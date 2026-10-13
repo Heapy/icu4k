@@ -5,7 +5,7 @@ package io.github.heapy.icu4k.util
 import io.github.heapy.icu4k.util.BytesTrie.Result
 
 /** ICU compact UTF-16 trie reader. Serialized storage is shared and must remain immutable. */
-class CharsTrie(private val chars: CharSequence, private val root: Int) {
+class CharsTrie(private val chars: CharSequence, private val root: Int) : Iterable<CharsTrie.Entry> {
     private var pos = root
     private var remaining = -1
     constructor(other: CharsTrie) : this(other.chars, other.root) { pos = other.pos; remaining = other.remaining }
@@ -155,7 +155,114 @@ class CharsTrie(private val chars: CharSequence, private val root: Int) {
         val value = findUniqueValue(chars, pos + remaining + 1, 0)
         return (value shl 31) shr 31
     }
+    override fun iterator(): Iterator = Iterator(chars, pos, remaining, 0)
+    fun iterator(maxStringLength: Int): Iterator = Iterator(chars, pos, remaining, maxStringLength)
+    /** Reused by the iterator; [chars] points to its mutable key buffer. */
+    class Entry internal constructor() {
+        var chars: CharSequence = ""
+        var value = 0
+    }
+    class Iterator internal constructor(
+        private val chars: CharSequence,
+        private val initialPos: Int,
+        private val initialRemaining: Int,
+        private val maxLength: Int,
+    ) : MutableIterator<Entry> {
+        private var pos = initialPos
+        private var remaining = initialRemaining
+        private var skipValue = false
+        private val str = StringBuilder()
+        private val entry = Entry()
+        private val stack = ArrayList<Long>()
+        init {
+            if (remaining >= 0) {
+                var count = remaining + 1
+                if (maxLength > 0 && count > maxLength) count = maxLength
+                str.append(chars, pos, pos + count)
+                pos += count; remaining -= count
+            }
+        }
+        fun reset(): Iterator {
+            pos = initialPos; remaining = initialRemaining; skipValue = false
+            var count = remaining + 1
+            if (maxLength > 0 && count > maxLength) count = maxLength
+            str.setLength(count)
+            pos += count; remaining -= count
+            stack.clear()
+            return this
+        }
+        override fun hasNext(): Boolean = pos >= 0 || stack.isNotEmpty()
+        override fun next(): Entry {
+            var p = pos
+            if (p < 0) {
+                if (stack.isEmpty()) throw NoSuchElementException()
+                val top = stack.removeAt(stack.lastIndex)
+                var length = top.toInt()
+                p = (top shr 32).toInt()
+                str.setLength(length and 0xffff)
+                length = length ushr 16
+                if (length > 1) {
+                    p = branchNext(p, length)
+                    if (p < 0) return entry
+                } else str.append(chars[p++])
+            }
+            if (remaining >= 0) return truncateAndStop()
+            while (true) {
+                var node = chars[p++].code
+                if (node >= 0x40) {
+                    if (skipValue) {
+                        p = skipNodeValue(p, node); node = node and 0x3f; skipValue = false
+                    } else {
+                        val final = node and 0x8000 != 0
+                        entry.value = if (final) readValue(chars, p, node and 0x7fff) else readNodeValue(chars, p, node)
+                        if (final || maxLength > 0 && str.length == maxLength) pos = -1
+                        else { pos = p - 1; skipValue = true }
+                        entry.chars = str
+                        return entry
+                    }
+                }
+                if (maxLength > 0 && str.length == maxLength) return truncateAndStop()
+                if (node < 0x30) {
+                    if (node == 0) node = chars[p++].code
+                    p = branchNext(p, node + 1)
+                    if (p < 0) return entry
+                } else {
+                    val length = node - 0x30 + 1
+                    if (maxLength > 0 && str.length + length > maxLength) {
+                        str.append(chars, p, p + maxLength - str.length)
+                        return truncateAndStop()
+                    }
+                    str.append(chars, p, p + length)
+                    p += length
+                }
+            }
+        }
+        override fun remove(): Nothing = throw UnsupportedOperationException()
+        private fun truncateAndStop(): Entry { pos = -1; entry.chars = str; entry.value = -1; return entry }
+        private fun branchNext(start: Int, count: Int): Int {
+            var p = start
+            var length = count
+            while (length > 5) {
+                ++p
+                stack.add((skipDelta(chars, p).toLong() shl 32) or ((length - (length shr 1)).toLong() shl 16) or str.length.toLong())
+                length = length shr 1
+                p = jumpByDelta(chars, p)
+            }
+            val unit = chars[p++]
+            val node = chars[p++].code
+            val value = readValue(chars, p, node and 0x7fff)
+            p = skipValue(p, node and 0x7fff)
+            stack.add((p.toLong() shl 32) or ((length - 1).toLong() shl 16) or str.length.toLong())
+            str.append(unit)
+            if (node and 0x8000 != 0) {
+                pos = -1; entry.chars = str; entry.value = value
+                return -1
+            }
+            return p + value
+        }
+    }
     companion object {
+        fun iterator(chars: CharSequence, offset: Int, maxStringLength: Int): Iterator = Iterator(chars, offset, -1, maxStringLength)
         private fun valueResult(node: Int): Result = if (node and 0x8000 != 0) Result.FINAL_VALUE else Result.INTERMEDIATE_VALUE
         private fun readValue(chars: CharSequence, p: Int, lead: Int): Int = when {
             lead < 0x4000 -> lead

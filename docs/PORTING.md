@@ -437,3 +437,16 @@ Japanese dictionary lookup on every target.
 CharsTrie Entry/Iterator and builders, language segmentation algorithms,
 normalization and script/UnicodeSet integration remain pending. Matching dictionary
 words alone is not the complete CJK segmentation algorithm.
+
+## Character trie enumeration
+
+CharsTrie now implements Iterable with the original reusable Entry and mutable
+CharSequence key buffer. Iterator ports preserve packed branch stacks,
+intermediate node-value skipping, suffix traversal, truncation sentinel -1,
+maximum key lengths, reset, exhaustion and unsupported removal.
+
+JVM oracle tests compare all entries of the real CJK dictionary, randomized
+FAST/SMALL tries, shared intermediate prefixes, eight truncation limits, reset
+and every position inside long linear matches. Common tests verify entry/key
+buffer reuse and truncated suffixes on every target. Trie builders and the
+language segmentation engines remain pending.

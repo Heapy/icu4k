@@ -3,6 +3,30 @@ package io.github.heapy.icu4k.util
 import kotlin.test.*
 
 class CharsTrieTest {
+    @Test fun iteratorReusesEntryAndMutableSequence() {
+        val raw = charArrayOf(0x30.toChar(), 'a', 0xb0.toChar(), 'b', 0x8002.toChar()).concatToString()
+        val trie = CharsTrie(raw, 0)
+        val iter = trie.iterator()
+        val entry = iter.next()
+        val chars = entry.chars
+        assertEquals("a", chars.toString())
+        assertEquals(1, entry.value)
+        assertSame(entry, iter.next())
+        assertSame(chars, entry.chars)
+        assertEquals("ab", chars.toString())
+        assertEquals(2, entry.value)
+        assertFalse(iter.hasNext())
+        assertEquals("a", iter.reset().next().chars.toString())
+        val limited = trie.iterator(1)
+        assertEquals(1, limited.next().value)
+        assertFalse(limited.hasNext())
+        val longRaw = charArrayOf(0x32.toChar(), 'a', 'b', 'c', 0x8002.toChar()).concatToString()
+        val longTrie = CharsTrie(longRaw, 0)
+        longTrie.next(97)
+        val suffix = longTrie.iterator(1)
+        assertEquals("b", suffix.next().chars.toString())
+        assertEquals(-1, suffix.reset().next().value)
+    }
     @Test fun readsIntermediateFinalAndRestoresState() {
         // a=1, ab=2; intermediate value and linear node type share a unit.
         val raw = charArrayOf(0x30.toChar(), 'a', 0xb0.toChar(), 'b', 0x8002.toChar()).concatToString()
