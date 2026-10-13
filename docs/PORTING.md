@@ -1735,3 +1735,18 @@ both direct range division and base-class dispatch on Lao prose, combining marks
 mixed text and 500 seeded random strings, with bounded iterators, range slices
 and both phrase flags. Common tests exercise the same embedded dictionary on
 all locally runnable targets.
+
+### Khmer dictionary segmentation
+
+Ported `KhmerBreakEngine` with ICU4J's complete dictionary candidate search and
+unknown-word recovery. The Khmer-specific four-code-unit minimum span, consonant
+begin set and COENG exclusion from the end set are retained, alongside combining
+mark attachment and terminal-boundary removal. Word and mark sets use the same
+property intersections as upstream. The pinned root bundle's `khmerdict.dict`
+is decoded directly; generic resource-bundle dictionary resolution is pending.
+
+Differential tests cover all Unicode script handling, Khmer phrases, COENG,
+marks, mixed text and 500 seeded random strings. Both direct range division and
+base-class dispatch are compared for break counts, queues and cursor positions,
+including bounded iterators, short spans and both phrase flags. Common tests
+exercise segmentation using the embedded dictionary on JVM, JS and Native.
