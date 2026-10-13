@@ -829,14 +829,9 @@ and string/code-point helpers against ICU4J. Common tests distinguish the three
 orders and cover supplementary code points, prefix ordering and validation.
 Pattern parsing and the remaining UnicodeSet API remain pending.
 
-## Public UnicodeSetIterator
+## UnicodeSetIterator shared string progression
 
-UnicodeSetIterator now ports code-point and range traversal, sorted strings,
-IS_STRING tagging, reset/rebinding, skipToStrings and getString. Public mutable
-fields retain the upstream stale/undefined values outside their documented
-modes; iteration does not add concurrent-modification checks. The string field
-and getString may be null before a string has been produced, matching Java.
-
-Differential tests compare 400 random sets through point/range/string-only
-modes, including all public result fields and reset behavior. Common tests
-exercise supplementary elements, empty strings, skipping and empty iterators.
+The already ported UnicodeSetIterator now shares nextString between point and
+range traversal. Its existing oracle and common tests are retained, including
+reset, skipping and mixed traversal coverage. This is a refactor of an existing
+port, not an additional completed ICU4J class.
