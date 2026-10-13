@@ -553,3 +553,18 @@ JVM differential tests compare 80,000 mixed iterator operations, complete
 iteration order and live/detached string views. Common tests cover mixed ranges,
 supplementary code points, empty string members and reset. Frozen acceleration,
 spans, patterns and property resolution remain pending.
+
+## Frozen code-point accelerator
+
+BMPSet ports the original Latin-1 table, U+07FF bits, mixed BMP block flags,
+4K inversion-list search bounds, copy constructor and direct/backward span
+algorithms with code-point counts. OutputInt and all SpanCondition identifiers
+are available in common code. The original reverse machine's behavior on
+malformed surrogate/BMP sequences is retained.
+
+Oracle tests compare membership across the full Unicode range for 25 sets,
+including empty/full sets and partial blocks, and both span directions at all
+indices of random UTF-16 strings for every condition. Common tests cover
+counts, supplementary pairs, unpaired units and block edges. UnicodeSet.freeze
+and public string-aware spans still require UnicodeSetStringSpan; BMPSet is
+currently an internal dependency rather than a partial replacement for freeze.

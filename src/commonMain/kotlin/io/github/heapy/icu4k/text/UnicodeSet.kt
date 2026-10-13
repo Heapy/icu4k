@@ -4,6 +4,7 @@ package io.github.heapy.icu4k.text
 
 /** ICU inversion-list core. Pattern/property parsing and frozen span acceleration are pending. */
 class UnicodeSet() : Iterable<String> {
+    enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
     private var buffer: IntArray? = null
