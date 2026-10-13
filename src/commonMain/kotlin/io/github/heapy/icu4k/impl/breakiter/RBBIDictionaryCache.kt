@@ -7,7 +7,7 @@ import io.github.heapy.icu4k.impl.RBBIDataWrapper
 import io.github.heapy.icu4k.text.CharacterIterator
 
 /** Original RuleBasedBreakIterator dictionary cache, with explicit owner dependencies. */
-internal class RBBIDictionaryCache(private val text: CharacterIterator, private val data: RBBIDataWrapper,
+internal class RBBIDictionaryCache(private var text: CharacterIterator, private val data: RBBIDataWrapper,
                                    private val languageEngine: (Int) -> LanguageBreakEngine?,
                                    private val phraseBreaking: Boolean) {
     var breaks = DictionaryBreakEngine.DequeI()
@@ -32,6 +32,7 @@ internal class RBBIDictionaryCache(private val text: CharacterIterator, private 
             it.firstRuleStatusIndex = firstRuleStatusIndex; it.otherRuleStatusIndex = otherRuleStatusIndex
             it.boundary = boundary; it.statusIndex = statusIndex
         }
+    fun setText(text: CharacterIterator) { this.text = text }
     fun reset() {
         positionInCache = -1; start = 0; limit = 0
         firstRuleStatusIndex = 0; otherRuleStatusIndex = 0

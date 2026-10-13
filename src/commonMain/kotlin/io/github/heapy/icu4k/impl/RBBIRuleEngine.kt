@@ -12,6 +12,11 @@ internal class RBBIRuleEngine(val data: RBBIDataWrapper, var text: CharacterIter
     var done = false
     private val lookAheadMatches = IntArray(data.fFTable!!.fLookAheadResultsSize)
 
+    /** ICU4J clones scalar state but allocates a fresh lookahead array. */
+    fun copyFor(text: CharacterIterator): RBBIRuleEngine = RBBIRuleEngine(data, text).also {
+        it.position = position; it.ruleStatusIndex = ruleStatusIndex
+        it.dictionaryCharCount = dictionaryCharCount; it.done = done
+    }
     fun handleNext(): Int {
         ruleStatusIndex = 0
         dictionaryCharCount = 0

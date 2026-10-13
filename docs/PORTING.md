@@ -2050,3 +2050,29 @@ Common/CJ creation-order precedence, and exercise eight concurrent writers/reade
 for stable engine identity and retention of every unsupported script. Common
 tests execute all dispatch branches on the locally runnable platforms. The
 public RuleBasedBreakIterator owner and ICUConfig integration remain pending.
+
+### Public compiled-rule iterator
+
+Added public `RuleBasedBreakIterator` backed by the original compiled rule engine,
+both caches and shared language registry. It supports first/last/current,
+next(n), forward/backward navigation, following/preceding/isBoundary, status
+vectors, direct CharacterIterator ownership, text replacement, equality/rules
+hashing and independent cloning. Rule engine copies preserve scalar state while
+resetting lookahead storage as ICU4J does; dictionary cache text binding is
+updated without discarding the original reset semantics.
+
+Compiled input uses the Common BinaryBuffer counterpart of ByteBuffer. The
+phrase/ML options are explicit while ICUConfig is pending. String-rule
+construction/compilation, locale factories and legacy nullable-text behavior
+are not yet exposed; the class is not claimed complete.
+
+JVM differential tests exercise all 15 pinned rule sets, bounded iterators,
+trained Thai/Myanmar dispatch, other dictionary scripts, malformed/supplementary
+text, complete walks, every nearby offset, random operations, status vectors and
+clones. Common tests exercise word statuses, mixed dictionary text, supplementary
+boundary rejection and CharSequence text replacement on local targets.
+
+Bounded-input phrase tests also preserve ICU4J's exceptional CJK punctuation
+behavior when previous32 returns DONE32 at a nonzero begin index. Differential
+operations compare exception families and post-exception cursor/status state,
+rather than assuming every valid-range phrase request succeeds upstream.
