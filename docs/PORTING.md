@@ -2275,3 +2275,24 @@ units, lookahead, chaining, BOF/EOF, dictionary sets and supplementary input.
 Common tests exercise the public pipeline and Java-compatible UTF-8 replacement
 on JVM, JS Node and macOS Arm64. All three full test suites pass. Locale
 factories and the broader ICU4J library scope remain incomplete.
+
+### Filtered sentence boundary iterator and explicit exception builder
+
+Ported SimpleFilteredSentenceBreakIterator's backwards exact and forwards
+partial trie matching, one-space handling, all navigation methods, cloning,
+delegate/text ownership and original equality/hash behavior. Added the empty
+FilteredBreakIteratorBuilder factory and explicit suppress/unsuppress/wrap API,
+including partial-prefix grouping, surrogate-aware reversal, mutable
+CharSequence identity semantics and empty-filter adoption shortcut. Locale
+constructors/factories and CLDR exception loading remain pending the locale
+resource layer; no synthetic locale exception lists are substituted.
+
+Differential tests compare both trie contents and forward/backward/offset
+navigation, next(n), current/text positions, inherited statuses, cloning and
+exception classes with ICU4J. Coverage includes exact and shared-prefix partial
+abbreviations, single/double spaces and line separators, supplementary and
+unpaired UTF-16 units, empty/duplicate/mutable exceptions, bounded delegates,
+long cache-spanning input, builder reuse and original null-trie hash/equality
+quirks. Common tests verify suppression, builder snapshot independence and the
+upstream isBoundary behavior that leaves the delegate on a suppressed boundary.
+Full JVM, JS Node and macOS Arm64 suites pass.
