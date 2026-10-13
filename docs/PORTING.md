@@ -1050,3 +1050,16 @@ JVM tests compare every Unicode code point plus adjacent invalid inputs for
 all 18 entries with ICU4J. Common tests exercise case, mirrors, flags, math
 start/continue differences and combining marks. Normalization, emoji and other
 derived binary properties are still pending.
+
+## POSIX binary properties
+
+UCharacterProperty now ports the five derived POSIX binary entries using the
+original Unicode-category and alphabetic rules. Blank differs from Print for
+TAB, Graph excludes separators/control/surrogate/unassigned categories but
+retains format characters, and XDigit includes every Unicode decimal digit
+alongside ASCII/fullwidth hex letters.
+
+JVM tests compare every Unicode code point and adjacent invalid values for all
+five entries with ICU4J. Common tests check the class distinctions and non-ASCII
+digits. Normalization/emoji binary entries and the full public dispatcher are
+still pending.

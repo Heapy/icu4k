@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.lang.UCharacterCategory
 import io.github.heapy.icu4k.lang.UProperty
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.CodePointTrie
@@ -59,6 +60,16 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    internal fun hasPosixBinaryProperty(c: Int, which: Int): Boolean = when (which) {
+        UProperty.POSIX_ALNUM -> hasVectorBinaryProperty(c, UProperty.ALPHABETIC) || getType(c) == UCharacterCategory.DECIMAL_DIGIT_NUMBER.toInt()
+        UProperty.POSIX_BLANK -> if (c <= 0x9f) c == 9 || c == 0x20 else getType(c) == UCharacterCategory.SPACE_SEPARATOR.toInt()
+        UProperty.POSIX_GRAPH -> isGraphPosix(c)
+        UProperty.POSIX_PRINT -> getType(c) == UCharacterCategory.SPACE_SEPARATOR.toInt() || isGraphPosix(c)
+        UProperty.POSIX_XDIGIT -> (c in 0x41..0x66 && (c <= 0x46 || c >= 0x61)) ||
+            (c in 0xff21..0xff46 && (c <= 0xff26 || c >= 0xff41)) || getType(c) == UCharacterCategory.DECIMAL_DIGIT_NUMBER.toInt()
+        else -> throw IllegalArgumentException("Not a POSIX binary property: $which")
+    }
+    private fun isGraphPosix(c: Int): Boolean = getMask(getType(c)) and posixGraphExcludedMask == 0
     /** Non-normalization binary entries backed by case/bidi data or fixed UCD ranges. */
     internal fun hasAuxiliaryBinaryProperty(c: Int, which: Int): Boolean = when (which) {
         UProperty.LOWERCASE,
@@ -246,6 +257,11 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
 
     private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        private val posixGraphExcludedMask = getMask(UCharacterCategory.CONTROL.toInt()) or
+            getMask(UCharacterCategory.SURROGATE.toInt()) or getMask(UCharacterCategory.UNASSIGNED.toInt()) or
+            getMask(UCharacterCategory.SPACE_SEPARATOR.toInt()) or getMask(UCharacterCategory.LINE_SEPARATOR.toInt()) or
+            getMask(UCharacterCategory.PARAGRAPH_SEPARATOR.toInt())
+
         private val idCompatMathStart = intArrayOf(8706, 8711, 8734, 120513, 120539, 120571, 120597, 120629, 120655, 120687, 120713, 120745, 120771)
         private val idCompatMathContinue = intArrayOf(178, 180, 185, 186, 8304, 8305, 8308, 8319, 8320, 8335)
         private val modifierCombiningMark = intArrayOf(1620, 1622, 1624, 1625, 1756, 1757, 1763, 1764, 1767, 1769, 2250, 2252, 2253, 2256, 2259, 2260, 2291, 2292)
