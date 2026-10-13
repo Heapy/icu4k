@@ -220,6 +220,114 @@ internal class Normalizer2Impl {
         fun getCCFromNormalYesOrMaybe(norm16: Int): Int = (norm16 shr OFFSET_SHIFT) and 255
         fun getCCFromYesOrMaybeYes(norm16: Int): Int = if (norm16 >= MIN_NORMAL_MAYBE_YES) getCCFromNormalYesOrMaybe(norm16) else 0
     }
+    class ReorderingBuffer(private val impl: Normalizer2Impl, private val app: Appendable, destCapacity: Int) : Appendable {
+        private val appIsStringBuilder = app is StringBuilder
+        private val str: StringBuilder = if (app is StringBuilder) app else StringBuilder()
+        private var reorderStart = 0
+        private var lastCC = 0
+        private var codePointStart = 0
+        private var codePointLimit = 0
+        init {
+            if (appIsStringBuilder) {
+                str.ensureCapacity(destCapacity)
+                if (str.isNotEmpty()) {
+                    setIterator()
+                    lastCC = previousCC()
+                    if (lastCC > 1) while (previousCC() > 1) { }
+                    reorderStart = codePointLimit
+                }
+            }
+        }
+        fun isEmpty(): Boolean = str.isEmpty()
+        fun length(): Int = str.length
+        fun getLastCC(): Int = lastCC
+        fun getStringBuilder(): StringBuilder = str
+        fun equals(s: CharSequence, start: Int, limit: Int): Boolean = UTF16Plus.equal(str, 0, str.length, s, start, limit)
+        fun append(c: Int, cc: Int) {
+            if (lastCC <= cc || cc == 0) {
+                str.append(io.github.heapy.icu4k.text.UTF16.valueOf(c))
+                lastCC = cc
+                if (cc <= 1) reorderStart = str.length
+            } else insert(c, cc)
+        }
+        fun append(s: CharSequence, start: Int, limit: Int, isNFD: Boolean, initialLeadCC: Int, trailCC: Int) {
+            if (start == limit) return
+            var leadCC = initialLeadCC
+            if (lastCC <= leadCC || leadCC == 0) {
+                if (trailCC <= 1) reorderStart = str.length + limit - start
+                else if (leadCC <= 1) reorderStart = str.length + 1
+                str.append(s, start, limit)
+                lastCC = trailCC
+            } else {
+                var index = start
+                var c = codePointAt(s, index)
+                index += if (c > 0xffff) 2 else 1
+                insert(c, leadCC)
+                while (index < limit) {
+                    c = codePointAt(s, index)
+                    index += if (c > 0xffff) 2 else 1
+                    leadCC = if (index < limit) {
+                        if (isNFD) getCCFromYesOrMaybeYes(impl.getNorm16(c)) else impl.getCC(impl.getNorm16(c))
+                    } else trailCC
+                    append(c, leadCC)
+                }
+            }
+        }
+        override fun append(c: Char): ReorderingBuffer {
+            str.append(c); lastCC = 0; reorderStart = str.length
+            return this
+        }
+        fun appendZeroCC(c: Int) { str.append(io.github.heapy.icu4k.text.UTF16.valueOf(c)); lastCC = 0; reorderStart = str.length }
+        override fun append(value: CharSequence?): ReorderingBuffer {
+            val s = value ?: throw NullPointerException()
+            if (s.isNotEmpty()) { str.append(s); lastCC = 0; reorderStart = str.length }
+            return this
+        }
+        override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): ReorderingBuffer {
+            val s = value ?: throw NullPointerException()
+            if (startIndex != endIndex) { str.append(s, startIndex, endIndex); lastCC = 0; reorderStart = str.length }
+            return this
+        }
+        fun flush() {
+            if (appIsStringBuilder) reorderStart = str.length
+            else { app.append(str); str.setLength(0); reorderStart = 0 }
+            lastCC = 0
+        }
+        fun flushAndAppendZeroCC(s: CharSequence, start: Int, limit: Int): ReorderingBuffer {
+            if (appIsStringBuilder) { str.append(s, start, limit); reorderStart = str.length }
+            else { app.append(str).append(s, start, limit); str.setLength(0); reorderStart = 0 }
+            lastCC = 0
+            return this
+        }
+        fun remove() { str.setLength(0); lastCC = 0; reorderStart = 0 }
+        fun removeSuffix(suffixLength: Int) { str.deleteRange(str.length - suffixLength, str.length); lastCC = 0; reorderStart = str.length }
+        private fun insert(c: Int, cc: Int) {
+            setIterator(); skipPrevious()
+            while (previousCC() > cc) { }
+            str.insert(codePointLimit, io.github.heapy.icu4k.text.UTF16.valueOf(c))
+            if (cc <= 1) reorderStart = codePointLimit + if (c > 0xffff) 2 else 1
+        }
+        private fun setIterator() { codePointStart = str.length }
+        private fun skipPrevious() {
+            codePointLimit = codePointStart
+            codePointStart -= if (codePointBefore(str, codePointStart) > 0xffff) 2 else 1
+        }
+        private fun previousCC(): Int {
+            codePointLimit = codePointStart
+            if (reorderStart >= codePointStart) return 0
+            val c = codePointBefore(str, codePointStart)
+            codePointStart -= if (c > 0xffff) 2 else 1
+            return impl.getCCFromYesOrMaybeYesCP(c)
+        }
+        private fun codePointAt(s: CharSequence, i: Int): Int {
+            val c = s[i].code
+            return if (c in 0xd800..0xdbff && i + 1 < s.length && s[i + 1].code in 0xdc00..0xdfff) ((c - 0xd800) shl 10) + s[i + 1].code - 0xdc00 + 0x10000 else c
+        }
+        private fun codePointBefore(s: CharSequence, i: Int): Int {
+            val c = s[i - 1].code
+            return if (c in 0xdc00..0xdfff && i > 1 && s[i - 2].code in 0xd800..0xdbff) ((s[i - 2].code - 0xd800) shl 10) + c - 0xdc00 + 0x10000 else c
+        }
+    }
     object Hangul {
         const val JAMO_L_BASE = 0x1100
         const val JAMO_L_END = 0x1112

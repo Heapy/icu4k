@@ -1156,3 +1156,16 @@ JVM tests compare all predicates for every Unicode code point and adjacent
 invalid values in all five datasets and both contiguous modes. Common tests
 cover accents, composing starters and inert punctuation. Full-string ordering
 and normalization are still pending.
+
+## Canonical reordering buffer
+
+Normalizer2Impl.ReorderingBuffer now ports canonical combining-class insertion,
+code-point and sequence appends, zero-class fast paths, initial destination
+state, flushing, suffix removal and backward class iteration. StringBuilder
+destinations are updated directly; other Appendables receive buffered output
+on flush. Equal-class marks retain their original order.
+
+JVM tests compare random mutation schedules in both destination modes against
+ICU4J, including supplementary and malformed units, marks and destination reuse.
+Common tests verify reordered accents and starter boundaries. Full-string
+normalization loops and composition remain pending.
