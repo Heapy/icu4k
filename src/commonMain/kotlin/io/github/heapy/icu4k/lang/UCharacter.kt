@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.lang
 
+import io.github.heapy.icu4k.impl.UCaseProps
 import io.github.heapy.icu4k.impl.UCharacterProperty
 import io.github.heapy.icu4k.impl.UBiDiProps
 import io.github.heapy.icu4k.text.UTF16
@@ -10,8 +11,9 @@ import io.github.heapy.icu4k.util.VersionInfo
 
 /**
  * Unicode character operations backed by pinned ICU data on every target.
- * The category/numeric/bidi portion is ported; case mapping, normalization,
- * names and the complete property dispatcher are added in subsequent stages.
+ * Category/numeric/bidi operations, simple case mappings and full case folding
+ * are ported. Locale-sensitive string casing, normalization, names and the
+ * complete property dispatcher are added in subsequent stages.
  */
 class UCharacter private constructor() {
     companion object {
@@ -109,6 +111,28 @@ class UCharacter private constructor() {
             if (value < 0) value = UCharacterProperty.getEuropeanDigit(ch)
             return if (value < radix) value else -1
         }
+        const val FOLD_CASE_DEFAULT = 0
+        const val FOLD_CASE_EXCLUDE_SPECIAL_I = 1
+        fun toLowerCase(ch: Int): Int = UCaseProps.INSTANCE.tolower(ch)
+        fun toUpperCase(ch: Int): Int = UCaseProps.INSTANCE.toupper(ch)
+        fun toTitleCase(ch: Int): Int = UCaseProps.INSTANCE.totitle(ch)
+        fun foldCase(ch: Int, options: Int): Int = UCaseProps.INSTANCE.fold(ch, options)
+        fun foldCase(ch: Int, defaultMapping: Boolean): Int = foldCase(ch, if (defaultMapping) FOLD_CASE_DEFAULT else FOLD_CASE_EXCLUDE_SPECIAL_I)
+        fun foldCase(str: String, options: Int): String = buildString {
+            val cases = UCaseProps.INSTANCE
+            var index = 0
+            while (index < str.length) {
+                val cp = UTF16.charAt(str, index)
+                index += UTF16.getCharCount(cp)
+                val result = cases.toFullFolding(cp, this, options)
+                when {
+                    result < 0 -> if ((options and 0x4000) == 0) append(UTF16.valueOf(cp))
+                    result > UCaseProps.MAX_STRING_LENGTH -> append(UTF16.valueOf(result))
+                    // Otherwise the mapping has already been appended.
+                }
+            }
+        }
+        fun foldCase(str: String, defaultMapping: Boolean): String = foldCase(str, if (defaultMapping) FOLD_CASE_DEFAULT else FOLD_CASE_EXCLUDE_SPECIAL_I)
         fun getNumericValue(ch: Int): Int = UCharacterProperty.INSTANCE.getNumericValue(ch)
         fun getUnicodeNumericValue(ch: Int): Double = UCharacterProperty.INSTANCE.getUnicodeNumericValue(ch)
         fun getType(ch: Int): Int = UCharacterProperty.INSTANCE.getType(ch)

@@ -58,7 +58,7 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
   optimized filtered range enumeration and error-aware string iteration are ported.
 - BinaryBuffer replaces Java ByteBuffer for common binary readers. ICUBinary
   header authentication, version conversion and typed array operations are ported.
-- ICUData embeds pinned `uprops.icu`, `ulayout.icu` and `ubidi.icu` bytes across all targets;
+- ICUData embeds pinned `uprops.icu`, `ulayout.icu`, `ubidi.icu` and `ucase.icu` bytes across all targets;
   other resources and filesystem/package scanning remain pending.
 - LayoutProps loads real Unicode 17 Indic positional/syllabic category and vertical
   orientation tries. The modern block trie in uprops also decodes correctly.
@@ -72,7 +72,11 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
   paired-bracket properties. The bidi reordering algorithm remains unported.
 - UProperty identifiers, UCharacterEnums, category/direction names and constants
   are implemented. UCharacter exposes category/numeric/bidi and legality APIs;
-  case mapping, names, normalization and the full property dispatcher are pending.
+  simple case mappings and full case folding are also implemented. Locale-sensitive
+  string casing, names, normalization and the full property dispatcher are pending.
+- UCaseProps loads the original case data and implements simple/full mappings,
+  contextual rules, folding, case flags, closures and reverse unfold lookup.
+  UnicodeSet adapters and Latin fast-path tables remain pending.
 - The remaining ICU4J classes and data algorithms are unported. No complete API
   compatibility is claimed.
 
@@ -141,8 +145,8 @@ were compared against ICU4J's UCharacter property API over the full Unicode rang
 Embedded resources match the ICU4J 78.3 artifact byte-for-byte.
 
 The main property data, numeric decoding and bidi property tables are now ported.
-The complete UCharacter property dispatcher still requires case/normalization,
-emoji and other derived-property data. MutableCodePointTrie and Trie2Writable
+The complete UCharacter property dispatcher still requires normalization,
+emoji and other derived-property data; case property algorithms are implemented. MutableCodePointTrie and Trie2Writable
 construction/compaction remain pending.
 
 Common adaptations: binary APIs accept BinaryBuffer or ByteArray and serialize
@@ -180,3 +184,24 @@ Java identifier predicates depend on host-JDK Unicode data in ICU4J and need an
 explicit portability decision. Unicode identifier predicates already use pinned
 ICU data. Locale-sensitive case conversion, names, normalization, resource
 bundles, the bidi algorithm, formatting and the rest of ICU remain pending.
+
+## Case mapping validation
+
+The prior character-property CI run `38378616115` passed JVM, JS, Linux Native
+and macOS arm64. The next local JVM/JS/macOS suites also passed with case data.
+Simple lower/upper/title mappings, case flags, dot classes and simple/full folding
+were compared against ICU4J over the entire Unicode range. Root full lower/upper/
+title mappings and all case-derived binary properties likewise match. Context
+fixtures cover six case locales, final sigma, Turkic and Lithuanian dot rules,
+and Eastern/Western Armenian ligature mappings. Case queries use an immutable
+Appendable sink, avoiding shared mutable scratch buffers.
+
+Full/simple case closures and reverse unfold lookups were compared to ICU4J's
+UnicodeSet results. They currently use internal callbacks until the common
+UnicodeSet integration is ported. Raw ucase.icu bytes match the ICU4J artifact.
+Public string folding matches ICU4J over a string containing every Unicode code
+point for default/Turkic and extra option bits, including OMIT_UNCHANGED_TEXT.
+
+Remaining casing scope includes CaseMapImpl string processing, Greek uppercase,
+titlecase word boundaries, Edits, locale APIs, Latin fast paths and the public
+UnicodeSet closure adapters. These are still part of the full ICU4J port.
