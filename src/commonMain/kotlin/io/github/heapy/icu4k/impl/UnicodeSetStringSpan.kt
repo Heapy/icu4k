@@ -6,7 +6,70 @@ import io.github.heapy.icu4k.text.UnicodeSet
 import io.github.heapy.icu4k.util.OutputInt
 
 /** Shared primitives for ICU string-aware spans; main span machines are being ported. */
-internal class UnicodeSetStringSpan private constructor() {
+internal class UnicodeSetStringSpan private constructor(
+    private val spanSet: UnicodeSet,
+    private val strings: ArrayList<String>,
+    private val all: Boolean,
+) {
+    private var spanNotSet: UnicodeSet? = null
+    private var spanLengths: ShortArray? = null
+    private var maxLength16 = 0
+    private var someRelevant = false
+    private val offsets = OffsetList()
+
+    constructor(set: UnicodeSet, setStrings: ArrayList<String>, which: Int) :
+        this(UnicodeSet(0, UnicodeSet.MAX_VALUE).retainAll(set), setStrings, which == ALL) {
+        if (which and NOT_CONTAINED != 0) spanNotSet = spanSet
+        var i = 0
+        while (i < strings.size) {
+            val string = strings[i]
+            if (string.isEmpty()) { strings.removeAt(i); continue }
+            val length = spanForward(string)
+            if (length < string.length) someRelevant = true
+            if (string.length > maxLength16) maxLength16 = string.length
+            ++i
+        }
+        if (someRelevant || which and WITH_COUNT != 0) {
+            if (all) spanSet.freezeCodePointSet()
+            val backOffset = if (all) strings.size else 0
+            val lengths = ShortArray(if (all) strings.size * 2 else strings.size)
+            spanLengths = lengths
+            for (index in strings.indices) {
+                val string = strings[index]
+                val length = spanForward(string)
+                if (length < string.length) {
+                    if (which and CONTAINED != 0) {
+                        if (which and FWD != 0) lengths[index] = makeSpanLengthByte(length)
+                        if (which and BACK != 0) lengths[backOffset + index] = makeSpanLengthByte(string.length - spanSet.spanCodePointsBack(string, string.length, UnicodeSet.SpanCondition.CONTAINED))
+                    } else { lengths[index] = 0; lengths[backOffset + index] = 0 }
+                    if (which and NOT_CONTAINED != 0) {
+                        if (which and FWD != 0) addToSpanNotSet(codePointAt(string, 0))
+                        if (which and BACK != 0) addToSpanNotSet(codePointBefore(string, string.length))
+                    }
+                } else {
+                    lengths[index] = ALL_CP_CONTAINED
+                    if (all) lengths[backOffset + index] = ALL_CP_CONTAINED
+                }
+            }
+            if (all) spanNotSet!!.freezeCodePointSet()
+        }
+    }
+    constructor(other: UnicodeSetStringSpan, newStrings: ArrayList<String>) : this(other.spanSet, newStrings, true) {
+        maxLength16 = other.maxLength16; someRelevant = other.someRelevant
+        spanNotSet = if (other.spanNotSet === other.spanSet) spanSet else other.spanNotSet!!.clone()
+        spanLengths = other.spanLengths!!.copyOf()
+    }
+    fun needsStringSpanUTF16(): Boolean = someRelevant
+    fun contains(c: Int): Boolean = spanSet.contains(c)
+    private fun spanForward(string: String): Int = spanSet.spanCodePointsAndCount(string, 0, UnicodeSet.SpanCondition.CONTAINED, null)
+    private fun addToSpanNotSet(c: Int) {
+        if (spanNotSet == null || spanNotSet === spanSet) {
+            if (spanSet.contains(c)) return
+            spanNotSet = spanSet.cloneAsThawed()
+        }
+        spanNotSet!!.add(c)
+    }
+
     class OffsetList {
         private var list = IntArray(16)
         private var length = 0
@@ -62,6 +125,28 @@ internal class UnicodeSetStringSpan private constructor() {
         }
     }
     companion object {
+        const val WITH_COUNT = 0x40
+        const val FWD = 0x20
+        const val BACK = 0x10
+        const val CONTAINED = 2
+        const val NOT_CONTAINED = 1
+        const val ALL = 0x7f
+        const val FWD_UTF16_CONTAINED = FWD or CONTAINED
+        const val FWD_UTF16_NOT_CONTAINED = FWD or NOT_CONTAINED
+        const val BACK_UTF16_CONTAINED = BACK or CONTAINED
+        const val BACK_UTF16_NOT_CONTAINED = BACK or NOT_CONTAINED
+        private fun codePointAt(s: String, index: Int): Int {
+            val lead = s[index].code
+            if (lead in 0xd800..0xdbff && index + 1 < s.length && s[index + 1].code in 0xdc00..0xdfff)
+                return ((lead - 0xd800) shl 10) + s[index + 1].code - 0xdc00 + 0x10000
+            return lead
+        }
+        private fun codePointBefore(s: String, index: Int): Int {
+            val trail = s[index - 1].code
+            if (trail in 0xdc00..0xdfff && index >= 2 && s[index - 2].code in 0xd800..0xdbff)
+                return ((s[index - 2].code - 0xd800) shl 10) + trail - 0xdc00 + 0x10000
+            return trail
+        }
         const val ALL_CP_CONTAINED: Short = 255
         const val LONG_SPAN: Short = 254
         fun makeSpanLengthByte(length: Int): Short = if (length < LONG_SPAN) length.toShort() else LONG_SPAN

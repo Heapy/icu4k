@@ -3,12 +3,14 @@
 package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.util.OutputInt
+import io.github.heapy.icu4k.impl.BMPSet
 
 /** ICU inversion-list core. Pattern/property parsing and frozen span acceleration are pending. */
 class UnicodeSet() : Iterable<String> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
+    private var bmpSet: BMPSet? = null
     private var buffer: IntArray? = null
     private var stringElements = ArrayList<String>()
     constructor(other: UnicodeSet) : this() { set(other) }
@@ -28,13 +30,13 @@ class UnicodeSet() : Iterable<String> {
         }
         list[i] = HIGH
     }
-    fun set(other: UnicodeSet): UnicodeSet {
+    fun set(other: UnicodeSet): UnicodeSet { checkFrozen();
         list = other.list.copyOf(other.len); len = other.len
         stringElements = ArrayList(other.stringElements)
         return this
     }
-    fun clear(): UnicodeSet { list[0] = HIGH; len = 1; stringElements.clear(); return this }
-    fun compact(): UnicodeSet { if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
+    fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
+    fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
     fun getRangeCount(): Int = len / 2
     fun getRangeStart(index: Int): Int = list[index * 2]
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
@@ -45,7 +47,7 @@ class UnicodeSet() : Iterable<String> {
         for (i in 0 until getRangeCount()) result += getRangeEnd(i) - getRangeStart(i) + 1
         return result
     }
-    fun contains(c: Int): Boolean { validate(c); return findCodePoint(c) and 1 != 0 }
+    fun contains(c: Int): Boolean { validate(c); return bmpSet?.contains(c) ?: (findCodePoint(c) and 1 != 0) }
     fun contains(start: Int, end: Int): Boolean {
         validate(start); validate(end)
         val i = findCodePoint(start)
@@ -55,7 +57,7 @@ class UnicodeSet() : Iterable<String> {
         val cp = singleCP(s)
         return if (cp >= 0) contains(cp) else stringElements.binarySearch(s.toString()) >= 0
     }
-    fun add(s: CharSequence): UnicodeSet {
+    fun add(s: CharSequence): UnicodeSet { checkFrozen();
         val cp = singleCP(s)
         if (cp >= 0) return add(cp)
         val str = s.toString()
@@ -63,7 +65,7 @@ class UnicodeSet() : Iterable<String> {
         if (index < 0) stringElements.add(-index - 1, str)
         return this
     }
-    fun add(c: Int): UnicodeSet {
+    fun add(c: Int): UnicodeSet { checkFrozen();
         validate(c)
         val i = findCodePoint(c)
         if (i and 1 != 0) return this
@@ -83,7 +85,7 @@ class UnicodeSet() : Iterable<String> {
         }
         return this
     }
-    fun add(start: Int, end: Int): UnicodeSet {
+    fun add(start: Int, end: Int): UnicodeSet { checkFrozen();
         validate(start); validate(end)
         if (start == end) return add(start)
         if (start > end) return this
@@ -105,43 +107,43 @@ class UnicodeSet() : Iterable<String> {
         }
         return union(intArrayOf(start, limit, HIGH), 2)
     }
-    fun addAll(other: UnicodeSet): UnicodeSet {
+    fun addAll(other: UnicodeSet): UnicodeSet { checkFrozen();
         union(other.list, other.len)
         // Snapshot handles adding a set to itself.
         for (s in other.stringElements.toList()) add(s)
         return this
     }
     fun remove(c: Int): UnicodeSet = remove(c, c)
-    fun remove(start: Int, end: Int): UnicodeSet {
+    fun remove(start: Int, end: Int): UnicodeSet { checkFrozen();
         validate(start); validate(end)
         if (start <= end) intersect(intArrayOf(start, end + 1, HIGH), 2, 2)
         return this
     }
     fun retain(c: Int): UnicodeSet = retain(c, c)
-    fun retain(start: Int, end: Int): UnicodeSet {
+    fun retain(start: Int, end: Int): UnicodeSet { checkFrozen();
         validate(start); validate(end)
         if (start <= end) intersect(intArrayOf(start, end + 1, HIGH), 2, 0) else clear()
         return this
     }
     fun complement(c: Int): UnicodeSet = complement(c, c)
-    fun complement(start: Int, end: Int): UnicodeSet {
+    fun complement(start: Int, end: Int): UnicodeSet { checkFrozen();
         validate(start); validate(end)
         if (start <= end) xor(intArrayOf(start, end + 1, HIGH), 2)
         return this
     }
-    fun complement(): UnicodeSet {
+    fun complement(): UnicodeSet { checkFrozen();
         if (list[0] == MIN_VALUE) { list.copyInto(list, 0, 1, len); --len }
         else { ensureCapacity(len + 1); list.copyInto(list, 1, 0, len); list[0] = MIN_VALUE; ++len }
         return this
     }
-    fun remove(s: CharSequence): UnicodeSet {
+    fun remove(s: CharSequence): UnicodeSet { checkFrozen();
         val cp = singleCP(s)
         if (cp >= 0) return remove(cp)
         val i = stringElements.binarySearch(s.toString())
         if (i >= 0) stringElements.removeAt(i)
         return this
     }
-    fun retain(s: CharSequence): UnicodeSet {
+    fun retain(s: CharSequence): UnicodeSet { checkFrozen();
         val cp = singleCP(s)
         if (cp >= 0) return retain(cp)
         val str = s.toString()
@@ -151,7 +153,7 @@ class UnicodeSet() : Iterable<String> {
         if (present) add(str)
         return this
     }
-    fun complement(s: CharSequence): UnicodeSet {
+    fun complement(s: CharSequence): UnicodeSet { checkFrozen();
         val cp = singleCP(s)
         if (cp >= 0) return complement(cp)
         val str = s.toString()
@@ -159,19 +161,19 @@ class UnicodeSet() : Iterable<String> {
         if (i >= 0) stringElements.removeAt(i) else stringElements.add(-i - 1, str)
         return this
     }
-    fun removeAllStrings(): UnicodeSet { stringElements.clear(); return this }
-    fun retainAll(other: UnicodeSet): UnicodeSet {
+    fun removeAllStrings(): UnicodeSet { checkFrozen(); stringElements.clear(); return this }
+    fun retainAll(other: UnicodeSet): UnicodeSet { checkFrozen();
         intersect(other.list, other.len, 0)
         stringElements.removeAll { other.stringElements.binarySearch(it) < 0 }
         return this
     }
-    fun removeAll(other: UnicodeSet): UnicodeSet {
+    fun removeAll(other: UnicodeSet): UnicodeSet { checkFrozen();
         intersect(other.list, other.len, 2)
         if (this === other) stringElements.clear()
         else stringElements.removeAll { other.stringElements.binarySearch(it) >= 0 }
         return this
     }
-    fun complementAll(other: UnicodeSet): UnicodeSet {
+    fun complementAll(other: UnicodeSet): UnicodeSet { checkFrozen();
         xor(other.list, other.len)
         for (str in other.stringElements.toList()) complement(str)
         return this
@@ -280,8 +282,19 @@ class UnicodeSet() : Iterable<String> {
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
     }
+    fun isFrozen(): Boolean = bmpSet != null
+    fun cloneAsThawed(): UnicodeSet = UnicodeSet(this)
+    fun clone(): UnicodeSet = if (isFrozen()) this else UnicodeSet(this)
+    /** Internal code-point-only freezing used by the string span engine. */
+    internal fun freezeCodePointSet(): UnicodeSet {
+        check(!hasStrings())
+        if (bmpSet == null) { compact(); bmpSet = BMPSet(list, len) }
+        return this
+    }
+    private fun checkFrozen() { if (isFrozen()) throw UnsupportedOperationException("Attempt to modify frozen object") }
     /** Original unfrozen code-point span fallback; caller handles empty/clamped input. */
     internal fun spanCodePointsAndCount(s: CharSequence, start: Int, condition: SpanCondition, outCount: OutputInt?): Int {
+        bmpSet?.let { return it.span(s, start, condition, outCount) }
         val contained = condition != SpanCondition.NOT_CONTAINED
         var next = start
         var count = 0
@@ -298,6 +311,7 @@ class UnicodeSet() : Iterable<String> {
         return next
     }
     internal fun spanCodePointsBack(s: CharSequence, fromIndex: Int, condition: SpanCondition): Int {
+        bmpSet?.let { return it.spanBack(s, fromIndex, condition) }
         val contained = condition != SpanCondition.NOT_CONTAINED
         var previous = fromIndex
         do {

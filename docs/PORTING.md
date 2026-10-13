@@ -605,3 +605,19 @@ JVM oracle tests compare closure sets for every cased Unicode code point plus
 including preservation of pre-existing elements. Common tests cover sharp-s,
 ASCII simple closure and property boundaries. Public UnicodeSet.closeOver and
 the string-span/freeze integration are still pending.
+
+## String-span preprocessing
+
+UnicodeSetStringSpan constructors now port relevant-string detection, empty-
+string removal from the supplied list, maximum UTF-16 lengths, per-direction
+prefix/suffix metadata and auxiliary NOT_CONTAINED sets for all flag modes.
+The copy constructor retains frozen set sharing and copies span metadata.
+Internal code-point-only sets can now freeze through BMPSet; mutators reject
+frozen storage and clone/cloneAsThawed preserve the original state semantics.
+Public freeze for sets containing strings remains pending.
+
+Oracle tests compare preprocessing fields, metadata, auxiliary ranges and frozen
+states for 100 UTF-16 fixtures under 13 flag combinations, plus copy construction.
+Common tests check relevance, empty removal, clones and all existing mutation
+entry points on frozen internal sets. Main string-aware span machines remain
+pending, so public span/freeze APIs are not yet presented as complete.
