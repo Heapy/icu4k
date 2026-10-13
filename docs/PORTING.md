@@ -275,3 +275,18 @@ implementations for six locales, adjustment/lowercase/omit options, Dutch accent
 fixtures, expansions and random malformed UTF-16. Common tests exercise explicit
 whole-string segments. Public locale APIs and common boundary engines remain
 pending, along with the rest of the full ICU port.
+
+## Public folding options and segmentation prerequisites
+
+CaseMap.Fold is now available in commonMain with cached immutable default,
+Turkic and omit-unchanged combinations, string/Appendable application and Edits.
+Common tests verify option composition, append behavior and reset; JVM tests
+compare all four option combinations and fine edit spans against public ICU4J.
+Lower/Upper/Title public locale adapters are still pending.
+
+The next boundary dependency is RBBIDataWrapper's compiled-rule parser, using
+the existing ICUBinary/BinaryBuffer/CodePointTrie implementations. Full boundary
+parity additionally requires the RuleBasedBreakIterator state machine and caches,
+text cursor adaptation, word/sentence/grapheme/line rules, ICU resource bundles
+and locale selection, dictionary engines and dictionary data. Supplying English
+rule boundaries alone will not constitute a complete segmentation port.
