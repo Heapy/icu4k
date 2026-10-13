@@ -44,7 +44,15 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
 - Deliberate differences: value equality without singleton interning; oversized
   version components are rejected before integer overflow. Historical constants,
   resource-backed timezone lookup and command-line entry point are not ported.
-- The rest of ICU4J remains unported. No complete API compatibility is claimed.
+- UTF16 traversal, random access, offset conversion, surrogate operations and
+  mutation are implemented for common strings/builders and array slices. Search,
+  replacement by substring and StringComparator are still pending.
+- Replaceable and ReplaceableString are implemented with shared builder storage.
+- UForwardCharacterIterator, UCharacterIterator and its replaceable/array
+  implementations are ported. The java.text.CharacterIterator adapters remain
+  pending; cursor cloning shares storage as upstream does.
+- The remaining ICU4J classes and data algorithms are unported. No complete API
+  compatibility is claimed.
 
 ## Next stages
 
@@ -64,3 +72,14 @@ retain copyright notices, and compare behavior against ICU4J before expanding AP
 on macOS arm64 with JDK 25. The JVM suite includes differential checks against
 ICU4J; all three targets execute the common tests. Linux execution is delegated
 to CI and has not been verified locally.
+
+UTF16 was checked against ICU4J for every Unicode code point and all 781 strings
+of length 0–4 over one BMP character and four surrogate boundary units, including
+cursor shifts and mutable edits. ReplaceableString was checked over 2,000 seeded
+editing operations. Common iterator tests passed on JVM, JS and macOS arm64;
+JVM differential iterator tests exercise seeded cursor operations and array slices.
+
+Kotlin/JS 2.4.21 emits `?` for unpaired surrogates in string literals. Tests build
+such strings from runtime code units to avoid testing corrupted compiler output.
+This also matters for future generated Unicode fixtures: use numeric arrays or
+escaped runtime decoding for arbitrary UTF-16 data.
