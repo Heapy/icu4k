@@ -3,11 +3,11 @@
 package io.github.heapy.icu4k.text
 
 /** ICU inversion-list core. Pattern/property parsing and frozen span acceleration are pending. */
-class UnicodeSet() {
+class UnicodeSet() : Iterable<String> {
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
     private var buffer: IntArray? = null
-    private val stringElements = ArrayList<String>()
+    private var stringElements = ArrayList<String>()
     constructor(other: UnicodeSet) : this() { set(other) }
     constructor(start: Int, end: Int) : this() { add(start, end) }
     constructor(vararg pairs: Int) : this() {
@@ -26,13 +26,12 @@ class UnicodeSet() {
         list[i] = HIGH
     }
     fun set(other: UnicodeSet): UnicodeSet {
-        if (this === other) return this
         list = other.list.copyOf(other.len); len = other.len
-        stringElements.clear(); stringElements.addAll(other.stringElements)
+        stringElements = ArrayList(other.stringElements)
         return this
     }
     fun clear(): UnicodeSet { list[0] = HIGH; len = 1; stringElements.clear(); return this }
-    fun compact(): UnicodeSet { if (len + 7 < list.size) list = list.copyOf(len); buffer = null; return this }
+    fun compact(): UnicodeSet { if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
     fun getRangeCount(): Int = len / 2
     fun getRangeStart(index: Int): Int = list[index * 2]
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
@@ -237,6 +236,46 @@ class UnicodeSet() {
         out[k++] = HIGH; len = k
         buffer = list; list = out
         return this
+    }
+    internal fun stringIterator(): Iterator<String> = stringElements.iterator()
+    /** Read-only view over the current string storage; empty sets return an empty collection. */
+    fun strings(): Collection<String> {
+        if (!hasStrings()) return emptyList()
+        val data = stringElements
+        return object : AbstractCollection<String>() {
+            override val size: Int get() = data.size
+            override fun iterator(): Iterator<String> {
+                val iterator = data.iterator()
+                return object : Iterator<String> {
+                    override fun hasNext(): Boolean = iterator.hasNext()
+                    override fun next(): String = iterator.next()
+                }
+            }
+        }
+    }
+    override fun iterator(): MutableIterator<String> = object : MutableIterator<String> {
+        private var sourceList: IntArray? = if (len > 1) list else null
+        private val sourceLength = len - 1
+        private val sourceStrings = stringElements
+        private var item = 0
+        private var current = 0
+        private var limit = 0
+        private var strings: Iterator<String>? = null
+        init {
+            if (sourceList != null) { current = sourceList!![item++]; limit = sourceList!![item++] }
+            else strings = sourceStrings.iterator()
+        }
+        override fun hasNext(): Boolean = sourceList != null || strings!!.hasNext()
+        override fun next(): String {
+            val data = sourceList ?: return strings!!.next()
+            val cp = current++
+            if (current >= limit) {
+                if (item >= sourceLength) { strings = sourceStrings.iterator(); sourceList = null }
+                else { current = data[item++]; limit = data[item++] }
+            }
+            return UTF16.valueOf(cp)
+        }
+        override fun remove(): Nothing = throw UnsupportedOperationException()
     }
     private fun union(other: IntArray, otherLen: Int): UnicodeSet {
         ensureBufferCapacity(len + otherLen)

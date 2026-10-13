@@ -539,3 +539,17 @@ surrogate pairs/unpaired units, independent startPos, set copying, delegated
 arguments, existing breaks and cursor restoration. Common tests cover a
 supplementary run. The delegated language-specific algorithms themselves are
 still pending; test delegates only verify this shared dispatch contract.
+
+## UnicodeSet iteration
+
+UnicodeSetIterator now supports interleaved next/nextRange, skipToStrings,
+reset/new-set reset, result fields and getString. UnicodeSet implements the
+original string iterator order (code points first, then sorted string members),
+exhaustion and unsupported removal. strings() returns a read-only view tied to
+the original string storage; set and compact retain upstream view-detachment
+behavior. Mutation during active iteration remains outside the ICU contract.
+
+JVM differential tests compare 80,000 mixed iterator operations, complete
+iteration order and live/detached string views. Common tests cover mixed ranges,
+supplementary code points, empty string members and reset. Frozen acceleration,
+spans, patterns and property resolution remain pending.
