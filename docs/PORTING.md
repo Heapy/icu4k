@@ -2342,3 +2342,23 @@ casing. A separate ICU class loader with assertions disabled verifies release
 legacy-error behavior. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
 production sources also compile on the macOS host (Linux runtime tests run in
 Linux CI).
+
+### Locale extension representation and Unicode extension validation
+
+Ported Extension and UnicodeLocaleExtension: singleton/value/ID representation,
+ca-japanese and nu-thai constants, attribute/keyword serialization, empty types,
+all syntax predicates and adopted backing collection semantics. Initially empty
+collections are not adopted, while nonempty collections retain live read-only
+views; the serialized value remains cached after backing mutations. Views reject
+all mutations, including empty bulk operations and iterator removal. Common
+constructors take Set/Map inputs and optional explicit ordering comparators in
+place of JVM SortedSet/SortedMap; locale-builder inputs use natural ordering.
+
+Differential tests compare natural/reverse ordering, 200 generated collection
+states, live views and cached serialization after additions/clears, null/empty
+construction, constants, generic extension values and all read-only mutation
+errors. Predicates are checked against every UTF-16 singleton and 3000 random
+strings/types. Common tests verify ordering, cached values, live views, mutation
+rejection and syntax boundaries. Full JVM, JS Node and macOS Arm64 suites pass.
+BaseLocale's GC-aware cache, aggregate LocaleExtensions, locale builders and
+LanguageTag.parseLocale conversion remain pending.
