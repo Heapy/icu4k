@@ -70,6 +70,46 @@ internal class UnicodeSetStringSpan private constructor(
         spanNotSet!!.add(c)
     }
 
+    internal fun spanNot(s: CharSequence, start: Int, outCount: OutputInt?): Int {
+        val length = s.length
+        var pos = start
+        var rest = length - start
+        var count = 0
+        do {
+            if (pos >= length) return length
+            val limit = spanNotSet!!.spanCodePointsAndCount(s, pos, UnicodeSet.SpanCondition.NOT_CONTAINED, outCount)
+            if (outCount != null) { count += outCount.value; outCount.value = count }
+            if (limit == length) return length
+            pos = limit; rest = length - limit
+            val cpLength = spanOne(spanSet, s, pos, rest)
+            if (cpLength > 0) return pos
+            for (i in strings.indices) {
+                if (spanLengths!![i] == ALL_CP_CONTAINED) continue
+                val string = strings[i]
+                if (string.length <= rest && matches16CPB(s, pos, length, string, string.length)) return pos
+            }
+            pos -= cpLength; rest += cpLength; ++count
+        } while (rest != 0)
+        if (outCount != null) outCount.value = count
+        return length
+    }
+    internal fun spanNotBack(s: CharSequence, length: Int): Int {
+        var pos = length
+        do {
+            if (pos == 0) return 0
+            pos = spanNotSet!!.spanCodePointsBack(s, pos, UnicodeSet.SpanCondition.NOT_CONTAINED)
+            if (pos == 0) return 0
+            val cpLength = spanOneBack(spanSet, s, pos)
+            if (cpLength > 0) return pos
+            for (i in strings.indices) {
+                if (spanLengths!![i] == ALL_CP_CONTAINED) continue
+                val string = strings[i]
+                if (string.length <= pos && matches16CPB(s, pos - string.length, length, string, string.length)) return pos
+            }
+            pos += cpLength
+        } while (pos != 0)
+        return 0
+    }
     class OffsetList {
         private var list = IntArray(16)
         private var length = 0

@@ -621,3 +621,17 @@ states for 100 UTF-16 fixtures under 13 flag combinations, plus copy constructio
 Common tests check relevance, empty removal, clones and all existing mutation
 entry points on frozen internal sets. Main string-aware span machines remain
 pending, so public span/freeze APIs are not yet presented as complete.
+
+## String-aware NOT_CONTAINED spans
+
+UnicodeSetStringSpan now ports forward NOT_CONTAINED spans with optional counts
+and reverse NOT_CONTAINED spans. Both use the precomputed auxiliary set to skip
+uninteresting code points, then test original code points and relevant strings
+at code-point boundaries, skipping false string starts/ends.
+
+JVM oracle tests compare both directions and counts for 300 sets of overlapping
+string/malformed UTF-16 fixtures, four preprocessing flag modes and every valid
+start/limit. Common tests cover false starts, supplementary counts and empty
+input, including preservation of an existing count at end-of-input.
+CONTAINED/SIMPLE string machines and public span/freeze integration remain
+pending.
