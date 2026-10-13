@@ -960,3 +960,17 @@ JVM tests compare 20,000 random code points and boundary/invalid inputs against
 ICU4J, all twelve predicates and output sets, including invalid internal type
 indices. Common tests verify recommended, ignorable and noncharacter data and
 caller-set replacement. The rest of the property dispatcher remains pending.
+
+## Direct-vector integer properties
+
+UCharacterProperty now implements the seven direct-vector integer dispatch
+entries: Decomposition_Type, East_Asian_Width, Line_Break, Grapheme_Cluster_Break,
+Sentence_Break, Word_Break and Indic_Conjunct_Break. Values and maxima use the
+original columns, masks and shifts. Internal helpers reject other property
+sources rather than pretending that a partial dispatcher is complete.
+
+JVM tests compare all seven entries and maxima against ICU4J's dispatcher on
+20,000 random code points per property plus invalid/boundary inputs. Common
+tests read real stored values and verify unsupported-source rejection. Full
+integer and binary dispatch, normalization-backed properties and public
+getIntPropertyValue remain pending.

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.lang.UProperty
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.CodePointTrie
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
@@ -58,6 +59,15 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Direct-vector entries of the original integer-property dispatch table. */
+    internal fun getVectorIntPropertyValue(c: Int, which: Int): Int {
+        val property = vectorIntProperties[which] ?: throw IllegalArgumentException("Not a vector integer property: $which")
+        return (getAdditional(c, property.column) and property.mask) ushr property.shift
+    }
+    internal fun getVectorIntPropertyMaxValue(which: Int): Int {
+        val property = vectorIntProperties[which] ?: throw IllegalArgumentException("Not a vector integer property: $which")
+        return (getMaxValues(property.column) and property.mask) ushr property.shift
+    }
     fun hasIDType(c: Int, typeIndex: Int): Boolean {
         if (typeIndex !in idTypeToEncoded.indices) return false
         val encoded = idTypeToEncoded[typeIndex]
@@ -157,7 +167,18 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         return value
     }
 
+    private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        private val vectorIntProperties = mapOf(
+            UProperty.DECOMPOSITION_TYPE to VectorIntProperty(2, 0x1f, 0),
+            UProperty.EAST_ASIAN_WIDTH to VectorIntProperty(0, 0x7000, 12),
+            UProperty.LINE_BREAK to VectorIntProperty(2, 0x03f00000, 20),
+            UProperty.GRAPHEME_CLUSTER_BREAK to VectorIntProperty(2, 0x3e0, 5),
+            UProperty.SENTENCE_BREAK to VectorIntProperty(2, 0x000f8000, 15),
+            UProperty.WORD_BREAK to VectorIntProperty(2, 0x7c00, 10),
+            UProperty.INDIC_CONJUNCT_BREAK to VectorIntProperty(0, 0x18000, 15),
+        )
+
         private val idTypeToEncoded = intArrayOf(0, 0x30, 0x31, 0x32, 0x81, 0xa0, 0x82, 0x84, 0x88, 0x90, 0x3e, 0x3f)
         val INSTANCE: UCharacterProperty by lazy { UCharacterProperty() }
         const val TYPE_MASK = 0x1f
