@@ -1457,3 +1457,17 @@ JVM oracle tests compare complete result sets for canonical Latin, Greek,
 Hangul, supplementary and malformed UTF-16 inputs, reuse/reset and standalone
 permutation behavior. Common tests cover Latin/Hangul equivalents, empty input,
 output-set retention and the permutation-depth guard.
+
+## Property sources and boundary enumeration
+
+UCharacterProperty now ports all source constants and getSource dispatch for
+binary, enumerated, mask, numeric, string and other properties. It also ports
+main-trie and additional-vector property starts, original hardcoded boundary
+points, shifted Block boundaries, layout boundaries and math/MCM fixed-range
+boundaries. Layout missing-data failures use a Common MissingResourceException
+with class-name/key accessors in place of java.util.MissingResourceException.
+
+JVM oracle tests compare source IDs from -10 through 0x8000 and complete boundary
+sets for each helper and all three layout sources. Common tests cover source
+routing, preserved destination entries, hardcoded points and invalid layout
+sources. Age access was already present and was retained.

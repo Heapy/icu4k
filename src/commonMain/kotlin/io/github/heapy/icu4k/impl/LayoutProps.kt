@@ -45,6 +45,22 @@ internal class LayoutProps(bytes: BinaryBuffer = ICUBinary.getRequiredData("ulay
         maxVoValue = (maxValues shr 8) and 255
     }
 
+    fun addPropertyStarts(src: Int, set: io.github.heapy.icu4k.text.UnicodeSet): io.github.heapy.icu4k.text.UnicodeSet {
+        val trie = when (src) {
+            UCharacterProperty.SRC_INPC -> inpcTrie
+            UCharacterProperty.SRC_INSC -> inscTrie
+            UCharacterProperty.SRC_VO -> voTrie
+            else -> throw IllegalStateException()
+        } ?: throw io.github.heapy.icu4k.util.MissingResourceException("no data for one of the text layout properties; src=$src", "LayoutProps", "")
+        var start = 0
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        while (trie.getRange(start, null, range)) {
+            set.add(start)
+            start = range.getEnd() + 1
+        }
+        return set
+    }
+
     companion object {
         val INSTANCE: LayoutProps by lazy { LayoutProps() }
     }

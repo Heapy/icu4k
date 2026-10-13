@@ -60,6 +60,44 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    internal fun getSource(which: Int): Int = when {
+        which < UProperty.BINARY_START -> SRC_NONE
+        which < UProperty.BINARY_LIMIT -> binarySources[which]
+        which < UProperty.INT_START -> SRC_NONE
+        which < UProperty.INT_LIMIT -> integerSources[which - UProperty.INT_START]
+        else -> when (which) {
+            UProperty.GENERAL_CATEGORY_MASK, UProperty.NUMERIC_VALUE -> SRC_CHAR
+            UProperty.AGE, UProperty.SCRIPT_EXTENSIONS, UProperty.IDENTIFIER_TYPE -> SRC_PROPSVEC
+            UProperty.BIDI_MIRRORING_GLYPH -> SRC_BIDI
+            UProperty.CASE_FOLDING, UProperty.LOWERCASE_MAPPING, UProperty.SIMPLE_CASE_FOLDING,
+            UProperty.SIMPLE_LOWERCASE_MAPPING, UProperty.SIMPLE_TITLECASE_MAPPING,
+            UProperty.SIMPLE_UPPERCASE_MAPPING, UProperty.TITLECASE_MAPPING, UProperty.UPPERCASE_MAPPING -> SRC_CASE
+            UProperty.ISO_COMMENT, UProperty.NAME, UProperty.UNICODE_1_NAME -> SRC_NAMES
+            else -> SRC_NONE
+        }
+    }
+    fun addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet): io.github.heapy.icu4k.text.UnicodeSet {
+        for (range in m_trie_) {
+            if (range.leadSurrogate) break
+            set.add(range.startCodePoint)
+        }
+        for (c in hardcodedPropertyStarts) set.add(c)
+        return set
+    }
+    fun upropsvec_addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        if (m_additionalColumnsCount_ > 0) for (range in additionalTrie!!) {
+            if (range.leadSurrogate) break
+            set.add(range.startCodePoint)
+        }
+    }
+    fun ublock_addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        var start = 0
+        while (start < 0x11000 && m_blockTrie_.getRange(start, null, range)) {
+            set.add(start shl 4)
+            start = range.getEnd() + 1
+        }
+    }
     fun hasBinaryProperty(c: Int, which: Int): Boolean {
         if (which !in UProperty.BINARY_START until UProperty.BINARY_LIMIT) return false
         if (which in vectorBinaryProperties) return hasVectorBinaryProperty(c, which)
@@ -346,6 +384,64 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
 
     private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        const val SRC_NONE = 0
+        const val SRC_CHAR = 1
+        const val SRC_PROPSVEC = 2
+        const val SRC_NAMES = 3
+        const val SRC_CASE = 4
+        const val SRC_BIDI = 5
+        const val SRC_CHAR_AND_PROPSVEC = 6
+        const val SRC_CASE_AND_NORM = 7
+        const val SRC_NFC = 8
+        const val SRC_NFKC = 9
+        const val SRC_NFKC_CF = 10
+        const val SRC_NFC_CANON_ITER = 11
+        const val SRC_INPC = 12
+        const val SRC_INSC = 13
+        const val SRC_VO = 14
+        const val SRC_EMOJI = 15
+        const val SRC_IDSU = 16
+        const val SRC_ID_COMPAT_MATH = 17
+        const val SRC_BLOCK = 18
+        const val SRC_MCM = 19
+        const val SRC_COUNT = 20
+        private val binarySources = intArrayOf(
+            SRC_PROPSVEC, SRC_PROPSVEC, SRC_BIDI, SRC_BIDI, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC,
+            SRC_PROPSVEC, SRC_NFC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC,
+            SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_BIDI, SRC_PROPSVEC, SRC_CASE, SRC_PROPSVEC,
+            SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_CASE, SRC_PROPSVEC, SRC_PROPSVEC, SRC_CASE, SRC_PROPSVEC,
+            SRC_PROPSVEC, SRC_PROPSVEC, SRC_CASE, SRC_PROPSVEC, SRC_PROPSVEC, SRC_NFC, SRC_NFKC, SRC_NFC,
+            SRC_NFKC, SRC_NFC_CANON_ITER, SRC_PROPSVEC, SRC_PROPSVEC, SRC_CHAR_AND_PROPSVEC, SRC_CHAR, SRC_CHAR, SRC_CHAR,
+            SRC_CHAR, SRC_CASE, SRC_CASE, SRC_CASE, SRC_CASE, SRC_CASE, SRC_CASE_AND_NORM, SRC_CASE,
+            SRC_NFKC_CF, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_PROPSVEC, SRC_PROPSVEC,
+            SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI, SRC_EMOJI,
+            SRC_IDSU, SRC_ID_COMPAT_MATH, SRC_ID_COMPAT_MATH, SRC_MCM,
+        )
+        private val integerSources = intArrayOf(
+            SRC_BIDI, SRC_BLOCK, SRC_NFC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_CHAR, SRC_BIDI, SRC_BIDI,
+            SRC_PROPSVEC, SRC_CHAR, SRC_PROPSVEC, SRC_PROPSVEC, SRC_NFC, SRC_NFKC, SRC_NFC, SRC_NFKC,
+            SRC_NFC, SRC_NFC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_PROPSVEC, SRC_BIDI, SRC_INPC, SRC_INSC,
+            SRC_VO, SRC_PROPSVEC, SRC_PROPSVEC,
+        )
+        private val hardcodedPropertyStarts = intArrayOf(
+            0x9, 0xa, 0xe, 0x1c, 0x20, 0x85, 0x86, 0x7f,
+            0x200a, 0x2010, 0x206a, 0x2070, 0xfeff, 0xff00, 0xa0, 0xa1,
+            0x2007, 0x2008, 0x202f, 0x2030, 0x3007, 0x3008, 0x4e00, 0x4e01,
+            0x4e8c, 0x4e8d, 0x4e09, 0x4e0a, 0x56db, 0x56dc, 0x4e94, 0x4e95,
+            0x516d, 0x516e, 0x4e03, 0x4e04, 0x516b, 0x516c, 0x4e5d, 0x4e5e,
+            0x61, 0x7b, 0x41, 0x5b, 0xff41, 0xff5b, 0xff21, 0xff3b,
+            0x67, 0x47, 0xff47, 0xff27, 0x2060, 0xfff0, 0xfffc, 0xe0000,
+            0xe1000, 0x34f, 0x350,
+        )
+        internal fun ulayout_addPropertyStarts(src: Int, set: io.github.heapy.icu4k.text.UnicodeSet): io.github.heapy.icu4k.text.UnicodeSet = LayoutProps.INSTANCE.addPropertyStarts(src, set)
+        internal fun mathCompat_addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+            for (c in idCompatMathContinue) set.add(c)
+            for (c in idCompatMathStart) { set.add(c); set.add(c + 1) }
+        }
+        internal fun mcm_addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+            for (c in modifierCombiningMark) set.add(c)
+        }
+
         private val posixGraphExcludedMask = getMask(UCharacterCategory.CONTROL.toInt()) or
             getMask(UCharacterCategory.SURROGATE.toInt()) or getMask(UCharacterCategory.UNASSIGNED.toInt()) or
             getMask(UCharacterCategory.SPACE_SEPARATOR.toInt()) or getMask(UCharacterCategory.LINE_SEPARATOR.toInt()) or
