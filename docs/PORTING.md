@@ -988,3 +988,17 @@ JVM tests compare all Unicode code points plus adjacent invalid values for all
 four entries against ICU4J. Common tests cover Jamo, LV/LVT syllables, the
 supplementary exclusion, decimal digits and identifier status. Normalization,
 script and other dispatch sources remain pending.
+
+## Trie-backed integer property entries
+
+UCharacterProperty now dispatches the original bidi class, joining group/type,
+paired bracket type, block, Indic positional/syllabic categories and vertical
+orientation entries through the already ported tries. Block indexing retains
+the four-bit shift only for in-range/error-compatible inputs. Maxima come from
+the original resource metadata. Helpers reject other property sources.
+
+JVM tests compare every Unicode code point, adjacent invalid inputs and a large
+invalid integer for all eight entries, plus maxima. Common tests cover bracket
+classification, block/error indexing and source rejection. Script and
+normalization entries, binary properties and the public complete dispatcher
+still remain pending.

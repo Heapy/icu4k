@@ -59,6 +59,26 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Integer entries backed by the bidi, block and layout tries. */
+    internal fun getTrieIntPropertyValue(c: Int, which: Int): Int = when (which) {
+        UProperty.BIDI_CLASS -> UBiDiProps.INSTANCE.getClass(c)
+        UProperty.JOINING_GROUP -> UBiDiProps.INSTANCE.getJoiningGroup(c)
+        UProperty.JOINING_TYPE -> UBiDiProps.INSTANCE.getJoiningType(c)
+        UProperty.BIDI_PAIRED_BRACKET_TYPE -> UBiDiProps.INSTANCE.getPairedBracketType(c)
+        UProperty.BLOCK -> m_blockTrie_[if (c <= 0x10ffff) c shr 4 else c]
+        UProperty.INDIC_POSITIONAL_CATEGORY -> LayoutProps.INSTANCE.inpcTrie?.get(c) ?: 0
+        UProperty.INDIC_SYLLABIC_CATEGORY -> LayoutProps.INSTANCE.inscTrie?.get(c) ?: 0
+        UProperty.VERTICAL_ORIENTATION -> LayoutProps.INSTANCE.voTrie?.get(c) ?: 0
+        else -> throw IllegalArgumentException("Not a trie integer property: $which")
+    }
+    internal fun getTrieIntPropertyMaxValue(which: Int): Int = when (which) {
+        UProperty.BIDI_CLASS, UProperty.JOINING_GROUP, UProperty.JOINING_TYPE, UProperty.BIDI_PAIRED_BRACKET_TYPE -> UBiDiProps.INSTANCE.getMaxValue(which)
+        UProperty.BLOCK -> m_maxValuesOther_ and 0x3ff
+        UProperty.INDIC_POSITIONAL_CATEGORY -> LayoutProps.INSTANCE.maxInpcValue
+        UProperty.INDIC_SYLLABIC_CATEGORY -> LayoutProps.INSTANCE.maxInscValue
+        UProperty.VERTICAL_ORIENTATION -> LayoutProps.INSTANCE.maxVoValue
+        else -> throw IllegalArgumentException("Not a trie integer property: $which")
+    }
     /** Derived entries backed by main/additional property data, without normalization. */
     internal fun getDerivedIntPropertyValue(c: Int, which: Int): Int = when (which) {
         UProperty.GENERAL_CATEGORY -> getType(c)
