@@ -707,3 +707,16 @@ JVM oracle tests compare every Unicode code point plus out-of-range values,
 and 2,000 random strings with every identifier slice. Common tests cover
 non-ASCII syntax, whitespace distinctions and the trailing trim quirk. This
 provides a dependency for pattern parsing; the parser itself remains pending.
+
+## Escape decoding for rule parsing
+
+Utility now ports unescapeAndLengthAt, packed code-point/length accessors,
+unescape and unescapeLeniently. The decoder retains hexadecimal, braced,
+octal, C-style, control and generic escapes, surrogate joining across escaped
+or literal trails, and the upstream bounded recursive lookahead. This removes
+another dependency of RuleCharacterIterator; that iterator is not yet ported.
+
+Differential JVM tests compare 4,000 composed valid/invalid escape fixtures at
+every offset, strict error messages and lenient decoding. Common fixtures
+exercise numeric escapes, surrogate joining and invalid forms. Other Utility
+methods remain pending.
