@@ -18,7 +18,7 @@ import io.github.heapy.icu4k.impl.PatternProps
 import io.github.heapy.icu4k.impl.BMPSet
 import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
-/** ICU inversion-list core. Pattern/property parsing is pending. */
+/** ICU Unicode sets, including recursive patterns, strings and property expressions. */
 class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, Freezable<UnicodeSet> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
@@ -27,6 +27,12 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     private var stringSpan: UnicodeSetStringSpan? = null
     private var buffer: IntArray? = null
     private var stringElements = ArrayList<String>()
+    private var patternCache: String? = null
+    constructor(pattern: String) : this() { applyPattern(pattern, null, null, IGNORE_SPACE) }
+    constructor(pattern: String, ignoreWhitespace: Boolean) : this() { applyPattern(pattern, null, null, if (ignoreWhitespace) IGNORE_SPACE else 0) }
+    constructor(pattern: String, options: Int) : this() { applyPattern(pattern, null, null, options) }
+    constructor(pattern: String, position: ParsePosition?, symbols: SymbolTable?) : this() { applyPattern(pattern, position, symbols, IGNORE_SPACE) }
+    constructor(pattern: String, position: ParsePosition?, symbols: SymbolTable?, options: Int) : this() { applyPattern(pattern, position, symbols, options) }
     constructor(other: UnicodeSet) : this() { set(other) }
     constructor(start: Int, end: Int) : this() { add(start, end) }
     constructor(vararg pairs: Int) : this() {
@@ -47,9 +53,10 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     fun set(other: UnicodeSet): UnicodeSet { checkFrozen();
         list = other.list.copyOf(other.len); len = other.len
         stringElements = ArrayList(other.stringElements)
+        patternCache = other.patternCache
         return this
     }
-    fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
+    fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; patternCache = null; stringElements.clear(); return this }
     fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
     internal fun maybeOnlyCaseSensitive(src: UnicodeSet): UnicodeSet {
         if (src.size() < 30) return src
@@ -128,7 +135,25 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         }
         set(foldSet)
     }
-    /** Original recursive expression parser; public overloads and pattern caching follow separately. */
+    fun applyPattern(pattern: String): UnicodeSet { checkFrozen(); return applyPattern(pattern, null, null, IGNORE_SPACE) }
+    fun applyPattern(pattern: String, ignoreWhitespace: Boolean): UnicodeSet {
+        checkFrozen(); return applyPattern(pattern, null, null, if (ignoreWhitespace) IGNORE_SPACE else 0)
+    }
+    fun applyPattern(pattern: String, options: Int): UnicodeSet { checkFrozen(); return applyPattern(pattern, null, null, options) }
+    fun applyPattern(pattern: String, position: ParsePosition?, symbols: SymbolTable?, options: Int): UnicodeSet {
+        val pos = position ?: ParsePosition(0)
+        val rebuilt = StringBuilder()
+        val chars = RuleCharacterIterator(pattern, symbols, pos)
+        applyPattern(chars, symbols, rebuilt, options, 0)
+        if (chars.inVariable()) syntaxError(chars, "Extra chars in variable value")
+        patternCache = rebuilt.toString()
+        if (position == null) {
+            val index = if (options and IGNORE_SPACE != 0) PatternProps.skipWhiteSpace(pattern, pos.index) else pos.index
+            if (index != pattern.length) throw IllegalArgumentException("Parse of \"$pattern\" failed at $index")
+        }
+        return this
+    }
+    /** Original recursive expression parser. */
     internal fun applyPattern(chars: RuleCharacterIterator, symbols: SymbolTable?, rebuilt: Appendable, options: Int, depth: Int) {
         if (depth > 100) syntaxError(chars, "Pattern nested too deeply")
         var opts = RuleCharacterIterator.PARSE_VARIABLES or RuleCharacterIterator.PARSE_ESCAPES
@@ -734,7 +759,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         if (cp >= 0) return add(cp)
         val str = s.toString()
         val index = stringElements.binarySearch(str)
-        if (index < 0) stringElements.add(-index - 1, str)
+        if (index < 0) { stringElements.add(-index - 1, str); patternCache = null }
         return this
     }
     fun add(c: Int): UnicodeSet { checkFrozen();
@@ -755,6 +780,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             } else list.copyInto(list, i + 2, i, len)
             list[i] = c; list[i + 1] = c + 1; len += 2
         }
+        patternCache = null
         return this
     }
     fun add(start: Int, end: Int): UnicodeSet { checkFrozen();
@@ -774,6 +800,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
                         ensureCapacity(len + 2); list[len++] = limit; list[len++] = HIGH
                     } else { ensureCapacity(len + 1); list[len++] = HIGH }
                 }
+                patternCache = null
                 return this
             }
         }
@@ -801,18 +828,20 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     fun complement(start: Int, end: Int): UnicodeSet { checkFrozen();
         validate(start); validate(end)
         if (start <= end) xor(intArrayOf(start, end + 1, HIGH), 2)
+        patternCache = null
         return this
     }
     fun complement(): UnicodeSet { checkFrozen();
         if (list[0] == MIN_VALUE) { list.copyInto(list, 0, 1, len); --len }
         else { ensureCapacity(len + 1); list.copyInto(list, 1, 0, len); list[0] = MIN_VALUE; ++len }
+        patternCache = null
         return this
     }
     fun remove(s: CharSequence): UnicodeSet { checkFrozen();
         val cp = singleCP(s)
         if (cp >= 0) return remove(cp)
         val i = stringElements.binarySearch(s.toString())
-        if (i >= 0) stringElements.removeAt(i)
+        if (i >= 0) { stringElements.removeAt(i); patternCache = null }
         return this
     }
     fun retain(s: CharSequence): UnicodeSet { checkFrozen();
@@ -831,9 +860,10 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         val str = s.toString()
         val i = stringElements.binarySearch(str)
         if (i >= 0) stringElements.removeAt(i) else stringElements.add(-i - 1, str)
+        patternCache = null
         return this
     }
-    fun removeAllStrings(): UnicodeSet { checkFrozen(); stringElements.clear(); return this }
+    fun removeAllStrings(): UnicodeSet { checkFrozen(); if (hasStrings()) { stringElements.clear(); patternCache = null }; return this }
     fun retainAll(other: UnicodeSet): UnicodeSet { checkFrozen();
         intersect(other.list, other.len, 0)
         stringElements.removeAll { other.stringElements.binarySearch(it) < 0 }
@@ -861,7 +891,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             else if (a != HIGH) { a = list[i++]; b = other[j++] }
             else { out[k++] = HIGH; len = k; break }
         }
-        buffer = list; list = out
+        buffer = list; list = out; patternCache = null
         return this
     }
     private fun intersect(other: IntArray, otherLen: Int, initialPolarity: Int): UnicodeSet {
@@ -911,7 +941,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             }
         }
         out[k++] = HIGH; len = k
-        buffer = list; list = out
+        buffer = list; list = out; patternCache = null
         return this
     }
     internal fun stringIterator(): Iterator<String> = stringElements.iterator()
@@ -1011,7 +1041,26 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         }
         return i
     }
-    override fun toPattern(escapeUnprintable: Boolean): String = _generatePattern(StringBuilder(), escapeUnprintable).toString()
+    override fun toPattern(escapeUnprintable: Boolean): String {
+        val cached = patternCache ?: return _generatePattern(StringBuilder(), escapeUnprintable).toString()
+        if (!escapeUnprintable) return cached
+        val result = StringBuilder()
+        var oddBackslashes = false
+        var i = 0
+        while (i < cached.length) {
+            val c = UTF16.charAt(cached, i)
+            i += UTF16.getCharCount(c)
+            if (Utility.isUnprintable(c)) { Utility.escape(result, c); oddBackslashes = false }
+            else if (!oddBackslashes && c == '\\'.code) oddBackslashes = true
+            else {
+                if (oddBackslashes) result.append('\\')
+                UTF16.appendCodePoint(result, c)
+                oddBackslashes = false
+            }
+        }
+        if (oddBackslashes) result.append('\\')
+        return result.toString()
+    }
     fun _generatePattern(result: StringBuilder, escapeUnprintable: Boolean, includeStrings: Boolean = true): StringBuilder {
         result.append('[')
         var i = 0
@@ -1242,7 +1291,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             }
         }
         out[k++] = HIGH; len = k
-        buffer = list; list = out
+        buffer = list; list = out; patternCache = null
         return this
     }
     private fun findCodePoint(c: Int): Int {

@@ -2125,3 +2125,24 @@ valid/invalid expressions, random grammar combinations and nesting limits.
 Common tests exercise nested algebra, ranges, closure, anchors and complement.
 Public String/ParsePosition overloads, constructors and retained-pattern caching
 remain pending; this step does not claim the whole UnicodeSet parser API complete.
+
+### Public UnicodeSet pattern API and retained patterns
+
+Added String/boolean/options/ParsePosition constructors and all public
+applyPattern overloads, including whole-input validation and variable remainder
+checks. Retained rebuilt patterns feed toPattern(false); toPattern(true) follows
+ICU4J's backslash-aware escaping of cached unprintable characters. Copies retain
+patterns, and compact/freeze preserve them. Core range algebra and individual
+mutators invalidate at the original points, including no-op distinctions for
+existing characters/strings, empty ranges and string removal.
+
+Differential tests compare constructors, partial parses, failed-parse state,
+positions, both pattern forms and 25 mutation paths, followed by copy/thaw/freeze.
+Common tests use the public API for nested expressions, case options, positions
+and cache preservation/invalidation. The rule compiler and remaining unrelated
+UnicodeSet APIs are still pending; public pattern parsing is now backed by the
+ported original grammar rather than a limited compatibility parser.
+
+Public SymbolTable tests additionally check cached matcher stand-ins, property
+variables and rejection of extra characters remaining in a variable value,
+including parse positions and retained/cleared patterns after failures.
