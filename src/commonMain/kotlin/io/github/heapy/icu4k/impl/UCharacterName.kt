@@ -42,6 +42,68 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         groupString = strings
         return true
     }
+    fun getCharFromName(choice: Int, name: String?): Int {
+        if (choice >= UCharacterNameChoice.CHAR_NAME_CHOICE_COUNT || name.isNullOrEmpty()) return -1
+        var result = getExtendedChar(name.lowercase(), choice)
+        if (result >= -1) return result
+        val upper = name.uppercase()
+        if (choice == UCharacterNameChoice.UNICODE_CHAR_NAME || choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+            for (i in algorithms.lastIndex downTo 0) {
+                result = algorithms[i].getChar(upper)
+                if (result >= 0) return result
+            }
+        }
+        if (choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+            result = getGroupChar(upper, UCharacterNameChoice.UNICODE_CHAR_NAME)
+            if (result == -1) result = getGroupChar(upper, UCharacterNameChoice.CHAR_NAME_ALIAS)
+        } else result = getGroupChar(upper, choice)
+        return result
+    }
+    private fun getGroupChar(name: String, choice: Int): Int {
+        val offsets = CharArray(LINES_PER_GROUP_ + 1)
+        val lengths = CharArray(LINES_PER_GROUP_ + 1)
+        for (i in 0 until m_groupcount_) {
+            val start = getGroupLengths(i, offsets, lengths)
+            val result = getGroupChar(start, lengths, name, choice)
+            if (result != -1) return (groupInfo[i * m_groupsize_].code shl GROUP_SHIFT_) or result
+        }
+        return -1
+    }
+    private fun getGroupChar(initialIndex: Int, lengths: CharArray, name: String, choice: Int): Int {
+        var index = initialIndex
+        val nameLength = name.length
+        for (result in 0..LINES_PER_GROUP_) {
+            var nameIndex = 0
+            var length = lengths[result].code
+            if (choice != UCharacterNameChoice.UNICODE_CHAR_NAME && choice != UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+                var field = if (choice == UCharacterNameChoice.ISO_COMMENT_) 2 else choice
+                do {
+                    val old = index
+                    index += UCharacterUtility.skipByteSubString(groupString, index, length, ';'.code.toByte())
+                    length -= index - old
+                } while (--field > 0)
+            }
+            var count = 0
+            while (count < length && nameIndex != -1 && nameIndex < nameLength) {
+                val b = groupString[index + count++].toInt()
+                if (b >= tokenTable.size) {
+                    if (name[nameIndex++].code != b and 255) nameIndex = -1
+                } else {
+                    var token = tokenTable[b and 255].code
+                    if (token == 0xfffe) {
+                        token = tokenTable[(b shl 8) or (groupString[index + count].toInt() and 255)].code
+                        ++count
+                    }
+                    if (token == 0xffff) {
+                        if (name[nameIndex++].code != b and 255) nameIndex = -1
+                    } else nameIndex = UCharacterUtility.compareNullTermByteSubString(name, tokenString, nameIndex, token)
+                }
+            }
+            if (nameLength == nameIndex && (count == length || groupString[index + count] == ';'.code.toByte())) return result
+            index += length
+        }
+        return -1
+    }
     fun getName(ch: Int, choice: Int): String? {
         if (ch !in 0..0x10ffff || choice > UCharacterNameChoice.CHAR_NAME_CHOICE_COUNT) return null
         val algorithmic = getAlgName(ch, choice)
@@ -299,6 +361,28 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
             "lead surrogate",
             "trail surrogate",
         )
+        private fun getExtendedChar(name: String, choice: Int): Int {
+            if (name[0] != '<') return -2
+            if (choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+                val end = name.length - 1
+                if (name[end] == '>') {
+                    val hyphen = name.lastIndexOf('-')
+                    if (hyphen >= 0) {
+                        val start = hyphen + 1
+                        val length = end - start
+                        if (length !in 1..8) return -1
+                        val result = name.substring(start, end).toIntOrNull(16) ?: return -1
+                        if (result !in 0..0x10ffff) return -1
+                        val type = name.substring(1, hyphen)
+                        for (i in TYPE_NAMES.indices) if (type == TYPE_NAMES[i]) {
+                            if (getExtendedType(result) == i) return result
+                            break
+                        }
+                    }
+                }
+            }
+            return -1
+        }
         private fun getExtendedType(ch: Int): Int {
             if (UCharacterUtility.isNonCharacter(ch)) return 30
             val type = io.github.heapy.icu4k.lang.UCharacter.getType(ch)

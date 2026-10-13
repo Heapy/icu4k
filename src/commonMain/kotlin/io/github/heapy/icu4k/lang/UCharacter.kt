@@ -179,6 +179,12 @@ class UCharacter private constructor() {
         fun isULowercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.LOWERCASE)
         fun isUUppercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.UPPERCASE)
         fun isUWhiteSpace(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.WHITE_SPACE)
+        fun getCharFromName(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.UNICODE_CHAR_NAME, name)
+        fun getCharFromExtendedName(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.EXTENDED_CHAR_NAME, name)
+        fun getCharFromNameAlias(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.CHAR_NAME_ALIAS, name)
+        @Deprecated("Unicode_1_Name has no values")
+        @Suppress("UNUSED_PARAMETER")
+        fun getCharFromName1_0(name: String?): Int = -1
         fun getName(ch: Int): String? = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getName(ch, io.github.heapy.icu4k.impl.UCharacterNameChoice.UNICODE_CHAR_NAME)
         fun getName(s: String, separator: String?): String? {
             if (s.length == 1) return getName(s[0].code)

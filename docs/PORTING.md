@@ -1573,3 +1573,18 @@ JVM tests compare modern, extended and alias names for every Unicode code point,
 all selector/invalid-input fixtures, direct fallback formatting and string
 joining. Common tests cover algorithmic names, corrected aliases, every major
 fallback category and public null behavior. Inverse name lookup remains pending.
+
+## Inverse character-name lookup
+
+UCharacterName now ports direct tokenized group-name comparison, ordered
+algorithm/group/alias lookup and extended-name parsing with category validation,
+hex length/range checks and the original sentinel results. UCharacter exposes
+getCharFromName, getCharFromExtendedName, getCharFromNameAlias and the deprecated
+always-minus-one Unicode_1_Name lookup. Per-call scratch arrays replace shared
+synchronized lookup scratch; case normalization uses locale-independent casing.
+
+JVM tests compare raw inverse group matching for every stored name/choice and
+public lookup over ordinary, algorithmic, alias, random extended and malformed
+names. Common tests exercise all public lookup modes, category validation,
+case-insensitivity and null/empty/invalid input. Name-character/length metadata
+and name iteration remain pending.
