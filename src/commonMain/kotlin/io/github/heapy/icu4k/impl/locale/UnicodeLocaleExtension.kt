@@ -23,31 +23,11 @@ class UnicodeLocaleExtension internal constructor(
             _value = parts.joinToString(LanguageTag.SEP)
         }
     }
-    fun getUnicodeLocaleAttributes(): Set<String> = ReadOnlySortedSet({ attributes }, attributeOrder)
-    fun getUnicodeLocaleKeys(): Set<String> = ReadOnlySortedSet({ keywords.keys }, keywordOrder)
+    fun getUnicodeLocaleAttributes(): Set<String> = LocaleReadOnlySet({ attributes }, attributeOrder)
+    fun getUnicodeLocaleKeys(): Set<String> = LocaleReadOnlySet({ keywords.keys }, keywordOrder)
     fun getUnicodeLocaleType(key: String): String? = if (keywordOrder == null) keywords[key] else
         keywords.entries.firstOrNull { keywordOrder.compare(it.key, key) == 0 }?.value
 
-    /** A live view which also rejects mutation through MutableSet casts. */
-    private class ReadOnlySortedSet(private val values: () -> Set<String>, private val order: Comparator<String>?) : AbstractMutableSet<String>() {
-        override val size: Int get() = values().size
-        override fun contains(element: String): Boolean = if (order == null) values().contains(element) else
-            values().any { order.compare(it, element) == 0 }
-        override fun iterator(): MutableIterator<String> {
-            val source = values().sortedWith(order ?: naturalOrder()).iterator()
-            return object : MutableIterator<String> {
-                override fun hasNext(): Boolean = source.hasNext()
-                override fun next(): String = source.next()
-                override fun remove(): Nothing = throw UnsupportedOperationException()
-            }
-        }
-        override fun add(element: String): Nothing = throw UnsupportedOperationException()
-        override fun addAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
-        override fun remove(element: String): Nothing = throw UnsupportedOperationException()
-        override fun removeAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
-        override fun retainAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
-        override fun clear(): Nothing = throw UnsupportedOperationException()
-    }
     companion object {
         const val SINGLETON = 'u'
         val CA_JAPANESE = UnicodeLocaleExtension(null, mapOf("ca" to "japanese"))

@@ -2362,3 +2362,28 @@ strings/types. Common tests verify ordering, cached values, live views, mutation
 rejection and syntax boundaries. Full JVM, JS Node and macOS Arm64 suites pass.
 BaseLocale's GC-aware cache, aggregate LocaleExtensions, locale builders and
 LanguageTag.parseLocale conversion remain pending.
+
+### Aggregate locale extensions and builder mutation/parsing
+
+Ported LocaleExtensions aggregation, lowercase/sorted canonical IDs with private
+use last, Unicode attribute/keyword snapshots, lvariant stripping, constants,
+lookup/validation and equality/hash. Extracted the existing live unmodifiable
+set view for reuse with extension singleton keys.
+
+Ported InternalLocaleBuilder's language/script/region/variant setters,
+attribute and keyword mutation, individual/combined extension parsing,
+Unicode extension attribute/key/type scanning, LanguageTag import, clear and
+extension snapshot export. Original failure timing/state is retained, including
+unchecked incomplete-first-singleton behavior, duplicate-extension overwrite,
+validated-but-unmodified keyword underscores and asymmetric uppercase
+CaseInsensitiveChar equality. BaseLocale import/export and GC-aware locale
+cache remain pending; the builder is not yet a complete locale facade.
+
+Differential tests compare scalar state and aggregate extension snapshots after
+successful and failing operations, syntax messages/indices, null/removal inputs,
+Unicode duplicates, mixed-case singleton keys, private use/lvariant, LanguageTag
+import and 500 generated extension strings. Constants, all UTF-16 key predicates,
+case-key equality/hash quirks and lvariant removal also match ICU4J. Common tests
+cover immutable snapshots, canonical/private ordering, errors without unintended
+mutation and original duplicate/type behavior. Full JVM, JS Node and macOS Arm64
+suites pass.
