@@ -2503,9 +2503,8 @@ POSIX, private-use variants, Unicode attributes/typeless types and unknown keys
 retain upstream behavior. Internal already-normalized construction avoids a
 second normalization for keyword updates and fallback.
 
-The name normalization factory currently uses the ported GC-aware locale cache;
-SoftCache-specific concurrent publication remains to be integrated when that
-shared cache implementation is ported. Default/category management, JDK locale
+The name normalization factory now uses the ported SoftCache (see the next
+stage), including its concurrent publication protocol. Default/category management, JDK locale
 interop/serialization, CLDR canonicalization/likely subtags, locale availability,
 display names and resource/service APIs are still pending. This is the identity
 and tag-conversion core, not completion of ULocale or ICU4J.
@@ -2516,3 +2515,28 @@ chains, all-pairs ordering/equality, strict builder mutations/failures, mapping
 fallbacks and exception metadata. Common tests cover public conversion,
 round trips, POSIX (including Unicode case equivalents), builder state after
 failure and immutable cloning. Full JVM, JS Node and macOS Arm64 suites pass.
+
+### CacheBase, CacheValue and SoftCache publication
+
+Ported the shared CacheBase/CacheValue/SoftCache implementation and switched
+ULocale's name factory to SoftCache. Key slots remain permanently allocated as
+upstream specifies; null results have a distinct persistent sentinel. Strong
+values are stored directly, while reclaimable slots retain their identity when
+reset after GC. Factory work stays outside map locks. putIfAbsent and atomic
+reference reset make first-publication and recreation races return the winner.
+Global STRONG/SOFT selection affects subsequent wrappers/slots, not existing ones.
+
+JVM primitives use ConcurrentHashMap and SoftReference. Native uses the existing
+POSIX mutex adapter for its map and WeakReference for reclaimable values; JS
+uses its single-threaded map operations and WeakRef, boxing primitive values.
+The Common cache protocol uses atomic reference publication and remains shared.
+As with LocaleObjectCache, JS/Native have weak rather than JVM soft retention.
+
+Differential tests compare null singleton/error behavior, reference strength,
+forced clearing/reset (including null recreation), stable slot identity, ignored
+hit data, permanent null caching, and strength changes. Forced eight-factory
+races compare both SOFT and STRONG publication with ICU4J and return a single
+winner. Common tests cover cache/value/reference contracts; Native tests force
+GC and concurrent first misses. Full JVM, JS Node and macOS Arm64 suites pass;
+production sources compile for Linux x64. ULocale default, display, canonical
+alias/likely-subtag and resource/service APIs remain pending.

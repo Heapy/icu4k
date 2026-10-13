@@ -4,6 +4,7 @@ package io.github.heapy.icu4k.util
 
 import io.github.heapy.icu4k.impl.LocaleIDParser
 import io.github.heapy.icu4k.impl.LocaleIDs
+import io.github.heapy.icu4k.impl.SoftCache
 import io.github.heapy.icu4k.impl.locale.*
 
 /** ICU locale identity and BCP47 conversion. Display/default/resource APIs are still being ported. */
@@ -133,7 +134,7 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     companion object {
         const val PRIVATE_USE_EXTENSION = 'x'
         const val UNICODE_LOCALE_EXTENSION = 'u'
-        private val nameCache = object : LocaleObjectCache<String, String>() { override fun createObject(key: String): String = LocaleIDParser(key).getName() }
+        private val nameCache = object : SoftCache<String, String, Unit?>() { override fun createInstance(key: String, data: Unit?): String = LocaleIDParser(key).getName() }
         val ROOT = ULocale("")
         val ENGLISH = ULocale("en"); val FRENCH = ULocale("fr"); val GERMAN = ULocale("de"); val ITALIAN = ULocale("it")
         val JAPANESE = ULocale("ja"); val KOREAN = ULocale("ko"); val CHINESE = ULocale("zh")
@@ -151,7 +152,7 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
             else if (localeID.length >= 3 && localeID.regionMatches(0, "und", 0, 3, ignoreCase = true)) {
                 if (localeID.length == 3) input = "" else if (localeID[3] == '-' || localeID[3] == '_') input = localeID.substring(3)
             }
-            return nameCache.get(input)!!
+            return nameCache.getInstance(input, null)!!
         }
         private fun shortestSubtagLength(id: String): Int {
             var length = id.length; var reset = true; var count = 0
