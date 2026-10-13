@@ -12,6 +12,13 @@
       "size": 28768
     },
     {
+      "name": "ucase.icu",
+      "file": "data/icu78/ucase.icu",
+      "object": "UcaseData",
+      "sha256": "6f9e9a3f309fe0c5bd34024269cd26a88bffe8f764c77f998495a669dd120adf",
+      "size": 31296
+    },
+    {
       "name": "ulayout.icu",
       "file": "data/icu78/ulayout.icu",
       "object": "UlayoutData",
