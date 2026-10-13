@@ -227,6 +227,20 @@
       "object": "UnamesData",
       "sha256": "fc4ed872c929d3fb660d18f21cd516540122d22806c1fd3c421853c8cb3728fb",
       "size": 341808
+    },
+    {
+      "name": "brkitr/ja.res",
+      "file": "data/icu78/brkitr/ja.res",
+      "object": "BreakJapaneseResourceData",
+      "sha256": "8b333d7f52e513273737d948dc2bd0ee64014737c6f039aafc12bad05c665bed",
+      "size": 2784
+    },
+    {
+      "name": "brkitr/root.res",
+      "file": "data/icu78/brkitr/root.res",
+      "object": "BreakRootResourceData",
+      "sha256": "5cd1b4b21532efca579424d31a37ee4968bb356cdc3d74ed370c7074b17aca3b",
+      "size": 800
     }
   ]
 }

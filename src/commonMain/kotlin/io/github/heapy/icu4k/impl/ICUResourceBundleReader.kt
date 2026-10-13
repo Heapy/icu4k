@@ -1,0 +1,186 @@
+// © 2016 and later: Unicode, Inc. and others.
+// SPDX-License-Identifier: Unicode-3.0
+package io.github.heapy.icu4k.impl
+
+import io.github.heapy.icu4k.util.BinaryBuffer
+
+/** Binary ResB value decoding. Locale fallback and the resource-object facade are separate. */
+internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: ICUResourceBundleReader? = null) {
+    private val bytes: BinaryBuffer
+    private val keys: ByteArray
+    private val units: CharArray
+    private val localKeyLimit: Int
+    private val poolStringIndexLimit: Int
+    private val poolStringIndex16Limit: Int
+    val rootResource: Int
+    val noFallback: Boolean
+    val isPoolBundle: Boolean
+    val usesPoolBundle: Boolean
+    val poolChecksum: Int
+    val dataVersion: Int
+    init {
+        dataVersion = ICUBinary.readHeader(input, 0x52657342, object : ICUBinary.Authenticate {
+            override fun isDataVersionAcceptable(version: ByteArray): Boolean =
+                (version[0].toInt() == 1 && (version[1].toInt() and 255) >= 1) || version[0].toInt() in 2..3
+        })
+        val major = input.getByte(16).toInt() and 255
+        bytes = input.slice()
+        rootResource = intAt(0)
+        val indexes0 = intAt(4)
+        val count = indexes0 and 255
+        check(count > 4) { "not enough indexes" }
+        check(bytes.limit >= (1 + count) * 4 && bytes.limit >= intAt(16) * 4) { "not enough bytes" }
+        val attributes = if (count > 5) intAt(24) else 0
+        noFallback = attributes and 1 != 0
+        isPoolBundle = attributes and 2 != 0
+        usesPoolBundle = attributes and 4 != 0
+        poolStringIndexLimit = (if (major >= 3) indexes0 ushr 8 else 0) or ((attributes and 0xf000) shl 12)
+        poolStringIndex16Limit = attributes ushr 16
+        val keysBottom = (1 + count) * 4
+        val keysTop = intAt(8) * 4
+        localKeyLimit = if (!isPoolBundle && keysTop > keysBottom) keysTop else 0
+        keys = if (keysTop > keysBottom) {
+            val start = if (isPoolBundle) keysBottom else 0
+            ByteArray(keysTop - start) { bytes.getByte(start + it) }
+        } else byteArrayOf()
+        val unitsTop = if (count > 6) intAt(28) * 4 else keysTop
+        units = if (unitsTop > keysTop) CharArray((unitsTop - keysTop) / 2) { charAt(keysTop + 2 * it).toChar() }
+            else charArrayOf('\u0000')
+        poolChecksum = if (count > 7) intAt(32) else 0
+        if (usesPoolBundle) {
+            check(pool != null && pool.isPoolBundle) { "pool bundle is missing" }
+            check(poolChecksum == pool.poolChecksum) { "pool bundle checksum mismatch" }
+        }
+    }
+    private fun intAt(offset: Int): Int {
+        val cursor = bytes.sliceAt(offset)
+        return cursor.readInt()
+    }
+    private fun charAt(offset: Int): Int = bytes.sliceAt(offset).readUnsignedShort()
+    private fun BinaryBuffer.sliceAt(offset: Int): BinaryBuffer {
+        if (offset < 0 || offset > limit) throw IndexOutOfBoundsException()
+        return BinaryBuffer(this.bytes, order, arrayOffset + offset, limit - offset)
+    }
+    private fun unitAt(offset: Int): Int {
+        if (offset !in units.indices) throw IndexOutOfBoundsException()
+        return units[offset].code
+    }
+    private fun stringAt(offset: Int, length: Int): String {
+        if (length < 0 || offset < 0 || length > (bytes.limit - offset) / 2) throw IndexOutOfBoundsException()
+        return CharArray(length) { charAt(offset + 2 * it).toChar() }.concatToString()
+    }
+    private fun stringV2(offsetValue: Int): String {
+        var offset = offsetValue
+        val first = unitAt(offset)
+        if (first and 0xfc00 != 0xdc00) {
+            val result = StringBuilder()
+            while (unitAt(offset) != 0) result.append(unitAt(offset++).toChar())
+            return result.toString()
+        }
+        val length: Int
+        if (first < 0xdfef) { length = first and 0x3ff; offset++ }
+        else if (first < 0xdfff) { length = ((first - 0xdfef) shl 16) or unitAt(offset + 1); offset += 2 }
+        else { length = (unitAt(offset + 1) shl 16) or unitAt(offset + 2); offset += 3 }
+        if (length < 0 || offset > units.size - length) throw IndexOutOfBoundsException()
+        return units.concatToString(offset, offset + length)
+    }
+    fun getString(res: Int): String? {
+        val offset = RES_GET_UINT(res)
+        val type = RES_GET_TYPE(res)
+        if (type != 0 && type != 6) return null
+        if (offset == 0) return ""
+        if (type == 6) return if (offset < poolStringIndexLimit) pool!!.stringV2(offset)
+            else stringV2(offset - poolStringIndexLimit)
+        return stringAt(offset * 4 + 4, intAt(offset * 4))
+    }
+    fun getAlias(res: Int): String? {
+        if (RES_GET_TYPE(res) != 3) return null
+        val offset = RES_GET_UINT(res) * 4
+        return if (offset == 0) "" else stringAt(offset + 4, intAt(offset))
+    }
+    fun getBinary(res: Int): ByteArray? {
+        if (RES_GET_TYPE(res) != 1) return null
+        val offset = RES_GET_UINT(res) * 4
+        if (offset == 0) return byteArrayOf()
+        val length = intAt(offset)
+        return bytes.sliceAt(offset + 4).readBytes(length)
+    }
+    fun getIntVector(res: Int): IntArray? {
+        if (RES_GET_TYPE(res) != 14) return null
+        val offset = RES_GET_UINT(res) * 4
+        if (offset == 0) return intArrayOf()
+        return bytes.sliceAt(offset + 4).readInts(intAt(offset))
+    }
+    private fun keyString(offset: Int, key16: Boolean): String {
+        val keyBytes: ByteArray
+        var position: Int
+        if (key16 && offset >= localKeyLimit) { keyBytes = pool!!.keys; position = offset - localKeyLimit }
+        else if (!key16 && offset < 0) { keyBytes = pool!!.keys; position = offset and 0x7fffffff }
+        else { keyBytes = keys; position = offset }
+        val result = StringBuilder()
+        while (true) {
+            if (position !in keyBytes.indices) throw IndexOutOfBoundsException()
+            val c = keyBytes[position++].toInt() and 255
+            if (c == 0) return result.toString()
+            result.append(c.toChar())
+        }
+    }
+    inner class Container internal constructor(val size: Int, private val itemsOffset: Int, private val compact: Boolean,
+                                               private val keyOffsets: IntArray? = null, private val key16: Boolean = true) {
+        fun getContainerResource(index: Int): Int {
+            if (index < 0 || index >= size) return RES_BOGUS
+            if (!compact) return intAt(itemsOffset + 4 * index)
+            var res16 = unitAt(itemsOffset + index)
+            if (res16 >= poolStringIndex16Limit) res16 += poolStringIndexLimit - poolStringIndex16Limit
+            return (6 shl 28) or res16
+        }
+        fun getKey(index: Int): String? = if (index < 0 || index >= size || keyOffsets == null) null
+            else keyString(keyOffsets[index], key16)
+        fun findTableItem(key: CharSequence): Int {
+            var start = 0
+            var limit = size
+            while (start < limit) {
+                val mid = (start + limit) ushr 1
+                val result = key.toString().compareTo(getKey(mid)!!)
+                if (result < 0) limit = mid else if (result > 0) start = mid + 1 else return mid
+            }
+            return -1
+        }
+        fun getResource(key: String): Int = getContainerResource(if (keyOffsets == null) key.toInt() else findTableItem(key))
+    }
+    fun getArray(res: Int): Container? {
+        val type = RES_GET_TYPE(res)
+        if (!URES_IS_ARRAY(type)) return null
+        val offset = RES_GET_UINT(res)
+        if (offset == 0) return Container(0, 0, false)
+        return if (type == 9) Container(unitAt(offset), offset + 1, true)
+            else Container(intAt(offset * 4), offset * 4 + 4, false)
+    }
+    fun getTable(res: Int): Container? {
+        val type = RES_GET_TYPE(res)
+        if (!URES_IS_TABLE(type)) return null
+        val offset = RES_GET_UINT(res)
+        if (offset == 0) return Container(0, 0, false, intArrayOf())
+        if (type == 5) {
+            val size = unitAt(offset)
+            return Container(size, offset + 1 + size, true, IntArray(size) { unitAt(offset + 1 + it) })
+        }
+        val byteOffset = offset * 4
+        if (type == 4) {
+            val size = intAt(byteOffset)
+            return Container(size, byteOffset + 4 * (1 + size), false,
+                IntArray(size) { intAt(byteOffset + 4 * (1 + it)) }, false)
+        }
+        val size = charAt(byteOffset)
+        return Container(size, byteOffset + 2 * ((size + 2) and -2), false,
+            IntArray(size) { charAt(byteOffset + 2 * (1 + it)) })
+    }
+    companion object {
+        const val RES_BOGUS = -1
+        fun RES_GET_TYPE(res: Int): Int = res ushr 28
+        fun RES_GET_UINT(res: Int): Int = res and 0x0fffffff
+        fun RES_GET_INT(res: Int): Int = (res shl 4) shr 4
+        fun URES_IS_ARRAY(type: Int): Boolean = type == 8 || type == 9
+        fun URES_IS_TABLE(type: Int): Boolean = type == 2 || type == 4 || type == 5
+    }
+}

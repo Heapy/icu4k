@@ -2,3 +2,5 @@
 *.brk binary
 *.dict binary
 *.nrm binary
+
+*.res binary

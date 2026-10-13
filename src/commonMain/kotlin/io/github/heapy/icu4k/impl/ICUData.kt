@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.impl.data.BreakJapaneseResourceData
+import io.github.heapy.icu4k.impl.data.BreakRootResourceData
+
 import io.github.heapy.icu4k.impl.data.UnamesData
 import io.github.heapy.icu4k.impl.data.Uts46Data
 
@@ -56,12 +59,14 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
+    private val resourceNames = setOf("brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
     private fun itemPath(name: String): String = name.removePrefix("/").removePrefix("$ICU_BASE_NAME/")
     fun exists(resourceName: String): Boolean = itemPath(resourceName) in resourceNames
 
     /** Returns a private copy, so callers cannot mutate cached resource data. */
     fun getBytes(resourceName: String): ByteArray? = when (itemPath(resourceName)) {
+        "brkitr/ja.res" -> BreakJapaneseResourceData.copy()
+        "brkitr/root.res" -> BreakRootResourceData.copy()
         "unames.icu" -> UnamesData.copy()
         "nfc.nrm" -> NfcData.copy()
         "nfkc.nrm" -> NfkcData.copy()

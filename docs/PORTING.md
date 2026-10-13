@@ -1858,3 +1858,20 @@ Differential tests cover random/malformed UTF-16, surrogate fragments, empty
 needles, negative/oversized starting positions and replacements. Common tests
 include complete supplementary matches, rejected trail fragments and the
 original no-offset lookahead behavior.
+
+### Binary resource-bundle values
+
+Started `ICUResourceBundleReader` with the ResB 1.1–3 header/index decoder,
+attributes and pool checksums; legacy/compact strings, aliases, binary values,
+integer vectors, array32/array16 and table1632/table16/table32; resource-word
+integer helpers and sorted key lookup. Pool key and string offsets are resolved
+through an explicitly supplied pool reader. Reads share immutable input bytes
+and use independent cursors. Locale loading/fallback, reader/resource caches,
+UResource value adapters and the full bundle facade remain pending.
+
+Embedded original `brkitr/ja.res` and `brkitr/root.res` with manifest checksums
+(34 resources total). JVM differential tests recursively compare their raw
+trees with ICU4J, including handles, keys, values and container lookups. Common
+fixtures exercise every container width, scalar payloads, length-prefixed
+strings, pooled keys/strings and missing/mismatched pool validation. These tests
+do not claim coverage of the unported locale fallback or cache layers.
