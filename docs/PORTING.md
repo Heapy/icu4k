@@ -1891,3 +1891,23 @@ and cursor positions on Southeast Asian/CJK/supplementary text. Unknown and
 case-mismatched script names are checked too. Common tests run script lookup on
 all locally runnable targets. This reads the root-defined dictionary table;
 general locale/default-locale resolution and resource fallback remain pending.
+
+### Default CJK dictionary word and phrase segmentation
+
+Ported the default `CjkBreakEngine` path: NFKC and legacy Normalizer source-index
+mapping, dynamic-programming word costs, unknown-character fallback excluding
+Hangul, Katakana run costs, backtracking, duplicate normalized-offset suppression
+and phrase punctuation boundaries. Japanese phrase skip strings are loaded from
+the original ja.res extensions and the Hiragana property set. Korean and CJ
+character coverage and engine equality are retained.
+
+Differential tests compare Unicode-wide handles plus counts, queues, cursor
+positions and original exceptional behavior for Chinese/Japanese/Korean prose,
+compatibility expansions, supplementary/malformed UTF-16, Katakana runs, random
+slices, preexisting boundaries, direct division/base dispatch and word/phrase
+modes. Common tests exercise dictionary costs and NFKC on local targets.
+
+The optional ICUConfig-controlled ML phrase path and MlBreakEngine/model loading
+remain pending. This class currently ports the original default dictionary path;
+it does not substitute a dictionary heuristic for the ML configuration or claim
+that the whole segmentation stack is complete.
