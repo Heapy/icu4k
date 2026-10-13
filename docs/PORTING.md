@@ -466,3 +466,18 @@ branches, long keys, repeated builds and clear/reuse. Common tests round-trip
 FAST/SMALL output and check lifecycle errors and old-view stability.
 BytesTrieBuilder remains pending, along with language segmentation engines and
 the other full ICU subsystems listed above.
+
+## Byte trie construction
+
+BytesTrieBuilder now uses the shared original construction algorithm with byte
+serialization, intermediate-value nodes, all signed value widths, branch delta
+encodings and growing tail buffers. buildByteBuffer returns the common shared
+BinaryBuffer with matching capacity/position; buildByteArray offers an isolated
+rooted snapshot. Built readers remain valid after builder clear/reuse.
+
+JVM tests compare exact bytes, buffer position/capacity and lookup values for
+80 randomized FAST/SMALL builds, prefix insertion orders, shared suffixes and
+all value-width boundaries. Delta encodings are compared at every width boundary.
+Common tests verify round trips, copied inputs and lifecycle errors.
+Both compact trie reader/builder families are now ported; JVM IOException
+wrapping and the remaining full ICU subsystems are still pending.
