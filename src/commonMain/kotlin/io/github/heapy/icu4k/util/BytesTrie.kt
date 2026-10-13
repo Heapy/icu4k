@@ -3,7 +3,7 @@
 package io.github.heapy.icu4k.util
 
 /** Reader for ICU's compact byte trie. Serialized storage is shared and must remain immutable. */
-class BytesTrie(private val bytes: ByteArray, private val root: Int) {
+class BytesTrie(private val bytes: ByteArray, private val root: Int) : Iterable<BytesTrie.Entry> {
     private var pos = root
     private var remaining = -1
     constructor(other: BytesTrie) : this(other.bytes, other.root) { pos = other.pos; remaining = other.remaining }
@@ -157,7 +157,125 @@ class BytesTrie(private val bytes: ByteArray, private val root: Int) {
         val value = findUniqueValue(bytes, pos + remaining + 1, 0)
         return (value shl 31) shr 31
     }
+    override fun iterator(): Iterator = Iterator(bytes, pos, remaining, 0)
+    fun iterator(maxStringLength: Int): Iterator = Iterator(bytes, pos, remaining, maxStringLength)
+
+    /** The iterator reuses this entry and its storage. Copy bytes before advancing. */
+    class Entry internal constructor(capacity: Int) {
+        private var bytes = ByteArray(capacity)
+        internal var length = 0
+        var value = 0
+        fun bytesLength(): Int = length
+        fun byteAt(index: Int): Byte = bytes[index]
+        fun copyBytesTo(dest: ByteArray, offset: Int) { bytes.copyInto(dest, offset, 0, length) }
+        /** Portable snapshot replacing the Java read-only ByteBuffer view. */
+        fun toByteArray(): ByteArray = bytes.copyOf(length)
+        private fun ensureCapacity(size: Int) {
+            if (bytes.size < size) bytes = bytes.copyOf(minOf(2 * bytes.size, 2 * size))
+        }
+        internal fun append(byte: Byte) { ensureCapacity(length + 1); bytes[length++] = byte }
+        internal fun append(source: ByteArray, offset: Int, count: Int) {
+            ensureCapacity(length + count)
+            source.copyInto(bytes, length, offset, offset + count)
+            length += count
+        }
+    }
+    class Iterator internal constructor(
+        private val bytes: ByteArray,
+        private val initialPos: Int,
+        private val initialRemaining: Int,
+        private val maxLength: Int,
+    ) : MutableIterator<Entry> {
+        private var pos = initialPos
+        private var remaining = initialRemaining
+        private val entry = Entry(if (maxLength != 0) maxLength else 32)
+        private val stack = ArrayList<Long>()
+        init {
+            if (remaining >= 0) {
+                var count = remaining + 1
+                if (maxLength > 0 && count > maxLength) count = maxLength
+                entry.append(bytes, pos, count)
+                pos += count
+                remaining -= count
+            }
+        }
+        fun reset(): Iterator {
+            pos = initialPos
+            remaining = initialRemaining
+            var count = remaining + 1
+            if (maxLength > 0 && count > maxLength) count = maxLength
+            entry.length = count
+            pos += count
+            remaining -= count
+            stack.clear()
+            return this
+        }
+        override fun hasNext(): Boolean = pos >= 0 || stack.isNotEmpty()
+        override fun next(): Entry {
+            var p = pos
+            if (p < 0) {
+                if (stack.isEmpty()) throw NoSuchElementException()
+                val top = stack.removeAt(stack.lastIndex)
+                var length = top.toInt()
+                p = (top shr 32).toInt()
+                entry.length = length and 0xffff
+                length = length ushr 16
+                if (length > 1) {
+                    p = branchNext(p, length)
+                    if (p < 0) return entry
+                } else entry.append(bytes[p++])
+            }
+            if (remaining >= 0) return truncateAndStop()
+            while (true) {
+                var node = u(bytes, p++)
+                if (node >= MIN_VALUE) {
+                    entry.value = readValue(bytes, p, node shr 1)
+                    pos = if (node and 1 != 0 || maxLength > 0 && entry.length == maxLength) -1 else skipValue(p, node)
+                    return entry
+                }
+                if (maxLength > 0 && entry.length == maxLength) return truncateAndStop()
+                if (node < MIN_LINEAR) {
+                    if (node == 0) node = u(bytes, p++)
+                    p = branchNext(p, node + 1)
+                    if (p < 0) return entry
+                } else {
+                    val length = node - MIN_LINEAR + 1
+                    if (maxLength > 0 && entry.length + length > maxLength) {
+                        entry.append(bytes, p, maxLength - entry.length)
+                        return truncateAndStop()
+                    }
+                    entry.append(bytes, p, length)
+                    p += length
+                }
+            }
+        }
+        override fun remove(): Nothing = throw UnsupportedOperationException()
+        private fun truncateAndStop(): Entry { pos = -1; entry.value = -1; return entry }
+        private fun branchNext(start: Int, count: Int): Int {
+            var p = start
+            var length = count
+            while (length > 5) {
+                ++p
+                stack.add((skipDelta(bytes, p).toLong() shl 32) or ((length - (length shr 1)).toLong() shl 16) or entry.length.toLong())
+                length = length shr 1
+                p = jumpByDelta(bytes, p)
+            }
+            val trieByte = bytes[p++]
+            val node = u(bytes, p++)
+            val value = readValue(bytes, p, node shr 1)
+            p = skipValue(p, node)
+            stack.add((p.toLong() shl 32) or ((length - 1).toLong() shl 16) or entry.length.toLong())
+            entry.append(trieByte)
+            if (node and 1 != 0) {
+                pos = -1
+                entry.value = value
+                return -1
+            }
+            return p + value
+        }
+    }
     companion object {
+        fun iterator(bytes: ByteArray, offset: Int, maxStringLength: Int): Iterator = Iterator(bytes, offset, -1, maxStringLength)
         private const val MIN_LINEAR = 0x10
         private const val MIN_VALUE = 0x20
         private const val MIN_TWO = 0x51

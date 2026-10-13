@@ -368,3 +368,16 @@ cover a serialized intermediate/final trie on every target.
 Entry enumeration/Iterator, the common builder, dictionary matchers and wrapping
 Java IOException from custom JVM Appendables remain pending. These are required
 parts of the full port, not replaced with a different data structure.
+
+## Byte trie enumeration
+
+BytesTrie now implements Iterable with ICU's reusable Entry and Iterator.
+Traversal retains the compact branch stack, suffix iteration from the current
+reader state, maximum-length truncation (value -1), reset and exhaustion behavior.
+Entry.toByteArray supplies an isolated portable snapshot in place of the Java
+read-only ByteBuffer view; byteAt/copyBytesTo retain their original semantics.
+
+Oracle tests compare FAST/SMALL trie enumeration, copied bytes, values, object
+reuse, truncation at eight limits, reset, stopped readers and every position
+inside a long shared linear prefix. Common tests cover iteration and truncation
+on JVM/JS/Native. BytesTrieBuilder and dictionary integration remain pending.

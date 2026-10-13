@@ -3,6 +3,28 @@ package io.github.heapy.icu4k.util
 import kotlin.test.*
 
 class BytesTrieTest {
+    @Test fun iteratorReusesEntriesAndTruncatesSuffixes() {
+        val trie = BytesTrie(byteArrayOf(16, 97, 34, 16, 98, 37), 0)
+        val iter = trie.iterator()
+        val entry = iter.next()
+        assertContentEquals(byteArrayOf(97), entry.toByteArray())
+        assertEquals(1, entry.value)
+        assertSame(entry, iter.next())
+        assertContentEquals(byteArrayOf(97, 98), entry.toByteArray())
+        assertEquals(2, entry.value)
+        assertFalse(iter.hasNext())
+        assertFailsWith<NoSuchElementException> { iter.next() }
+        iter.reset()
+        assertEquals(1, iter.next().value)
+        val limited = trie.iterator(1)
+        assertEquals(1, limited.next().value)
+        assertFalse(limited.hasNext())
+        val longTrie = BytesTrie(byteArrayOf(18, 97, 98, 99, 37), 0)
+        assertEquals(BytesTrie.Result.NO_VALUE, longTrie.next(97))
+        val suffix = longTrie.iterator(1)
+        assertContentEquals(byteArrayOf(98), suffix.next().toByteArray())
+        assertEquals(-1, suffix.reset().next().value)
+    }
     @Test fun intermediateFinalAndSavedState() {
         val raw = byteArrayOf(16, 97, 34, 16, 98, 37)
         val trie = BytesTrie(raw, 0)
