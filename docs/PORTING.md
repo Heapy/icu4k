@@ -337,3 +337,17 @@ sets and 600 text fixtures, including malformed UTF-16 and dictionary scripts.
 Common tests cover word/status output, emoji grapheme clusters, combining marks,
 CRLF and pinned/split-pair indices. Dictionary subdivision, BreakCache,
 DictionaryCache and public iterator/factory integration remain pending.
+
+## Dictionary candidate helpers
+
+DictionaryMatcher's common cursor contract and DictionaryBreakEngine's
+PossibleWord/DequeI helpers are ported. Candidate caching distinguishes the
+longest prefix from the longest accepted word, supports backtracking and marked
+candidate selection, and restores the cursor after failed matches. DequeI
+retains the original limited front capacity, growth, reset and cloned storage.
+
+Common tests exercise candidate/backtracking/reset and deque growth. JVM oracle
+tests compare candidate choices/caching with ICU4J and 50,000 mixed deque
+operations, including independent clones. These tests use deterministic matcher
+fixtures; actual byte/character trie dictionary matchers and data, UnicodeSet
+integration and language engines still need to be ported.
