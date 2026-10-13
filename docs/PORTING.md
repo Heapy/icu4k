@@ -203,5 +203,19 @@ Public string folding matches ICU4J over a string containing every Unicode code
 point for default/Turkic and extra option bits, including OMIT_UNCHANGED_TEXT.
 
 Remaining casing scope includes CaseMapImpl string processing, Greek uppercase,
-titlecase word boundaries, Edits, locale APIs, Latin fast paths and the public
+titlecase word boundaries, locale APIs, Latin fast paths and the public
 UnicodeSet closure adapters. These are still part of the full ICU4J port.
+
+## Edit tracking
+
+Edits now runs in commonMain, including compact span encoding, fine/coarse
+iterators, source/destination/replacement indices, bidirectional index lookup
+and mergeAndAppend composition. Common BufferOverflowException replaces the
+java.nio exception. Diagnostic strings retain span contents with a portable
+class prefix.
+
+Differential tests compare 100 randomized streams in all four iterator modes,
+interleaved backward/forward searches and index conversion, 200 compatible
+compositions, compressed repetitions, multi-unit lengths and overflow/reset
+behavior against ICU4J. JVM, JS/Node and macOS arm64 suites pass locally.
+The preceding commit 523ed2c passed CI on all four targets.
