@@ -2192,3 +2192,24 @@ at every offset and limit, alias chains, matcher consumption, UnicodeSet parser
 integration and error codes. Common tests cover duplicate-definition ownership,
 returning error callbacks and reference positions. JVM, JS Node and macOS Arm64
 test suites pass.
+
+### Rule compiler scanner and syntax-tree construction
+
+Ported the original RBBIRuleScanner state machine and all parse actions:
+operator precedence, assignments/references, set interning, literal/quoted and
+escaped input, comments, lookahead/end marks, rule tags, chaining, direction
+and literal-mode options. It retains original line/column errors, bounded
+stacks, source offsets, empty-set checks and debug traces. Compiler error codes
+are shared with the symbol table. RBBIRuleParseResult holds the original
+front-end owner state for subsequent category/DFA stages; global ICUDebug
+configuration is not yet ported, and scanner debugging is explicitly supplied.
+
+Differential tests compare all 15 embedded ICU rule sources, 250 generated
+valid expressions, 400 random malformed inputs and focused edge cases against
+ICU4J's actual private scanner. Graph comparison checks node metadata and a
+bijection of object identities over child/parent links, shared set nodes and
+variable definitions. Tests also compare options, counters, stripped comments,
+error messages/locations and low-level quote/escape/newline tokenization.
+Common tests cover tree flags, tags, variable ownership and source offsets.
+Full JVM, JS Node and macOS Arm64 suites pass. Set-category partitioning, DFA
+construction and compiled-data emission remain pending.

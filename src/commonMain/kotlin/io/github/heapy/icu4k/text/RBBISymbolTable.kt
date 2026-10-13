@@ -18,7 +18,7 @@ internal class RBBISymbolTable(private val error: (Int) -> Unit) : SymbolTable {
             cachedSetLookup = expression.fLeftChild!!.fInputSet
             "\uffff"
         } else {
-            error(0x1020f) // U_BRK_MALFORMED_SET
+            error(RBBIRuleCompilerError.U_BRK_MALFORMED_SET)
             cachedSetLookup = null
             expression.fText!!
         }
@@ -50,7 +50,7 @@ internal class RBBISymbolTable(private val error: (Int) -> Unit) : SymbolTable {
 
     fun addEntry(key: String, node: RBBINode) {
         if (entries.containsKey(key)) {
-            error(0x10207) // U_BRK_VARIABLE_REDFINITION
+            error(RBBIRuleCompilerError.U_BRK_VARIABLE_REDFINITION)
             return
         }
         entries[key] = node
