@@ -1105,3 +1105,16 @@ JVM tests compare every loaded threshold, mapping text, smallFCD byte and all
 Unicode trie values with ICU4J for all five resources. Common tests load each
 resource and verify surrogate behavior. Reordering, decomposition/composition
 and the public normalization facade remain pending.
+
+## Normalization value classification and combining classes
+
+Normalizer2Impl now ports composition quick-check classification, algorithmic/
+composition-no and decomposition-yes predicates, combining-class extraction
+(including mapping CCC words), code-point shortcuts and smallFCD lead masks.
+Fixed norm16 constants and direct class helpers are shared by the upcoming
+reordering and normalization algorithms.
+
+JVM tests compare these operations for every Unicode code point in all five
+normalization datasets, every BMP smallFCD lookup and all 16-bit direct class
+helper inputs. Common tests read accents, inert characters and decomposition
+classification. Full FCD, reordering and normalization remain pending.

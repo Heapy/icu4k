@@ -57,6 +57,44 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun getCompQuickCheck(norm16: Int): Int = when {
+        norm16 < minNoNo || norm16 >= MIN_YES_YES_WITH_CC -> 1
+        norm16 >= minMaybeNo -> 2
+        else -> 0
+    }
+    fun isAlgorithmicNoNo(norm16: Int): Boolean = norm16 >= limitNoNo && norm16 < minMaybeNo
+    fun isCompNo(norm16: Int): Boolean = norm16 >= minNoNo && norm16 < minMaybeNo
+    fun isDecompYes(norm16: Int): Boolean = norm16 < minYesNo || norm16 >= minMaybeYes
+    fun getCC(norm16: Int): Int {
+        if (norm16 >= MIN_NORMAL_MAYBE_YES) return getCCFromNormalYesOrMaybe(norm16)
+        if (norm16 < minNoNo || norm16 >= limitNoNo) return 0
+        val mapping = norm16 shr OFFSET_SHIFT
+        return if (extraData!![mapping].code and MAPPING_HAS_CCC_LCCC_WORD != 0) extraData!![mapping - 1].code and 255 else 0
+    }
+    fun getCCFromYesOrMaybeYesCP(c: Int): Int = if (c < minCompNoMaybeCP) 0 else getCCFromYesOrMaybeYes(getNorm16(c))
+    /** Input is a BMP single-or-lead code unit. */
+    fun singleLeadMightHaveNonZeroFCD16(lead: Int): Boolean {
+        val bits = smallFCD[lead shr 8].toInt()
+        return bits != 0 && (bits shr ((lead shr 5) and 7)) and 1 != 0
+    }
+    companion object {
+        const val MIN_YES_YES_WITH_CC = 0xfe02
+        const val JAMO_VT = 0xfe00
+        const val MIN_NORMAL_MAYBE_YES = 0xfc00
+        const val JAMO_L = 2
+        const val INERT = 1
+        const val HAS_COMP_BOUNDARY_AFTER = 1
+        const val OFFSET_SHIFT = 1
+        const val DELTA_TCCC_0 = 0
+        const val DELTA_TCCC_1 = 2
+        const val DELTA_TCCC_GT_1 = 4
+        const val DELTA_TCCC_MASK = 6
+        const val DELTA_SHIFT = 3
+        const val MAX_DELTA = 0x40
+        const val MAPPING_HAS_CCC_LCCC_WORD = 0x80
+        fun getCCFromNormalYesOrMaybe(norm16: Int): Int = (norm16 shr OFFSET_SHIFT) and 255
+        fun getCCFromYesOrMaybeYes(norm16: Int): Int = if (norm16 >= MIN_NORMAL_MAYBE_YES) getCCFromNormalYesOrMaybe(norm16) else 0
+    }
     object Hangul {
         const val JAMO_L_BASE = 0x1100
         const val JAMO_L_END = 0x1112
