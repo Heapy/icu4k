@@ -11,12 +11,13 @@ import io.github.heapy.icu4k.text.UnicodeSet
 import kotlin.concurrent.atomics.AtomicReference
 
 /** Shared fallback for scripts without a dictionary engine. Published sets are never mutated. */
-internal class UnhandledBreakEngine : LanguageBreakEngine {
+internal class UnhandledBreakEngine(private val externalSnapshot: (() -> UnicodeSet)? = null) : LanguageBreakEngine {
     private val handled = AtomicReference(UnicodeSet())
-    override fun handles(c: Int): Boolean = handled.load().contains(c)
+    private fun snapshot(): UnicodeSet = externalSnapshot?.invoke() ?: handled.load()
+    override fun handles(c: Int): Boolean = snapshot().contains(c)
     override fun findBreaks(text: CharacterIterator, startPos: Int, endPos: Int,
                             foundBreaks: DictionaryBreakEngine.DequeI, isPhraseBreaking: Boolean): Int {
-        val set = handled.load()
+        val set = snapshot()
         var c = CharacterIteration.current32(text)
         while (text.getIndex() < endPos && set.contains(c)) {
             CharacterIteration.next32(text)
@@ -26,6 +27,7 @@ internal class UnhandledBreakEngine : LanguageBreakEngine {
     }
     /** May overlap readers, but callers must serialize calls to this method, as in ICU4J. */
     fun handleChar(c: Int) {
+        check(externalSnapshot == null) { "Registry-owned snapshots must be updated by their owner" }
         val original = handled.load()
         if (!original.contains(c)) {
             val script = UCharacter.getIntPropertyValue(c, UProperty.SCRIPT)

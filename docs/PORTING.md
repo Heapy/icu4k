@@ -2028,3 +2028,25 @@ Thai/Myanmar prose and range slices. Common tests load and execute both trained
 models on all local targets. The global language-engine registry and public
 RuleBasedBreakIterator owner remain pending; these resources now make original
 LSTM selection available for that integration.
+
+### Language break-engine registry
+
+Ported RuleBasedBreakIterator's script dispatch and reuse into
+`LanguageBreakEngineRegistry`: Thai/Myanmar trained LSTM with missing-resource
+fallback to dictionary engines, Lao/Khmer dictionaries, shared CJ handling of
+Han/Hiragana/Katakana, Korean handling and the shared unhandled-script fallback.
+Corrupt dictionary IO returns no engine as in upstream. A shared default registry
+is available for the pending iterator owner; the ML option remains explicit.
+
+Common publication uses CAS on an immutable snapshot containing both the engine
+list and fallback script set. This preserves the original fallback-first
+precedence without platform locks, lost script updates or duplicate published
+engines. Racing constructors can do duplicate transient work, but only one
+engine is published/reused. UnhandledBreakEngine can read a registry-owned
+snapshot; its existing standalone single-writer handleChar behavior is unchanged.
+
+Tests compare dispatch and segmentation with ICU4J's private registry, verify
+Common/CJ creation-order precedence, and exercise eight concurrent writers/readers
+for stable engine identity and retention of every unsupported script. Common
+tests execute all dispatch branches on the locally runnable platforms. The
+public RuleBasedBreakIterator owner and ICUConfig integration remain pending.
