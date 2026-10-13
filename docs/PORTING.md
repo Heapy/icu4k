@@ -1956,3 +1956,20 @@ Common tests verify endpoint statuses, short-span retention and copy independenc
 The outer RuleBasedBreakIterator, main BreakCache and global engine registry
 remain pending. Thai/Myanmar automatic dispatch also has an upstream LSTM path;
 that dependency has not yet been ported or claimed by these cache tests.
+
+### Main circular break cache
+
+Ported all boundary-cache algorithms into `RBBIBreakCache`, bound to the existing
+rule engine and dictionary cache: 128-entry ring, asymmetric eviction, retained
+iteration positions, binary search across wraparound, sequential navigation,
+remote safe-point refill, forward prefetch and backward side-buffer refill.
+Owner position/status/done state is published with the original timing, including
+fast-path behavior. Copies duplicate arrays and use a fresh transient side buffer.
+
+Differential tests inspect ICU4J's actual BreakCache and owner state after every
+operation, comparing complete boundary/status arrays, ring indexes, text cursor,
+rule status, dictionary counts and done flags. Character/word/line/sentence/title
+rules cover long wraparound, remote/random seeks, dictionary mixed text, both
+phrase flags, cloning and direct insertion/retention limits. Common tests walk
+400 boundaries and refill remotely in both directions. The public iterator
+facade, rule compiler, global engine registry and locale factories remain pending.
