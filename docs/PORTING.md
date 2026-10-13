@@ -1811,3 +1811,22 @@ ICU4J and check capacities around every nonempty result, plus invalid inputs.
 Common tests cover compatibility characters whose capital letters are exposed
 by normalization, preflight and unchanged undersized destinations. Legacy
 canonical comparison remains pending.
+
+### Incremental canonical comparison
+
+Ported all `Normalizer.compare` overloads and the internal `cmpEquivFold` core.
+The implementation retains upstream's FCD precheck/partial normalization,
+Turkic NFD prepass, Unicode 3.2 option shift, two-level folding/decomposition
+stacks, supplementary-character rewind and surrogate-aware code-point-order
+fixup. Symmetric per-source state encapsulates the original stack/cursor logic;
+the comparison is incremental and preserves ICU4J's exact numeric result.
+
+Differential tests compare all changing canonical/full-fold mappings across
+Unicode, random mixed/malformed UTF-16, arrays/ranges and code-point overloads.
+The internal core is also checked against ICU4J with canonical equivalence
+turned off, including the options needed by UTF16.StringComparator. Common tests
+cover canonical equality, caseless and Turkic matches, Hangul and surrogate order.
+
+CanonicalIterator now calls the ported incremental `Normalizer.compare` for
+canonical equality, replacing the earlier equivalent whole-string NFD equality
+fallback. Its existing ICU4J differential tests exercise this integration.

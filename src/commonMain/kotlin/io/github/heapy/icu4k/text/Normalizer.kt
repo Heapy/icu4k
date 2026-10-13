@@ -128,6 +128,55 @@ class Normalizer private constructor(private var text: UCharacterIterator, priva
             internal val maybe = QuickCheckResult()
         }
     }
+    /** One side of ICU's two-level fold/decomposition comparison stack. */
+    private class CompareState(var source: CharSequence) {
+        var index = 0
+        var level = 0
+        var unit = -1
+        private val sources = arrayOfNulls<CharSequence>(2)
+        private val indexes = IntArray(2)
+        val folded = StringBuilder()
+        fun fetch() {
+            if (unit >= 0) return
+            while (true) {
+                if (index != source.length) { unit = source[index++].code; return }
+                if (level == 0) { unit = -1; return }
+                do { level-- } while (sources[level] == null)
+                source = sources[level]!!
+                index = indexes[level]
+            }
+        }
+        fun codePoint(): Int {
+            if (unit in 0xd800..0xdbff && index != source.length && source[index].code in 0xdc00..0xdfff) {
+                return 0x10000 + ((unit - 0xd800) shl 10) + source[index].code - 0xdc00
+            }
+            if (unit in 0xdc00..0xdfff && index >= 2 && source[index - 2].code in 0xd800..0xdbff) {
+                return 0x10000 + ((source[index - 2].code - 0xd800) shl 10) + unit - 0xdc00
+            }
+            return unit
+        }
+        fun adjustSurrogates(other: CompareState) {
+            if (unit in 0xd800..0xdbff) index++
+            else if (unit in 0xdc00..0xdfff) {
+                other.index--
+                other.unit = other.source[other.index - 1].code
+            }
+        }
+        fun push(replacement: CharSequence, decomposition: Boolean) {
+            sources[level] = source
+            indexes[level] = index
+            level++
+            if (decomposition && level < 2) { sources[level] = null; level++ }
+            source = replacement
+            index = 0
+            unit = -1
+        }
+        fun orderedUnit(): Int {
+            val pair = (unit <= 0xdbff && index != source.length && source[index].code in 0xdc00..0xdfff) ||
+                (unit in 0xdc00..0xdfff && index != 1 && source[index - 2].code in 0xd800..0xdbff)
+            return if (pair) unit else unit - 0x2800
+        }
+    }
     private class ArraySlice(private val chars: CharArray, private val start: Int, private val limit: Int) : CharSequence {
         init { if (start < 0 || limit < start || limit > chars.size) throw IndexOutOfBoundsException() }
         override val length: Int get() = limit - start
@@ -245,6 +294,94 @@ class Normalizer private constructor(private var text: UCharacterIterator, priva
             if (destStart < 0 || destStart > dest.size - length) throw IndexOutOfBoundsException()
             for (i in 0 until length) dest[destStart + i] = output[i]
             return length
+        }
+        fun compare(s1: String, s2: String, options: Int): Int = internalCompare(s1, s2, options)
+        fun compare(s1: CharArray, s2: CharArray, options: Int): Int =
+            internalCompare(ArraySlice(s1, 0, s1.size), ArraySlice(s2, 0, s2.size), options)
+        fun compare(s1: CharArray?, s1Start: Int, s1Limit: Int, s2: CharArray?, s2Start: Int,
+                    s2Limit: Int, options: Int): Int {
+            require(s1 != null && s1Start >= 0 && s1Limit >= s1Start &&
+                s2 != null && s2Start >= 0 && s2Limit >= s2Start)
+            return internalCompare(ArraySlice(s1, s1Start, s1Limit), ArraySlice(s2, s2Start, s2Limit), options)
+        }
+        fun compare(c1: Int, c2: Int, options: Int): Int =
+            internalCompare(UTF16.valueOf(c1), UTF16.valueOf(c2), options or INPUT_IS_FCD)
+        fun compare(c1: Int, s2: String, options: Int): Int = internalCompare(UTF16.valueOf(c1), s2, options)
+        private const val COMPARE_EQUIV = 0x80000
+        private fun internalCompare(first: CharSequence, second: CharSequence, originalOptions: Int): Int {
+            var s1 = first
+            var s2 = second
+            val normOptions = originalOptions ushr COMPARE_NORM_OPTIONS_SHIFT
+            val options = originalOptions or COMPARE_EQUIV
+            if (options and INPUT_IS_FCD == 0 || options and FOLD_CASE_EXCLUDE_SPECIAL_I != 0) {
+                val n2 = (if (options and FOLD_CASE_EXCLUDE_SPECIAL_I != 0) NFD else FCD).resolve(normOptions)
+                val span1 = n2.spanQuickCheckYes(s1)
+                val span2 = n2.spanQuickCheckYes(s2)
+                if (span1 < s1.length) {
+                    s1 = n2.normalizeSecondAndAppend(StringBuilder(s1.length + 16).append(s1, 0, span1),
+                        s1.subSequence(span1, s1.length))
+                }
+                if (span2 < s2.length) {
+                    s2 = n2.normalizeSecondAndAppend(StringBuilder(s2.length + 16).append(s2, 0, span2),
+                        s2.subSequence(span2, s2.length))
+                }
+            }
+            return cmpEquivFold(s1, s2, options)
+        }
+        /** ICU's incremental comparison core, also used by UTF16.StringComparator. */
+        internal fun cmpEquivFold(first: CharSequence, second: CharSequence, options: Int): Int {
+            val nfc = if (options and COMPARE_EQUIV != 0) Norm2AllModes.getNFCInstance().impl else null
+            val caseProps = if (options and COMPARE_IGNORE_CASE != 0) UCaseProps.INSTANCE else null
+            val a = CompareState(first)
+            val b = CompareState(second)
+            while (true) {
+                a.fetch(); b.fetch()
+                if (a.unit == b.unit) {
+                    if (a.unit < 0) return 0
+                    a.unit = -1; b.unit = -1
+                    continue
+                }
+                if (a.unit < 0) return -1
+                if (b.unit < 0) return 1
+                val cp1 = a.codePoint()
+                val cp2 = b.codePoint()
+                if (a.level == 0 && caseProps != null) {
+                    val length = caseProps.toFullFolding(cp1, a.folded, options)
+                    if (length >= 0) {
+                        a.adjustSurrogates(b)
+                        if (length <= UCaseProps.MAX_STRING_LENGTH) a.folded.deleteRange(0, a.folded.length - length)
+                        else { a.folded.setLength(0); UTF16.appendCodePoint(a.folded, length) }
+                        a.push(a.folded, false)
+                        continue
+                    }
+                }
+                if (b.level == 0 && caseProps != null) {
+                    val length = caseProps.toFullFolding(cp2, b.folded, options)
+                    if (length >= 0) {
+                        b.adjustSurrogates(a)
+                        if (length <= UCaseProps.MAX_STRING_LENGTH) b.folded.deleteRange(0, b.folded.length - length)
+                        else { b.folded.setLength(0); UTF16.appendCodePoint(b.folded, length) }
+                        b.push(b.folded, false)
+                        continue
+                    }
+                }
+                if (a.level < 2 && nfc != null) {
+                    val decomposition = nfc.getDecomposition(cp1)
+                    if (decomposition != null) {
+                        a.adjustSurrogates(b); a.push(decomposition, true)
+                        continue
+                    }
+                }
+                if (b.level < 2 && nfc != null) {
+                    val decomposition = nfc.getDecomposition(cp2)
+                    if (decomposition != null) {
+                        b.adjustSurrogates(a); b.push(decomposition, true)
+                        continue
+                    }
+                }
+                return if (a.unit >= 0xd800 && b.unit >= 0xd800 && options and COMPARE_CODE_POINT_ORDER != 0)
+                    a.orderedUnit() - b.orderedUnit() else a.unit - b.unit
+            }
         }
         fun getFC_NFKC_Closure(c: Int, dest: CharArray?): Int {
             val closure = getFC_NFKC_Closure(c)

@@ -69,8 +69,7 @@ class CanonicalIterator(source: String) {
         }
         return result.toTypedArray()
     }
-    // Normalizer.compare(a, b, 0)==0: canonical equality is equality of NFD forms.
-    private fun canonicallyEqual(a: String, b: String): Boolean = nfd.normalize(a) == nfd.normalize(b)
+    private fun canonicallyEqual(a: String, b: String): Boolean = Normalizer.compare(a, b, 0) == 0
     private fun getEquivalents2(segment: String): Set<String> {
         val result = hashSetOf(segment)
         val working = StringBuilder()
