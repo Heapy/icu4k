@@ -1630,3 +1630,19 @@ JVM oracle tests compare bits and rejection outcomes for random long hex
 mantissas/exponents, random Double hex/decimal strings and boundary fixtures.
 Common tests cover rounding ties, subnormals and syntax across JVM/JS/Native.
 This dependency will be connected by the pending applyPropertyAlias port.
+
+## UnicodeSet property aliases
+
+UnicodeSet.applyPropertyAlias now ports explicit/default XSymbolTable hooks,
+loose UCD property/value aliases, numeric CCC fallback, numeric-value filters,
+character names, age filters, script extensions, identifier types and empty-value
+category/script/binary/special aliases. Name whitespace munging, general-category
+mask conversion, Assigned inversion and error paths follow ICU4J. Numeric values
+use the portable Java-literal parser. The range set overload and default symbol
+table getters/setters are also ported; changing the default clears inclusions.
+XSymbolTable's property value accepts null to preserve the original Java hook.
+
+JVM oracle tests cover every binary alias, enumerated boundary aliases, numeric
+and name syntax, age, special aliases and rejection cases. Common tests cover
+replacement, all major alias branches, hex numeric values, symbol precedence and
+null hook values. UnicodeSet pattern parsing remains pending.

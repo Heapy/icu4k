@@ -1,7 +1,15 @@
 // © 2016 and later: Unicode, Inc. and others.
 // SPDX-License-Identifier: Unicode-3.0
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.lang.UCharacter
+import io.github.heapy.icu4k.lang.UProperty
+import io.github.heapy.icu4k.impl.CharacterPropertiesImpl
+import io.github.heapy.icu4k.impl.UPropertyAliases
+import io.github.heapy.icu4k.impl.ICUNumberParsing
+import io.github.heapy.icu4k.util.VersionInfo
+import kotlin.concurrent.atomics.AtomicReference
 import io.github.heapy.icu4k.util.Freezable
 import io.github.heapy.icu4k.util.OutputInt
 import io.github.heapy.icu4k.impl.Utility
@@ -42,6 +50,92 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     }
     fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
     fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
+    fun set(start: Int, end: Int): UnicodeSet { checkFrozen(); clear(); complement(start, end); return this }
+    fun applyPropertyAlias(propertyAlias: String, valueAlias: String?): UnicodeSet = applyPropertyAlias(propertyAlias, valueAlias, null)
+    fun applyPropertyAlias(propertyAlias: String, valueAlias: String?, symbols: SymbolTable?): UnicodeSet {
+        checkFrozen()
+        if (symbols is XSymbolTable && symbols.applyPropertyAlias(propertyAlias, valueAlias, this)) return this
+        if (defaultXSymbolTable.load()?.applyPropertyAlias(propertyAlias, valueAlias, this) == true) return this
+        var p: Int
+        var v: Int
+        var invert = false
+        if (!valueAlias.isNullOrEmpty()) {
+            p = UCharacter.getPropertyEnum(propertyAlias)
+            if (p == UProperty.GENERAL_CATEGORY) p = UProperty.GENERAL_CATEGORY_MASK
+            if (p in UProperty.BINARY_START until UProperty.BINARY_LIMIT || p in UProperty.INT_START until UProperty.INT_LIMIT || p in UProperty.MASK_START until UProperty.MASK_LIMIT) {
+                try { v = UCharacter.getPropertyValueEnum(p, valueAlias) }
+                catch (e: IllegalArgumentException) {
+                    if (p == UProperty.CANONICAL_COMBINING_CLASS || p == UProperty.LEAD_CANONICAL_COMBINING_CLASS || p == UProperty.TRAIL_CANONICAL_COMBINING_CLASS) {
+                        v = PatternProps.trimWhiteSpace(valueAlias).toInt()
+                        if (v !in 0..255) throw e
+                    } else throw e
+                }
+            } else when (p) {
+                UProperty.NUMERIC_VALUE -> {
+                    val value = ICUNumberParsing.parseDouble(PatternProps.trimWhiteSpace(valueAlias))
+                    applyFilter({ UCharacter.getUnicodeNumericValue(it) == value }, CharacterPropertiesImpl.getInclusionsForProperty(p))
+                    return this
+                }
+                UProperty.NAME -> {
+                    val ch = UCharacter.getCharFromExtendedName(mungeCharName(valueAlias))
+                    require(ch != -1) { "Invalid character name" }
+                    clear(); add(ch)
+                    return this
+                }
+                UProperty.UNICODE_1_NAME -> throw IllegalArgumentException("Unicode_1_Name (na1) not supported")
+                UProperty.AGE -> {
+                    val version = VersionInfo.getInstance(mungeCharName(valueAlias))
+                    val noVersion = VersionInfo.getInstance(0)
+                    applyFilter({ val age = UCharacter.getAge(it); age != noVersion && age <= version }, CharacterPropertiesImpl.getInclusionsForProperty(p))
+                    return this
+                }
+                UProperty.SCRIPT_EXTENSIONS -> v = UCharacter.getPropertyValueEnum(UProperty.SCRIPT, valueAlias)
+                UProperty.IDENTIFIER_TYPE -> v = UCharacter.getPropertyValueEnum(p, valueAlias)
+                else -> throw IllegalArgumentException("Unsupported property")
+            }
+        } else {
+            val names = UPropertyAliases.INSTANCE
+            p = UProperty.GENERAL_CATEGORY_MASK
+            v = names.getPropertyValueEnum(p, propertyAlias)
+            if (v == -1) {
+                p = UProperty.SCRIPT
+                v = names.getPropertyValueEnum(p, propertyAlias)
+                if (v == -1) {
+                    p = names.getPropertyEnum(propertyAlias)
+                    if (p in UProperty.BINARY_START until UProperty.BINARY_LIMIT) v = 1
+                    else if (p == -1) {
+                        when {
+                            UPropertyAliases.compare("ANY", propertyAlias) == 0 -> return set(0, 0x10ffff)
+                            UPropertyAliases.compare("ASCII", propertyAlias) == 0 -> return set(0, 127)
+                            UPropertyAliases.compare("Assigned", propertyAlias) == 0 -> {
+                                p = UProperty.GENERAL_CATEGORY_MASK
+                                v = 1
+                                invert = true
+                            }
+                            else -> throw IllegalArgumentException("Invalid property alias: $propertyAlias=$valueAlias")
+                        }
+                    } else throw IllegalArgumentException("Missing property value")
+                }
+            }
+        }
+        applyIntPropertyValue(p, v)
+        if (invert) complement().removeAllStrings()
+        return this
+    }
+    private fun mungeCharName(input: String): String {
+        val source = PatternProps.trimWhiteSpace(input)
+        var buffer: StringBuilder? = null
+        for (i in source.indices) {
+            var ch = source[i]
+            if (PatternProps.isWhiteSpace(ch.code)) {
+                if (buffer == null) buffer = StringBuilder().append(source, 0, i)
+                else if (buffer[buffer.length - 1] == ' ') continue
+                ch = ' '
+            }
+            buffer?.append(ch)
+        }
+        return buffer?.toString() ?: source
+    }
     /** Replaces this set with the characters (and supported emoji strings) having the given property value. */
     fun applyIntPropertyValue(prop: Int, value: Int): UnicodeSet {
         val properties = io.github.heapy.icu4k.lang.UProperty
@@ -93,7 +187,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         override fun lookupMatcher(ch: Int): UnicodeMatcher? = null
         override fun lookup(s: String): CharArray? = null
         override fun parseReference(text: String, pos: ParsePosition, limit: Int): String? = null
-        open fun applyPropertyAlias(propertyName: String, propertyValue: String, result: UnicodeSet): Boolean = false
+        open fun applyPropertyAlias(propertyName: String, propertyValue: String?, result: UnicodeSet): Boolean = false
     }
     class EntryRange internal constructor() {
         @kotlin.jvm.JvmField var codepoint = 0
@@ -871,6 +965,13 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        private val defaultXSymbolTable = AtomicReference<XSymbolTable?>(null)
+        fun getDefaultXSymbolTable(): XSymbolTable? = defaultXSymbolTable.load()
+        fun setDefaultXSymbolTable(symbols: XSymbolTable?) {
+            CharacterPropertiesImpl.clear()
+            defaultXSymbolTable.store(symbols)
+        }
+
         const val IGNORE_SPACE = 1
         @Deprecated("Use CASE_INSENSITIVE") const val CASE = 2
         const val CASE_INSENSITIVE = 2
