@@ -31,6 +31,111 @@
       "object": "UpropsData",
       "sha256": "b60c40ecc64c8ffa44060a390c0903aa621f5faf5496289072ac8e0047f352c1",
       "size": 170864
+    },
+    {
+      "name": "brkitr/char.brk",
+      "file": "data/icu78/brkitr/char.brk",
+      "object": "BreakCharData",
+      "sha256": "cbe610282d7413e994552f09b7e5f88cc2d2e1e82031194ef581fc40b21f58af",
+      "size": 14048
+    },
+    {
+      "name": "brkitr/line.brk",
+      "file": "data/icu78/brkitr/line.brk",
+      "object": "BreakLineData",
+      "sha256": "31d48825e0e27d4d82605aef17fc7752844395c7941ca2f1900b6056c5028dc5",
+      "size": 73424
+    },
+    {
+      "name": "brkitr/line_cj.brk",
+      "file": "data/icu78/brkitr/line_cj.brk",
+      "object": "BreakLineCjData",
+      "sha256": "6adb63487a30e94040b1b7ba4abf75b45a6c15719d96aa435ee806df52454a79",
+      "size": 73456
+    },
+    {
+      "name": "brkitr/line_loose.brk",
+      "file": "data/icu78/brkitr/line_loose.brk",
+      "object": "BreakLineLooseData",
+      "sha256": "9a729162209ad0ec93f27c524b0f3475a6dda7ba680d6b07fec7b00e1bcca880",
+      "size": 75584
+    },
+    {
+      "name": "brkitr/line_loose_cj.brk",
+      "file": "data/icu78/brkitr/line_loose_cj.brk",
+      "object": "BreakLineLooseCjData",
+      "sha256": "af2905cc7d66e9cfffce0699bafb5cedce3b49c1d2dabc9497f9086b0a4a5c4c",
+      "size": 80240
+    },
+    {
+      "name": "brkitr/line_loose_phrase_cj.brk",
+      "file": "data/icu78/brkitr/line_loose_phrase_cj.brk",
+      "object": "BreakLineLoosePhraseCjData",
+      "sha256": "1b8eae7a5eee4a18cb66de6d0221e8320e2fb6ca589c37431e9614d017c71614",
+      "size": 85584
+    },
+    {
+      "name": "brkitr/line_normal.brk",
+      "file": "data/icu78/brkitr/line_normal.brk",
+      "object": "BreakLineNormalData",
+      "sha256": "3b89ca57165396bc9a4534da19faf5bc75ff08554320273678215ca1d0b102c0",
+      "size": 73312
+    },
+    {
+      "name": "brkitr/line_normal_cj.brk",
+      "file": "data/icu78/brkitr/line_normal_cj.brk",
+      "object": "BreakLineNormalCjData",
+      "sha256": "6b35245a668544c60751a9878595b8af6c29740776953a38bfb162bd095ec004",
+      "size": 74416
+    },
+    {
+      "name": "brkitr/line_normal_phrase_cj.brk",
+      "file": "data/icu78/brkitr/line_normal_phrase_cj.brk",
+      "object": "BreakLineNormalPhraseCjData",
+      "sha256": "ad10230c7f1ac59aed8d59d82bf80115e3fdc6852b95d2a2174d99ae08e6e460",
+      "size": 79552
+    },
+    {
+      "name": "brkitr/line_phrase_cj.brk",
+      "file": "data/icu78/brkitr/line_phrase_cj.brk",
+      "object": "BreakLinePhraseCjData",
+      "sha256": "07b738fe62dbb082f1e46c39660e5755136dfb01ad4ce8b8fae91534d06c7e93",
+      "size": 78560
+    },
+    {
+      "name": "brkitr/sent.brk",
+      "file": "data/icu78/brkitr/sent.brk",
+      "object": "BreakSentData",
+      "sha256": "78a89a731e2b10b7bf579f3dd30f052a8074d887b3fe68da93e3a3c860c863b8",
+      "size": 19856
+    },
+    {
+      "name": "brkitr/sent_el.brk",
+      "file": "data/icu78/brkitr/sent_el.brk",
+      "object": "BreakSentElData",
+      "sha256": "ef295ddeb1356a7b3cda8a510397f09703e7799cf048a2ebf0ec0a80f62d51b5",
+      "size": 19872
+    },
+    {
+      "name": "brkitr/title.brk",
+      "file": "data/icu78/brkitr/title.brk",
+      "object": "BreakTitleData",
+      "sha256": "b66a317de43262b520df98a844d031c270d9acd226bd16eb7ccdf2c157908be2",
+      "size": 12400
+    },
+    {
+      "name": "brkitr/word.brk",
+      "file": "data/icu78/brkitr/word.brk",
+      "object": "BreakWordData",
+      "sha256": "b01c71473b575dcefab227445f13153d377df9af6b961f4e65da836b7a31e230",
+      "size": 23120
+    },
+    {
+      "name": "brkitr/word_POSIX.brk",
+      "file": "data/icu78/brkitr/word_POSIX.brk",
+      "object": "BreakWordPosixData",
+      "sha256": "cf872f07330196b1a8786c3dcb78e32800e79c962bf3067f8cd8bbd6e29f1155",
+      "size": 23120
     }
   ]
 }

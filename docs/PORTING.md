@@ -290,3 +290,19 @@ parity additionally requires the RuleBasedBreakIterator state machine and caches
 text cursor adaptation, word/sentence/grapheme/line rules, ICU resource bundles
 and locale selection, dictionary engines and dictionary data. Supplying English
 rule boundaries alone will not constitute a complete segmentation port.
+
+## Compiled break rule data
+
+RBBIDataWrapper now reads ICU version-6 rule headers, 8/16-bit state rows,
+FAST category tries, rule-status vectors and UTF-8 source. State tables retain
+equality/hash semantics and serialize to big-endian ByteArray with ICU padding.
+BinaryBuffer cursor restoration replaces ByteBuffer mark/reset around trie reads.
+Debug printing and the rule compiler are still pending.
+
+All 15 upstream .brk resources are pinned in the checksum manifest and generated
+as portable data, including word/POSIX, sentence/Greek, grapheme, title and line
+variants. Oracle tests compare raw bytes, tables, hashes, state serialization,
+status/source, final cursor position and every Unicode trie lookup with ICU4J.
+Common tests load real data and reject invalid magic/version. Runtime boundary
+traversal, dictionary engines, resource-bundle locale selection and public
+BreakIterator factories remain pending.
