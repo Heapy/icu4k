@@ -2108,3 +2108,20 @@ random compaction pairs/order for both modes, and exact int-array comparator
 results. Common tests cover rectangular ranges, shortened endpoints and
 supplementary characters. This supplies the string-range dependency of the
 pending general UnicodeSet parser; that parser is not yet marked complete.
+
+### Recursive UnicodeSet expression parser core
+
+Ported the original recursive applyPattern core, including nested sets,
+union/intersection/subtraction, strict character ranges, properties, escaped
+literals, strings and string ranges, anchors, variable expansion, matcher
+stand-ins, case options before complement and the 100-level depth limit.
+Rebuilt pattern selection and parse-cursor behavior follow the original core.
+String-range expansion writes through a sorted unique sink so partial mutations
+on errors match ICU4J's TreeSet behavior.
+
+Differential tests invoke ICU4J's actual private parser and compare set ranges,
+strings, rebuilt pattern, cursor position, variable state and error messages on
+valid/invalid expressions, random grammar combinations and nesting limits.
+Common tests exercise nested algebra, ranges, closure, anchors and complement.
+Public String/ParsePosition overloads, constructors and retained-pattern caching
+remain pending; this step does not claim the whole UnicodeSet parser API complete.

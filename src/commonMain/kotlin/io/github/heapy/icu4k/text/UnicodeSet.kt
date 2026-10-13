@@ -128,6 +128,187 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         }
         set(foldSet)
     }
+    /** Original recursive expression parser; public overloads and pattern caching follow separately. */
+    internal fun applyPattern(chars: RuleCharacterIterator, symbols: SymbolTable?, rebuilt: Appendable, options: Int, depth: Int) {
+        if (depth > 100) syntaxError(chars, "Pattern nested too deeply")
+        var opts = RuleCharacterIterator.PARSE_VARIABLES or RuleCharacterIterator.PARSE_ESCAPES
+        if (options and IGNORE_SPACE != 0) opts = opts or RuleCharacterIterator.SKIP_WHITESPACE
+        val pattern = StringBuilder()
+        var usePattern = false
+        var scratch: UnicodeSet? = null
+        var backup: RuleCharacterIterator.Position? = null
+        // lastItem: none, character, set. mode: before [, inside, after ].
+        var lastItem = 0
+        var lastChar = 0
+        var mode = 0
+        var op = '\u0000'
+        var invert = false
+        var lastString: String? = null
+        clear()
+        while (mode != 2 && !chars.atEnd()) {
+            var c = 0
+            var literal = false
+            var nested: UnicodeSet? = null
+            var setMode = 0
+            if (resemblesPropertyPattern(chars, opts)) setMode = 2
+            else {
+                backup = chars.getPos(backup)
+                c = chars.next(opts)
+                literal = chars.isEscaped()
+                if (c == '['.code && !literal) {
+                    if (mode == 1) { chars.setPos(backup); setMode = 1 }
+                    else {
+                        mode = 1; pattern.append('[')
+                        backup = chars.getPos(backup)
+                        c = chars.next(opts); literal = chars.isEscaped()
+                        if (c == '^'.code && !literal) {
+                            invert = true; pattern.append('^')
+                            backup = chars.getPos(backup)
+                            c = chars.next(opts); literal = chars.isEscaped()
+                        }
+                        if (c == '-'.code) literal = true
+                        else { chars.setPos(backup); continue }
+                    }
+                } else if (symbols != null) {
+                    val matcher = symbols.lookupMatcher(c)
+                    if (matcher != null) {
+                        nested = matcher as? UnicodeSet ?: syntaxError(chars, "Syntax error")
+                        setMode = 3
+                    }
+                }
+            }
+            if (setMode != 0) {
+                if (lastItem == 1) {
+                    if (op != '\u0000') syntaxError(chars, "Char expected after operator")
+                    add(lastChar); appendPatternCodePoint(pattern, lastChar, false)
+                    lastItem = 0; op = '\u0000'
+                }
+                if (op == '-' || op == '&') pattern.append(op)
+                if (nested == null) {
+                    if (scratch == null) scratch = UnicodeSet()
+                    nested = scratch
+                }
+                val set = nested!!
+                when (setMode) {
+                    1 -> set.applyPattern(chars, symbols, pattern, options, depth + 1)
+                    2 -> { chars.skipIgnored(opts); set.applyPropertyPattern(chars, pattern, symbols) }
+                    3 -> pattern.append(set.toPattern(false))
+                }
+                usePattern = true
+                if (mode == 0) { this.set(set); mode = 2; break }
+                when (op) { '-' -> removeAll(set); '&' -> retainAll(set); '\u0000' -> addAll(set) }
+                op = '\u0000'; lastItem = 2
+                continue
+            }
+            if (mode == 0) syntaxError(chars, "Missing '['")
+            if (!literal) {
+                when (c) {
+                    ']'.code -> {
+                        if (lastItem == 1) { add(lastChar); appendPatternCodePoint(pattern, lastChar, false) }
+                        if (op == '-') { add(op.code); pattern.append(op) }
+                        else if (op == '&') syntaxError(chars, "Trailing '&'")
+                        pattern.append(']'); mode = 2
+                        continue
+                    }
+                    '-'.code -> {
+                        if (op == '\u0000') {
+                            if (lastItem != 0 || lastString != null) { op = '-'; continue }
+                            else {
+                                add(c)
+                                c = chars.next(opts); literal = chars.isEscaped()
+                                if (c == ']'.code && !literal) { pattern.append("-]"); mode = 2; continue }
+                            }
+                        }
+                        syntaxError(chars, "'-' not after char, string, or set")
+                    }
+                    '&'.code -> {
+                        if (lastItem == 2 && op == '\u0000') { op = '&'; continue }
+                        syntaxError(chars, "'&' not after set")
+                    }
+                    '^'.code -> syntaxError(chars, "'^' not after '['")
+                    '{'.code -> {
+                        if (op != '\u0000' && op != '-') syntaxError(chars, "Missing operand after operator")
+                        if (lastItem == 1) { add(lastChar); appendPatternCodePoint(pattern, lastChar, false) }
+                        lastItem = 0
+                        val buffer = StringBuilder()
+                        var ok = false
+                        while (!chars.atEnd()) {
+                            c = chars.next(opts); literal = chars.isEscaped()
+                            if (c == '}'.code && !literal) { ok = true; break }
+                            UTF16.appendCodePoint(buffer, c)
+                        }
+                        if (!ok) syntaxError(chars, "Invalid multicharacter string")
+                        val currentString = buffer.toString()
+                        if (op == '-') {
+                            val first = io.github.heapy.icu4k.lang.CharSequences.getSingleCodePoint(lastString ?: "")
+                            val end = io.github.heapy.icu4k.lang.CharSequences.getSingleCodePoint(currentString)
+                            if (first != Int.MAX_VALUE && end != Int.MAX_VALUE) add(first, end)
+                            else {
+                                // Expansion goes directly into the string container, as in ICU4J.
+                                val expanded = stringRangeOutput()
+                                try { io.github.heapy.icu4k.impl.StringRange.expand(lastString, currentString, true, expanded) }
+                                catch (e: Exception) { syntaxError(chars, e.message ?: "null") }
+                            }
+                            lastString = null; op = '\u0000'
+                        } else { add(currentString); lastString = currentString }
+                        pattern.append('{'); appendPatternString(pattern, currentString); pattern.append('}')
+                        continue
+                    }
+                    SymbolTable.SYMBOL_REF.code -> {
+                        backup = chars.getPos(backup)
+                        c = chars.next(opts); literal = chars.isEscaped()
+                        val anchor = c == ']'.code && !literal
+                        if (symbols == null && !anchor) {
+                            c = SymbolTable.SYMBOL_REF.code; chars.setPos(backup)
+                        } else if (anchor && op == '\u0000') {
+                            if (lastItem == 1) { add(lastChar); appendPatternCodePoint(pattern, lastChar, false) }
+                            add(UnicodeMatcher.ETHER.code); usePattern = true
+                            pattern.append(SymbolTable.SYMBOL_REF).append(']'); mode = 2
+                            continue
+                        } else syntaxError(chars, "Unquoted '$'")
+                    }
+                }
+            }
+            when (lastItem) {
+                0 -> {
+                    if (op == '-' && lastString != null) syntaxError(chars, "Invalid range")
+                    lastItem = 1; lastChar = c; lastString = null
+                }
+                1 -> {
+                    if (op == '-') {
+                        if (lastString != null || lastChar >= c) syntaxError(chars, "Invalid range")
+                        add(lastChar, c); appendPatternCodePoint(pattern, lastChar, false)
+                        pattern.append(op); appendPatternCodePoint(pattern, c, false)
+                        lastItem = 0; op = '\u0000'
+                    } else { add(lastChar); appendPatternCodePoint(pattern, lastChar, false); lastChar = c }
+                }
+                2 -> {
+                    if (op != '\u0000') syntaxError(chars, "Set expected after operator")
+                    lastChar = c; lastItem = 1
+                }
+            }
+        }
+        if (mode != 2) syntaxError(chars, "Missing ']'")
+        chars.skipIgnored(opts)
+        if (options and (CASE_INSENSITIVE or ADD_CASE_MAPPINGS) != 0) closeOver(options)
+        if (invert) complement().removeAllStrings()
+        if (usePattern) rebuilt.append(pattern) else rebuilt.append(_generatePattern(StringBuilder(), false, true))
+    }
+    private fun appendPatternString(result: StringBuilder, s: String) {
+        var i = 0
+        while (i < s.length) { val cp = UTF16.charAt(s, i); appendPatternCodePoint(result, cp, false); i += UTF16.getCharCount(cp) }
+    }
+    /** A sorted unique sink retaining partial expansion before an exception. */
+    private fun stringRangeOutput(): MutableCollection<String> = object : AbstractMutableCollection<String>() {
+        override val size: Int get() = stringElements.size
+        override fun iterator(): MutableIterator<String> = stringElements.iterator()
+        override fun add(element: String): Boolean {
+            val index = stringElements.binarySearch(element)
+            if (index >= 0) return false
+            stringElements.add(-index - 1, element)
+            return true
+        }
+    }
     internal fun applyPropertyPattern(pattern: String, position: ParsePosition, symbols: SymbolTable?): UnicodeSet? {
         var pos = position.index
         if (pos + 5 > pattern.length) return null
