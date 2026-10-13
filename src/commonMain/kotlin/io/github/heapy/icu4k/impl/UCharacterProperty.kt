@@ -59,6 +59,35 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Non-normalization binary entries backed by case/bidi data or fixed UCD ranges. */
+    internal fun hasAuxiliaryBinaryProperty(c: Int, which: Int): Boolean = when (which) {
+        UProperty.LOWERCASE,
+        UProperty.SOFT_DOTTED,
+        UProperty.UPPERCASE,
+        UProperty.CASE_SENSITIVE,
+        UProperty.CASED,
+        UProperty.CASE_IGNORABLE,
+        UProperty.CHANGES_WHEN_LOWERCASED,
+        UProperty.CHANGES_WHEN_UPPERCASED,
+        UProperty.CHANGES_WHEN_TITLECASED,
+        UProperty.CHANGES_WHEN_CASEMAPPED -> UCaseProps.INSTANCE.hasBinaryProperty(c, which)
+        UProperty.BIDI_CONTROL -> UBiDiProps.INSTANCE.isBidiControl(c)
+        UProperty.BIDI_MIRRORED -> UBiDiProps.INSTANCE.isMirrored(c)
+        UProperty.JOIN_CONTROL -> UBiDiProps.INSTANCE.isJoinControl(c)
+        UProperty.REGIONAL_INDICATOR -> c in 0x1f1e6..0x1f1ff
+        UProperty.IDS_UNARY_OPERATOR -> c in 0x2ffe..0x2fff
+        UProperty.ID_COMPAT_MATH_START -> c >= idCompatMathStart[0] && c in idCompatMathStart
+        UProperty.ID_COMPAT_MATH_CONTINUE -> inFixedRanges(c, idCompatMathContinue) || (c >= idCompatMathStart[0] && c in idCompatMathStart)
+        UProperty.MODIFIER_COMBINING_MARK -> inFixedRanges(c, modifierCombiningMark)
+        else -> throw IllegalArgumentException("Not an auxiliary binary property: $which")
+    }
+    private fun inFixedRanges(c: Int, ranges: IntArray): Boolean {
+        for (i in ranges.indices step 2) {
+            if (c < ranges[i]) return false
+            if (c < ranges[i + 1]) return true
+        }
+        return false
+    }
     /** Directly stored binary properties from additional-vector word 1. */
     internal fun hasVectorBinaryProperty(c: Int, which: Int): Boolean {
         val bit = vectorBinaryProperties[which] ?: throw IllegalArgumentException("Not a vector binary property: $which")
@@ -217,6 +246,10 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
 
     private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        private val idCompatMathStart = intArrayOf(8706, 8711, 8734, 120513, 120539, 120571, 120597, 120629, 120655, 120687, 120713, 120745, 120771)
+        private val idCompatMathContinue = intArrayOf(178, 180, 185, 186, 8304, 8305, 8308, 8319, 8320, 8335)
+        private val modifierCombiningMark = intArrayOf(1620, 1622, 1624, 1625, 1756, 1757, 1763, 1764, 1767, 1769, 2250, 2252, 2253, 2256, 2259, 2260, 2291, 2292)
+
         private val vectorBinaryProperties = mapOf(
             UProperty.ALPHABETIC to 8,
             UProperty.ASCII_HEX_DIGIT to 7,

@@ -1037,3 +1037,16 @@ JVM tests compare 20,000 random code points per bit plus boundary/error inputs
 against ICU4J. Common tests cover alphabetic, pattern whitespace, the high bit
 and unsupported sources. Case, bidi, normalization, emoji and derived binary
 dispatch entries remain pending.
+
+## Case, bidi and fixed-range binary entries
+
+UCharacterProperty now routes ten case and three bidi binary properties to the
+ported data engines. Five additional entries retain the original fixed UCD
+ranges: Regional_Indicator, IDS_Unary_Operator, ID_Compat_Math_Start/Continue
+and Modifier_Combining_Mark. Math continuation includes math-start characters.
+These remain internal components of the complete dispatcher.
+
+JVM tests compare every Unicode code point plus adjacent invalid inputs for
+all 18 entries with ICU4J. Common tests exercise case, mirrors, flags, math
+start/continue differences and combining marks. Normalization, emoji and other
+derived binary properties are still pending.
