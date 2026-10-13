@@ -1182,3 +1182,15 @@ JVM tests compare random strings and slices across all five normalization
 resources, including malformed UTF-16, quick-check spans and both append modes.
 Common tests cover reordering, Hangul and append-boundary merging. Composition,
 FCD string processing and the public normalization facade remain pending.
+
+## Pair composition
+
+Normalizer2Impl now ports composePair and the original packed composition-list
+search, including pair/triple entries, supplementary trails, forward-combining
+metadata, algorithmic Jamo L+V and Hangul LV+T composition. Missing and invalid
+pairs retain -1. Composition-list pointer helpers are ready for recomposition.
+
+JVM tests compare all two-code-point raw decompositions and 100,000 arbitrary
+pairs per normalization dataset with ICU4J. Common tests cover table-based
+accent composition, both Hangul steps and rejected pairs. Full-string
+recomposition and composition scanning remain pending.

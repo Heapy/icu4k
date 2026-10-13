@@ -57,6 +57,65 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun composePair(a: Int, initialB: Int): Int {
+        val norm16 = getNorm16(a)
+        var b = initialB
+        var list: Int
+        if (norm16 == INERT) return -1
+        if (norm16 < minYesNoMappingsOnly) {
+            if (norm16 == JAMO_L) {
+                b -= Hangul.JAMO_V_BASE
+                return if (b in 0 until Hangul.JAMO_V_COUNT) Hangul.HANGUL_BASE + ((a - Hangul.JAMO_L_BASE) * Hangul.JAMO_V_COUNT + b) * Hangul.JAMO_T_COUNT else -1
+            }
+            if (norm16 == minYesNo) {
+                b -= Hangul.JAMO_T_BASE
+                return if (b > 0 && b < Hangul.JAMO_T_COUNT) a + b else -1
+            }
+            list = norm16 shr OFFSET_SHIFT
+            if (norm16 > minYesNo) list += 1 + (extraData!![list].code and MAPPING_LENGTH_MASK)
+        } else {
+            if (norm16 < minMaybeNoCombinesFwd || norm16 >= MIN_NORMAL_MAYBE_YES) return -1
+            list = getDataForMaybe(norm16)
+            if (norm16 < minMaybeYes) list += 1 + (extraData!![list].code and MAPPING_LENGTH_MASK)
+        }
+        if (b < 0 || b > 0x10ffff) return -1
+        return combine(list, b) shr 1
+    }
+    private fun combine(initialList: Int, trail: Int): Int {
+        val data = extraData!!
+        var list = initialList
+        var firstUnit: Int
+        if (trail < COMP_1_TRAIL_LIMIT) {
+            val key1 = trail shl 1
+            while (true) {
+                firstUnit = data[list].code
+                if (key1 <= firstUnit) break
+                list += 2 + (firstUnit and COMP_1_TRIPLE)
+            }
+            if (key1 == firstUnit and COMP_1_TRAIL_MASK) return if (firstUnit and COMP_1_TRIPLE != 0) (data[list + 1].code shl 16) or data[list + 2].code else data[list + 1].code
+        } else {
+            val key1 = COMP_1_TRAIL_LIMIT + ((trail shr COMP_1_TRAIL_SHIFT) and COMP_1_TRIPLE.inv())
+            val key2 = (trail shl COMP_2_TRAIL_SHIFT) and 0xffff
+            while (true) {
+                firstUnit = data[list].code
+                if (key1 > firstUnit) list += 2 + (firstUnit and COMP_1_TRIPLE)
+                else if (key1 == firstUnit and COMP_1_TRAIL_MASK) {
+                    val secondUnit = data[list + 1].code
+                    if (key2 > secondUnit) {
+                        if (firstUnit and COMP_1_LAST_TUPLE != 0) break
+                        list += 3
+                    } else if (key2 == secondUnit and COMP_2_TRAIL_MASK) return ((secondUnit and COMP_2_TRAIL_MASK.inv()) shl 16) or data[list + 2].code
+                    else break
+                } else break
+            }
+        }
+        return -1
+    }
+    private fun getCompositionsListForDecompYes(norm16: Int): Int = if (norm16 < JAMO_L || norm16 >= MIN_NORMAL_MAYBE_YES) -1 else getData(norm16)
+    private fun getCompositionsListForComposite(norm16: Int): Int {
+        val list = getData(norm16)
+        return list + 1 + (extraData!![list].code and MAPPING_LENGTH_MASK)
+    }
     fun decompose(s: CharSequence, src: Int, limit: Int, dest: StringBuilder, destLengthEstimate: Int) {
         val capacity = if (destLengthEstimate < 0) limit - src else destLengthEstimate
         dest.setLength(0)
@@ -304,6 +363,13 @@ internal class Normalizer2Impl {
         const val MAPPING_HAS_CCC_LCCC_WORD = 0x80
         const val MAPPING_HAS_RAW_MAPPING = 0x40
         const val MAPPING_LENGTH_MASK = 0x1f
+        const val COMP_1_LAST_TUPLE = 0x8000
+        const val COMP_1_TRIPLE = 1
+        const val COMP_1_TRAIL_LIMIT = 0x3400
+        const val COMP_1_TRAIL_MASK = 0x7ffe
+        const val COMP_1_TRAIL_SHIFT = 9
+        const val COMP_2_TRAIL_SHIFT = 6
+        const val COMP_2_TRAIL_MASK = 0xffc0
         fun getCCFromNormalYesOrMaybe(norm16: Int): Int = (norm16 shr OFFSET_SHIFT) and 255
         fun getCCFromYesOrMaybeYes(norm16: Int): Int = if (norm16 >= MIN_NORMAL_MAYBE_YES) getCCFromNormalYesOrMaybe(norm16) else 0
     }
