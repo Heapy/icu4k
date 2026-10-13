@@ -46,6 +46,47 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    fun addAll(s: CharSequence): UnicodeSet {
+        checkFrozen()
+        var i = 0
+        while (i < s.length) {
+            val cp = UTF16.charAt(s, i)
+            add(cp)
+            i += UTF16.getCharCount(cp)
+        }
+        return this
+    }
+    fun retainAll(s: CharSequence): UnicodeSet = retainAll(fromAll(s))
+    fun removeAll(s: CharSequence): UnicodeSet = removeAll(fromAll(s))
+    fun complementAll(s: CharSequence): UnicodeSet = complementAll(fromAll(s))
+    fun addAll(source: Iterable<*>): UnicodeSet {
+        checkFrozen()
+        for (item in source) add(item!!.toString())
+        return this
+    }
+    fun addAll(vararg collection: CharSequence): UnicodeSet {
+        checkFrozen()
+        for (string in collection) add(string)
+        return this
+    }
+    fun containsAll(collection: Iterable<CharSequence>): Boolean {
+        for (item in collection) if (!contains(item)) return false
+        return true
+    }
+    fun containsNone(collection: Iterable<CharSequence>): Boolean {
+        for (item in collection) if (contains(item)) return false
+        return true
+    }
+    fun containsSome(collection: Iterable<CharSequence>): Boolean = !containsNone(collection)
+    fun removeAll(collection: Iterable<CharSequence>): UnicodeSet {
+        checkFrozen()
+        for (item in collection) remove(item)
+        return this
+    }
+    fun retainAll(collection: Iterable<CharSequence>): UnicodeSet {
+        checkFrozen()
+        return retainAll(UnicodeSet().addAll(collection))
+    }
     fun containsAll(other: UnicodeSet): Boolean {
         var needA = true; var needB = true
         var aPtr = 0; var bPtr = 0
@@ -649,6 +690,8 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
         return result
     }
     companion object {
+        fun from(s: CharSequence): UnicodeSet = UnicodeSet().add(s)
+        fun fromAll(s: CharSequence): UnicodeSet = UnicodeSet().addAll(s)
         const val MIN_VALUE = 0
         const val MAX_VALUE = 0x10ffff
         private const val HIGH = 0x110000

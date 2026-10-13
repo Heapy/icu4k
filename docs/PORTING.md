@@ -802,3 +802,16 @@ range pairs (including reversed bounds) and supplementary/malformed text.
 Common tests distinguish string membership from code-point membership and
 segmentation, as well as empty input. Iterable overloads and other UnicodeSet
 APIs remain pending.
+
+## UnicodeSet collection and character-sequence overloads
+
+UnicodeSet now ports collection containment/disjointness, addAll/removeAll/
+retainAll for iterable members, vararg addAll, character-sequence bulk algebra,
+and from/fromAll factories. Iterable addition uses each object's string value;
+character-sequence bulk operations use individual code points, whereas iterable
+and vararg members are whole strings. Frozen guards run even for empty input.
+
+Common tests distinguish these overloads and check supplementary code points,
+duplicate character toggling and empty collections. JVM oracle tests compare
+600 random collections through the containment and mutation overloads against
+ICU4J. Remaining UnicodeSet APIs and pattern parsing are still pending.
