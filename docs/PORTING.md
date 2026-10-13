@@ -815,3 +815,16 @@ Common tests distinguish these overloads and check supplementary code points,
 duplicate character toggling and empty collections. JVM oracle tests compare
 600 random collections through the containment and mutation overloads against
 ICU4J. Remaining UnicodeSet APIs and pattern parsing are still pending.
+
+## UnicodeSet ordering
+
+UnicodeSet now implements Comparable with the original SHORTER_FIRST,
+LEXICOGRAPHIC and LONGER_FIRST styles, inversion-list boundary comparison,
+string/code-point crossover and ordered string comparison. Iterable comparison
+and companion helpers for iterators, iterables and string/code-point UTF-16
+comparison are also ported. Supplementary comparisons avoid creating strings.
+
+JVM tests compare 2,000 mixed set pairs under every style and exercise iterable
+and string/code-point helpers against ICU4J. Common tests distinguish the three
+orders and cover supplementary code points, prefix ordering and validation.
+Pattern parsing and the remaining UnicodeSet API remain pending.

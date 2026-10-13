@@ -9,7 +9,7 @@ import io.github.heapy.icu4k.impl.BMPSet
 import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
 /** ICU inversion-list core. Pattern/property parsing is pending. */
-class UnicodeSet() : UnicodeFilter(), Iterable<String> {
+class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
@@ -46,6 +46,31 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    enum class ComparisonStyle { SHORTER_FIRST, LEXICOGRAPHIC, LONGER_FIRST }
+    override fun compareTo(other: UnicodeSet): Int = compareTo(other, ComparisonStyle.SHORTER_FIRST)
+    fun compareTo(other: UnicodeSet, style: ComparisonStyle): Int {
+        if (style != ComparisonStyle.LEXICOGRAPHIC) {
+            val diff = size() - other.size()
+            if (diff != 0) return if ((diff < 0) == (style == ComparisonStyle.SHORTER_FIRST)) -1 else 1
+        }
+        var i = 0
+        while (true) {
+            val result = list[i] - other.list[i]
+            if (result != 0) {
+                if (list[i] == HIGH) return if (!hasStrings()) 1 else compare(stringElements.first(), other.list[i])
+                if (other.list[i] == HIGH) {
+                    if (!other.hasStrings()) return -1
+                    val comparison = compare(other.stringElements.first(), list[i])
+                    return if (comparison > 0) -1 else if (comparison < 0) 1 else 0
+                }
+                return if (i and 1 == 0) result else -result
+            }
+            if (list[i] == HIGH) break
+            ++i
+        }
+        return compare(stringElements, other.stringElements)
+    }
+    fun compareTo(other: Iterable<String>): Int = compare(this, other)
     fun addAll(s: CharSequence): UnicodeSet {
         checkFrozen()
         var i = 0
@@ -690,6 +715,33 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
         return result
     }
     companion object {
+        fun compare(string: CharSequence, codePoint: Int): Int {
+            require(codePoint in MIN_VALUE..MAX_VALUE)
+            val length = string.length
+            if (length == 0) return -1
+            val offset = codePoint - 0x10000
+            if (offset < 0) {
+                val result = string[0].code - codePoint
+                return if (result != 0) result else length - 1
+            }
+            val result = string[0].code - ((offset ushr 10) + 0xd800)
+            if (result != 0) return result
+            if (length > 1) {
+                val trailResult = string[1].code - ((offset and 1023) + 0xdc00)
+                if (trailResult != 0) return trailResult
+            }
+            return length - 2
+        }
+        fun compare(codePoint: Int, string: CharSequence): Int = -compare(string, codePoint)
+        fun <T : Comparable<T>> compare(first: Iterable<T>, other: Iterable<T>): Int = compare(first.iterator(), other.iterator())
+        fun <T : Comparable<T>> compare(first: Iterator<T>, other: Iterator<T>): Int {
+            while (true) {
+                if (!first.hasNext()) return if (other.hasNext()) -1 else 0
+                if (!other.hasNext()) return 1
+                val result = first.next().compareTo(other.next())
+                if (result != 0) return result
+            }
+        }
         fun from(s: CharSequence): UnicodeSet = UnicodeSet().add(s)
         fun fromAll(s: CharSequence): UnicodeSet = UnicodeSet().addAll(s)
         const val MIN_VALUE = 0
