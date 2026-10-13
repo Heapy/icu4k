@@ -57,6 +57,74 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    /** Packed quick-check span (bits 31..1) and maybe flag (bit 0). */
+    fun composeQuickCheck(s: CharSequence, initialSrc: Int, limit: Int, onlyContiguous: Boolean, doSpan: Boolean): Int {
+        var src = initialSrc
+        var qcResult = 0
+        var prevBoundary = src
+        val trie = normTrie as io.github.heapy.icu4k.util.CodePointTrie.Fast
+        while (true) {
+            var prevSrc: Int
+            var c: Int
+            var norm16 = 0
+            while (true) {
+                if (src == limit) return (src shl 1) or qcResult
+                c = s[src].code
+                if (c < minCompNoMaybeCP) { ++src; continue }
+                norm16 = trie.bmpGet(c)
+                if (norm16 < minNoNo) { ++src; continue }
+                prevSrc = src++
+                if (!UTF16Plus.isLeadSurrogate(c)) break
+                if (src != limit && s[src].code in 0xdc00..0xdfff) {
+                    c = ((c - 0xd800) shl 10) + s[src++].code - 0xdc00 + 0x10000
+                    norm16 = trie.suppGet(c)
+                    if (norm16 >= minNoNo) break
+                }
+            }
+            var prevNorm16 = INERT
+            if (prevBoundary != prevSrc) {
+                prevBoundary = prevSrc
+                if (!norm16HasCompBoundaryBefore(norm16)) {
+                    c = codePointBefore(s, prevSrc)
+                    val n16 = getNorm16(c)
+                    if (!norm16HasCompBoundaryAfter(n16, onlyContiguous)) {
+                        prevBoundary -= if (c > 0xffff) 2 else 1
+                        prevNorm16 = n16
+                    }
+                }
+            }
+            if (norm16 >= minMaybeNo) {
+                var fcd16 = getFCD16FromMaybeOrNonZeroCC(norm16)
+                var cc = (fcd16 shr 8) and 255
+                if (!(onlyContiguous && cc != 0 && getTrailCCFromCompYesAndZeroCC(prevNorm16) > cc)) {
+                    while (true) {
+                        if (norm16 < MIN_YES_YES_WITH_CC) {
+                            if (!doSpan) qcResult = 1 else return prevBoundary shl 1
+                        }
+                        if (src == limit) return (src shl 1) or qcResult
+                        val prevCC = fcd16 and 255
+                        c = codePointAt(s, src)
+                        norm16 = getNorm16(c)
+                        if (norm16 < minMaybeNo) break
+                        fcd16 = getFCD16FromMaybeOrNonZeroCC(norm16)
+                        cc = (fcd16 shr 8) and 255
+                        if (!(prevCC <= cc || cc == 0)) break
+                        src += if (c > 0xffff) 2 else 1
+                    }
+                    if (norm16 < minNoNo) {
+                        prevBoundary = src
+                        src += if (c > 0xffff) 2 else 1
+                        continue
+                    }
+                }
+            }
+            return prevBoundary shl 1
+        }
+    }
+    private fun codePointBefore(s: CharSequence, i: Int): Int {
+        val c = s[i - 1].code
+        return if (c in 0xdc00..0xdfff && i > 1 && s[i - 2].code in 0xd800..0xdbff) ((s[i - 2].code - 0xd800) shl 10) + c - 0xdc00 + 0x10000 else c
+    }
     internal fun recompose(buffer: ReorderingBuffer, recomposeStartIndex: Int, onlyContiguous: Boolean) {
         val sb = buffer.getStringBuilder()
         var p = recomposeStartIndex

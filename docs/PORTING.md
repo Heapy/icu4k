@@ -1207,3 +1207,14 @@ JVM tests compare 600 random decomposed buffers per dataset, both contiguous
 modes and nonzero recomposition start offsets with ICU4J's original private
 method. Common tests cover Hangul, accents and discontiguous composition.
 The main composition scan and public normalization facade remain pending.
+
+## Composition quick check
+
+Normalizer2Impl.composeQuickCheck now ports the original packed span/maybe
+result, fast BMP/supplementary scan, backward boundary adjustment, canonical
+class order checks and FCC contiguous trailing-class checks. Span mode stops
+before maybe characters; full quick check retains the maybe flag.
+
+JVM tests compare every slice of random mixed/malformed UTF-16 strings across
+all five datasets and both contiguous/span modes. Common tests distinguish
+packed yes/maybe/no results. The main composition scan and facade remain pending.
