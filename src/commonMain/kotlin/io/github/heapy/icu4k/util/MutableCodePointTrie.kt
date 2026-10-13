@@ -188,6 +188,159 @@ class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : Cod
         index[i] = newBlock
         return newBlock
     }
+    private fun compactIndex(fastILimit: Int, mixedBlocks: MixedBlocks): Int {
+        val fastIndexLength = fastILimit shr (CodePointTrie.FAST_SHIFT - CodePointTrie.SHIFT_3)
+        if (highStart shr CodePointTrie.FAST_SHIFT <= fastIndexLength) {
+            index3NullOffset = CodePointTrie.NO_INDEX3_NULL_OFFSET
+            return fastIndexLength
+        }
+        val fastIndex = CharArray(fastIndexLength)
+        var firstNull = -1
+        var i = 0
+        var j = 0
+        while (i < fastILimit) {
+            var i3 = index[i]
+            fastIndex[j] = i3.toChar()
+            if (i3 == dataNullOffset) {
+                if (firstNull < 0) firstNull = j
+                else if (index3NullOffset < 0 && j - firstNull + 1 == CodePointTrie.INDEX_3_BLOCK_LENGTH) index3NullOffset = firstNull
+            } else firstNull = -1
+            val next = i + SMALL_DATA_BLOCKS_PER_BMP_BLOCK
+            while (++i < next) {
+                i3 += CodePointTrie.SMALL_DATA_BLOCK_LENGTH
+                index[i] = i3
+            }
+            ++j
+        }
+        mixedBlocks.init(fastIndexLength, CodePointTrie.INDEX_3_BLOCK_LENGTH)
+        mixedBlocks.extend(fastIndex, 0, 0, fastIndexLength)
+        var index3Capacity = 0
+        firstNull = index3NullOffset
+        var hasLongBlocks = false
+        val start = if (fastILimit < BMP_I_LIMIT) 0 else BMP_I_LIMIT
+        val limit = highStart shr CodePointTrie.SHIFT_3
+        i = start
+        while (i < limit) {
+            j = i
+            val jLimit = i + CodePointTrie.INDEX_3_BLOCK_LENGTH
+            var ored = 0
+            var isNull = true
+            do {
+                val i3 = index[j]
+                ored = ored or i3
+                if (i3 != dataNullOffset) isNull = false
+            } while (++j < jLimit)
+            if (isNull) {
+                flags[i] = I3_NULL
+                if (firstNull < 0) {
+                    if (ored <= 0xffff) index3Capacity += CodePointTrie.INDEX_3_BLOCK_LENGTH
+                    else { index3Capacity += INDEX_3_18BIT_BLOCK_LENGTH; hasLongBlocks = true }
+                    firstNull = 0
+                }
+            } else if (ored <= 0xffff) {
+                val n = mixedBlocks.findBlock(fastIndex, index, i)
+                if (n >= 0) { flags[i] = I3_BMP; index[i] = n }
+                else { flags[i] = I3_16; index3Capacity += CodePointTrie.INDEX_3_BLOCK_LENGTH }
+            } else {
+                flags[i] = I3_18
+                index3Capacity += INDEX_3_18BIT_BLOCK_LENGTH
+                hasLongBlocks = true
+            }
+            i = j
+        }
+        val index2Capacity = (limit - start) shr CodePointTrie.SHIFT_2_3
+        val index1Length = (index2Capacity + CodePointTrie.INDEX_2_MASK) shr CodePointTrie.SHIFT_1_2
+        val capacity = fastIndexLength + index1Length + index3Capacity + index2Capacity + 1
+        val output = fastIndex.copyOf(capacity)
+        index16 = output
+        mixedBlocks.init(capacity, CodePointTrie.INDEX_3_BLOCK_LENGTH)
+        val longBlocks = if (hasLongBlocks) MixedBlocks().also { it.init(capacity, INDEX_3_18BIT_BLOCK_LENGTH) } else null
+        val index2 = CharArray(index2Capacity)
+        var i2Length = 0
+        firstNull = index3NullOffset
+        val index3Start = fastIndexLength + index1Length
+        var length = index3Start
+        i = start
+        while (i < limit) {
+            val i3: Int
+            var f = flags[i]
+            if (f == I3_NULL && firstNull < 0) {
+                f = if (dataNullOffset <= 0xffff) I3_16 else I3_18
+                firstNull = 0
+            }
+            if (f == I3_NULL) i3 = index3NullOffset
+            else if (f == I3_BMP) i3 = index[i]
+            else if (f == I3_16) {
+                var n = mixedBlocks.findBlock(output, index, i)
+                if (n >= 0) i3 = n
+                else {
+                    n = if (length == index3Start) 0 else getOverlap(output, length, index, i, CodePointTrie.INDEX_3_BLOCK_LENGTH)
+                    i3 = length - n
+                    val previous = length
+                    while (n < CodePointTrie.INDEX_3_BLOCK_LENGTH) output[length++] = index[i + n++].toChar()
+                    mixedBlocks.extend(output, index3Start, previous, length)
+                    longBlocks?.extend(output, index3Start, previous, length)
+                }
+            } else {
+                j = i
+                val jLimit = i + CodePointTrie.INDEX_3_BLOCK_LENGTH
+                var k = length
+                do {
+                    val upperPosition = k++
+                    var upperBits = 0
+                    for (part in 0 until 8) {
+                        val v = index[j++]
+                        upperBits = upperBits or ((v and 0x30000) shr (2 + part * 2))
+                        output[k++] = v.toChar()
+                    }
+                    output[upperPosition] = upperBits.toChar()
+                } while (j < jLimit)
+                var n = longBlocks!!.findBlock(output, output, length)
+                if (n >= 0) i3 = n or 0x8000
+                else {
+                    n = if (length == index3Start) 0 else getOverlap(output, length, output, length, INDEX_3_18BIT_BLOCK_LENGTH)
+                    i3 = (length - n) or 0x8000
+                    val previous = length
+                    if (n > 0) {
+                        val source = length
+                        while (n < INDEX_3_18BIT_BLOCK_LENGTH) output[length++] = output[source + n++]
+                    } else length += INDEX_3_18BIT_BLOCK_LENGTH
+                    mixedBlocks.extend(output, index3Start, previous, length)
+                    longBlocks.extend(output, index3Start, previous, length)
+                }
+            }
+            if (index3NullOffset < 0 && firstNull >= 0) index3NullOffset = i3
+            index2[i2Length++] = i3.toChar()
+            i += CodePointTrie.INDEX_3_BLOCK_LENGTH
+        }
+        if (index3NullOffset < 0) index3NullOffset = CodePointTrie.NO_INDEX3_NULL_OFFSET
+        if (length >= CodePointTrie.NO_INDEX3_NULL_OFFSET + CodePointTrie.INDEX_3_BLOCK_LENGTH) {
+            throw IndexOutOfBoundsException("The trie data exceeds limitations of the data structure.")
+        }
+        var blockLength = CodePointTrie.INDEX_2_BLOCK_LENGTH
+        var i1 = fastIndexLength
+        i = 0
+        while (i < i2Length) {
+            var n: Int
+            if (i2Length - i >= blockLength) n = mixedBlocks.findBlock(output, index2, i)
+            else {
+                blockLength = i2Length - i
+                n = findSameBlock(output, index3Start, length, index2, i, blockLength)
+            }
+            val i2: Int
+            if (n >= 0) i2 = n
+            else {
+                n = if (length == index3Start) 0 else getOverlap(output, length, index2, i, blockLength)
+                i2 = length - n
+                val previous = length
+                while (n < blockLength) output[length++] = index2[i + n++]
+                mixedBlocks.extend(output, index3Start, previous, length)
+            }
+            output[i1++] = i2.toChar()
+            i += blockLength
+        }
+        return length
+    }
     private fun compactWholeDataBlocks(fastILimit: Int, allSameBlocks: AllSameBlocks): Int {
         var capacity = ASCII_LIMIT + CodePointTrie.SMALL_DATA_BLOCK_LENGTH + 4
         val limit = highStart shr CodePointTrie.SHIFT_3
@@ -547,6 +700,11 @@ class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : Cod
         private const val ALL_SAME: Byte = 0
         private const val MIXED: Byte = 1
         private const val SAME_AS: Byte = 2
+        private const val I3_NULL: Byte = 0
+        private const val I3_BMP: Byte = 1
+        private const val I3_16: Byte = 2
+        private const val I3_18: Byte = 3
+        private const val INDEX_3_18BIT_BLOCK_LENGTH = CodePointTrie.INDEX_3_BLOCK_LENGTH + CodePointTrie.INDEX_3_BLOCK_LENGTH / 8
         private const val INITIAL_DATA_LENGTH = 1 shl 14
         private const val MEDIUM_DATA_LENGTH = 1 shl 17
         private const val MAX_DATA_LENGTH = UNICODE_LIMIT

@@ -1379,3 +1379,17 @@ block, final data length and the complete data array after both original
 internal passes. Fixtures cover both fast-range sizes, supplementary/high-end
 ranges, more than 32 constant values, random 32-bit values and mixed ASCII.
 Index compaction and final immutable building remain pending.
+
+## Trie index compaction
+
+MutableCodePointTrie.compactIndex now ports the fast-index condensation,
+index-3 null/fast/16-bit/18-bit classification, packed upper-bit groups,
+shortened final index-2 blocks, index-1 offsets, index-block deduplication and
+overlap, plus the original index-size limit check. It retains the original
+index-table layout and scratch-array behavior.
+
+The data-pass oracle test now continues through index compaction and compares
+the complete index16 array, mutable indexes, flags, index length and null offset.
+Additional fixtures assign 131,072 unique values to force 18-bit data offsets;
+both FAST and SMALL fast-range sizes are exercised. The compactTrie orchestration
+and final immutable builder remain pending.
