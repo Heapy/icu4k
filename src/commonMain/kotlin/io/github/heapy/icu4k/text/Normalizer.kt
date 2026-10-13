@@ -126,6 +126,43 @@ class Normalizer private constructor(private var text: UCharacterIterator, priva
             internal val maybe = QuickCheckResult()
         }
     }
+    private class ArraySlice(private val chars: CharArray, private val start: Int, private val limit: Int) : CharSequence {
+        init { if (start < 0 || limit < start || limit > chars.size) throw IndexOutOfBoundsException() }
+        override val length: Int get() = limit - start
+        override fun get(index: Int): Char {
+            if (index < 0 || index >= length) throw IndexOutOfBoundsException()
+            return chars[start + index]
+        }
+        override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
+            if (startIndex < 0 || endIndex < startIndex || endIndex > length) throw IndexOutOfBoundsException()
+            return ArraySlice(chars, start + startIndex, start + endIndex)
+        }
+        override fun toString(): String = chars.concatToString(start, limit)
+    }
+    private class CharsAppendable(private val chars: CharArray, private val start: Int, private val limit: Int) : Appendable {
+        private var offset = start
+        fun length(): Int {
+            val length = offset - start
+            if (offset > limit) throw IndexOutOfBoundsException(length.toString())
+            return length
+        }
+        private fun put(c: Char) {
+            if (offset < 0 || offset >= chars.size) throw IndexOutOfBoundsException()
+            chars[offset++] = c
+        }
+        override fun append(value: Char): Appendable {
+            if (offset < limit) put(value) else offset++
+            return this
+        }
+        override fun append(value: CharSequence?): Appendable = append(value, 0, value!!.length)
+        override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable {
+            val length = endIndex - startIndex
+            if (length <= limit - offset) {
+                for (i in startIndex until endIndex) put(value!![i])
+            } else offset += length
+            return this
+        }
+    }
     companion object {
         const val UNICODE_3_2 = 0x20
         const val DONE = UCharacterIterator.DONE
@@ -141,6 +178,72 @@ class Normalizer private constructor(private var text: UCharacterIterator, priva
         fun normalize(source: String, mode: Mode, options: Int = 0): String = mode.resolve(options).normalize(source)
         fun quickCheck(source: String, mode: Mode, options: Int = 0): QuickCheckResult = mode.resolve(options).quickCheck(source)
         fun isNormalized(source: String, mode: Mode, options: Int = 0): Boolean = mode.resolve(options).isNormalized(source)
+        val COMPOSE = NFC
+        val COMPOSE_COMPAT = NFKC
+        val DECOMP = NFD
+        val DECOMP_COMPAT = NFKD
+        const val IGNORE_HANGUL = 1
+        const val FOLD_CASE_DEFAULT = 0
+        const val FOLD_CASE_EXCLUDE_SPECIAL_I = 1
+        const val INPUT_IS_FCD = 0x20000
+        const val COMPARE_IGNORE_CASE = 0x10000
+        const val COMPARE_CODE_POINT_ORDER = 0x8000
+        const val COMPARE_NORM_OPTIONS_SHIFT = 20
+
+        fun compose(source: String, compat: Boolean, options: Int = 0): String =
+            normalize(source, if (compat) NFKC else NFC, options)
+        fun decompose(source: String, compat: Boolean, options: Int = 0): String =
+            normalize(source, if (compat) NFKD else NFD, options)
+        fun compose(source: CharArray, target: CharArray, compat: Boolean, options: Int): Int =
+            compose(source, 0, source.size, target, 0, target.size, compat, options)
+        fun decompose(source: CharArray, target: CharArray, compat: Boolean, options: Int): Int =
+            decompose(source, 0, source.size, target, 0, target.size, compat, options)
+        fun normalize(source: CharArray, target: CharArray, mode: Mode, options: Int): Int =
+            normalize(source, 0, source.size, target, 0, target.size, mode, options)
+        fun compose(src: CharArray, srcStart: Int, srcLimit: Int, dest: CharArray, destStart: Int,
+                    destLimit: Int, compat: Boolean, options: Int): Int =
+            normalize(src, srcStart, srcLimit, dest, destStart, destLimit, if (compat) NFKC else NFC, options)
+        fun decompose(src: CharArray, srcStart: Int, srcLimit: Int, dest: CharArray, destStart: Int,
+                      destLimit: Int, compat: Boolean, options: Int): Int =
+            normalize(src, srcStart, srcLimit, dest, destStart, destLimit, if (compat) NFKD else NFD, options)
+        fun normalize(src: CharArray, srcStart: Int, srcLimit: Int, dest: CharArray, destStart: Int,
+                      destLimit: Int, mode: Mode, options: Int): Int {
+            val source = ArraySlice(src, srcStart, srcLimit)
+            val output = CharsAppendable(dest, destStart, destLimit)
+            mode.resolve(options).normalize(source, output)
+            return output.length()
+        }
+        fun normalize(c: Int, mode: Mode, options: Int = 0): String {
+            if (mode === NFD && options == 0) {
+                return Normalizer2.getNFCInstance().getDecomposition(c) ?: UTF16.valueOf(c)
+            }
+            return normalize(UTF16.valueOf(c), mode, options)
+        }
+        fun quickCheck(source: CharArray, mode: Mode, options: Int): QuickCheckResult =
+            quickCheck(source, 0, source.size, mode, options)
+        fun quickCheck(source: CharArray, start: Int, limit: Int, mode: Mode, options: Int): QuickCheckResult =
+            mode.resolve(options).quickCheck(ArraySlice(source, start, limit))
+        fun isNormalized(source: CharArray, start: Int, limit: Int, mode: Mode, options: Int): Boolean =
+            mode.resolve(options).isNormalized(ArraySlice(source, start, limit))
+        fun isNormalized(c: Int, mode: Mode, options: Int): Boolean = isNormalized(UTF16.valueOf(c), mode, options)
+        fun concatenate(left: String, right: String, mode: Mode, options: Int): String =
+            mode.resolve(options).append(StringBuilder(left.length + right.length + 16).append(left), right).toString()
+        fun concatenate(left: CharArray, right: CharArray, mode: Mode, options: Int): String =
+            mode.resolve(options).append(StringBuilder(left.size + right.size + 16).append(left.concatToString()),
+                ArraySlice(right, 0, right.size)).toString()
+        fun concatenate(left: CharArray, leftStart: Int, leftLimit: Int, right: CharArray, rightStart: Int,
+                        rightLimit: Int, dest: CharArray?, destStart: Int, destLimit: Int, mode: Mode, options: Int): Int {
+            requireNotNull(dest)
+            require(right !== dest || rightStart >= destLimit || destStart >= rightLimit) { "overlapping right and dst ranges" }
+            val output = StringBuilder(leftLimit - leftStart + rightLimit - rightStart + 16)
+                .append(ArraySlice(left, leftStart, leftLimit))
+            mode.resolve(options).append(output, ArraySlice(right, rightStart, rightLimit))
+            val length = output.length
+            if (length > destLimit - destStart) throw IndexOutOfBoundsException(length.toString())
+            if (destStart < 0 || destStart > dest.size - length) throw IndexOutOfBoundsException()
+            for (i in 0 until length) dest[destStart + i] = output[i]
+            return length
+        }
         val NO: QuickCheckResult = QuickCheckResult.no
         val YES: QuickCheckResult = QuickCheckResult.yes
         val MAYBE: QuickCheckResult = QuickCheckResult.maybe

@@ -1782,3 +1782,21 @@ iterator ownership, compatibility expansions and Unicode 3.2 options. Common
 tests verify expansion offsets and clone independence across targets. Legacy
 Normalizer's remaining static overloads, comparison/concatenation helpers and
 compatibility aliases are still pending; this does not mark the class complete.
+
+### Legacy normalization array and concatenation APIs
+
+Ported compose/decompose String and array overloads, range-based normalization,
+code-point normalization with the original NFD fast path, array quickCheck and
+isNormalized, and normalized concatenation for strings/arrays/ranges. The common
+CharsAppendable retains ICU4J's output-counting behavior on overflow, including
+its distinction between single-character writes and all-or-nothing sequence
+writes. Concatenation allows the left input to alias the destination, rejects
+an overlapping right input, and leaves the destination unchanged on overflow.
+Compatibility mode aliases and normalization/comparison option constants are
+also present; the comparison implementation and FC_NFKC closure remain pending.
+
+Differential tests compare results, exception classes/messages and the entire
+output buffer after successful and overflowing operations across all modes,
+Unicode 3.2, random UTF-16 slices and compatibility expansions. Common tests
+exercise array output, overflow accounting and composition across a concatenation
+boundary on all locally runnable targets.
