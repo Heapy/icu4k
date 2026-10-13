@@ -306,3 +306,19 @@ status/source, final cursor position and every Unicode trie lookup with ICU4J.
 Common tests load real data and reject invalid magic/version. Runtime boundary
 traversal, dictionary engines, resource-bundle locale selection and public
 BreakIterator factories remain pending.
+
+## Common character cursor
+
+A common CharacterIterator contract replaces java.text.CharacterIterator, with
+StringCharacterIterator preserving ICU's bounded code-unit traversal, absolute
+indices, mutable text reset, value equality/hash and independent cursor clones.
+CharacterIteration ports next32/previous32/current32/nextTrail32, including the
+intentional trail-unit positioning of nextTrail32. U+FFFF is distinguished from
+end-of-range by cursor position; split surrogate pairs remain individual units.
+The common port keeps StringCharacterIterator available rather than deprecating
+it in favor of the unavailable java.text class.
+
+JVM oracle tests compare 60,000 mixed cursor and code-point operations over
+random ranges/UTF-16 against ICU4J. Common tests cover U+FFFF, pairs, split ranges,
+empty text and clone independence. RBBI runtime traversal and adapters between
+CharacterIterator and UCharacterIterator remain pending.
