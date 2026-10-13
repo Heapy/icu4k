@@ -525,3 +525,17 @@ sizes, hashes and membership, plus BMP/supplementary/maximum crossing cases.
 Common tests cover interval splits, string retention, self-intersection,
 self-difference and symmetric difference. Freezing/span acceleration, public
 iteration, parsing and property resolution are still pending.
+
+## Dictionary range dispatch
+
+LanguageBreakEngine's common contract and DictionaryBreakEngine range dispatch
+are connected to UnicodeSet. setCharacters retains a compact independent copy;
+handles queries use the set. findBreaks scans the supported code-point run from
+the actual cursor, delegates divideUpDictionaryRange with phrase mode and the
+existing output deque, then restores the run-end cursor as upstream does.
+
+JVM tests compare 500 randomized bounded UTF-16 ranges with ICU4J, including
+surrogate pairs/unpaired units, independent startPos, set copying, delegated
+arguments, existing breaks and cursor restoration. Common tests cover a
+supplementary run. The delegated language-specific algorithms themselves are
+still pending; test delegates only verify this shared dispatch contract.

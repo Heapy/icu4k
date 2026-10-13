@@ -4,9 +4,32 @@
 package io.github.heapy.icu4k.impl.breakiter
 
 import io.github.heapy.icu4k.text.CharacterIterator
+import io.github.heapy.icu4k.text.UnicodeSet
+import io.github.heapy.icu4k.impl.CharacterIteration
 
-/** Shared dictionary helpers; UnicodeSet and language-engine integration are pending. */
-internal abstract class DictionaryBreakEngine {
+/** Shared dictionary-range dispatch and candidate/boundary helpers. */
+internal abstract class DictionaryBreakEngine : LanguageBreakEngine {
+    private var characters = UnicodeSet()
+    override fun handles(c: Int): Boolean = characters.contains(c)
+    override fun findBreaks(text: CharacterIterator, startPos: Int, endPos: Int,
+                            foundBreaks: DequeI, isPhraseBreaking: Boolean): Int {
+        val start = text.getIndex()
+        var current: Int
+        var c = CharacterIteration.current32(text)
+        while (true) {
+            current = text.getIndex()
+            if (current >= endPos || !characters.contains(c)) break
+            CharacterIteration.next32(text)
+            c = CharacterIteration.current32(text)
+        }
+        val result = divideUpDictionaryRange(text, start, current, foundBreaks, isPhraseBreaking)
+        text.setIndex(current)
+        return result
+    }
+    fun setCharacters(set: UnicodeSet) { characters = UnicodeSet(set).compact() }
+    abstract fun divideUpDictionaryRange(text: CharacterIterator, rangeStart: Int, rangeEnd: Int,
+                                         foundBreaks: DequeI, isPhraseBreaking: Boolean): Int
+
     class PossibleWord {
         private val lengths = IntArray(20)
         private val count = IntArray(1)
