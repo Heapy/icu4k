@@ -69,6 +69,88 @@ internal class UnicodeSetStringSpan private constructor(
         spanNotSet!!.add(c)
     }
 
+    fun span(s: CharSequence, start: Int, condition: UnicodeSet.SpanCondition): Int {
+        if (condition == UnicodeSet.SpanCondition.NOT_CONTAINED) return spanNot(s, start, null)
+        val limit = if (start >= s.length) s.length else spanSet.spanCodePointsAndCount(s, start, UnicodeSet.SpanCondition.CONTAINED, null)
+        if (limit == s.length) return limit
+        return spanWithStrings(s, start, limit, condition)
+    }
+    private fun spanWithStrings(s: CharSequence, start: Int, initialLimit: Int, condition: UnicodeSet.SpanCondition): Int {
+        val offsets = OffsetList()
+        offsets.setMaxLength(if (condition == UnicodeSet.SpanCondition.CONTAINED) maxLength16 else 0)
+        val length = s.length
+        var spanLimit = initialLimit
+        var pos = spanLimit
+        var rest = length - spanLimit
+        var spanLength = spanLimit - start
+        val lengths = spanLengths!!
+        while (true) {
+            if (condition == UnicodeSet.SpanCondition.CONTAINED) {
+                for (i in strings.indices) {
+                    var overlap = lengths[i].toInt()
+                    if (overlap == ALL_CP_CONTAINED.toInt()) continue
+                    val string = strings[i]
+                    val length16 = string.length
+                    if (overlap >= LONG_SPAN) overlap = length16 - if (codePointBefore(string, length16) > 0xffff) 2 else 1
+                    if (overlap > spanLength) overlap = spanLength
+                    var inc = length16 - overlap
+                    while (true) {
+                        if (inc > rest) break
+                        if (!offsets.containsOffset(inc) && matches16CPB(s, pos - overlap, length, string, length16)) {
+                            if (inc == rest) return length
+                            offsets.addOffset(inc)
+                        }
+                        if (overlap == 0) break
+                        --overlap; ++inc
+                    }
+                }
+            } else {
+                var maxInc = 0; var maxOverlap = 0
+                for (i in strings.indices) {
+                    var overlap = lengths[i].toInt()
+                    val string = strings[i]
+                    val length16 = string.length
+                    if (overlap >= LONG_SPAN) overlap = length16
+                    if (overlap > spanLength) overlap = spanLength
+                    var inc = length16 - overlap
+                    while (true) {
+                        if (inc > rest || overlap < maxOverlap) break
+                        if ((overlap > maxOverlap || inc > maxInc) && matches16CPB(s, pos - overlap, length, string, length16)) {
+                            maxInc = inc; maxOverlap = overlap; break
+                        }
+                        --overlap; ++inc
+                    }
+                }
+                if (maxInc != 0 || maxOverlap != 0) {
+                    pos += maxInc; rest -= maxInc
+                    if (rest == 0) return length
+                    spanLength = 0
+                    continue
+                }
+            }
+            if (spanLength != 0 || pos == 0) {
+                if (offsets.isEmpty()) return pos
+            } else {
+                if (offsets.isEmpty()) {
+                    spanLimit = spanSet.spanCodePointsAndCount(s, pos, UnicodeSet.SpanCondition.CONTAINED, null)
+                    spanLength = spanLimit - pos
+                    if (spanLength == rest || spanLength == 0) return spanLimit
+                    pos += spanLength; rest -= spanLength
+                    continue
+                } else {
+                    spanLength = spanOne(spanSet, s, pos, rest)
+                    if (spanLength > 0) {
+                        if (spanLength == rest) return length
+                        pos += spanLength; rest -= spanLength
+                        offsets.shift(spanLength); spanLength = 0
+                        continue
+                    }
+                }
+            }
+            val minOffset = offsets.popMinimum(null)
+            pos += minOffset; rest -= minOffset; spanLength = 0
+        }
+    }
     fun spanAndCount(s: CharSequence, start: Int, condition: UnicodeSet.SpanCondition, outCount: OutputInt): Int {
         if (condition == UnicodeSet.SpanCondition.NOT_CONTAINED) return spanNot(s, start, outCount)
         if (condition == UnicodeSet.SpanCondition.CONTAINED) return spanContainedAndCount(s, start, outCount)
@@ -78,7 +160,8 @@ internal class UnicodeSetStringSpan private constructor(
         while (rest != 0) {
             val cpLength = spanOne(spanSet, s, pos, rest)
             var maxInc = if (cpLength > 0) cpLength else 0
-            for (string in strings) {
+            for (i in strings.indices) {
+                val string = strings[i]
                 if (maxInc < string.length && string.length <= rest && matches16CPB(s, pos, s.length, string, string.length))
                     maxInc = string.length
             }
@@ -98,7 +181,8 @@ internal class UnicodeSetStringSpan private constructor(
         while (rest != 0) {
             val cpLength = spanOne(spanSet, s, pos, rest)
             if (cpLength > 0) offsets.addOffsetAndCount(cpLength, count + 1)
-            for (string in strings) {
+            for (i in strings.indices) {
+                val string = strings[i]
                 val length = string.length
                 if (length <= rest && !offsets.hasCountAtOffset(length, count + 1) && matches16CPB(s, pos, s.length, string, length))
                     offsets.addOffsetAndCount(length, count + 1)

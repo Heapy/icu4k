@@ -651,3 +651,18 @@ Concurrent calls on one span object are checked separately. Common tests
 exercise paths where greedy matching stops earlier and strings reduce counts.
 Optimized non-counting forward/reverse CONTAINED/SIMPLE spans and public
 UnicodeSet span/freeze integration remain pending.
+
+## Optimized forward string spans
+
+UnicodeSetStringSpan.span now ports the original optimized forward
+CONTAINED/SIMPLE overlap machine, including initial code-point spans, relevant
+prefix lengths, long-prefix fallback, earliest-start longest matching, pending
+ring offsets and one-code-point progression between pending string matches.
+Scratch remains per-call for common concurrency. Count loops also use indexed
+string access as upstream does.
+
+JVM tests compare 300 overlapping/malformed fixtures at every start under ALL
+and forward-contained metadata modes, including long prefixes and supplementary
+strings. Common tests distinguish greedy from contained paths and validate
+code-point/string overlap. Optimized reverse spans and public UnicodeSet
+span/freeze integration remain pending.
