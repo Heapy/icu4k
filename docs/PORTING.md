@@ -694,3 +694,16 @@ supplementary and malformed UTF-16, long suffixes and unchanged count outputs
 at the end. Common tests cover frozen string paths, thawed-copy independence
 and counts reduced by fully contained strings. Pattern/property parsing and
 the remaining UnicodeSet API are still pending.
+
+## Pattern syntax and whitespace primitives
+
+PatternProps now uses the upstream Latin-1 and indexed BMP bit tables for the
+immutable Pattern_Syntax and Pattern_White_Space properties. Identifier checks,
+skipping and whitespace trimming are common Kotlin. trimSpaceChar preserves
+the upstream asymmetric trailing Pattern_White_Space predicate; the leading
+Java SpaceChar predicate is represented by its Unicode separator ranges.
+
+JVM oracle tests compare every Unicode code point plus out-of-range values,
+and 2,000 random strings with every identifier slice. Common tests cover
+non-ASCII syntax, whitespace distinctions and the trailing trim quirk. This
+provides a dependency for pattern parsing; the parser itself remains pending.
