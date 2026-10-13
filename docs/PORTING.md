@@ -735,3 +735,16 @@ combinations, including repeated end/error calls and snapshot restoration.
 Common tests cover symbol expansion, undefined references, escaped values,
 position independence while inside a variable and code-unit jumping. The
 UnicodeSet pattern parser and concrete matcher implementations remain pending.
+
+## UnicodeSet matching algorithms
+
+UnicodeSet now ports matchesIndexValue, addMatchSetTo and matches, including
+longest string matches, incremental partial matches, ETHER anchoring, reverse
+string traversal and the original UnicodeFilter code-point fallback with
+reverse surrogate offset adjustment. The class does not yet declare the
+UnicodeMatcher interface because its toPattern implementation is still pending.
+
+JVM tests compare 150 mixed range/string sets at all start/limit combinations
+in both incremental modes, including frozen sets and malformed UTF-16, and
+all 256 index values. Common tests verify longest and partial matches, unchanged
+offsets on partial matches, ETHER and union behavior.

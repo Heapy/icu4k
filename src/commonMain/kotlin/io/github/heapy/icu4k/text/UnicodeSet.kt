@@ -284,6 +284,62 @@ class UnicodeSet() : Iterable<String> {
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
     }
+    fun matchesIndexValue(v: Int): Boolean {
+        for (i in 0 until getRangeCount()) {
+            val low = getRangeStart(i)
+            val high = getRangeEnd(i)
+            if (low and -256 == high and -256) {
+                if (low and 255 <= v && v <= high and 255) return true
+            } else if (low and 255 <= v || v <= high and 255) return true
+        }
+        for (string in stringElements) if (string.isNotEmpty() && UTF16.charAt(string, 0) and 255 == v) return true
+        return false
+    }
+    fun addMatchSetTo(toUnionTo: UnicodeSet) { toUnionTo.addAll(this) }
+    fun matches(text: Replaceable, offset: IntArray, limit: Int, incremental: Boolean): Int {
+        if (offset[0] == limit) return if (contains(UnicodeMatcher.ETHER.code)) {
+            if (incremental) UnicodeMatcher.U_PARTIAL_MATCH else UnicodeMatcher.U_MATCH
+        } else UnicodeMatcher.U_MISMATCH
+        if (hasStrings()) {
+            val forward = offset[0] < limit
+            val firstChar = text.charAt(offset[0])
+            var highWaterLength = 0
+            for (trial in stringElements) {
+                if (trial.isEmpty()) continue
+                val c = trial[if (forward) 0 else trial.lastIndex]
+                if (forward && c > firstChar) break
+                if (c != firstChar) continue
+                val length = matchRest(text, offset[0], limit, trial)
+                if (incremental && length == (if (forward) limit - offset[0] else offset[0] - limit)) return UnicodeMatcher.U_PARTIAL_MATCH
+                if (length == trial.length) {
+                    if (length > highWaterLength) highWaterLength = length
+                    if (forward && length < highWaterLength) break
+                }
+            }
+            if (highWaterLength != 0) {
+                offset[0] += if (forward) highWaterLength else -highWaterLength
+                return UnicodeMatcher.U_MATCH
+            }
+        }
+        if (offset[0] < limit) {
+            val c = text.char32At(offset[0])
+            if (contains(c)) { offset[0] += UTF16.getCharCount(c); return UnicodeMatcher.U_MATCH }
+        }
+        if (offset[0] > limit && contains(text.char32At(offset[0]))) {
+            --offset[0]
+            if (offset[0] >= 0) offset[0] -= UTF16.getCharCount(text.char32At(offset[0])) - 1
+            return UnicodeMatcher.U_MATCH
+        }
+        return if (incremental && offset[0] == limit) UnicodeMatcher.U_PARTIAL_MATCH else UnicodeMatcher.U_MISMATCH
+    }
+    private fun matchRest(text: Replaceable, start: Int, limit: Int, string: String): Int {
+        val forward = start < limit
+        val maxLength = minOf(if (forward) limit - start else start - limit, string.length)
+        for (i in 1 until maxLength) {
+            if (text.charAt(if (forward) start + i else start - i) != string[if (forward) i else string.lastIndex - i]) return 0
+        }
+        return maxLength
+    }
     fun freeze(): UnicodeSet {
         if (!isFrozen()) {
             compact()
