@@ -1294,3 +1294,16 @@ standard forms, casefold variants, quick-check tokens, custom name caching,
 streaming Appendable output and rejection of aliased source/destination.
 A JVM concurrency test races eight loads of one custom name and verifies shared
 instance identity and normalization results after publication.
+
+## Filtered normalization
+
+FilteredNormalizer2 now ports the complete original Normalizer2 wrapper: SIMPLE
+UnicodeSet spans, unchanged out-of-filter text, filtered property queries,
+quick-check aggregation, streaming output and merging only the in-filter suffix
+and prefix on append. Both the normalizer and the filter are retained by
+reference, including string-element span behavior and mutable-filter updates.
+
+Common tests cover filtering, append boundaries, string elements, retained set
+changes and alias rejection. JVM oracle tests compare all four modes, mutable
+and frozen sets, filters with and without strings, malformed UTF-16, both append
+operations, properties and Appendable output.
