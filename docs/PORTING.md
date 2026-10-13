@@ -1025,3 +1025,15 @@ Out-of-range script values retain the original empty/default metadata behavior.
 JVM tests compare every script entry and invalid bounds with ICU4J; common tests
 exercise representative flags and supplementary-capable sample generation.
 Locale-to-script selection remains pending.
+
+## Direct-vector binary properties
+
+UCharacterProperty now decodes all 32 binary property bits stored in additional
+vector word 1 using the original UProperty-to-bit mapping, including the signed
+high bit for Prepended_Concatenation_Mark. The internal helper rejects properties
+from other sources; it is a component of the future complete binary dispatcher.
+
+JVM tests compare 20,000 random code points per bit plus boundary/error inputs
+against ICU4J. Common tests cover alphabetic, pattern whitespace, the high bit
+and unsupported sources. Case, bidi, normalization, emoji and derived binary
+dispatch entries remain pending.

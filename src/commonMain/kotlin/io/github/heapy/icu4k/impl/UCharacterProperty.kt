@@ -59,6 +59,11 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Directly stored binary properties from additional-vector word 1. */
+    internal fun hasVectorBinaryProperty(c: Int, which: Int): Boolean {
+        val bit = vectorBinaryProperties[which] ?: throw IllegalArgumentException("Not a vector binary property: $which")
+        return getAdditional(c, 1) and (1 shl bit) != 0
+    }
     /** Integer entries backed by the bidi, block and layout tries. */
     internal fun getTrieIntPropertyValue(c: Int, which: Int): Int = when (which) {
         UProperty.BIDI_CLASS -> UBiDiProps.INSTANCE.getClass(c)
@@ -212,6 +217,41 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
 
     private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        private val vectorBinaryProperties = mapOf(
+            UProperty.ALPHABETIC to 8,
+            UProperty.ASCII_HEX_DIGIT to 7,
+            UProperty.DASH to 1,
+            UProperty.DEFAULT_IGNORABLE_CODE_POINT to 19,
+            UProperty.DEPRECATED to 20,
+            UProperty.DIACRITIC to 10,
+            UProperty.EXTENDER to 11,
+            UProperty.GRAPHEME_BASE to 26,
+            UProperty.GRAPHEME_EXTEND to 13,
+            UProperty.GRAPHEME_LINK to 14,
+            UProperty.HEX_DIGIT to 6,
+            UProperty.HYPHEN to 2,
+            UProperty.ID_CONTINUE to 25,
+            UProperty.ID_START to 24,
+            UProperty.IDEOGRAPHIC to 9,
+            UProperty.IDS_BINARY_OPERATOR to 15,
+            UProperty.IDS_TRINARY_OPERATOR to 16,
+            UProperty.LOGICAL_ORDER_EXCEPTION to 21,
+            UProperty.MATH to 5,
+            UProperty.NONCHARACTER_CODE_POINT to 12,
+            UProperty.QUOTATION_MARK to 3,
+            UProperty.RADICAL to 17,
+            UProperty.TERMINAL_PUNCTUATION to 4,
+            UProperty.UNIFIED_IDEOGRAPH to 18,
+            UProperty.WHITE_SPACE to 0,
+            UProperty.XID_CONTINUE to 23,
+            UProperty.XID_START to 22,
+            UProperty.S_TERM to 27,
+            UProperty.VARIATION_SELECTOR to 28,
+            UProperty.PATTERN_SYNTAX to 29,
+            UProperty.PATTERN_WHITE_SPACE to 30,
+            UProperty.PREPENDED_CONCATENATION_MARK to 31,
+        )
+
         private val gcbToHst = intArrayOf(0, 0, 0, 0, 1, 0, 4, 5, 3, 2)
         private val vectorIntProperties = mapOf(
             UProperty.DECOMPOSITION_TYPE to VectorIntProperty(2, 0x1f, 0),
