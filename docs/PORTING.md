@@ -2468,3 +2468,26 @@ errors, mutable entries and iterators. Common tests cover normalization, sorting
 live mutation, limits, trimming and obsolete-code conversion. Full JVM, JS Node
 and macOS Arm64 suites pass. ULocale and locale resource/factory integration
 remain pending.
+
+### Legacy/Unicode locale key and type data
+
+Ported KeyTypeData's legacy/BCP key and type conversion, reverse aliases,
+timezone colon/slash handling, known/special output flags, ordered read-only
+key/type lists, deprecation metadata and value types. Special handlers preserve
+original well-formed syntax for codepoints, reorder codes, region values,
+scripts, subdivision codes and private types; they do not add semantic validity
+checks beyond upstream's patterns. Added the generic Output<T> parameter wrapper.
+
+Embedded pinned keyTypeData.res and timezoneTypes.res (39 total resources).
+KeyTypeData's direct resource loader resolves the original cross-bundle
+/ICUDATA aliases into timezoneTypes, preserving each value's reader context.
+This is the direct lookup needed by these data bundles; general locale fallback
+and the public resource-bundle facade remain pending.
+
+Differential tests compare every original key/type alias, timezone conversion,
+ordered lists, metadata, flags (including aliased output parameters), null
+outputs, immutable views and 3000 generated special-type inputs against ICU4J.
+The original key/type resource bytes are also compared. Common tests exercise
+aliases, timezone data, special patterns, metadata and outputs. Full JVM, JS
+Node and macOS Arm64 suites pass. All four data/model/parser generators pass
+--check. ULocale and locale/resource factory integration remain pending.

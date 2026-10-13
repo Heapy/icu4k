@@ -268,6 +268,20 @@
       "size": 32384,
       "generated_from": "icu4c/source/data/brkitr/lstm/Burmese_graphclust_model5_heavy.txt",
       "generator": "scripts/generate-lstm-models.py"
+    },
+    {
+      "name": "keyTypeData.res",
+      "file": "data/icu78/keyTypeData.res",
+      "object": "KeyTypeResourceData",
+      "sha256": "2d4d4bc9aa8e84817ede905aefc22cb93b0132b8035b3c9aa966701496969447",
+      "size": 7472
+    },
+    {
+      "name": "timezoneTypes.res",
+      "file": "data/icu78/timezoneTypes.res",
+      "object": "TimezoneTypeResourceData",
+      "sha256": "c949c2ae617c4adfa84c71bdeb2f010340d40c38ad32ec33bcc70e674ff8dd32",
+      "size": 21248
     }
   ]
 }
