@@ -1218,3 +1218,15 @@ before maybe characters; full quick check retains the maybe flag.
 JVM tests compare every slice of random mixed/malformed UTF-16 strings across
 all five datasets and both contiguous/span modes. Common tests distinguish
 packed yes/maybe/no results. The main composition scan and facade remain pending.
+
+## Normalization boundary scans and short decomposition
+
+Normalizer2Impl now ports forward/backward composition and FCD boundary scans,
+short-segment decomposition with optional boundary stopping, and previous
+trailing-class lookup. These retain the original code-point traversal and
+contiguous-mode rules and feed the main composition/FCD loops.
+
+JVM tests compare the original private methods over random mixed/malformed
+strings at every starting position for all five datasets and mode combinations.
+Common tests exercise stopping before starters and canonical ordering in short
+segments. Main composition and FCD string processing remain pending.

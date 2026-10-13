@@ -57,6 +57,66 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    internal fun decomposeShort(s: CharSequence, initialSrc: Int, limit: Int, stopAtCompBoundary: Boolean, onlyContiguous: Boolean, buffer: ReorderingBuffer): Int {
+        var src = initialSrc
+        while (src < limit) {
+            val c = codePointAt(s, src)
+            if (stopAtCompBoundary && c < minCompNoMaybeCP) return src
+            val norm16 = getNorm16(c)
+            if (stopAtCompBoundary && norm16HasCompBoundaryBefore(norm16)) return src
+            src += if (c > 0xffff) 2 else 1
+            decomposeCodePoint(c, norm16, buffer)
+            if (stopAtCompBoundary && norm16HasCompBoundaryAfter(norm16, onlyContiguous)) return src
+        }
+        return src
+    }
+    internal fun findPreviousCompBoundary(s: CharSequence, initialP: Int, onlyContiguous: Boolean): Int {
+        var p = initialP
+        while (p > 0) {
+            val c = codePointBefore(s, p)
+            val norm16 = getNorm16(c)
+            if (norm16HasCompBoundaryAfter(norm16, onlyContiguous)) break
+            p -= if (c > 0xffff) 2 else 1
+            if (c < minCompNoMaybeCP || norm16HasCompBoundaryBefore(norm16)) break
+        }
+        return p
+    }
+    internal fun findNextCompBoundary(s: CharSequence, initialP: Int, limit: Int, onlyContiguous: Boolean): Int {
+        var p = initialP
+        while (p < limit) {
+            val c = codePointAt(s, p)
+            val norm16 = normTrie[c]
+            if (c < minCompNoMaybeCP || norm16HasCompBoundaryBefore(norm16)) break
+            p += if (c > 0xffff) 2 else 1
+            if (norm16HasCompBoundaryAfter(norm16, onlyContiguous)) break
+        }
+        return p
+    }
+    internal fun findPreviousFCDBoundary(s: CharSequence, initialP: Int): Int {
+        var p = initialP
+        while (p > 0) {
+            val c = codePointBefore(s, p)
+            if (c < minDecompNoCP) break
+            val norm16 = getNorm16(c)
+            if (norm16HasDecompBoundaryAfter(norm16)) break
+            p -= if (c > 0xffff) 2 else 1
+            if (norm16HasDecompBoundaryBefore(norm16)) break
+        }
+        return p
+    }
+    internal fun findNextFCDBoundary(s: CharSequence, initialP: Int, limit: Int): Int {
+        var p = initialP
+        while (p < limit) {
+            val c = codePointAt(s, p)
+            if (c < minLcccCP) break
+            val norm16 = getNorm16(c)
+            if (norm16HasDecompBoundaryBefore(norm16)) break
+            p += if (c > 0xffff) 2 else 1
+            if (norm16HasDecompBoundaryAfter(norm16)) break
+        }
+        return p
+    }
+    private fun getPreviousTrailCC(s: CharSequence, start: Int, p: Int): Int = if (start == p) 0 else getFCD16(codePointBefore(s, p))
     /** Packed quick-check span (bits 31..1) and maybe flag (bit 0). */
     fun composeQuickCheck(s: CharSequence, initialSrc: Int, limit: Int, onlyContiguous: Boolean, doSpan: Boolean): Int {
         var src = initialSrc
