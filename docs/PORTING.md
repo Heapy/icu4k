@@ -1530,3 +1530,17 @@ Common tests cover CJK-style names, factorized names and setter validation.
 The full name data reader and public lookup API remain pending.
 Common tests also verify fullwidth/Arabic hex digits and out-of-bounds padding
 widths on JVM, JS and Native.
+
+## Name binary data reader
+
+The pinned unames.icu resource is embedded with manifest checksum verification.
+UCharacterNameReader ports format authentication and token/group/algorithm-table
+reading, including factor arrays, prefixes and factor strings. UCharacterName
+now stores these tables, lazily loads its shared instance and exposes algorithm
+range/name access. Data setters retain the original acceptance behavior.
+
+JVM tests compare every token/group table entry and every algorithmic name in
+all embedded ranges with ICU4J. Common tests cover real CJK/Hangul names,
+resource-copy isolation, invalid versions and truncated inputs. Generated data
+verification now checks 32 resources. Group-name decompression and public name
+lookup remain pending.

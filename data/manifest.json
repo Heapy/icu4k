@@ -220,6 +220,13 @@
       "object": "Uts46Data",
       "sha256": "397ed9198dd1b1fa67b919f6ad83fd3ff57cb63b340a9f68fc78f43205831893",
       "size": 60896
+    },
+    {
+      "name": "unames.icu",
+      "file": "data/icu78/unames.icu",
+      "object": "UnamesData",
+      "sha256": "fc4ed872c929d3fb660d18f21cd516540122d22806c1fd3c421853c8cb3728fb",
+      "size": 341808
     }
   ]
 }

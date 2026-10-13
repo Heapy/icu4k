@@ -3,10 +3,55 @@
 package io.github.heapy.icu4k.impl
 
 /** Character-name data implementation being ported. */
-internal class UCharacterName {
+internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = ICUBinary.getRequiredData("unames.icu")) {
+    internal var tokenTable = CharArray(0)
+        private set
+    internal var tokenString = ByteArray(0)
+        private set
+    internal var groupInfo = CharArray(0)
+        private set
+    internal var groupString = ByteArray(0)
+        private set
+    internal var algorithms = emptyArray<AlgorithmName>()
+        private set
+    var m_groupcount_ = 0
+        private set
+    internal var m_groupsize_ = 0
+        private set
+    init { UCharacterNameReader(bytes).read(this) }
+    internal fun setToken(token: CharArray?, strings: ByteArray?): Boolean {
+        if (token == null || token.isEmpty() || strings == null || strings.isEmpty()) return false
+        tokenTable = token
+        tokenString = strings
+        return true
+    }
+    internal fun setAlgorithm(alg: Array<AlgorithmName>?): Boolean {
+        if (alg.isNullOrEmpty()) return false
+        algorithms = alg
+        return true
+    }
+    internal fun setGroupCountSize(count: Int, size: Int): Boolean {
+        if (count <= 0 || size <= 0) return false
+        m_groupcount_ = count
+        m_groupsize_ = size
+        return true
+    }
+    internal fun setGroup(group: CharArray?, strings: ByteArray?): Boolean {
+        if (group == null || group.isEmpty() || strings == null || strings.isEmpty()) return false
+        groupInfo = group
+        groupString = strings
+        return true
+    }
+    fun getAlgorithmLength(): Int = algorithms.size
+    fun getAlgorithmStart(index: Int): Int = algorithms[index].rangeStart
+    fun getAlgorithmEnd(index: Int): Int = algorithms[index].rangeEnd
+    fun getAlgorithmName(index: Int, codepoint: Int): String = StringBuilder().also { algorithms[index].appendName(codepoint, it) }.toString()
+
     internal class AlgorithmName {
-        private var rangeStart = 0
-        private var rangeEnd = 0
+        internal var rangeStart = 0
+            private set
+        internal var rangeEnd = 0
+            private set
         private var type: Byte = 0
         private var variant: Byte = 0
         private var factor: CharArray? = null
@@ -112,6 +157,7 @@ internal class UCharacterName {
         }
     }
     companion object {
+        val INSTANCE: UCharacterName by lazy { UCharacterName() }
         private fun addChars(set: IntArray, str: CharSequence): Int {
             for (i in str.length - 1 downTo 0) {
                 val ch = str[i].code
