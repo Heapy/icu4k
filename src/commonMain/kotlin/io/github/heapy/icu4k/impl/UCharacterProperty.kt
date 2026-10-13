@@ -88,8 +88,9 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         }
     }
 
-    /** Normalization-dependent entries; canonical segment-starter data is ported separately. */
+    /** Normalization-dependent binary entries, including canonical segment starters. */
     internal fun hasNormalizationBinaryProperty(c: Int, which: Int): Boolean = when (which) {
+        UProperty.SEGMENT_STARTER -> Norm2AllModes.getNFCInstance().impl.ensureCanonIterData().isCanonSegmentStarter(c)
         UProperty.FULL_COMPOSITION_EXCLUSION -> Norm2AllModes.getNFCInstance().impl.let { it.isCompNo(it.getNorm16(c)) }
         UProperty.NFD_INERT, UProperty.NFKD_INERT, UProperty.NFC_INERT, UProperty.NFKC_INERT ->
             Norm2AllModes.getN2WithImpl(which - UProperty.NFD_INERT)!!.isInert(c)

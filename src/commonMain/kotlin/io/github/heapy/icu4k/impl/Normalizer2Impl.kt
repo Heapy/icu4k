@@ -2,8 +2,135 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
-/** Data-driven normalization implementation; canonical-iteration support is still being ported. */
+/** Data-driven normalization and canonical-iteration implementation. */
 internal class Normalizer2Impl {
+    private class CanonicalData(val trie: io.github.heapy.icu4k.util.CodePointTrie, val sets: List<io.github.heapy.icu4k.text.UnicodeSet>)
+    private val canonicalData = lazy { buildCanonicalData() }
+    fun ensureCanonIterData(): Normalizer2Impl { canonicalData.value; return this }
+    private fun initializedCanonicalData(): CanonicalData {
+        if (!canonicalData.isInitialized()) throw NullPointerException()
+        return canonicalData.value
+    }
+    private fun buildCanonicalData(): CanonicalData {
+        val trie = io.github.heapy.icu4k.util.MutableCodePointTrie(0, 0)
+        val sets = mutableListOf<io.github.heapy.icu4k.text.UnicodeSet>()
+        fun addToStartSet(origin: Int, lead: Int) {
+            var value = trie[lead]
+            if (value and (CANON_HAS_SET or CANON_VALUE_MASK) == 0 && origin != 0) trie.set(lead, value or origin)
+            else {
+                val set: io.github.heapy.icu4k.text.UnicodeSet
+                if (value and CANON_HAS_SET == 0) {
+                    val first = value and CANON_VALUE_MASK
+                    value = (value and CANON_VALUE_MASK.inv()) or CANON_HAS_SET or sets.size
+                    trie.set(lead, value)
+                    set = io.github.heapy.icu4k.text.UnicodeSet()
+                    sets.add(set)
+                    if (first != 0) set.add(first)
+                } else set = sets[value and CANON_VALUE_MASK]
+                set.add(origin)
+            }
+        }
+        var start = 0
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        while (normTrie.getRange(start, io.github.heapy.icu4k.util.CodePointMap.RangeOption.FIXED_LEAD_SURROGATES, INERT, null, range)) {
+            val end = range.getEnd()
+            val norm16 = range.getValue()
+            if (norm16 == INERT || norm16 in minYesNo until minNoNo || norm16 in minMaybeNo until minMaybeYes) {
+                start = end + 1
+                continue
+            }
+            for (c in start..end) {
+                val oldValue = trie[c]
+                var newValue = oldValue
+                if (norm16 >= minMaybeYes) {
+                    newValue = newValue or CANON_NOT_SEGMENT_STARTER
+                    if (norm16 < MIN_NORMAL_MAYBE_YES) newValue = newValue or CANON_HAS_COMPOSITIONS
+                } else if (norm16 < minYesNo) newValue = newValue or CANON_HAS_COMPOSITIONS
+                else {
+                    var c2 = c
+                    var n16 = norm16
+                    if (isAlgorithmicNoNo(n16)) {
+                        c2 = mapAlgorithmic(c2, n16)
+                        n16 = getRawNorm16(c2)
+                    }
+                    if (n16 > minYesNo) {
+                        var mapping = getData(n16)
+                        val data = extraData!!
+                        val first = data[mapping].code
+                        val length = first and MAPPING_LENGTH_MASK
+                        if (first and MAPPING_HAS_CCC_LCCC_WORD != 0 && c == c2 && data[mapping - 1].code and 0xff != 0) {
+                            newValue = newValue or CANON_NOT_SEGMENT_STARTER
+                        }
+                        if (length != 0) {
+                            ++mapping
+                            val limit = mapping + length
+                            c2 = codePointAt(data, mapping)
+                            addToStartSet(c, c2)
+                            if (n16 >= minNoNo) {
+                                while (true) {
+                                    mapping += if (c2 > 0xffff) 2 else 1
+                                    if (mapping >= limit) break
+                                    c2 = codePointAt(data, mapping)
+                                    val value = trie[c2]
+                                    if (value and CANON_NOT_SEGMENT_STARTER == 0) trie.set(c2, value or CANON_NOT_SEGMENT_STARTER)
+                                }
+                            }
+                        }
+                    } else addToStartSet(c, c2)
+                }
+                if (newValue != oldValue) trie.set(c, newValue)
+            }
+            start = end + 1
+        }
+        return CanonicalData(trie.buildImmutable(io.github.heapy.icu4k.util.CodePointTrie.Type.SMALL, io.github.heapy.icu4k.util.CodePointTrie.ValueWidth.BITS_32), sets)
+    }
+    fun isCanonSegmentStarter(c: Int): Boolean = initializedCanonicalData().trie[c] >= 0
+    fun getCanonStartSet(c: Int, set: io.github.heapy.icu4k.text.UnicodeSet): Boolean {
+        val data = initializedCanonicalData()
+        val canonValue = data.trie[c] and CANON_NOT_SEGMENT_STARTER.inv()
+        if (canonValue == 0) return false
+        set.clear()
+        val value = canonValue and CANON_VALUE_MASK
+        if (canonValue and CANON_HAS_SET != 0) set.addAll(data.sets[value])
+        else if (value != 0) set.add(value)
+        if (canonValue and CANON_HAS_COMPOSITIONS != 0) {
+            val norm16 = getRawNorm16(c)
+            if (norm16 == JAMO_L) {
+                val syllable = Hangul.HANGUL_BASE + (c - Hangul.JAMO_L_BASE) * Hangul.JAMO_VT_COUNT
+                set.add(syllable, syllable + Hangul.JAMO_VT_COUNT - 1)
+            } else addComposites(if (isDecompYes(norm16)) getCompositionsListForDecompYes(norm16) else getCompositionsListForComposite(norm16), set)
+        }
+        return true
+    }
+    private fun addComposites(initialList: Int, set: io.github.heapy.icu4k.text.UnicodeSet) {
+        var list = initialList
+        val data = extraData!!
+        var first: Int
+        do {
+            first = data[list].code
+            val compositeAndFwd: Int
+            if (first and COMP_1_TRIPLE == 0) {
+                compositeAndFwd = data[list + 1].code
+                list += 2
+            } else {
+                compositeAndFwd = ((data[list + 1].code and COMP_2_TRAIL_MASK.inv()) shl 16) or data[list + 2].code
+                list += 3
+            }
+            val composite = compositeAndFwd shr 1
+            if (compositeAndFwd and 1 != 0) addComposites(getCompositionsListForComposite(getRawNorm16(composite)), set)
+            set.add(composite)
+        } while (first and COMP_1_LAST_TUPLE == 0)
+    }
+    fun addCanonIterPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        ensureCanonIterData()
+        var start = 0
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        val mapper = io.github.heapy.icu4k.util.CodePointMap.ValueFilter { it and CANON_NOT_SEGMENT_STARTER }
+        while (canonicalData.value.trie.getRange(start, mapper, range)) {
+            set.add(start)
+            start = range.getEnd() + 1
+        }
+    }
     fun addLcccChars(set: io.github.heapy.icu4k.text.UnicodeSet) {
         var start = 0
         val range = io.github.heapy.icu4k.util.CodePointMap.Range()
@@ -820,6 +947,10 @@ internal class Normalizer2Impl {
         const val MAPPING_HAS_CCC_LCCC_WORD = 0x80
         const val MAPPING_HAS_RAW_MAPPING = 0x40
         const val MAPPING_LENGTH_MASK = 0x1f
+        private const val CANON_NOT_SEGMENT_STARTER = Int.MIN_VALUE
+        private const val CANON_HAS_COMPOSITIONS = 0x40000000
+        private const val CANON_HAS_SET = 0x200000
+        private const val CANON_VALUE_MASK = 0x1fffff
         const val COMP_1_LAST_TUPLE = 0x8000
         const val COMP_1_TRIPLE = 1
         const val COMP_1_TRAIL_LIMIT = 0x3400

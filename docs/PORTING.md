@@ -1411,3 +1411,20 @@ Common tests verify value truncation, binary round-trip, builder reset, immutabl
 independence and null-argument behavior.
 A limit-exceeding fixture compares the thrown exception, cleared state and a
 successful subsequent build with ICU4J.
+
+## Canonical iteration data
+
+Normalizer2Impl now builds canonical-iteration data with MutableCodePointTrie
+and the original one-way mapping traversal, singleton/start-set encoding,
+non-starter flags and forward-composition flags. It ports isCanonSegmentStarter,
+getCanonStartSet, recursive composition-list expansion, Hangul syllable ranges
+and canonical property-start enumeration. SEGMENT_STARTER is connected to the
+normalization binary-property helper.
+
+A lazy immutable data holder replaces synchronized JVM initialization, keeping
+trie and start-set publication together. Calls requiring explicit initialization
+still fail before ensureCanonIterData, matching the original contract. JVM tests
+compare every Unicode segment-starter flag and canonical start set, including
+range endpoints and untouched destinations for absent sets, plus property
+starts and invalid lookups. Common tests cover initialization, composed Latin
+characters, Hangul and non-starters.
