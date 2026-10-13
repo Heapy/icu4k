@@ -1,3 +1,4 @@
 *.icu binary
 *.brk binary
 *.dict binary
+*.nrm binary

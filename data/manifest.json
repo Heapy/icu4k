@@ -185,6 +185,41 @@
       "object": "UemojiData",
       "sha256": "a92ca494ad7c7e923d35d92bbfbbb60b67dbf3bb9f2df143c0bba9f1ee024ccd",
       "size": 14400
+    },
+    {
+      "name": "nfc.nrm",
+      "file": "data/icu78/nfc.nrm",
+      "object": "NfcData",
+      "sha256": "66f17826a2ada7bef2ad9f8a86f3c9feac1c4b7ddfe070a587ae7e5933f7463e",
+      "size": 36336
+    },
+    {
+      "name": "nfkc.nrm",
+      "file": "data/icu78/nfkc.nrm",
+      "object": "NfkcData",
+      "sha256": "3d375fe101d90dffa231037e304e101e5be0822f5284182be29198bec48f6d0c",
+      "size": 56128
+    },
+    {
+      "name": "nfkc_cf.nrm",
+      "file": "data/icu78/nfkc_cf.nrm",
+      "object": "NfkcCfData",
+      "sha256": "a7dde88b31fe5a09ab8ed2bba29790e84ea0346c7f21478160b7828dd899560c",
+      "size": 53440
+    },
+    {
+      "name": "nfkc_scf.nrm",
+      "file": "data/icu78/nfkc_scf.nrm",
+      "object": "NfkcScfData",
+      "sha256": "65342136f1d975e10193c12e4320a51c1bc38a6c1a08522314ae11a3187677bf",
+      "size": 52992
+    },
+    {
+      "name": "uts46.nrm",
+      "file": "data/icu78/uts46.nrm",
+      "object": "Uts46Data",
+      "sha256": "397ed9198dd1b1fa67b919f6ad83fd3ff57cb63b340a9f68fc78f43205831893",
+      "size": 60896
     }
   ]
 }

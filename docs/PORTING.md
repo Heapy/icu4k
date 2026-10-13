@@ -1091,3 +1091,17 @@ for both decomposition forms, and random UTF-16 slice equality with ICU4J.
 Common tests exercise append behavior, LV/LVT raw decomposition and equality.
 Normalization data loading, reordering, composition and public normalizers
 remain pending.
+
+## Normalization resource loading
+
+All five pinned .nrm resources (NFC, NFKC, NFKC_CF, NFKC_SCF, UTS46) are now
+embedded, bringing generator verification to 31 resources. Normalizer2Impl.load
+ports the version-5 header, thresholds, FAST/16 norm trie, padding, mapping/
+composition text and smallFCD loading. getNorm16/getRawNorm16 retain the original
+lead-surrogate code-point distinction. Reloading retains the original loader
+behavior; normalization algorithms are not yet exposed.
+
+JVM tests compare every loaded threshold, mapping text, smallFCD byte and all
+Unicode trie values with ICU4J for all five resources. Common tests load each
+resource and verify surrogate behavior. Reordering, decomposition/composition
+and the public normalization facade remain pending.
