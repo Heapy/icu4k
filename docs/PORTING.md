@@ -1719,3 +1719,19 @@ JVM differential tests compare script handling across Unicode and break counts,
 queues and cursor positions for Myanmar prose, marks, mixed text and 500 seeded
 random strings, including range slices and both phrase flags. Common tests
 exercise the embedded dictionary on JVM, JS and macOS Native.
+
+### Lao dictionary segmentation
+
+Ported `LaoBreakEngine` with the original three-word candidate search, short-root
+and prefix thresholds, unknown-word resynchronization, mark attachment and
+terminal-boundary suppression. Lao-specific begin/end sets retain the prefix
+vowel exclusions and digraph consonant ranges from ICU4J. Property intersections
+construct the original word and mark sets without requiring the pending general
+UnicodeSet expression parser. The pinned root bundle's Lao dictionary is read
+from `laodict.dict`; generic resource-bundle dictionary resolution remains pending.
+
+Differential coverage compares script handling for every Unicode code point and
+both direct range division and base-class dispatch on Lao prose, combining marks,
+mixed text and 500 seeded random strings, with bounded iterators, range slices
+and both phrase flags. Common tests exercise the same embedded dictionary on
+all locally runnable targets.
