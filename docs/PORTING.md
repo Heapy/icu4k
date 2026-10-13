@@ -1258,3 +1258,15 @@ and malformed UTF-16 strings, including nonzero starts, both contiguous modes,
 all five normalization datasets and both append modes. Common tests cover
 canonical composition, Hangul and composition across an append boundary.
 The public Normalizer2 facade and canonical-iteration data remain pending.
+
+## Normalization property range enumeration
+
+Normalizer2Impl.addLcccChars and addPropertyStarts now enumerate the original
+same-value normalization trie ranges with fixed inert lead surrogates. The port
+preserves algorithmic-decomposition FCD change points and the Hangul LV/LV+1
+boundaries. Both methods add to the caller's existing UnicodeSet.
+
+JVM tests compare every resulting range endpoint with ICU4J for all five data
+files. Common tests verify combining-mark membership, exclusion of composed
+starters and lead surrogates, all Hangul LV boundaries and preservation of
+existing set members. Canonical-iterator property ranges remain pending.

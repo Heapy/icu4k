@@ -2,8 +2,51 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
-/** Normalization implementation being ported; currently Hangul and UTF-16 primitives. */
+/** Data-driven normalization implementation; canonical-iteration support is still being ported. */
 internal class Normalizer2Impl {
+    fun addLcccChars(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        var start = 0
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        while (normTrie.getRange(start, io.github.heapy.icu4k.util.CodePointMap.RangeOption.FIXED_LEAD_SURROGATES, INERT, null, range)) {
+            val end = range.getEnd()
+            val norm16 = range.getValue()
+            if (norm16 > MIN_NORMAL_MAYBE_YES && norm16 != JAMO_VT) {
+                set.add(start, end)
+            } else if (norm16 >= minNoNoCompNoMaybeCC && norm16 < limitNoNo && getFCD16(start) > 0xff) {
+                set.add(start, end)
+            }
+            start = end + 1
+        }
+    }
+
+    fun addPropertyStarts(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        var start = 0
+        val range = io.github.heapy.icu4k.util.CodePointMap.Range()
+        while (normTrie.getRange(start, io.github.heapy.icu4k.util.CodePointMap.RangeOption.FIXED_LEAD_SURROGATES, INERT, null, range)) {
+            val end = range.getEnd()
+            val value = range.getValue()
+            set.add(start)
+            if (start != end && isAlgorithmicNoNo(value) && value and DELTA_TCCC_MASK > DELTA_TCCC_1) {
+                var prevFCD16 = getFCD16(start)
+                while (++start <= end) {
+                    val fcd16 = getFCD16(start)
+                    if (fcd16 != prevFCD16) {
+                        set.add(start)
+                        prevFCD16 = fcd16
+                    }
+                }
+            }
+            start = end + 1
+        }
+        var c = Hangul.HANGUL_BASE
+        while (c < Hangul.HANGUL_LIMIT) {
+            set.add(c)
+            set.add(c + 1)
+            c += Hangul.JAMO_T_COUNT
+        }
+        set.add(Hangul.HANGUL_LIMIT)
+    }
+
     private var minDecompNoCP = 0
     private var minCompNoMaybeCP = 0
     private var minLcccCP = 0
