@@ -1558,3 +1558,18 @@ all five name choices through both raw and code-point lookup. Group selection
 is compared over all Unicode code points. Common tests cover modern names,
 aliases, supplementary names and group boundaries. Extended/generated fallback
 names and inverse group lookup remain pending.
+
+## Forward character-name API
+
+UCharacterName now dispatches algorithmic/group names and generates extended
+fallback names from the original category-name table, including noncharacters,
+lead/trail surrogates and unsigned hexadecimal formatting. UCharacter exposes
+getName(codepoint), getName(string, separator), getExtendedName and getNameAlias,
+plus the deprecated always-null Unicode_1_Name/ISO_Comment methods. String name
+joining retains the original single-character null vs multi-character literal
+"null" behavior.
+
+JVM tests compare modern, extended and alias names for every Unicode code point,
+all selector/invalid-input fixtures, direct fallback formatting and string
+joining. Common tests cover algorithmic names, corrected aliases, every major
+fallback category and public null behavior. Inverse name lookup remains pending.

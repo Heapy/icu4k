@@ -179,6 +179,27 @@ class UCharacter private constructor() {
         fun isULowercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.LOWERCASE)
         fun isUUppercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.UPPERCASE)
         fun isUWhiteSpace(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.WHITE_SPACE)
+        fun getName(ch: Int): String? = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getName(ch, io.github.heapy.icu4k.impl.UCharacterNameChoice.UNICODE_CHAR_NAME)
+        fun getName(s: String, separator: String?): String? {
+            if (s.length == 1) return getName(s[0].code)
+            val out = StringBuilder()
+            var i = 0
+            while (i < s.length) {
+                val cp = UTF16.charAt(s, i)
+                if (i != 0) out.append(separator)
+                out.append(getName(cp))
+                i += UTF16.getCharCount(cp)
+            }
+            return out.toString()
+        }
+        fun getExtendedName(ch: Int): String? = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getName(ch, io.github.heapy.icu4k.impl.UCharacterNameChoice.EXTENDED_CHAR_NAME)
+        fun getNameAlias(ch: Int): String? = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getName(ch, io.github.heapy.icu4k.impl.UCharacterNameChoice.CHAR_NAME_ALIAS)
+        @Deprecated("Unicode_1_Name has no values")
+        @Suppress("UNUSED_PARAMETER")
+        fun getName1_0(ch: Int): String? = null
+        @Deprecated("ISO_Comment has no values")
+        @Suppress("UNUSED_PARAMETER")
+        fun getISOComment(ch: Int): String? = null
         fun getCombiningClass(ch: Int): Int = io.github.heapy.icu4k.text.Normalizer2.getNFDInstance().getCombiningClass(ch)
         fun getIntPropertyValue(ch: Int, type: Int): Int = UCharacterProperty.INSTANCE.getIntPropertyValue(ch, type)
         /** All binary and enumerated properties have minimum zero, including undefined IDs. */

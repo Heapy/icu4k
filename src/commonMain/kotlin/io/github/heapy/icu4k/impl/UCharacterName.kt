@@ -42,6 +42,27 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         groupString = strings
         return true
     }
+    fun getName(ch: Int, choice: Int): String? {
+        if (ch !in 0..0x10ffff || choice > UCharacterNameChoice.CHAR_NAME_CHOICE_COUNT) return null
+        val algorithmic = getAlgName(ch, choice)
+        if (!algorithmic.isNullOrEmpty()) return algorithmic
+        return if (choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) getExtendedName(ch) else getGroupName(ch, choice)
+    }
+    private fun getAlgName(ch: Int, choice: Int): String? {
+        if (choice == UCharacterNameChoice.UNICODE_CHAR_NAME || choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+            for (i in algorithms.lastIndex downTo 0) {
+                if (algorithms[i].contains(ch)) return StringBuilder().also { algorithms[i].appendName(ch, it) }.toString()
+            }
+        }
+        return null
+    }
+    fun getExtendedName(ch: Int): String = getName(ch, UCharacterNameChoice.UNICODE_CHAR_NAME) ?: getExtendedOr10Name(ch)
+    fun getExtendedOr10Name(ch: Int): String {
+        val type = getExtendedType(ch)
+        val typeName = if (type >= TYPE_NAMES.size) "unknown" else TYPE_NAMES[type]
+        val hex = ch.toUInt().toString(16).uppercase().padStart(4, '0')
+        return "<$typeName-$hex>"
+    }
     fun getGroup(codepoint: Int): Int {
         var end = m_groupcount_
         val msb = getCodepointMSB(codepoint)
@@ -243,6 +264,46 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         }
     }
     companion object {
+        private val TYPE_NAMES = arrayOf(
+            "unassigned",
+            "uppercase letter",
+            "lowercase letter",
+            "titlecase letter",
+            "modifier letter",
+            "other letter",
+            "non spacing mark",
+            "enclosing mark",
+            "combining spacing mark",
+            "decimal digit number",
+            "letter number",
+            "other number",
+            "space separator",
+            "line separator",
+            "paragraph separator",
+            "control",
+            "format",
+            "private use area",
+            "surrogate",
+            "dash punctuation",
+            "start punctuation",
+            "end punctuation",
+            "connector punctuation",
+            "other punctuation",
+            "math symbol",
+            "currency symbol",
+            "modifier symbol",
+            "other symbol",
+            "initial punctuation",
+            "final punctuation",
+            "noncharacter",
+            "lead surrogate",
+            "trail surrogate",
+        )
+        private fun getExtendedType(ch: Int): Int {
+            if (UCharacterUtility.isNonCharacter(ch)) return 30
+            val type = io.github.heapy.icu4k.lang.UCharacter.getType(ch)
+            return if (type == 18) { if (ch <= 0xdbff) 31 else 32 } else type
+        }
         const val LINES_PER_GROUP_ = 32
         private const val GROUP_SHIFT_ = 5
         private const val GROUP_MASK_ = LINES_PER_GROUP_ - 1
