@@ -1270,3 +1270,27 @@ JVM tests compare every resulting range endpoint with ICU4J for all five data
 files. Common tests verify combining-mark membership, exclusion of composed
 starters and lead surrogates, all Hangul LV boundaries and preservation of
 existing set members. Canonical-iterator property ranges remain pending.
+
+## Public Normalizer2 and mode dispatch
+
+The Normalizer2 API now exposes the six standard/casefold factories, all four
+modes, immutable data-backed implementations, normalization to StringBuilder or
+Appendable, append boundary repair, decomposition and composition-pair access,
+combining classes, quick checks, boundaries and inertness. Norm2AllModes also
+ports the no-op implementation and internal normalization-property dispatch.
+The original String quick-check fast path is retained.
+
+Common loading accepts BinaryBuffer in place of Java InputStream. Built-in
+instances are lazy; custom names are cached using atomic immutable-map updates.
+This preserves name-based reuse and safe publication without a JVM lock. Custom
+cache entries are strongly retained because Common Kotlin has no portable soft
+references. The legacy Normalizer currently contains only the shared identity
+QuickCheckResult tokens; its remaining API is not yet ported.
+
+Oracle tests exercise all five data files and all four modes with mixed random
+Unicode/malformed UTF-16, immutable/mutable sources, normalized append and
+normalize-second append, properties and custom binary data. Common tests cover
+standard forms, casefold variants, quick-check tokens, custom name caching,
+streaming Appendable output and rejection of aliased source/destination.
+A JVM concurrency test races eight loads of one custom name and verifies shared
+instance identity and normalization results after publication.

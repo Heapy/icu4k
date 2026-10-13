@@ -21,3 +21,12 @@ python3 scripts/generate-data.py --check
 
 See [porting scope](docs/PORTING.md) for measured source size and stages.
 Unicode's upstream license and third-party notices are retained in LICENSE.
+
+Common Kotlin normalization is available through `Normalizer2`:
+
+```kotlin
+import io.github.heapy.icu4k.text.Normalizer2
+
+val composed = Normalizer2.getNFCInstance().normalize("e\u0301") // é
+val decomposed = Normalizer2.getNFDInstance().normalize("é") // e + U+0301
+```
