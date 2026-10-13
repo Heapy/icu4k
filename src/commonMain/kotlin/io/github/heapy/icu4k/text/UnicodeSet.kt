@@ -57,6 +57,53 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return if (src.hasStrings() || src.getRangeCount() > sensitive.getRangeCount()) sensitive.cloneAsThawed().retainAll(src)
         else src.clone().retainAll(sensitive)
     }
+    fun closeOver(attribute: Int): UnicodeSet {
+        checkFrozen()
+        when (attribute and (CASE_INSENSITIVE or ADD_CASE_MAPPINGS)) {
+            CASE_INSENSITIVE -> closeOverCaseInsensitive(false)
+            ADD_CASE_MAPPINGS -> closeOverAddCaseMappings()
+            SIMPLE_CASE_INSENSITIVE -> closeOverCaseInsensitive(true)
+        }
+        return this
+    }
+    private fun closeOverAddCaseMappings() {
+        val csp = io.github.heapy.icu4k.impl.UCaseProps.INSTANCE
+        val root = io.github.heapy.icu4k.impl.UCaseProps.LOC_ROOT
+        val foldSet = UnicodeSet(this)
+        val codePoints = maybeOnlyCaseSensitive(this)
+        val full = StringBuilder()
+        fun addMapping(result: Int) {
+            if (result >= 0) {
+                if (result > io.github.heapy.icu4k.impl.UCaseProps.MAX_STRING_LENGTH) foldSet.add(result)
+                else { foldSet.add(full.toString()); full.setLength(0) }
+            }
+        }
+        for (i in 0 until codePoints.getRangeCount()) {
+            for (cp in codePoints.getRangeStart(i)..codePoints.getRangeEnd(i)) {
+                addMapping(csp.toFullLower(cp, null, full, root))
+                addMapping(csp.toFullTitle(cp, null, full, root))
+                addMapping(csp.toFullUpper(cp, null, full, root))
+                addMapping(csp.toFullFolding(cp, full, 0))
+            }
+        }
+        if (hasStrings()) {
+            // Root's word boundary resource supplies the same titlecasing boundaries as ICU4J.
+            val boundaries = RuleBasedBreakIterator.getInstanceFromCompiledRules(
+                io.github.heapy.icu4k.impl.ICUBinary.getRequiredData("brkitr/word.brk"))
+            val titleIterator = object : io.github.heapy.icu4k.impl.CaseMapImpl.TitleIterator {
+                override fun first(): Int = boundaries.first()
+                override fun next(): Int = boundaries.next()
+            }
+            for (str in stringElements) {
+                foldSet.add(io.github.heapy.icu4k.impl.CaseMapImpl.toLower(root, 0, str))
+                boundaries.setText(str)
+                foldSet.add(io.github.heapy.icu4k.impl.CaseMapImpl.toTitle(root, 0, titleIterator, str))
+                foldSet.add(io.github.heapy.icu4k.impl.CaseMapImpl.toUpper(root, 0, str))
+                foldSet.add(UCharacter.foldCase(str, 0))
+            }
+        }
+        set(foldSet)
+    }
     internal fun closeOverCaseInsensitive(simple: Boolean) {
         checkFrozen()
         val csp = io.github.heapy.icu4k.impl.UCaseProps.INSTANCE

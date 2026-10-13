@@ -2076,3 +2076,19 @@ Bounded-input phrase tests also preserve ICU4J's exceptional CJK punctuation
 behavior when previous32 returns DONE32 at a nonzero begin index. Differential
 operations compare exception families and post-exception cursor/status state,
 rather than assuming every valid-range phrase request succeeds upstream.
+
+### Public UnicodeSet case closure
+
+Ported `UnicodeSet.closeOver` option dispatch and the complete ADD_CASE_MAPPINGS
+branch: original code-point lower/title/upper/full-fold mappings, large-set
+case-sensitive filtering, retained input strings and root string mappings.
+Root titlecasing now uses the ported compiled word iterator with CaseMapImpl's
+existing title adapter. The full/simple case-insensitive branches reuse the
+previously verified internal closures. Frozen sets reject even no-op options,
+and the original CASE_MASK selects exactly one of the three modes.
+
+Differential tests cover all option bit combinations, mixed strings (including
+multiword titlecasing and dictionary scripts), random sets, every case-sensitive
+code point and the complete Unicode range. Common tests distinguish case closure
+from one-step mappings and exercise root word-title mappings across platforms.
+The general UnicodeSet expression parser and locale case APIs remain pending.
