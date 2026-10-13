@@ -42,6 +42,47 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     }
     fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
     fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
+    /** Replaces this set with the characters (and supported emoji strings) having the given property value. */
+    fun applyIntPropertyValue(prop: Int, value: Int): UnicodeSet {
+        val properties = io.github.heapy.icu4k.lang.UProperty
+        when {
+            prop == properties.GENERAL_CATEGORY_MASK -> applyFilter(
+                { (1 shl io.github.heapy.icu4k.lang.UCharacter.getType(it)) and value != 0 },
+                io.github.heapy.icu4k.impl.CharacterPropertiesImpl.getInclusionsForProperty(prop))
+            prop == properties.SCRIPT_EXTENSIONS -> applyFilter(
+                { io.github.heapy.icu4k.lang.UScript.hasScript(it, value) },
+                io.github.heapy.icu4k.impl.CharacterPropertiesImpl.getInclusionsForProperty(prop))
+            prop == properties.IDENTIFIER_TYPE -> applyFilter(
+                { io.github.heapy.icu4k.impl.UCharacterProperty.INSTANCE.hasIDType(it, value) },
+                io.github.heapy.icu4k.impl.CharacterPropertiesImpl.getInclusionsForProperty(prop))
+            prop in 0 until properties.BINARY_LIMIT -> {
+                if (value == 0 || value == 1) {
+                    set(io.github.heapy.icu4k.lang.CharacterProperties.getBinaryPropertySet(prop))
+                    if (value == 0) complement().removeAllStrings()
+                } else clear()
+            }
+            prop in properties.INT_START until properties.INT_LIMIT -> applyFilter(
+                { io.github.heapy.icu4k.lang.UCharacter.getIntPropertyValue(it, prop) == value },
+                io.github.heapy.icu4k.impl.CharacterPropertiesImpl.getInclusionsForProperty(prop))
+            else -> throw IllegalArgumentException("unsupported property $prop")
+        }
+        return this
+    }
+    private fun applyFilter(filter: (Int) -> Boolean, inclusions: UnicodeSet) {
+        clear()
+        var start = -1
+        for (i in 0 until inclusions.getRangeCount()) {
+            for (c in inclusions.getRangeStart(i)..inclusions.getRangeEnd(i)) {
+                if (filter(c)) {
+                    if (start < 0) start = c
+                } else if (start >= 0) {
+                    add(start, c - 1)
+                    start = -1
+                }
+            }
+        }
+        if (start >= 0) add(start, 0x10ffff)
+    }
     fun getRangeCount(): Int = len / 2
     fun getRangeStart(index: Int): Int = list[index * 2]
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1

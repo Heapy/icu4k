@@ -1486,3 +1486,19 @@ JVM tests compare every range/string in all 76 binary sets, all 27 integer maps
 at every Unicode code point, complete map binaries and all property inclusion
 sets. Common tests cover frozen mutation rejection, cached identity, Script
 error values, emoji sequences, inclusion cache clearing and invalid property IDs.
+
+## UnicodeSet integer-property application
+
+UnicodeSet.applyIntPropertyValue now ports binary-property sets and code-point
+complements, all enumerated property values, general-category masks,
+Script_Extensions and Identifier_Type filters. The generic inclusion-boundary
+filter scan replaces prior contents, merges true spans and includes the final
+Unicode tail. Frozen checks and unsupported-property error ordering follow the
+original implementation.
+
+JVM tests compare all binary values (-1..2), every enumerated value through each
+maximum plus adjacent invalid values, every script, identifier type and category
+mask fixtures. They compare every resulting range/string and frozen/error
+outcomes. Common tests cover replacement, script/category/class filters, emoji
+string complements and frozen mutation. Property-alias/pattern parsing remains
+pending.
