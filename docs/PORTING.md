@@ -2176,3 +2176,19 @@ variable/set expansion, parent values, discovery order, shared-node behavior,
 copy flags and debug output against ICU4J's actual private node class. Common
 tests verify ownership, independent containers and depth/type errors on local
 targets. Scanner actions and DFA/set-category construction remain pending.
+
+### Rule compiler symbol table
+
+Ported RBBISymbolTable variable definitions and node lookup, variable-chain
+resolution, one-shot U+FFFF UnicodeSet matcher handoff, Unicode identifier
+scanning, duplicate/malformed-set errors and debug dump. The scanner supplies
+an error callback; the full scanner remains pending. Failed name scans retain
+upstream's empty-string result and unchanged position. Missing variables and
+unrelated matcher queries leave an outstanding set handoff intact.
+
+JVM differential tests use ICU4J's actual private symbol table and syntax nodes
+with a real scanner owner. They compare supplementary/invalid identifier scans
+at every offset and limit, alias chains, matcher consumption, UnicodeSet parser
+integration and error codes. Common tests cover duplicate-definition ownership,
+returning error callbacks and reference positions. JVM, JS Node and macOS Arm64
+test suites pass.
