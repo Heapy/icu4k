@@ -1131,3 +1131,16 @@ adjacent invalid values across all five datasets, plus trailing-class helper
 results within its preconditions. Common tests cover accents, decomposing
 characters, Hangul and lead surrogate code points. Complete normalization
 algorithms are still pending.
+
+## Single-code-point decompositions
+
+Normalizer2Impl now ports getDecomposition and getRawDecomposition through
+algorithmic deltas, Hangul, mapping lengths, optional CCC words and raw mapping
+encodings. Missing mappings return null, while deletion mappings return an
+empty string. Recursive mappings are read from the original precomputed data;
+raw mappings preserve their original one-step form.
+
+JVM tests compare both operations for every Unicode code point and adjacent
+invalid values across all five normalization datasets. Common tests cover
+accents, compatibility ligatures, Hangul raw/recursive differences and deletion.
+Full-string decomposition/reordering and composition remain pending.

@@ -57,6 +57,44 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun getDecomposition(initialCodePoint: Int): String? {
+        var c = initialCodePoint
+        if (c < minDecompNoCP) return null
+        var norm16 = getNorm16(c)
+        if (norm16 >= minMaybeYes) return null
+        var decomp = -1
+        if (isAlgorithmicNoNo(norm16)) {
+            c = mapAlgorithmic(c, norm16)
+            decomp = c
+            norm16 = getRawNorm16(c)
+        }
+        if (norm16 < minYesNo) return if (decomp < 0) null else io.github.heapy.icu4k.text.UTF16.valueOf(decomp)
+        if (norm16 == minYesNo || isHangulLVT(norm16)) return buildString { Hangul.decompose(c, this) }
+        var mapping = getData(norm16)
+        val data = extraData!!
+        val length = data[mapping++].code and MAPPING_LENGTH_MASK
+        return data.substring(mapping, mapping + length)
+    }
+    fun getRawDecomposition(c: Int): String? {
+        if (c < minDecompNoCP) return null
+        val norm16 = getNorm16(c)
+        if (isDecompYes(norm16)) return null
+        if (norm16 == minYesNo || isHangulLVT(norm16)) return buildString { Hangul.getRawDecomposition(c, this) }
+        if (isAlgorithmicNoNo(norm16)) return io.github.heapy.icu4k.text.UTF16.valueOf(mapAlgorithmic(c, norm16))
+        var mapping = getData(norm16)
+        val data = extraData!!
+        val firstUnit = data[mapping].code
+        val length = firstUnit and MAPPING_LENGTH_MASK
+        if (firstUnit and MAPPING_HAS_RAW_MAPPING != 0) {
+            val rawMapping = mapping - ((firstUnit shr 7) and 1) - 1
+            val rm0 = data[rawMapping]
+            if (rm0.code <= MAPPING_LENGTH_MASK) return data.substring(rawMapping - rm0.code, rawMapping)
+            mapping += 3
+            return StringBuilder(length - 1).append(rm0).append(data, mapping, mapping + length - 2).toString()
+        }
+        ++mapping
+        return data.substring(mapping, mapping + length)
+    }
     fun getFCD16(c: Int): Int {
         if (c < minDecompNoCP) return 0
         if (c <= 0xffff && !singleLeadMightHaveNonZeroFCD16(c)) return 0
@@ -132,6 +170,8 @@ internal class Normalizer2Impl {
         const val DELTA_SHIFT = 3
         const val MAX_DELTA = 0x40
         const val MAPPING_HAS_CCC_LCCC_WORD = 0x80
+        const val MAPPING_HAS_RAW_MAPPING = 0x40
+        const val MAPPING_LENGTH_MASK = 0x1f
         fun getCCFromNormalYesOrMaybe(norm16: Int): Int = (norm16 shr OFFSET_SHIFT) and 255
         fun getCCFromYesOrMaybeYes(norm16: Int): Int = if (norm16 >= MIN_NORMAL_MAYBE_YES) getCCFromNormalYesOrMaybe(norm16) else 0
     }
