@@ -1230,3 +1230,16 @@ JVM tests compare the original private methods over random mixed/malformed
 strings at every starting position for all five datasets and mode combinations.
 Common tests exercise stopping before starters and canonical ordering in short
 segments. Main composition and FCD string processing remain pending.
+
+## Full-string FCD processing
+
+Normalizer2Impl.makeFCD and makeFCDAndAppend now port the original fast scan,
+deferred trailing-class lookup, supplementary repair, safe-boundary tracking,
+local decomposition of out-of-order spans and append-boundary merging. Null
+buffer mode returns the FCD quick-check boundary without modifying text.
+Already-safe text retains its original composed form.
+
+JVM tests compare random mixed/malformed strings at every start, quick-check
+mode and both append modes across all five datasets. Common tests verify local
+repair without decomposing safe spans and append-boundary repair. Main
+composition scanning and the public facade remain pending.

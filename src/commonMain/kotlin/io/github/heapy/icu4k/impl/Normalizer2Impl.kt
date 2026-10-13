@@ -57,6 +57,75 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun makeFCD(s: CharSequence, initialSrc: Int, limit: Int, buffer: ReorderingBuffer?): Int {
+        var src = initialSrc
+        var prevBoundary = src
+        var c = 0
+        var prevFCD16 = 0
+        var fcd16 = 0
+        while (true) {
+            var prevSrc = src
+            while (src != limit) {
+                c = s[src].code
+                if (c < minLcccCP) { prevFCD16 = c.inv(); ++src }
+                else if (!singleLeadMightHaveNonZeroFCD16(c)) { prevFCD16 = 0; ++src }
+                else {
+                    if (UTF16Plus.isLeadSurrogate(c) && src + 1 != limit && s[src + 1].code in 0xdc00..0xdfff) c = ((c - 0xd800) shl 10) + s[src + 1].code - 0xdc00 + 0x10000
+                    fcd16 = getFCD16FromNormData(c)
+                    if (fcd16 <= 255) { prevFCD16 = fcd16; src += if (c > 0xffff) 2 else 1 } else break
+                }
+            }
+            if (src != prevSrc) {
+                if (src == limit) { buffer?.flushAndAppendZeroCC(s, prevSrc, src); break }
+                prevBoundary = src
+                if (prevFCD16 < 0) {
+                    val prev = prevFCD16.inv()
+                    if (prev < minDecompNoCP) prevFCD16 = 0
+                    else { prevFCD16 = getFCD16FromNormData(prev); if (prevFCD16 > 1) --prevBoundary }
+                } else {
+                    var p = src - 1
+                    if (s[p].code in 0xdc00..0xdfff && prevSrc < p && s[p - 1].code in 0xd800..0xdbff) {
+                        --p
+                        prevFCD16 = getFCD16FromNormData(((s[p].code - 0xd800) shl 10) + s[p + 1].code - 0xdc00 + 0x10000)
+                    }
+                    if (prevFCD16 > 1) prevBoundary = p
+                }
+                if (buffer != null) { buffer.flushAndAppendZeroCC(s, prevSrc, prevBoundary); buffer.append(s, prevBoundary, src) }
+                prevSrc = src
+            } else if (src == limit) break
+            src += if (c > 0xffff) 2 else 1
+            if (prevFCD16 and 255 <= fcd16 shr 8) {
+                if (fcd16 and 255 <= 1) prevBoundary = src
+                buffer?.appendZeroCC(c)
+                prevFCD16 = fcd16
+                continue
+            }
+            if (buffer == null) return prevBoundary
+            buffer.removeSuffix(prevSrc - prevBoundary)
+            src = findNextFCDBoundary(s, src, limit)
+            decomposeShort(s, prevBoundary, src, false, false, buffer)
+            prevBoundary = src
+            prevFCD16 = 0
+        }
+        return src
+    }
+    fun makeFCDAndAppend(s: CharSequence, doMakeFCD: Boolean, buffer: ReorderingBuffer) {
+        var src = 0
+        val limit = s.length
+        if (!buffer.isEmpty()) {
+            val firstBoundary = findNextFCDBoundary(s, 0, limit)
+            if (firstBoundary != 0) {
+                val lastBoundary = findPreviousFCDBoundary(buffer.getStringBuilder(), buffer.length())
+                val middle = StringBuilder(buffer.length() - lastBoundary + firstBoundary + 16)
+                middle.append(buffer.getStringBuilder(), lastBoundary, buffer.length())
+                buffer.removeSuffix(buffer.length() - lastBoundary)
+                middle.append(s, 0, firstBoundary)
+                makeFCD(middle, 0, middle.length, buffer)
+                src = firstBoundary
+            }
+        }
+        if (doMakeFCD) makeFCD(s, src, limit, buffer) else buffer.append(s, src, limit)
+    }
     internal fun decomposeShort(s: CharSequence, initialSrc: Int, limit: Int, stopAtCompBoundary: Boolean, onlyContiguous: Boolean, buffer: ReorderingBuffer): Int {
         var src = initialSrc
         while (src < limit) {
