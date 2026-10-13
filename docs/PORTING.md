@@ -219,3 +219,11 @@ interleaved backward/forward searches and index conversion, 200 compatible
 compositions, compressed repetitions, multi-unit lengths and overflow/reset
 behavior against ICU4J. JVM, JS/Node and macOS arm64 suites pass locally.
 The preceding commit 523ed2c passed CI on all four targets.
+
+CaseMapImpl's StringContextIterator and title option conflict checks are ported.
+Context traversal intentionally sees the entire input even when the mapping
+segment is shorter, and a surrogate pair may cross a segment limit as in ICU4J.
+Common tests cover these boundaries; JVM differential tests cover 30,000
+interleaved operations over arbitrary UTF-16 plus title option combinations.
+String mapping loops, Latin fast paths, Greek uppercase and title boundaries
+remain pending.
