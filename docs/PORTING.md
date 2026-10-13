@@ -883,3 +883,11 @@ JVM tests compare combining-class boundaries and every name choice, several
 property families, unknown aliases and error messages with ICU4J. Common tests
 exercise names, alias resolution and unnamed combining-class values. This does
 not yet implement the complete property value dispatcher or UnicodeSet parser.
+
+## Common Freezable contract
+
+Freezable<T> now exposes isFrozen, freeze and cloneAsThawed in common code,
+and UnicodeSet implements it through its already verified freeze machinery.
+The JVM-only Cloneable marker is omitted from the common contract; explicit
+cloneAsThawed is available on every target. Common tests exercise generic
+interface use, idempotence, frozen mutation rejection and copy independence.

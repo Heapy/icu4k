@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.util.Freezable
 import io.github.heapy.icu4k.util.OutputInt
 import io.github.heapy.icu4k.impl.Utility
 import io.github.heapy.icu4k.impl.PatternProps
@@ -9,7 +10,7 @@ import io.github.heapy.icu4k.impl.BMPSet
 import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
 /** ICU inversion-list core. Pattern/property parsing is pending. */
-class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet> {
+class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, Freezable<UnicodeSet> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
@@ -607,7 +608,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet> {
         }
         return maxLength
     }
-    fun freeze(): UnicodeSet {
+    override fun freeze(): UnicodeSet {
         if (!isFrozen()) {
             compact()
             if (hasStrings()) stringSpan = UnicodeSetStringSpan(this, ArrayList(stringElements), UnicodeSetStringSpan.ALL)
@@ -651,8 +652,8 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet> {
         }
         return spanCodePointsBack(s, index, condition)
     }
-    fun isFrozen(): Boolean = bmpSet != null || stringSpan != null
-    fun cloneAsThawed(): UnicodeSet = UnicodeSet(this)
+    override fun isFrozen(): Boolean = bmpSet != null || stringSpan != null
+    override fun cloneAsThawed(): UnicodeSet = UnicodeSet(this)
     fun clone(): UnicodeSet = if (isFrozen()) this else UnicodeSet(this)
     /** Internal code-point-only freezing used by the string span engine. */
     internal fun freezeCodePointSet(): UnicodeSet {
