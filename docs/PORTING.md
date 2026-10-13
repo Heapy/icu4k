@@ -568,3 +568,16 @@ indices of random UTF-16 strings for every condition. Common tests cover
 counts, supplementary pairs, unpaired units and block edges. UnicodeSet.freeze
 and public string-aware spans still require UnicodeSetStringSpan; BMPSet is
 currently an internal dependency rather than a partial replacement for freeze.
+
+## String-span primitives
+
+UnicodeSetStringSpan's circular OffsetList, minimum path counts, length-byte
+encoding, code-point-boundary string matching and single-code-point forward/
+backward membership primitives are ported. The offset ring retains ICU's shift,
+wrap and popMinimum semantics without replacing it with a sorted queue.
+
+JVM oracle tests compare 50,000 mixed offset/count operations, 500 malformed
+UTF-16 fixtures at every position and span-length boundaries. Common tests cover
+wraparound, minimum counts and rejection of matches that split a surrogate pair.
+The constructor/preprocessing and main string-aware span machines remain
+pending, as does UnicodeSet.freeze integration.
