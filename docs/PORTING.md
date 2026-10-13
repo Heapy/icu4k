@@ -1830,3 +1830,16 @@ cover canonical equality, caseless and Turkic matches, Hangul and surrogate orde
 CanonicalIterator now calls the ported incremental `Normalizer.compare` for
 canonical equality, replacing the earlier equivalent whole-string NFD equality
 fallback. Its existing ICU4J differential tests exercise this integration.
+
+### UTF16 string comparator
+
+Ported `UTF16.StringComparator`, including default/configurable construction,
+null ordering, mutable comparison options, code-unit prefix comparison,
+surrogate-aware code-point ordering and full case folding through cmpEquivFold.
+The invalid-fold-option setter retains ICU4J's partial state change: the
+ignore-case flag changes before validation, while the previous fold option
+remains. This comparator does not implicitly enable canonical equivalence.
+
+Differential tests compare exact integer results for all option combinations,
+nulls, expansions, supplementary mappings and random/malformed UTF-16. Common
+tests cover ordering, Turkic folding and invalid-setter state across targets.

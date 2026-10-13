@@ -289,4 +289,47 @@ object UTF16 {
         if (newLimit != limit && newLimit < target.size) target[newLimit] = '\u0000'
         return newLimit
     }
+    /** Unicode string ordering with optional full case folding. Null sorts first. */
+    class StringComparator(codepointcompare: Boolean, ignorecase: Boolean, foldcaseoption: Int) : Comparator<String?> {
+        private var codePointCompare = if (codepointcompare) Normalizer.COMPARE_CODE_POINT_ORDER else 0
+        private var ignoreCase = ignorecase
+        private var foldCase = foldcaseoption
+        init { require(foldcaseoption in FOLD_CASE_DEFAULT..FOLD_CASE_EXCLUDE_SPECIAL_I) { "Invalid fold case option" } }
+        constructor() : this(false, false, FOLD_CASE_DEFAULT)
+        fun setCodePointCompare(flag: Boolean) { codePointCompare = if (flag) Normalizer.COMPARE_CODE_POINT_ORDER else 0 }
+        fun setIgnoreCase(ignorecase: Boolean, foldcaseoption: Int) {
+            // ICU changes the ignore-case flag even if validation then fails.
+            ignoreCase = ignorecase
+            require(foldcaseoption in FOLD_CASE_DEFAULT..FOLD_CASE_EXCLUDE_SPECIAL_I) { "Invalid fold case option" }
+            foldCase = foldcaseoption
+        }
+        fun getCodePointCompare(): Boolean = codePointCompare == Normalizer.COMPARE_CODE_POINT_ORDER
+        fun getIgnoreCase(): Boolean = ignoreCase
+        fun getIgnoreCaseOption(): Int = foldCase
+        override fun compare(a: String?, b: String?): Int {
+            if (a === b) return 0
+            if (a == null) return -1
+            if (b == null) return 1
+            if (ignoreCase) return Normalizer.cmpEquivFold(a, b, foldCase or codePointCompare or Normalizer.COMPARE_IGNORE_CASE)
+            val minimum = minOf(a.length, b.length)
+            var index = 0
+            while (index < minimum && a[index] == b[index]) index++
+            if (index == minimum) return when { a.length < b.length -> -1; a.length > b.length -> 1; else -> 0 }
+            var c1 = a[index].code
+            var c2 = b[index].code
+            if (c1 >= 0xd800 && c2 >= 0xd800 && getCodePointCompare()) {
+                if (!partOfPair(a, index, c1)) c1 -= 0x2800
+                if (!partOfPair(b, index, c2)) c2 -= 0x2800
+            }
+            return c1 - c2
+        }
+        private fun partOfPair(s: String, index: Int, c: Int): Boolean =
+            (c <= 0xdbff && index + 1 != s.length && isTrailSurrogate(s[index + 1].code)) ||
+                (isTrailSurrogate(c) && index != 0 && isLeadSurrogate(s[index - 1].code))
+        companion object {
+            const val FOLD_CASE_DEFAULT = 0
+            const val FOLD_CASE_EXCLUDE_SPECIAL_I = 1
+        }
+    }
+
 }
