@@ -6,7 +6,7 @@ package io.github.heapy.icu4k.impl.locale
 import io.github.heapy.icu4k.impl.CaseMapImpl
 import io.github.heapy.icu4k.impl.UCaseProps
 
-/** ICU language-tag parser. Conversion from BaseLocale/LocaleExtensions is still pending. */
+/** ICU language-tag parsing, syntax helpers and conversion from base locale/extensions. */
 class LanguageTag private constructor() {
     private var language = ""
     private var script = ""
@@ -100,6 +100,41 @@ class LanguageTag private constructor() {
                 status._errorIndex = itr.currentStart()
                 status._errorMsg = if (token.isEmpty()) "Empty subtag" else "Invalid subtag: $token"
             }
+            return tag
+        }
+        fun parseLocale(base: BaseLocale, localeExtensions: LocaleExtensions): LanguageTag {
+            val tag = LanguageTag()
+            var language = base.getLanguage()
+            val script = base.getScript(); val region = base.getRegion(); val variant = base.getVariant()
+            var hasSubtag = false
+            var privateVariant: String? = null
+            if (language.isNotEmpty() && isLanguage(language)) {
+                language = when (language) { "iw" -> "he"; "ji" -> "yi"; "in" -> "id"; else -> language }
+                tag.language = language
+            }
+            if (script.isNotEmpty() && isScript(script)) { tag.script = canonicalizeScript(script); hasSubtag = true }
+            if (region.isNotEmpty() && isRegion(region)) { tag.region = canonicalizeRegion(region); hasSubtag = true }
+            if (variant.isNotEmpty()) {
+                val itr = StringTokenIterator(variant, BaseLocale.SEP)
+                while (!itr.isDone() && isVariant(itr.current()!!)) { tag.variants.add(canonicalizeVariant(itr.current()!!)); itr.next() }
+                if (tag.variants.isNotEmpty()) hasSubtag = true
+                if (!itr.isDone()) {
+                    val parts = ArrayList<String>()
+                    while (!itr.isDone() && isPrivateuseSubtag(itr.current()!!)) { parts.add(AsciiUtil.toLowerString(itr.current()!!)); itr.next() }
+                    if (parts.isNotEmpty()) privateVariant = parts.joinToString(SEP)
+                }
+            }
+            var privateuse: String? = null
+            for (key in localeExtensions.getKeys()) {
+                val extension = localeExtensions.getExtension(key)!!
+                if (isPrivateusePrefixChar(key)) privateuse = extension.getValue()
+                else tag.extensions.add("$key$SEP${extension.getValue()}")
+            }
+            if (tag.extensions.isNotEmpty()) hasSubtag = true
+            if (privateVariant != null) privateuse = if (privateuse == null) PRIVUSE_VARIANT_PREFIX + SEP + privateVariant else
+                privateuse + SEP + PRIVUSE_VARIANT_PREFIX + SEP + privateVariant.replace(BaseLocale.SEP, SEP)
+            if (privateuse != null) tag.privateuse = privateuse
+            if (tag.language.isEmpty() && (hasSubtag || privateuse == null)) tag.language = UNDETERMINED
             return tag
         }
         fun isLanguage(s: String): Boolean = s.length in 2..8 && AsciiUtil.isAlphaString(s)

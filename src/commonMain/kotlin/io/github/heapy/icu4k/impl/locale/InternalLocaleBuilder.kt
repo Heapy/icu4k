@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.locale
 
-/** Original builder mutation/parsing. BaseLocale import/export is still being ported. */
+/** Original locale builder validation, mutation, parsing and base/extension conversion. */
 class InternalLocaleBuilder {
     private var _language = ""
     private var _script = ""
@@ -155,6 +155,57 @@ class InternalLocaleBuilder {
         return clearExtensions()
     }
     fun clearExtensions(): InternalLocaleBuilder { _extensions?.clear(); _uattributes?.clear(); _ukeywords?.clear(); return this }
+    fun getBaseLocale(): BaseLocale {
+        var variant = _variant
+        val privateuse = _extensions?.get(PRIVUSE_KEY)
+        if (privateuse != null) {
+            val itr = StringTokenIterator(privateuse, LanguageTag.SEP)
+            var sawPrefix = false
+            var start = -1
+            while (!itr.isDone()) {
+                if (sawPrefix) { start = itr.currentStart(); break }
+                if (AsciiUtil.caseIgnoreMatch(itr.current()!!, LanguageTag.PRIVUSE_VARIANT_PREFIX)) sawPrefix = true
+                itr.next()
+            }
+            if (start != -1) {
+                if (variant.isNotEmpty()) variant += BaseLocale.SEP
+                variant += privateuse.substring(start).replace(LanguageTag.SEP, BaseLocale.SEP)
+            }
+        }
+        return BaseLocale.getInstance(_language, _script, _region, variant)
+    }
+    fun setLocale(base: BaseLocale, extensions: LocaleExtensions?): InternalLocaleBuilder {
+        val language = base.getLanguage(); val script = base.getScript(); val region = base.getRegion(); val variant = base.getVariant()
+        if (language.isNotEmpty() && !LanguageTag.isLanguage(language)) throw LocaleSyntaxException("Ill-formed language: $language")
+        if (script.isNotEmpty() && !LanguageTag.isScript(script)) throw LocaleSyntaxException("Ill-formed script: $script")
+        if (region.isNotEmpty() && !LanguageTag.isRegion(region)) throw LocaleSyntaxException("Ill-formed region: $region")
+        if (variant.isNotEmpty()) {
+            val itr = StringTokenIterator(variant, BaseLocale.SEP)
+            while (!itr.isDone()) {
+                if (!LanguageTag.isVariant(itr.current()!!)) throw LocaleSyntaxException("Ill-formed variant: $variant", itr.currentStart())
+                itr.next()
+            }
+        }
+        _language = language; _script = script; _region = region; _variant = variant
+        clearExtensions()
+        if (extensions != null) for (key in extensions.getKeys()) {
+            val extension = extensions.getExtension(key)!!
+            if (extension is UnicodeLocaleExtension) {
+                for (attribute in extension.getUnicodeLocaleAttributes()) {
+                    if (_uattributes == null) _uattributes = HashSet(4)
+                    _uattributes!!.add(CaseInsensitiveString(attribute))
+                }
+                for (keyword in extension.getUnicodeLocaleKeys()) {
+                    if (_ukeywords == null) _ukeywords = HashMap(4)
+                    _ukeywords!![CaseInsensitiveString(keyword)] = extension.getUnicodeLocaleType(keyword)!!
+                }
+            } else {
+                if (_extensions == null) _extensions = HashMap(4)
+                _extensions!![CaseInsensitiveChar(key)] = extension.getValue()!!
+            }
+        }
+        return this
+    }
     fun getLocaleExtensions(): LocaleExtensions {
         if (_extensions.isNullOrEmpty() && _uattributes.isNullOrEmpty() && _ukeywords.isNullOrEmpty()) return LocaleExtensions.EMPTY_EXTENSIONS
         return LocaleExtensions(_extensions, _uattributes, _ukeywords)
@@ -201,6 +252,7 @@ class InternalLocaleBuilder {
         override fun equals(other: Any?): Boolean = this === other || other is CaseInsensitiveChar && c == AsciiUtil.toLower(other.c)
     }
     companion object {
+        private val PRIVUSE_KEY = CaseInsensitiveChar(LanguageTag.PRIVATEUSE[0])
         fun removePrivateuseVariant(value: String): String? {
             val itr = StringTokenIterator(value, "-")
             var prefixStart = -1

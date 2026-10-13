@@ -2416,3 +2416,31 @@ workers and forced GC, proving both referent collection and stale-key release.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux production sources compile.
 A subsequent macOS Native test run including forced GC also passes. BaseLocale
 and its integration into locale builders/tag conversion remain pending.
+
+### BaseLocale, string interning and locale/tag integration
+
+Ported BaseLocale's normalized fields, root instance, case-insensitive cache
+keys, exact key comparison/hash, canonical instance cache and string rendering.
+Immutable hash values are computed at construction instead of lazily publishing
+volatile integers. JVM uses String.intern; JS string primitives already compare
+by contents. Native uses a serialized weak string pool whose keys retain copied
+UTF-16 units and a weak source reference, preventing a strong key-to-referent
+cycle while preserving canonical string identity across concurrent misses.
+
+Completed InternalLocaleBuilder.getBaseLocale/setLocale: lvariant extraction,
+validation before mutation and base/extension import/export. Completed
+LanguageTag.parseLocale with deprecated language remapping, valid variant
+conversion, private variant truncation/merging, extension ordering and und
+selection. Original internal privateuse/toString behavior is preserved (the
+parseLocale representation does not add an x prefix). This completes those
+implementation classes' active ICU (JDKIMPL=false) paths; ULocale and locale
+resource/factory integration remain pending.
+
+Differential tests compare 1000 arbitrary field sets, canonical fields, interned
+string identity, hashes, 500 key sets and exact key ordering/normalization,
+instance-cache reuse, builder round trips, rejected base fields, deprecated
+language codes and variant/private-use conversions. Common tests check root,
+canonical reuse, string sharing, hashes and validation without mutation. Native
+tests prove concurrent locales share interned fields and unreferenced pooled
+strings are reclaimed by forced GC. Full JVM, JS Node and macOS Arm64 suites
+pass; Linux production sources compile.
