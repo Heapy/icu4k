@@ -47,6 +47,13 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    /** Override property interpretation during UnicodeSet pattern parsing. */
+    abstract class XSymbolTable : SymbolTable {
+        override fun lookupMatcher(ch: Int): UnicodeMatcher? = null
+        override fun lookup(s: String): CharArray? = null
+        override fun parseReference(text: String, pos: ParsePosition, limit: Int): String? = null
+        open fun applyPropertyAlias(propertyName: String, propertyValue: String, result: UnicodeSet): Boolean = false
+    }
     class EntryRange internal constructor() {
         @kotlin.jvm.JvmField var codepoint = 0
         @kotlin.jvm.JvmField var codepointEnd = 0
@@ -823,6 +830,35 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        const val IGNORE_SPACE = 1
+        @Deprecated("Use CASE_INSENSITIVE") const val CASE = 2
+        const val CASE_INSENSITIVE = 2
+        const val ADD_CASE_MAPPINGS = 4
+        const val SIMPLE_CASE_INSENSITIVE = 6
+        fun resemblesPattern(pattern: String, pos: Int): Boolean =
+            (pos + 1 < pattern.length && pattern[pos] == '[') || resemblesPropertyPattern(pattern, pos)
+        private fun resemblesPropertyPattern(pattern: String, pos: Int): Boolean {
+            if (pos + 5 > pattern.length) return false
+            return pattern.regionMatches(pos, "[:", 0, 2) || pattern.regionMatches(pos, "\\p", 0, 2, true) || pattern.regionMatches(pos, "\\N", 0, 2)
+        }
+        fun getSingleCodePoint(s: CharSequence): Int = io.github.heapy.icu4k.lang.CharSequences.getSingleCodePoint(s)
+        fun <T : Comparable<T>> compare(first: Collection<T>, other: Collection<T>, style: ComparisonStyle): Int {
+            if (style != ComparisonStyle.LEXICOGRAPHIC) {
+                val diff = first.size - other.size
+                if (diff != 0) return if ((diff < 0) == (style == ComparisonStyle.SHORTER_FIRST)) -1 else 1
+            }
+            return compare(first, other)
+        }
+        fun <T, U : MutableCollection<T>> addAllTo(source: Iterable<T>, target: U): U {
+            for (item in source) target.add(item)
+            return target
+        }
+        fun <T> addAllTo(source: Iterable<T>, target: Array<T>): Array<T> {
+            var i = 0
+            for (item in source) target[i++] = item
+            return target
+        }
+
         private fun appendPatternCodePoint(result: StringBuilder, c: Int, escape: Boolean) {
             if (if (escape) Utility.isUnprintable(c) else Utility.shouldAlwaysBeEscaped(c)) { Utility.escape(result, c); return }
             if (c in intArrayOf(91, 93, 45, 94, 38, 92, 123, 125, 36, 58) || PatternProps.isWhiteSpace(c)) result.append('\\')

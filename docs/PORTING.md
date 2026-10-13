@@ -933,3 +933,16 @@ JVM tests compare 3,000 random malformed UTF-16 fixtures with all valid prefix
 start pairs, boundaries, comparisons, equality, search and extracted arrays.
 Common tests cover supplementary pairs, differing trails and CharSequence content.
 The complete ICU4J port and UnicodeSet pattern parser remain in progress.
+
+## UnicodeSet parser contracts and remaining helpers
+
+UnicodeSet now includes XSymbolTable's default symbol/property callbacks,
+pattern option constants, resemblesPattern recognition, getSingleCodePoint,
+collection comparison styles and addAllTo collection/array helpers. These
+prepare the original parser integration; exposing option constants does not
+mean applyPattern or case closure is implemented yet.
+
+JVM tests compare recognition at valid and beyond-end offsets, collection
+ordering and array copying with ICU4J. Common tests cover default callbacks,
+unchanged output on unrecognized properties, supplementary detection and
+caller-owned target arrays. Pattern parsing and case closure remain pending.
