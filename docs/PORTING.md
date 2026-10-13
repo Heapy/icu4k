@@ -2146,3 +2146,17 @@ ported original grammar rather than a limited compatibility parser.
 Public SymbolTable tests additionally check cached matcher stand-ins, property
 variables and rejection of extra characters remaining in a variable value,
 including parse positions and retained/cleared patterns after failures.
+
+### Rule compiler grammar table
+
+Ported RBBIRuleParseTable's 104 rows, 32 actions and character-class constants.
+The Common table is generated from the exact pinned ICU rbbirpt.txt grammar,
+retained under data/compiler with SHA-256 verification. The Python generator
+resolves state/push labels, preserves row order and first-match priority, and
+assigns action/class numbers as the original ICU generator. CI checks regeneration.
+
+JVM tests compare every table field and constant with ICU4J's actual compiler
+table. A Common grammar trajectory test exercises a literal rule's consume,
+push/pop and action sequence across local targets. Scanner actions, syntax-tree
+construction, set categories, DFA construction and serialization remain pending;
+this ports the compiler's original grammar data, not a substitute compiler.
