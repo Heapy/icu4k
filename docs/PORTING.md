@@ -1077,3 +1077,17 @@ sequence sets and sequence/prefix lookups, and property starts against ICU4J.
 Common tests exercise code-point emoji, keycaps, ZWJ sequences and enumeration.
 Public UCharacter binary dispatch and normalization-backed properties remain
 pending.
+
+## Normalization Hangul and UTF-16 primitives
+
+Normalizer2Impl now begins with the original Hangul and UTF16Plus primitives:
+Jamo/Hangul predicates, recursive and raw syllable decomposition, surrogate
+bit tests and binary sequence/slice equality. Hangul methods retain the original
+precondition that decomposition input is a Hangul syllable and append to the
+supplied buffer. This is not yet a complete normalization engine.
+
+JVM tests compare predicates over all Unicode code points, every Hangul syllable
+for both decomposition forms, and random UTF-16 slice equality with ICU4J.
+Common tests exercise append behavior, LV/LVT raw decomposition and equality.
+Normalization data loading, reordering, composition and public normalizers
+remain pending.
