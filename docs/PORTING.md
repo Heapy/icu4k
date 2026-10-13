@@ -592,3 +592,16 @@ Public span methods are still pending until string elements are handled.
 JVM tests compare 200 malformed UTF-16 fixtures at every forward/backward index
 for every SpanCondition with ICU4J's original unfrozen fallback. Common tests
 cover supplementary counts and starting on a trail surrogate.
+
+## Property-table UnicodeSet integration
+
+UCaseProps now exposes its original UnicodeSet adapters for full/simple code-
+point closures, reverse string closures and property starts. UBiDiProps likewise
+adds its property starts to the common set. Existing callback implementations
+remain shared rather than duplicating algorithms.
+
+JVM oracle tests compare closure sets for every cased Unicode code point plus
+1,000 other samples, reverse-fold fixtures and complete case/bidi boundary sets,
+including preservation of pre-existing elements. Common tests cover sharp-s,
+ASCII simple closure and property boundaries. Public UnicodeSet.closeOver and
+the string-span/freeze integration are still pending.

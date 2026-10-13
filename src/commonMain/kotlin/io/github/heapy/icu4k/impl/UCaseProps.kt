@@ -4,6 +4,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.text.UTF16
+import io.github.heapy.icu4k.text.UnicodeSet
 import io.github.heapy.icu4k.lang.UProperty
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
@@ -129,7 +130,12 @@ class UCaseProps internal constructor(bytes: BinaryBuffer = ICUBinary.getRequire
         return if (result == c) result.inv() else result
     }
 
-    // Callback forms keep these algorithms independent of UnicodeSet while it is ported.
+    fun addCaseClosure(c: Int, set: UnicodeSet) { addCaseClosure(c, { set.add(it) }, { set.add(it) }) }
+    fun addSimpleCaseClosure(c: Int, set: UnicodeSet) { addSimpleCaseClosure(c) { set.add(it) } }
+    fun addStringCaseClosure(s: String?, set: UnicodeSet): Boolean = addStringCaseClosure(s, { set.add(it) }, { set.add(it) })
+    fun addPropertyStarts(set: UnicodeSet) { forEachPropertyStart { set.add(it) } }
+
+    // Callback forms are also used by internal algorithms and differential tests.
     internal fun addCaseClosure(c: Int, addCodePoint: (Int) -> Unit, addString: (String) -> Unit) =
         addClosure(c, false, addCodePoint, addString)
     internal fun addSimpleCaseClosure(c: Int, addCodePoint: (Int) -> Unit) =

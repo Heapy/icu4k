@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.text.UnicodeSet
+
 import io.github.heapy.icu4k.lang.UProperty
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
@@ -65,7 +67,9 @@ class UBiDiProps internal constructor(bytes: BinaryBuffer = ICUBinary.getRequire
         return c
     }
 
-    /** Common callback form; UnicodeSet integration is added when that class is ported. */
+    fun addPropertyStarts(set: UnicodeSet) { forEachPropertyStart { set.add(it) } }
+
+    /** Callback form for property-boundary enumeration. */
     internal fun forEachPropertyStart(add: (Int) -> Unit) {
         for (range in trie) {
             if (range.leadSurrogate) break
