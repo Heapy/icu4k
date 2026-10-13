@@ -1646,3 +1646,17 @@ JVM oracle tests cover every binary alias, enumerated boundary aliases, numeric
 and name syntax, age, special aliases and rejection cases. Common tests cover
 replacement, all major alias branches, hex numeric values, symbol precedence and
 null hook values. UnicodeSet pattern parsing remains pending.
+
+## UnicodeSet property-pattern parsing
+
+UnicodeSet now ports iterator property-pattern lookahead and parsing for POSIX [:...:],
+\\p/\\P and \\N forms, property/value splitting, inversion, ParsePosition updates
+and RuleCharacterIterator advancement/rebuilt text. Syntax errors use the
+original escaped iterator context; Utility.escape(String) is ported for this
+purpose, including its printable-DEL behavior.
+
+JVM oracle tests compare parsed sets, null/error outcomes, offsets and lookahead
+across syntax variants, malformed patterns, names, numeric properties and emoji
+complements. Existing string lookahead is reused. Common tests cover both parser entry points, preserved lookahead
+position and rebuilt text. The general UnicodeSet expression parser remains
+pending; these methods are internal building blocks for it.

@@ -6,6 +6,19 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** ICU utilities; currently the original escape decoder. */
 internal object Utility {
+    fun escape(source: String): String = buildString {
+        var i = 0
+        while (i < source.length) {
+            val c = UTF16.charAt(source, i)
+            i += UTF16.getCharCount(c)
+            if (c in 0x20..0x7f) {
+                if (c == '\\'.code) append("\\\\") else append(c.toChar())
+            } else {
+                append(if (c <= 0xffff) "\\u" else "\\U")
+                append(hex(c.toLong(), if (c <= 0xffff) 4 else 8))
+            }
+        }
+    }
     fun hex(ch: Long): String = hex(ch, 4)
     fun hex(number: Long, places: Int): String {
         if (number == Long.MIN_VALUE) return "-8000000000000000"

@@ -5,6 +5,7 @@ package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.lang.UCharacter
 import io.github.heapy.icu4k.lang.UProperty
+import io.github.heapy.icu4k.impl.RuleCharacterIterator
 import io.github.heapy.icu4k.impl.CharacterPropertiesImpl
 import io.github.heapy.icu4k.impl.UPropertyAliases
 import io.github.heapy.icu4k.impl.ICUNumberParsing
@@ -50,6 +51,51 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     }
     fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
     fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
+    internal fun applyPropertyPattern(pattern: String, position: ParsePosition, symbols: SymbolTable?): UnicodeSet? {
+        var pos = position.index
+        if (pos + 5 > pattern.length) return null
+        var posix = false
+        var isName = false
+        var invert = false
+        if (pattern.regionMatches(pos, "[:", 0, 2)) {
+            posix = true
+            pos = PatternProps.skipWhiteSpace(pattern, pos + 2)
+            if (pos < pattern.length && pattern[pos] == '^') { ++pos; invert = true }
+        } else if (pattern.regionMatches(pos, "\\p", 0, 2, true) || pattern.regionMatches(pos, "\\N", 0, 2)) {
+            val c = pattern[pos + 1]
+            invert = c == 'P'
+            isName = c == 'N'
+            pos = PatternProps.skipWhiteSpace(pattern, pos + 2)
+            if (pos == pattern.length || pattern[pos++] != '{') return null
+        } else return null
+        val close = pattern.indexOf(if (posix) ":]" else "}", pos)
+        if (close < 0) return null
+        val equals = pattern.indexOf('=', pos)
+        var propName: String
+        var valueName: String?
+        if (equals >= 0 && equals < close && !isName) {
+            propName = pattern.substring(pos, equals)
+            valueName = pattern.substring(equals + 1, close)
+        } else {
+            propName = pattern.substring(pos, close)
+            valueName = null
+            if (isName) { valueName = propName; propName = "na" }
+        }
+        applyPropertyAlias(propName, valueName, symbols)
+        if (invert) complement().removeAllStrings()
+        position.index = close + if (posix) 2 else 1
+        return this
+    }
+    internal fun applyPropertyPattern(chars: RuleCharacterIterator, rebuilt: Appendable, symbols: SymbolTable?) {
+        val pattern = chars.getCurrentBuffer()
+        val start = chars.getCurrentBufferPos()
+        val position = ParsePosition(start)
+        applyPropertyPattern(pattern, position, symbols)
+        val length = position.index - start
+        if (length == 0) syntaxError(chars, "Invalid property pattern")
+        chars.jumpahead(length)
+        rebuilt.append(pattern.substring(start, position.index))
+    }
     fun set(start: Int, end: Int): UnicodeSet { checkFrozen(); clear(); complement(start, end); return this }
     fun applyPropertyAlias(propertyAlias: String, valueAlias: String?): UnicodeSet = applyPropertyAlias(propertyAlias, valueAlias, null)
     fun applyPropertyAlias(propertyAlias: String, valueAlias: String?, symbols: SymbolTable?): UnicodeSet {
@@ -965,6 +1011,20 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        internal fun resemblesPropertyPattern(chars: RuleCharacterIterator, options: Int): Boolean {
+            val opts = options and RuleCharacterIterator.PARSE_ESCAPES.inv()
+            val pos = chars.getPos(null)
+            val c = chars.next(opts)
+            var result = false
+            if (c == '['.code || c == '\\'.code) {
+                val d = chars.next(opts and RuleCharacterIterator.SKIP_WHITESPACE.inv())
+                result = if (c == '['.code) d == ':'.code else d == 'N'.code || d == 'p'.code || d == 'P'.code
+            }
+            chars.setPos(pos)
+            return result
+        }
+        private fun syntaxError(chars: RuleCharacterIterator, message: String): Nothing =
+            throw IllegalArgumentException("Error: $message at \"${Utility.escape(chars.toString())}\"")
         private val defaultXSymbolTable = AtomicReference<XSymbolTable?>(null)
         fun getDefaultXSymbolTable(): XSymbolTable? = defaultXSymbolTable.load()
         fun setDefaultXSymbolTable(symbols: XSymbolTable?) {
@@ -979,7 +1039,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         const val SIMPLE_CASE_INSENSITIVE = 6
         fun resemblesPattern(pattern: String, pos: Int): Boolean =
             (pos + 1 < pattern.length && pattern[pos] == '[') || resemblesPropertyPattern(pattern, pos)
-        private fun resemblesPropertyPattern(pattern: String, pos: Int): Boolean {
+        internal fun resemblesPropertyPattern(pattern: String, pos: Int): Boolean {
             if (pos + 5 > pattern.length) return false
             return pattern.regionMatches(pos, "[:", 0, 2) || pattern.regionMatches(pos, "\\p", 0, 2, true) || pattern.regionMatches(pos, "\\N", 0, 2)
         }
