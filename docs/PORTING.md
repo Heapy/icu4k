@@ -138,3 +138,7 @@ Common adaptations: binary APIs accept BinaryBuffer or ByteArray and serialize
 into ByteArray instead of Java streams. ICUBinary failures use the common
 ICUUncheckedIOException. Filesystem, classloader and package scanning have not
 been silently replaced by host-JDK behavior; they remain explicit pending work.
+
+CI run `38375483112` for commit `a0e07ea` passed all JVM/JS/Linux Native and
+macOS arm64 suites, including the real ICU data checks. GitHub Actions were then
+updated from deprecated Node 20 actions to released Node 24 actions.
