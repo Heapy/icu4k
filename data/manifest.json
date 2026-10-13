@@ -250,6 +250,24 @@
       "size": 25852,
       "generated_from": "icu4c/source/data/brkitr/adaboost/jaml.txt",
       "generator": "scripts/generate-ml-model.py"
+    },
+    {
+      "name": "brkitr/Thai_graphclust_model4_heavy.res",
+      "file": "data/icu78/brkitr/Thai_graphclust_model4_heavy.res",
+      "object": "ThaiLstmModelData",
+      "sha256": "f39e0bc7052728d96290c151cff8957d027f3e13355fc9193bccab49f96aa663",
+      "size": 58056,
+      "generated_from": "icu4c/source/data/brkitr/lstm/Thai_graphclust_model4_heavy.txt",
+      "generator": "scripts/generate-lstm-models.py"
+    },
+    {
+      "name": "brkitr/Burmese_graphclust_model5_heavy.res",
+      "file": "data/icu78/brkitr/Burmese_graphclust_model5_heavy.res",
+      "object": "BurmeseLstmModelData",
+      "sha256": "33bb0af205a954c9017904486e8ce340c52470b0b654ace54e49a545c74dad46",
+      "size": 32384,
+      "generated_from": "icu4c/source/data/brkitr/lstm/Burmese_graphclust_model5_heavy.txt",
+      "generator": "scripts/generate-lstm-models.py"
     }
   ]
 }

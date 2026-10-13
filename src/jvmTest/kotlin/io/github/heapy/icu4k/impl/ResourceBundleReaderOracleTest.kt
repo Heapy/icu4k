@@ -16,7 +16,7 @@ class ResourceBundleReaderOracleTest {
         val cls = com.ibm.icu.impl.ICUResourceBundleReader::class.java
         val factory = cls.declaredMethods.single { it.name == "getReader" }
         factory.isAccessible = true
-        for (locale in listOf("ja", "root", "jaml")) {
+        for (locale in listOf("ja", "root", "jaml", "Thai_graphclust_model4_heavy", "Burmese_graphclust_model5_heavy")) {
             val j = factory.invoke(null, com.ibm.icu.impl.ICUData.ICU_BRKITR_BASE_NAME, locale, cls.classLoader)!!
             val k = ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/$locale.res"))
             val root = call(j, "getRootResource") as Int

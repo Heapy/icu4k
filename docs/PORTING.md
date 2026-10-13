@@ -2011,3 +2011,20 @@ A common cancellation fixture uses saturated gates and output bias to distinguis
 binary32 product rounding from a fused/wider multiply-add: correct rounding ties
 SINGLE with INSIDE and preserves the earlier INSIDE class. This exercises the
 rounding-sensitive decision on JS and Native, beyond JVM bit comparisons.
+
+### Default trained Thai/Myanmar LSTM resources
+
+Ported `LSTMBreakEngine.createData(script)` selection through root.res's original
+lstm table, preserving unsupported-script null results and missing-model errors.
+Embedded the exact default Thai_graphclust_model4_heavy and
+Burmese_graphclust_model5_heavy models from the pinned ICU tag. Their source text
+is retained; `scripts/generate-lstm-models.py` checks source SHA-256, validates all
+matrix dimensions and compiles deterministic ResB resources without native genrb.
+CI verifies regeneration, JVM oracle copies and common embeddings (37 resources).
+
+JVM tests load the same trained resources into ICU4J, compare every weight bit,
+dictionary and model type, then compare segmentation counts/queues/cursors on
+Thai/Myanmar prose and range slices. Common tests load and execute both trained
+models on all local targets. The global language-engine registry and public
+RuleBasedBreakIterator owner remain pending; these resources now make original
+LSTM selection available for that integration.

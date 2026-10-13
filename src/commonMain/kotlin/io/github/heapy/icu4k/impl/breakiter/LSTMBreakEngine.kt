@@ -8,6 +8,7 @@ import io.github.heapy.icu4k.impl.RBBIDataWrapper
 import io.github.heapy.icu4k.impl.RBBIRuleEngine
 import io.github.heapy.icu4k.lang.UCharacter
 import io.github.heapy.icu4k.lang.UProperty
+import io.github.heapy.icu4k.lang.UScript
 import io.github.heapy.icu4k.text.CharacterIterator
 import io.github.heapy.icu4k.text.UnicodeSet
 import kotlin.math.exp
@@ -15,7 +16,7 @@ import kotlin.math.tanh
 import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.UResourceTypeMismatchException
 
-/** Bidirectional LSTM dictionary segmentation; default-model resource resolution is pending. */
+/** Bidirectional LSTM dictionary segmentation; default models resolved from the original root bundle. */
 internal class LSTMBreakEngine(private val script: Int, set: UnicodeSet, private val data: LSTMData) : DictionaryBreakEngine() {
     init { setCharacters(set) }
     override fun hashCode(): Int = LSTMBreakEngine::class.hashCode()
@@ -210,5 +211,17 @@ internal class LSTMBreakEngine(private val script: Int, set: UnicodeSet, private
             Float.fromBits(data[index])
         }
         fun createData(reader: ICUResourceBundleReader): LSTMData = LSTMData(reader)
+        private val rootBundle by lazy { ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/root.res")) }
+        fun createData(script: Int): LSTMData? {
+            if (script != UScript.KHMER && script != UScript.LAO && script != UScript.MYANMAR && script != UScript.THAI) return null
+            val key = UScript.getShortName(script)!!
+            val table = rootBundle.getTable(rootBundle.getTable(rootBundle.rootResource)!!.getResource("lstm"))
+            val file = table?.let { rootBundle.getString(it.getResource(key)) }
+                ?: throw MissingResourceException("Missing LSTM model: $key", "LSTMData", "lstm/$key")
+            val name = file.substring(0, file.indexOf('.'))
+            val bytes = ICUBinary.getData("brkitr/$name.res")
+                ?: throw MissingResourceException("Missing LSTM resource: $name", "LSTMData", name)
+            return createData(ICUResourceBundleReader(bytes))
+        }
     }
 }
