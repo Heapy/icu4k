@@ -450,3 +450,19 @@ FAST/SMALL tries, shared intermediate prefixes, eight truncation limits, reset
 and every position inside long linear matches. Common tests verify entry/key
 buffer reuse and truncated suffixes on every target. Trie builders and the
 language segmentation engines remain pending.
+
+## Shared trie construction and character builder
+
+StringTrieBuilder ports the original three-stage algorithm: mutable prefix/
+branch insertion, FAST/SMALL runtime-node registration and hash-consing, then
+right-edge numbering and backwards serialization. All original node kinds and
+identity-based child comparisons are retained. CharsTrieBuilder implements the
+UTF-16 backend, growing tail buffer, value/type/delta encodings, lifecycle and
+shared CharSequence views (using a portable array view instead of CharBuffer).
+
+Oracle tests compare exact serialized units with ICU4J for 80 randomized builds,
+prefix insertion orders, duplicate detection, wide signed values, 4,096-way
+branches, long keys, repeated builds and clear/reuse. Common tests round-trip
+FAST/SMALL output and check lifecycle errors and old-view stability.
+BytesTrieBuilder remains pending, along with language segmentation engines and
+the other full ICU subsystems listed above.
