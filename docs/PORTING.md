@@ -351,3 +351,20 @@ tests compare candidate choices/caching with ICU4J and 50,000 mixed deque
 operations, including independent clones. These tests use deterministic matcher
 fixtures; actual byte/character trie dictionary matchers and data, UnicodeSet
 integration and language engines still need to be ported.
+
+## Compact byte trie reader
+
+BytesTrie now supports current/first/next (single byte and bulk), compact signed
+values, binary branch jumps, linear matches, saved/copy/clone/64-bit states,
+unique-value detection and next-byte enumeration. ByteArray storage remains
+shared, and validated State restoration checks array identity and root offset.
+
+JVM differential tests use original BytesTrieBuilder FAST/SMALL output with
+random keys and all value-encoding boundaries, signed extremes, intermediate
+values and shared prefixes. They compare result, value, exact packed state,
+unique values and next-byte output during traversal/restoration. Common tests
+cover a serialized intermediate/final trie on every target.
+
+Entry enumeration/Iterator, the common builder, dictionary matchers and wrapping
+Java IOException from custom JVM Appendables remain pending. These are required
+parts of the full port, not replaced with a different data structure.
