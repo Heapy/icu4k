@@ -401,3 +401,20 @@ compare 30,000 mixed operations on bounded UTF-16/noncharacter input. Common
 tests cover candidate values and shared/independent cursor behavior. Actual
 dictionary resources/loaders, character-trie matcher and language engines remain
 pending.
+
+## Pinned dictionaries and binary decoding
+
+All five ICU dictionaries (Thai, Lao, Khmer, Burmese, CJK) are checksum-pinned
+and embedded via the same portable lazy Base64 pipeline. DictionaryData reads
+the ICU Dict header, index block, padding, trie type, byte offset transform and
+byte or UTF-16 trie payload. Decoded byte dictionaries create the common matcher.
+The decoded character payload is retained for the upcoming CharsTrie matcher.
+
+JVM tests compare every resource byte and decoded payload/index/cursor with ICU4J,
+then compare candidate lengths/values/counts and cursor positions for 500 real
+entries per byte dictionary under multiple limits. Common tests load all five
+resources and match a Thai fixture on every target.
+
+Resource-bundle-driven script-to-file lookup (loadDictionaryFor), CharsTrie/
+CharsDictionaryMatcher and the language engines remain pending. The binary
+decoder does not substitute fixed locale mappings for the original factory.

@@ -18,6 +18,11 @@ import io.github.heapy.icu4k.impl.data.BreakSentElData
 import io.github.heapy.icu4k.impl.data.BreakTitleData
 import io.github.heapy.icu4k.impl.data.BreakWordData
 import io.github.heapy.icu4k.impl.data.BreakWordPosixData
+import io.github.heapy.icu4k.impl.data.DictionaryBurmesedictData
+import io.github.heapy.icu4k.impl.data.DictionaryCjdictData
+import io.github.heapy.icu4k.impl.data.DictionaryKhmerdictData
+import io.github.heapy.icu4k.impl.data.DictionaryLaodictData
+import io.github.heapy.icu4k.impl.data.DictionaryThaidictData
 import io.github.heapy.icu4k.impl.data.UcaseData
 import io.github.heapy.icu4k.impl.data.UbidiData
 import io.github.heapy.icu4k.impl.data.UlayoutData
@@ -38,7 +43,7 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk")
+    private val resourceNames = setOf("ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
     private fun itemPath(name: String): String = name.removePrefix("/").removePrefix("$ICU_BASE_NAME/")
     fun exists(resourceName: String): Boolean = itemPath(resourceName) in resourceNames
 
@@ -63,6 +68,11 @@ object ICUData {
         "brkitr/title.brk" -> BreakTitleData.copy()
         "brkitr/word.brk" -> BreakWordData.copy()
         "brkitr/word_POSIX.brk" -> BreakWordPosixData.copy()
+        "brkitr/burmesedict.dict" -> DictionaryBurmesedictData.copy()
+        "brkitr/cjdict.dict" -> DictionaryCjdictData.copy()
+        "brkitr/khmerdict.dict" -> DictionaryKhmerdictData.copy()
+        "brkitr/laodict.dict" -> DictionaryLaodictData.copy()
+        "brkitr/thaidict.dict" -> DictionaryThaidictData.copy()
         else -> null
     }
 }

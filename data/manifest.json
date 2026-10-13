@@ -136,6 +136,41 @@
       "object": "BreakWordPosixData",
       "sha256": "cf872f07330196b1a8786c3dcb78e32800e79c962bf3067f8cd8bbd6e29f1155",
       "size": 23120
+    },
+    {
+      "name": "brkitr/burmesedict.dict",
+      "file": "data/icu78/brkitr/burmesedict.dict",
+      "object": "DictionaryBurmesedictData",
+      "sha256": "85af51ca28526b1f785fe0fe09a8ba63033145036e377e2a6e53ff742a48770c",
+      "size": 254448
+    },
+    {
+      "name": "brkitr/cjdict.dict",
+      "file": "data/icu78/brkitr/cjdict.dict",
+      "object": "DictionaryCjdictData",
+      "sha256": "5b96312a434f4ca3df1f5fa906e88d52fe2e28e3b87c68b9e62d0d77e1995edc",
+      "size": 2007296
+    },
+    {
+      "name": "brkitr/khmerdict.dict",
+      "file": "data/icu78/brkitr/khmerdict.dict",
+      "object": "DictionaryKhmerdictData",
+      "sha256": "591cfdffc0ecea7873a31e980c8731d629cc5e3fc94f6ce1b2b20f135f4daad8",
+      "size": 445552
+    },
+    {
+      "name": "brkitr/laodict.dict",
+      "file": "data/icu78/brkitr/laodict.dict",
+      "object": "DictionaryLaodictData",
+      "sha256": "c68e9963fbdf173b748017c38cbf822616d0acd291ab1b38185349a5c72ba5cf",
+      "size": 162624
+    },
+    {
+      "name": "brkitr/thaidict.dict",
+      "file": "data/icu78/brkitr/thaidict.dict",
+      "object": "DictionaryThaidictData",
+      "sha256": "0c23739890c8460251a1807ee32f29c586a92bd216922f660d52f8041b4e1181",
+      "size": 126144
     }
   ]
 }
