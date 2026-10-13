@@ -267,4 +267,108 @@ internal object CaseMapImpl {
         }
         return toUpper(caseLocale, options, src, StringBuilder(src.length), null).toString()
     }
+
+    /** Boundary adapter used until the common BreakIterator hierarchy is ported. */
+    interface TitleIterator {
+        fun first(): Int
+        fun next(): Int
+    }
+    private fun isLNS(c: Int): Boolean {
+        val type = UCharacterProperty.INSTANCE.getType(c)
+        val mask = (1 shl 1) or (1 shl 2) or (1 shl 3) or (1 shl 5) or
+            (1 shl 9) or (1 shl 10) or (1 shl 11) or (1 shl 24) or
+            (1 shl 25) or (1 shl 26) or (1 shl 27) or (1 shl 17)
+        return (1 shl type) and mask != 0 || type == 4 && UCaseProps.INSTANCE.getType(c) != UCaseProps.NONE
+    }
+    fun <A : Appendable> toTitle(locale: Int, options: Int, boundaries: TitleIterator,
+                                src: CharSequence, dest: A, edits: Edits?): A {
+        edits?.reset()
+        val iter = StringContextIterator(src)
+        var previous = 0
+        var first = true
+        while (previous < src.length) {
+            var index = if (first) { first = false; boundaries.first() } else boundaries.next()
+            if (index == -1 || index > src.length) index = src.length
+            if (previous < index) {
+                var titleStart = previous
+                iter.setLimit(index)
+                var c = iter.nextCaseMapCP()
+                if (options and 0x200 == 0) {
+                    val toCased = options and TITLECASE_ADJUST_TO_CASED != 0
+                    while (if (toCased) UCaseProps.INSTANCE.getType(c) == UCaseProps.NONE else !isLNS(c)) {
+                        c = iter.nextCaseMapCP()
+                        if (c < 0) break
+                    }
+                    titleStart = iter.getCPStart()
+                    appendUnchanged(src, previous, titleStart - previous, dest, options, edits)
+                }
+                if (titleStart < index) {
+                    c = UCaseProps.INSTANCE.toFullTitle(c, iter, dest, locale)
+                    appendResult(c, dest, iter.getCPLength(), options, edits)
+                    val titleLimit: Int
+                    if (titleStart + 1 < index && locale == UCaseProps.LOC_DUTCH) {
+                        if (c < 0) c = c.inv()
+                        if (c == 0x49 || c == 0xcd) {
+                            titleLimit = maybeTitleDutchIJ(src, c, titleStart + 1, index, dest, options, edits)
+                            iter.moveTo(titleLimit)
+                        } else titleLimit = iter.getCPLimit()
+                    } else titleLimit = iter.getCPLimit()
+                    if (titleLimit < index) {
+                        if (options and 0x100 == 0) internalToLower(locale, options, src, titleLimit, index, iter, dest, edits)
+                        else appendUnchanged(src, titleLimit, index - titleLimit, dest, options, edits)
+                        iter.moveToLimit()
+                    }
+                }
+            }
+            previous = index
+        }
+        return dest
+    }
+    fun toTitle(locale: Int, options: Int, boundaries: TitleIterator, src: CharSequence): String {
+        if (src.isEmpty()) return src.toString()
+        if (src.length <= 100 && options and OMIT_UNCHANGED_TEXT == 0) {
+            val edits = Edits()
+            val replacements = toTitle(locale, options or OMIT_UNCHANGED_TEXT, boundaries, src, StringBuilder(), edits)
+            return applyEdits(src, replacements, edits)
+        }
+        return toTitle(locale, options, boundaries, src, StringBuilder(src.length), null).toString()
+    }
+    private fun maybeTitleDutchIJ(src: CharSequence, c: Int, start: Int, limit: Int,
+                                  dest: Appendable, options: Int, edits: Edits?): Int {
+        var index = start
+        var withAcute = false
+        var unchanged1 = 0
+        val titleJ: Boolean
+        var unchanged2 = 0
+        var c2 = src[index++]
+        if (c == 0x49) {
+            if (c2 == '\u0301') {
+                withAcute = true
+                unchanged1 = 1
+                if (index == limit) return start
+                c2 = src[index++]
+            }
+        } else withAcute = true
+        if (c2 == 'j') titleJ = true
+        else if (c2 == 'J') { titleJ = false; ++unchanged1 }
+        else return start
+        if (withAcute) {
+            if (index == limit || src[index++] != '\u0301') return start
+            if (titleJ) unchanged2 = 1 else ++unchanged1
+        }
+        if (index < limit) {
+            val lookahead = StringContextIterator(src, index, index).nextCaseMapCP()
+            val type = UCharacterProperty.INSTANCE.getType(lookahead)
+            if (type == 6 || type == 7 || type == 8) return start
+        }
+        appendUnchanged(src, start, unchanged1, dest, options, edits)
+        var position = start + unchanged1
+        if (titleJ) {
+            dest.append('J')
+            edits?.addReplace(1, 1)
+            ++position
+        }
+        appendUnchanged(src, position, unchanged2, dest, options, edits)
+        return index
+    }
 }

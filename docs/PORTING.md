@@ -260,3 +260,18 @@ and 200 generated Greek/diacritic sequences. A regression specifically covers
 the distinction between precomposed and combining dialytika in vowel state.
 Titlecase and public locale adapters remain pending, as do the rest of the
 previously listed ICU subsystems.
+
+## Titlecase string processing
+
+CaseMapImpl titlecase processing now supports supplied boundary iterators,
+index adjustment to cased or letter/number/symbol/private-use characters,
+optional remainder lowercasing, short-string reconstruction, Edits and Dutch IJ
+with matching acute accents and combining-mark exclusion. An internal
+TitleIterator adapter supplies boundaries until common BreakIterator is ported;
+it does not approximate or replace ICU word/sentence segmentation.
+
+JVM differential tests supply the same ICU4J word boundaries to both mapping
+implementations for six locales, adjustment/lowercase/omit options, Dutch accent
+fixtures, expansions and random malformed UTF-16. Common tests exercise explicit
+whole-string segments. Public locale APIs and common boundary engines remain
+pending, along with the rest of the full ICU port.

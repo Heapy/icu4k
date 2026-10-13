@@ -3,6 +3,22 @@ package io.github.heapy.icu4k.impl
 import kotlin.test.*
 
 class CaseMapImplTest {
+    @Test fun titlecasesSuppliedSegmentsAndDutchIJ() {
+        fun title(text: String, options: Int = 0): String {
+            val boundaries = object : CaseMapImpl.TitleIterator {
+                override fun first() = 0
+                override fun next() = text.length
+            }
+            return CaseMapImpl.toTitle(5, options, boundaries, text)
+        }
+        assertEquals("IJssel", title("ijSSEL"))
+        assertEquals("ÍJ\u0301ssel", title("íj\u0301SSEL"))
+        assertEquals("Ij\u0308ssel", title("ij\u0308SSEL"))
+        assertEquals("123abc", title("123ABC"))
+        assertEquals("123Abc", title("123ABC", 0x400))
+        assertEquals("IJSSEL", title("ijSSEL", 0x100))
+        assertEquals("IJssel", title("ijSSEL", 0x4000))
+    }
     @Test fun stringCasingTracksChangesAndContext() {
         val edits = io.github.heapy.icu4k.text.Edits()
         val dest = StringBuilder("prefix")
