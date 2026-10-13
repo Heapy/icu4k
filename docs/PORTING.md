@@ -510,3 +510,18 @@ membership is also checked after covering the entire range. Common tests cover
 range merging, strings versus supplementary code points and maximum bounds.
 Removal/intersection/complement, freezing, spans, iteration, pattern parsing,
 property resolution and dictionary integration remain pending.
+
+## UnicodeSet algebra
+
+UnicodeSet now ports the original intersection/difference polarity machine and
+symmetric-difference merge, range/singleton/string removal and retention, whole
+Unicode complement, set-to-set retain/remove/complement, and removeAllStrings.
+Operations preserve ICU's distinction between ranges and string members: range
+retention and whole complement do not remove strings. Self-aliasing operations
+are supported.
+
+JVM tests compare 30,000 randomized range/string/set operations, range boundaries,
+sizes, hashes and membership, plus BMP/supplementary/maximum crossing cases.
+Common tests cover interval splits, string retention, self-intersection,
+self-difference and symmetric difference. Freezing/span acceleration, public
+iteration, parsing and property resolution are still pending.

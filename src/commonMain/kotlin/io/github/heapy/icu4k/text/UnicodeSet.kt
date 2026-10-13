@@ -109,6 +109,135 @@ class UnicodeSet() {
         for (s in other.stringElements.toList()) add(s)
         return this
     }
+    fun remove(c: Int): UnicodeSet = remove(c, c)
+    fun remove(start: Int, end: Int): UnicodeSet {
+        validate(start); validate(end)
+        if (start <= end) intersect(intArrayOf(start, end + 1, HIGH), 2, 2)
+        return this
+    }
+    fun retain(c: Int): UnicodeSet = retain(c, c)
+    fun retain(start: Int, end: Int): UnicodeSet {
+        validate(start); validate(end)
+        if (start <= end) intersect(intArrayOf(start, end + 1, HIGH), 2, 0) else clear()
+        return this
+    }
+    fun complement(c: Int): UnicodeSet = complement(c, c)
+    fun complement(start: Int, end: Int): UnicodeSet {
+        validate(start); validate(end)
+        if (start <= end) xor(intArrayOf(start, end + 1, HIGH), 2)
+        return this
+    }
+    fun complement(): UnicodeSet {
+        if (list[0] == MIN_VALUE) { list.copyInto(list, 0, 1, len); --len }
+        else { ensureCapacity(len + 1); list.copyInto(list, 1, 0, len); list[0] = MIN_VALUE; ++len }
+        return this
+    }
+    fun remove(s: CharSequence): UnicodeSet {
+        val cp = singleCP(s)
+        if (cp >= 0) return remove(cp)
+        val i = stringElements.binarySearch(s.toString())
+        if (i >= 0) stringElements.removeAt(i)
+        return this
+    }
+    fun retain(s: CharSequence): UnicodeSet {
+        val cp = singleCP(s)
+        if (cp >= 0) return retain(cp)
+        val str = s.toString()
+        val present = stringElements.binarySearch(str) >= 0
+        if (present && getRangeCount() == 0 && size() == 1) return this
+        clear()
+        if (present) add(str)
+        return this
+    }
+    fun complement(s: CharSequence): UnicodeSet {
+        val cp = singleCP(s)
+        if (cp >= 0) return complement(cp)
+        val str = s.toString()
+        val i = stringElements.binarySearch(str)
+        if (i >= 0) stringElements.removeAt(i) else stringElements.add(-i - 1, str)
+        return this
+    }
+    fun removeAllStrings(): UnicodeSet { stringElements.clear(); return this }
+    fun retainAll(other: UnicodeSet): UnicodeSet {
+        intersect(other.list, other.len, 0)
+        stringElements.removeAll { other.stringElements.binarySearch(it) < 0 }
+        return this
+    }
+    fun removeAll(other: UnicodeSet): UnicodeSet {
+        intersect(other.list, other.len, 2)
+        if (this === other) stringElements.clear()
+        else stringElements.removeAll { other.stringElements.binarySearch(it) >= 0 }
+        return this
+    }
+    fun complementAll(other: UnicodeSet): UnicodeSet {
+        xor(other.list, other.len)
+        for (str in other.stringElements.toList()) complement(str)
+        return this
+    }
+    private fun xor(other: IntArray, otherLen: Int): UnicodeSet {
+        ensureBufferCapacity(len + otherLen)
+        val out = buffer!!
+        var i = 0; var j = 0; var k = 0
+        var a = list[i++]; var b = other[j++]
+        while (true) {
+            if (a < b) { out[k++] = a; a = list[i++] }
+            else if (b < a) { out[k++] = b; b = other[j++] }
+            else if (a != HIGH) { a = list[i++]; b = other[j++] }
+            else { out[k++] = HIGH; len = k; break }
+        }
+        buffer = list; list = out
+        return this
+    }
+    private fun intersect(other: IntArray, otherLen: Int, initialPolarity: Int): UnicodeSet {
+        ensureBufferCapacity(len + otherLen)
+        val out = buffer!!
+        var i = 0; var j = 0; var k = 0
+        var a = list[i++]; var b = other[j++]
+        var polarity = initialPolarity
+        main@ while (true) {
+            when (polarity) {
+                0 -> {
+                    if (a < b) { a = list[i++]; polarity = polarity xor 1 }
+                    else if (b < a) { b = other[j++]; polarity = polarity xor 2 }
+                    else {
+                        if (a == HIGH) break@main
+                        out[k++] = a; a = list[i++]; polarity = polarity xor 1
+                        b = other[j++]; polarity = polarity xor 2
+                    }
+                }
+                3 -> {
+                    if (a < b) { out[k++] = a; a = list[i++]; polarity = polarity xor 1 }
+                    else if (b < a) { out[k++] = b; b = other[j++]; polarity = polarity xor 2 }
+                    else {
+                        if (a == HIGH) break@main
+                        out[k++] = a; a = list[i++]; polarity = polarity xor 1
+                        b = other[j++]; polarity = polarity xor 2
+                    }
+                }
+                1 -> {
+                    if (a < b) { a = list[i++]; polarity = polarity xor 1 }
+                    else if (b < a) { out[k++] = b; b = other[j++]; polarity = polarity xor 2 }
+                    else {
+                        if (a == HIGH) break@main
+                        a = list[i++]; polarity = polarity xor 1
+                        b = other[j++]; polarity = polarity xor 2
+                    }
+                }
+                2 -> {
+                    if (b < a) { b = other[j++]; polarity = polarity xor 2 }
+                    else if (a < b) { out[k++] = a; a = list[i++]; polarity = polarity xor 1 }
+                    else {
+                        if (a == HIGH) break@main
+                        a = list[i++]; polarity = polarity xor 1
+                        b = other[j++]; polarity = polarity xor 2
+                    }
+                }
+            }
+        }
+        out[k++] = HIGH; len = k
+        buffer = list; list = out
+        return this
+    }
     private fun union(other: IntArray, otherLen: Int): UnicodeSet {
         ensureBufferCapacity(len + otherLen)
         val out = buffer!!
