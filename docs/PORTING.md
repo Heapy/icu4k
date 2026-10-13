@@ -1544,3 +1544,17 @@ all embedded ranges with ICU4J. Common tests cover real CJK/Hangul names,
 resource-copy isolation, invalid versions and truncated inputs. Generated data
 verification now checks 32 resources. Group-name decompression and public name
 lookup remain pending.
+
+## Group character-name decompression
+
+UCharacterName now ports group binary search, MSB/offset helpers, packed-nibble
+length decoding, token expansion (including two-byte tokens), alternate-field
+selection and code-point group lookup. UCharacterNameChoice constants are
+ported. Per-call offsets/lengths/builders replace synchronized shared scratch.
+The original signed-byte and field-selection behavior is retained.
+
+JVM tests compare every group's decoded length/offset arrays and every line for
+all five name choices through both raw and code-point lookup. Group selection
+is compared over all Unicode code points. Common tests cover modern names,
+aliases, supplementary names and group boundaries. Extended/generated fallback
+names and inverse group lookup remain pending.

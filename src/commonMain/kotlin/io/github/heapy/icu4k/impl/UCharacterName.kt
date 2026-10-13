@@ -42,6 +42,92 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         groupString = strings
         return true
     }
+    fun getGroup(codepoint: Int): Int {
+        var end = m_groupcount_
+        val msb = getCodepointMSB(codepoint)
+        var result = 0
+        while (result < end - 1) {
+            val index = (result + end) shr 1
+            if (msb < getGroupMSB(index)) end = index else result = index
+        }
+        return result
+    }
+    fun getGroupMSB(index: Int): Int {
+        if (index >= m_groupcount_) return -1
+        if (index < 0) throw IndexOutOfBoundsException()
+        return groupInfo[index * m_groupsize_].code
+    }
+    fun getGroupLengths(group: Int, offsets: CharArray, lengths: CharArray): Int {
+        var length = 0xffff
+        val index = group * m_groupsize_
+        var stringOffset = UCharacterUtility.toInt(groupInfo[index + 1], groupInfo[index + 2])
+        offsets[0] = 0.toChar()
+        var i = 0
+        while (i < LINES_PER_GROUP_) {
+            val b = groupString[stringOffset].toInt()
+            var shift = 4
+            while (shift >= 0) {
+                val n = (b shr shift) and 15
+                if (length == 0xffff && n > 11) length = (n - 12) shl 4
+                else {
+                    lengths[i] = (if (length != 0xffff) (length or n) + 12 else n).toChar()
+                    if (i < LINES_PER_GROUP_) offsets[i + 1] = (offsets[i].code + lengths[i].code).toChar()
+                    length = 0xffff
+                    ++i
+                }
+                shift -= 4
+            }
+            ++stringOffset
+        }
+        return stringOffset
+    }
+    fun getGroupName(initialIndex: Int, initialLength: Int, choice: Int): String? {
+        var index = initialIndex
+        var length = initialLength
+        if (choice != UCharacterNameChoice.UNICODE_CHAR_NAME && choice != UCharacterNameChoice.EXTENDED_CHAR_NAME) {
+            if (';'.code >= tokenTable.size || tokenTable[';'.code].code == 0xffff) {
+                var field = if (choice == UCharacterNameChoice.ISO_COMMENT_) 2 else choice
+                do {
+                    val old = index
+                    index += UCharacterUtility.skipByteSubString(groupString, index, length, ';'.code.toByte())
+                    length -= index - old
+                } while (--field > 0)
+            } else length = 0
+        }
+        val out = StringBuilder()
+        var i = 0
+        while (i < length) {
+            val b = groupString[index + i++].toInt()
+            if (b >= tokenTable.size) {
+                if (b == ';'.code) break
+                out.append(b)
+            } else {
+                var token = tokenTable[b and 255].code
+                if (token == 0xfffe) {
+                    token = tokenTable[(b shl 8) or (groupString[index + i].toInt() and 255)].code
+                    ++i
+                }
+                if (token == 0xffff) {
+                    if (b == ';'.code) {
+                        if (out.isEmpty() && choice == UCharacterNameChoice.EXTENDED_CHAR_NAME) continue
+                        break
+                    }
+                    out.append((b and 255).toChar())
+                } else UCharacterUtility.getNullTermByteSubString(out, tokenString, token)
+            }
+        }
+        return out.toString().takeIf { it.isNotEmpty() }
+    }
+    fun getGroupName(ch: Int, choice: Int): String? {
+        val msb = getCodepointMSB(ch)
+        val group = getGroup(ch)
+        if (msb != groupInfo[group * m_groupsize_].code) return null
+        val offsets = CharArray(LINES_PER_GROUP_ + 1)
+        val lengths = CharArray(LINES_PER_GROUP_ + 1)
+        val index = getGroupLengths(group, offsets, lengths)
+        val offset = ch and GROUP_MASK_
+        return getGroupName(index + offsets[offset].code, lengths[offset].code, choice)
+    }
     fun getAlgorithmLength(): Int = algorithms.size
     fun getAlgorithmStart(index: Int): Int = algorithms[index].rangeStart
     fun getAlgorithmEnd(index: Int): Int = algorithms[index].rangeEnd
@@ -157,6 +243,14 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         }
     }
     companion object {
+        const val LINES_PER_GROUP_ = 32
+        private const val GROUP_SHIFT_ = 5
+        private const val GROUP_MASK_ = LINES_PER_GROUP_ - 1
+        fun getCodepointMSB(codepoint: Int): Int = codepoint shr GROUP_SHIFT_
+        fun getGroupLimit(msb: Int): Int = (msb shl GROUP_SHIFT_) + LINES_PER_GROUP_
+        fun getGroupMin(msb: Int): Int = msb shl GROUP_SHIFT_
+        fun getGroupOffset(codepoint: Int): Int = codepoint and GROUP_MASK_
+        fun getGroupMinFromCodepoint(codepoint: Int): Int = codepoint and GROUP_MASK_.inv()
         val INSTANCE: UCharacterName by lazy { UCharacterName() }
         private fun addChars(set: IntArray, str: CharSequence): Int {
             for (i in str.length - 1 downTo 0) {
