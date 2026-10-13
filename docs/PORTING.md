@@ -1336,3 +1336,17 @@ ported, including binary maximum 1, undefined maximum -1 and minimum 0 for every
 ID. JVM tests compare 20,000 random code points per integer property, surrogate
 and invalid-input boundaries, and all property bounds from -10 through 0x8000.
 Common tests cover routing between data sources and undefined-property bounds.
+
+## Mutable code point trie: mutation and range iteration
+
+MutableCodePointTrie now ports the original mutable block representation:
+ALL_SAME/MIXED flags, 64-entry BMP allocations, 16-entry supplementary blocks,
+512-code-point high-start growth, original data capacity growth, point/range
+writes, filtered range scans, deep cloning and fromCodePointMap. Values retain
+all 32 bits. Invalid lookups return the error value; invalid writes throw.
+
+JVM tests compare randomized interleaved point/range writes and filtered ranges,
+then exhaustively compare all Unicode values and independent clone/map copies.
+Common tests cover block boundaries, supplementary/high-end writes, filtered
+range merging and clone independence. Immutable building/compaction is still
+pending; this phase does not replace it with another representation.
