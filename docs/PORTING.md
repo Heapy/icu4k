@@ -1660,3 +1660,18 @@ across syntax variants, malformed patterns, names, numeric properties and emoji
 complements. Existing string lookahead is reused. Common tests cover both parser entry points, preserved lookahead
 position and rebuilt text. The general UnicodeSet expression parser remains
 pending; these methods are internal building blocks for it.
+
+## UnicodeSet full/simple case-closure algorithms
+
+UnicodeSet now ports the internal full/simple case-insensitive closure pass,
+large-set Case_Sensitive intersection optimization and per-code-point simple
+folding of strings. Full closure replaces source strings with folded equivalents
+and reverse string closures; simple closure preserves only simple-fold mappings.
+The input remains included for code points, following the original algorithm.
+
+JVM tests compare every Case_Sensitive code point, random mixed code-point/string
+sets, malformed UTF-16 and the entire Unicode range with ICU4J's full/simple
+closeOver modes. Common tests cover long-s/sharp-s closures, string reduction,
+untouched simple-fold scratch and frozen rejection. The public closeOver
+selector and ADD_CASE_MAPPINGS string branch remain pending until word/titlecase
+iteration is available; the general pattern parser still depends on these.

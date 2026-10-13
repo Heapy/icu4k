@@ -51,6 +51,36 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     }
     fun clear(): UnicodeSet { checkFrozen(); list[0] = HIGH; len = 1; stringElements.clear(); return this }
     fun compact(): UnicodeSet { checkFrozen(); if (len + 7 < list.size) list = list.copyOf(len); buffer = null; if (stringElements.isEmpty()) stringElements = ArrayList(); return this }
+    internal fun maybeOnlyCaseSensitive(src: UnicodeSet): UnicodeSet {
+        if (src.size() < 30) return src
+        val sensitive = io.github.heapy.icu4k.lang.CharacterProperties.getBinaryPropertySet(UProperty.CASE_SENSITIVE)
+        return if (src.hasStrings() || src.getRangeCount() > sensitive.getRangeCount()) sensitive.cloneAsThawed().retainAll(src)
+        else src.clone().retainAll(sensitive)
+    }
+    internal fun closeOverCaseInsensitive(simple: Boolean) {
+        checkFrozen()
+        val csp = io.github.heapy.icu4k.impl.UCaseProps.INSTANCE
+        val foldSet = UnicodeSet(this)
+        if (!simple && foldSet.hasStrings()) foldSet.stringElements.clear()
+        val codePoints = maybeOnlyCaseSensitive(this)
+        for (i in 0 until codePoints.getRangeCount()) {
+            for (cp in codePoints.getRangeStart(i)..codePoints.getRangeEnd(i)) {
+                if (simple) csp.addSimpleCaseClosure(cp, foldSet) else csp.addCaseClosure(cp, foldSet)
+            }
+        }
+        if (hasStrings()) {
+            val buffer = if (simple) StringBuilder() else null
+            for (s in stringElements) {
+                if (simple) {
+                    if (scfString(s, buffer!!)) foldSet.remove(s).add(buffer)
+                } else {
+                    val folded = UCharacter.foldCase(s, 0)
+                    if (!csp.addStringCaseClosure(folded, foldSet)) foldSet.add(folded)
+                }
+            }
+        }
+        set(foldSet)
+    }
     internal fun applyPropertyPattern(pattern: String, position: ParsePosition, symbols: SymbolTable?): UnicodeSet? {
         var pos = position.index
         if (pos + 5 > pattern.length) return null
@@ -1011,6 +1041,26 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        internal fun scfString(s: CharSequence, scf: StringBuilder): Boolean {
+            var i = 0
+            while (i < s.length) {
+                var c = UTF16.charAt(s, i)
+                var folded = UCharacter.foldCase(c, UCharacter.FOLD_CASE_DEFAULT)
+                if (folded != c) {
+                    scf.setLength(0)
+                    scf.append(s, 0, i)
+                    while (true) {
+                        scf.append(UTF16.valueOf(folded))
+                        i += UTF16.getCharCount(c)
+                        if (i == s.length) return true
+                        c = UTF16.charAt(s, i)
+                        folded = UCharacter.foldCase(c, UCharacter.FOLD_CASE_DEFAULT)
+                    }
+                }
+                i += UTF16.getCharCount(c)
+            }
+            return false
+        }
         internal fun resemblesPropertyPattern(chars: RuleCharacterIterator, options: Int): Boolean {
             val opts = options and RuleCharacterIterator.PARSE_ESCAPES.inv()
             val pos = chars.getPos(null)
