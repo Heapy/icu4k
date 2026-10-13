@@ -1,0 +1,170 @@
+// © 2016 and later: Unicode, Inc. and others.
+// Copyright (C) 1996-2016, International Business Machines Corporation and others.
+// SPDX-License-Identifier: Unicode-3.0
+package io.github.heapy.icu4k.impl
+
+import io.github.heapy.icu4k.util.BinaryBuffer
+import io.github.heapy.icu4k.util.CodePointTrie
+import io.github.heapy.icu4k.util.ICUUncheckedIOException
+import io.github.heapy.icu4k.util.VersionInfo
+
+/**
+ * Unicode property data and numeric algorithms from ICU4J UCharacterProperty.
+ * Binary/int property dispatch will be added with its case/bidi/normalization
+ * dependencies; this class currently exposes the raw data and numeric layer.
+ */
+class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.getRequiredData("uprops.icu")) {
+    val m_unicodeVersion_: VersionInfo
+    val m_trie_: Trie2_16
+    private val additionalTrie: Trie2_16?
+    private val additionalVectors: IntArray
+    internal val m_additionalColumnsCount_: Int
+    internal val m_maxBlockScriptValue_: Int
+    internal val m_maxJTGValue_: Int
+    internal val m_maxValuesOther_: Int
+    val m_scriptExtensions_: CharArray
+    internal val m_blockTrie_: CodePointTrie
+
+    init {
+        m_unicodeVersion_ = ICUBinary.readHeaderAndDataVersion(bytes, 0x5550726f, ICUBinary.Authenticate { it[0] == 9.toByte() })
+        val start = bytes.position
+        val indexes = bytes.readInts(16)
+        m_additionalColumnsCount_ = indexes[5]
+        if (m_additionalColumnsCount_ < 0) throw ICUUncheckedIOException("Invalid additional property column count")
+        m_maxBlockScriptValue_ = indexes[10]
+        m_maxJTGValue_ = indexes[11]
+        m_maxValuesOther_ = indexes[12]
+        fun advanceTo(wordOffset: Int) {
+            if (wordOffset < 0 || wordOffset > (bytes.limit - start) / 4) throw ICUUncheckedIOException("Invalid uprops data offset")
+            val position = start + wordOffset * 4
+            if (position < bytes.position) throw ICUUncheckedIOException("uprops section is shorter than its data")
+            bytes.position = position
+        }
+        m_trie_ = Trie2_16.createFromSerialized(bytes)
+        advanceTo(indexes[0])
+        advanceTo(indexes[3])
+        if (m_additionalColumnsCount_ > 0) {
+            additionalTrie = Trie2_16.createFromSerialized(bytes)
+            advanceTo(indexes[4])
+            additionalVectors = bytes.readInts(indexes[6] - indexes[4])
+        } else {
+            additionalTrie = null
+            additionalVectors = IntArray(0)
+        }
+        val scriptLength = (indexes[7] - indexes[6]) * 2
+        if (scriptLength < 0) throw ICUUncheckedIOException("Invalid script extensions data length")
+        m_scriptExtensions_ = bytes.readChars(scriptLength)
+        m_blockTrie_ = CodePointTrie.fromBinary(null, CodePointTrie.ValueWidth.BITS_16, bytes)
+        advanceTo(indexes[8])
+    }
+
+    fun getProperty(ch: Int): Int = m_trie_[ch]
+    fun getType(c: Int): Int = getProperty(c) and TYPE_MASK
+    fun getAdditional(codepoint: Int, column: Int): Int {
+        require(column >= 0) { "Negative property column" }
+        if (column >= m_additionalColumnsCount_) return 0
+        return additionalVectors[additionalTrie!![codepoint] + column]
+    }
+    fun getAge(codepoint: Int): VersionInfo {
+        val version = getAdditional(codepoint, 0) ushr 24
+        return VersionInfo.getInstance(version shr 2, version and 3)
+    }
+    fun getMaxValues(column: Int): Int = when (column) {
+        0 -> m_maxBlockScriptValue_
+        2 -> m_maxJTGValue_
+        else -> 0
+    }
+    fun digit(c: Int): Int {
+        val value = numericTypeValue(c) - NTV_DECIMAL_START
+        return if (value <= 9) value else -1
+    }
+    private fun numericTypeValue(c: Int): Int = getProperty(c) shr 6
+
+    fun getNumericValue(c: Int): Int {
+        val ntv = numericTypeValue(c)
+        return when {
+            ntv == 0 -> getEuropeanDigit(c)
+            ntv < NTV_DIGIT_START -> ntv - NTV_DECIMAL_START
+            ntv < NTV_NUMERIC_START -> ntv - NTV_DIGIT_START
+            ntv < NTV_FRACTION_START -> ntv - NTV_NUMERIC_START
+            ntv < NTV_LARGE_START -> -2
+            ntv < NTV_BASE60_START -> {
+                val mantissa = (ntv shr 5) - 14
+                val exponent = (ntv and 31) + 2
+                if (exponent < 9 || (exponent == 9 && mantissa <= 2)) {
+                    var value = mantissa
+                    repeat(exponent) { value *= 10 }
+                    value
+                } else -2
+            }
+            ntv < NTV_FRACTION20_START -> base60Value(ntv)
+            else -> -2
+        }
+    }
+
+    fun getUnicodeNumericValue(c: Int): Double {
+        val ntv = numericTypeValue(c)
+        return when {
+            ntv == 0 -> NO_NUMERIC_VALUE
+            ntv < NTV_DIGIT_START -> (ntv - NTV_DECIMAL_START).toDouble()
+            ntv < NTV_NUMERIC_START -> (ntv - NTV_DIGIT_START).toDouble()
+            ntv < NTV_FRACTION_START -> (ntv - NTV_NUMERIC_START).toDouble()
+            ntv < NTV_LARGE_START -> ((ntv shr 4) - 12).toDouble() / ((ntv and 15) + 1)
+            ntv < NTV_BASE60_START -> {
+                var value = ((ntv shr 5) - 14).toDouble()
+                var exponent = (ntv and 31) + 2
+                // Preserve ICU's multiplication order for floating-point parity.
+                while (exponent >= 4) { value *= 10000.0; exponent -= 4 }
+                value *= when (exponent) { 3 -> 1000.0; 2 -> 100.0; 1 -> 10.0; else -> 1.0 }
+                value
+            }
+            ntv < NTV_FRACTION20_START -> base60Value(ntv).toDouble()
+            ntv < NTV_FRACTION32_START -> {
+                val fraction = ntv - NTV_FRACTION20_START
+                (2 * (fraction and 3) + 1).toDouble() / (20 shl (fraction shr 2))
+            }
+            ntv < NTV_RESERVED_START -> {
+                val fraction = ntv - NTV_FRACTION32_START
+                (2 * (fraction and 3) + 1).toDouble() / (32 shl (fraction shr 2))
+            }
+            else -> NO_NUMERIC_VALUE
+        }
+    }
+
+    private fun base60Value(ntv: Int): Int {
+        var value = (ntv shr 2) - 0xbf
+        repeat((ntv and 3) + 1) { value *= 60 }
+        return value
+    }
+
+    companion object {
+        val INSTANCE: UCharacterProperty by lazy { UCharacterProperty() }
+        const val TYPE_MASK = 0x1f
+        const val LATIN_CAPITAL_LETTER_I_WITH_DOT_ABOVE_: Char = '\u0130'
+        const val LATIN_SMALL_LETTER_DOTLESS_I_: Char = '\u0131'
+        const val LATIN_SMALL_LETTER_I_: Char = 'i'
+        const val SCRIPT_X_MASK = 0xfff
+        const val SCRIPT_X_WITH_OTHER = 0xc00
+        const val SCRIPT_X_WITH_INHERITED = 0x800
+        const val SCRIPT_X_WITH_COMMON = 0x400
+        const val MAX_SCRIPT = 0x3ff
+        const val NO_NUMERIC_VALUE: Double = -123456789.0
+        private const val NTV_DECIMAL_START = 1
+        private const val NTV_DIGIT_START = 11
+        private const val NTV_NUMERIC_START = 21
+        private const val NTV_FRACTION_START = 0xb0
+        private const val NTV_LARGE_START = 0x1e0
+        private const val NTV_BASE60_START = 0x300
+        private const val NTV_FRACTION20_START = 0x324
+        private const val NTV_FRACTION32_START = 0x33c
+        private const val NTV_RESERVED_START = 0x34c
+        fun getMask(type: Int): Int = 1 shl type
+        fun getEuropeanDigit(ch: Int): Int = when (ch) {
+            in 0x41..0x5a -> ch - 0x41 + 10
+            in 0x61..0x7a -> ch - 0x61 + 10
+            in 0xff21..0xff3a -> ch - 0xff21 + 10
+            in 0xff41..0xff5a -> ch - 0xff41 + 10
+            else -> -1
+        }
+    }
+}
