@@ -857,3 +857,16 @@ ICUBinary expose independent copies through the existing resource mechanism.
 Generator verification checks all 25 embedded resources. Common tests verify
 the pnam/version-2 header, index offsets and copy isolation. The UPropertyAliases
 decoder and property-name resolution APIs are the next step and remain pending.
+
+## Property alias decoder and lookup
+
+UPropertyAliases now decodes the pinned pnames.icu value maps, ASCII name
+groups and byte tries, including ranged and listed property values. Original
+property/value name retrieval, loose alias resolution, no-throw value lookup
+and loose-name comparison are common code. IllegalIcuArgumentException retains
+its common constructors; JVM-only initCause mutation is not exposed.
+
+JVM tests compare names, choices, value names and alias lookup across binary,
+integer, mask, numeric and string property ranges, plus 10,000 random loose-name
+comparisons. Common tests resolve real names and values on each target. Public
+UCharacter name adapters and UnicodeSet property parsing remain pending.
