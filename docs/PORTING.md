@@ -1350,3 +1350,18 @@ then exhaustively compare all Unicode values and independent clone/map copies.
 Common tests cover block boundaries, supplementary/high-end writes, filtered
 range merging and clone independence. Immutable building/compaction is still
 pending; this phase does not replace it with another representation.
+
+## Trie compaction block algorithms
+
+MutableCodePointTrie now includes the original block equality/search/overlap
+helpers, value masking, backward high-start scan, AllSameBlocks reference-count
+tracker with least-used eviction, and MixedBlocks prime-sized hash tables with
+partial-hash/index packing and double-hash probing. Both integer and UTF-16
+index-block paths are ported, including table reuse and incremental extension.
+
+JVM tests invoke ICU4J's original internal block trackers for direct comparison
+across table sizes, block lengths, negative integer hashes, mixed array widths,
+incremental extension and repeated initialization. Constant-block tests exercise
+capacity overflow, eviction and most-used selection. Common tests cover append
+tracking, first-occurrence lookup, table reset and constant-block eviction.
+The main immutable compaction/build passes are still pending.
