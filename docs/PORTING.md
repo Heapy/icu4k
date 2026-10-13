@@ -2444,3 +2444,27 @@ canonical reuse, string sharing, hashes and validation without mutation. Native
 tests prove concurrent locales share interned fields and unreferenced pooled
 strings are reclaimed by forced GC. Full JVM, JS Node and macOS Arm64 suites
 pass; Linux production sources compile.
+
+### Legacy locale IDs and ISO mappings
+
+Ported LocaleIDs' original eleven language/country tables, obsolete/deprecated
+mappings, ISO2/ISO3 conversion and defensive array-copy getters from ICU 78.3.
+Ported LocaleIDParser's ICU/POSIX language/script/country/variant normalization,
+experimental language prefixes, codepage skipping, 179-unit variant limit,
+base-name override, keyword parsing/cache and default/set/remove operations.
+Java trim semantics (units <= U+0020), duplicate-first keyword behavior, sentinel
+handling, parser state/call order and original keyword value casing are retained.
+
+The mutable keyword map preserves sorted iteration, live entry values, key
+iterator removal and fail-fast structural changes. Empty maps retain original
+no-op clear/remove and unsupported insertion behavior. Changes through exposed
+maps/entries affect subsequent parser output; resetting all keywords detaches
+previous map references as upstream does.
+
+Differential tests compare every original ISO table/mapping, array isolation,
+2000 generated locale IDs in both canonicalization modes, focused POSIX and
+UTF-16 cases, getter order, overrides, keyword mutations/defaults/removals,
+errors, mutable entries and iterators. Common tests cover normalization, sorting,
+live mutation, limits, trimming and obsolete-code conversion. Full JVM, JS Node
+and macOS Arm64 suites pass. ULocale and locale resource/factory integration
+remain pending.
