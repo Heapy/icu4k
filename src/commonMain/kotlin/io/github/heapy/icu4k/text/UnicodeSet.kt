@@ -9,7 +9,7 @@ import io.github.heapy.icu4k.impl.BMPSet
 import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
 /** ICU inversion-list core. Pattern/property parsing is pending. */
-class UnicodeSet() : Iterable<String>, UnicodeMatcher {
+class UnicodeSet() : UnicodeFilter(), Iterable<String> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
@@ -51,7 +51,7 @@ class UnicodeSet() : Iterable<String>, UnicodeMatcher {
         for (i in 0 until getRangeCount()) result += getRangeEnd(i) - getRangeStart(i) + 1
         return result
     }
-    fun contains(c: Int): Boolean { validate(c); return bmpSet?.contains(c) ?: stringSpan?.contains(c) ?: (findCodePoint(c) and 1 != 0) }
+    override fun contains(c: Int): Boolean { validate(c); return bmpSet?.contains(c) ?: stringSpan?.contains(c) ?: (findCodePoint(c) and 1 != 0) }
     fun contains(start: Int, end: Int): Boolean {
         validate(start); validate(end)
         val i = findCodePoint(start)
@@ -374,16 +374,7 @@ class UnicodeSet() : Iterable<String>, UnicodeMatcher {
                 return UnicodeMatcher.U_MATCH
             }
         }
-        if (offset[0] < limit) {
-            val c = text.char32At(offset[0])
-            if (contains(c)) { offset[0] += UTF16.getCharCount(c); return UnicodeMatcher.U_MATCH }
-        }
-        if (offset[0] > limit && contains(text.char32At(offset[0]))) {
-            --offset[0]
-            if (offset[0] >= 0) offset[0] -= UTF16.getCharCount(text.char32At(offset[0])) - 1
-            return UnicodeMatcher.U_MATCH
-        }
-        return if (incremental && offset[0] == limit) UnicodeMatcher.U_PARTIAL_MATCH else UnicodeMatcher.U_MISMATCH
+        return super.matches(text, offset, limit, incremental)
     }
     private fun matchRest(text: Replaceable, start: Int, limit: Int, string: String): Int {
         val forward = start < limit

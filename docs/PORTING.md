@@ -765,3 +765,13 @@ modes and append-to-buffer behavior, then parse every generated pattern with
 ICU4J and compare the resulting set. Common tests cover ranges, complements,
 strings, surrogate boundaries and use through the UnicodeMatcher interface.
 The common pattern parser remains pending.
+
+## UnicodeFilter hierarchy
+
+UnicodeFilter is now a common abstract UnicodeMatcher with the original
+single-code-point match implementation, including reverse surrogate cursor
+adjustment and incremental boundary results. UnicodeSet extends this base and
+delegates its code-point fallback to super.matches rather than duplicating it.
+The existing exhaustive-direction UnicodeSet matcher oracle continues to cover
+this fallback; common tests additionally exercise the public filter hierarchy
+and the base filter's distinct incremental boundary behavior.
