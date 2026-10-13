@@ -1169,3 +1169,16 @@ JVM tests compare random mutation schedules in both destination modes against
 ICU4J, including supplementary and malformed units, marks and destination reuse.
 Common tests verify reordered accents and starter boundaries. Full-string
 normalization loops and composition remain pending.
+
+## Full-string decomposition and append
+
+Normalizer2Impl now ports the original decomposition scan with BMP/supplementary
+fast paths, quick-check boundary mode, canonical reordering, algorithmic and
+Hangul mappings, destination reset and decomposeAndAppend boundary merging.
+The append-only mode retains its upstream precondition that input is already
+appropriately decomposed; it merges classes at the join without decomposing.
+
+JVM tests compare random strings and slices across all five normalization
+resources, including malformed UTF-16, quick-check spans and both append modes.
+Common tests cover reordering, Hangul and append-boundary merging. Composition,
+FCD string processing and the public normalization facade remain pending.

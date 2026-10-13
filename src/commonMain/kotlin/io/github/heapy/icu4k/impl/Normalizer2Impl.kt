@@ -57,6 +57,93 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun decompose(s: CharSequence, src: Int, limit: Int, dest: StringBuilder, destLengthEstimate: Int) {
+        val capacity = if (destLengthEstimate < 0) limit - src else destLengthEstimate
+        dest.setLength(0)
+        decompose(s, src, limit, ReorderingBuffer(this, dest, capacity))
+    }
+    fun decompose(s: CharSequence, initialSrc: Int, limit: Int, buffer: ReorderingBuffer?): Int {
+        var src = initialSrc
+        var c = 0; var norm16 = 0
+        var prevBoundary = src; var prevCC = 0
+        val trie = normTrie as io.github.heapy.icu4k.util.CodePointTrie.Fast
+        while (true) {
+            val prevSrc = src
+            while (src != limit) {
+                c = s[src].code
+                if (c < minDecompNoCP) { ++src; continue }
+                norm16 = trie.bmpGet(c)
+                if (isMostDecompYesAndZeroCC(norm16)) { ++src; continue }
+                if (!UTF16Plus.isLeadSurrogate(c)) break
+                if (src + 1 != limit && s[src + 1].code in 0xdc00..0xdfff) {
+                    c = ((c - 0xd800) shl 10) + s[src + 1].code - 0xdc00 + 0x10000
+                    norm16 = trie.suppGet(c)
+                    if (isMostDecompYesAndZeroCC(norm16)) src += 2 else break
+                } else ++src
+            }
+            if (src != prevSrc) {
+                if (buffer != null) buffer.flushAndAppendZeroCC(s, prevSrc, src)
+                else { prevCC = 0; prevBoundary = src }
+            }
+            if (src == limit) break
+            src += if (c > 0xffff) 2 else 1
+            if (buffer != null) decomposeCodePoint(c, norm16, buffer)
+            else {
+                if (isDecompYes(norm16)) {
+                    val cc = getCCFromYesOrMaybeYes(norm16)
+                    if (prevCC <= cc || cc == 0) {
+                        prevCC = cc
+                        if (cc <= 1) prevBoundary = src
+                        continue
+                    }
+                }
+                return prevBoundary
+            }
+        }
+        return src
+    }
+    private fun isMostDecompYesAndZeroCC(norm16: Int): Boolean = norm16 < minYesNo || norm16 == MIN_NORMAL_MAYBE_YES || norm16 == JAMO_VT
+    private fun decomposeCodePoint(initialC: Int, initialNorm16: Int, buffer: ReorderingBuffer) {
+        var c = initialC; var norm16 = initialNorm16
+        if (norm16 >= limitNoNo) {
+            if (norm16 >= minMaybeYes) { buffer.append(c, getCCFromYesOrMaybeYes(norm16)); return }
+            if (norm16 < minMaybeNo) { c = mapAlgorithmic(c, norm16); norm16 = getRawNorm16(c) }
+        }
+        if (norm16 < minYesNo) buffer.append(c, 0)
+        else if (norm16 == minYesNo || isHangulLVT(norm16)) Hangul.decompose(c, buffer)
+        else {
+            var mapping = getData(norm16)
+            val data = extraData!!
+            val firstUnit = data[mapping].code
+            val length = firstUnit and MAPPING_LENGTH_MASK
+            val trailCC = firstUnit shr 8
+            val leadCC = if (firstUnit and MAPPING_HAS_CCC_LCCC_WORD != 0) data[mapping - 1].code shr 8 else 0
+            ++mapping
+            buffer.append(data, mapping, mapping + length, true, leadCC, trailCC)
+        }
+    }
+    fun decomposeAndAppend(s: CharSequence, doDecompose: Boolean, buffer: ReorderingBuffer) {
+        val limit = s.length
+        if (limit == 0) return
+        if (doDecompose) { decompose(s, 0, limit, buffer); return }
+        var src = 0
+        var c = codePointAt(s, src)
+        val firstCC = getCC(getNorm16(c))
+        var prevCC = firstCC; var cc = firstCC
+        while (cc != 0) {
+            prevCC = cc
+            src += if (c > 0xffff) 2 else 1
+            if (src >= limit) break
+            c = codePointAt(s, src)
+            cc = getCC(getNorm16(c))
+        }
+        buffer.append(s, 0, src, false, firstCC, prevCC)
+        buffer.append(s, src, limit)
+    }
+    private fun codePointAt(s: CharSequence, i: Int): Int {
+        val c = s[i].code
+        return if (c in 0xd800..0xdbff && i + 1 < s.length && s[i + 1].code in 0xdc00..0xdfff) ((c - 0xd800) shl 10) + s[i + 1].code - 0xdc00 + 0x10000 else c
+    }
     fun hasDecompBoundaryBefore(c: Int): Boolean = c < minLcccCP ||
         (c <= 0xffff && !singleLeadMightHaveNonZeroFCD16(c)) || norm16HasDecompBoundaryBefore(getNorm16(c))
     fun norm16HasDecompBoundaryBefore(norm16: Int): Boolean {
