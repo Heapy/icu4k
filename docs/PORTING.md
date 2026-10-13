@@ -1502,3 +1502,16 @@ mask fixtures. They compare every resulting range/string and frozen/error
 outcomes. Common tests cover replacement, script/category/class filters, emoji
 string complements and frozen mutation. Property-alias/pattern parsing remains
 pending.
+
+## Character-name byte utilities
+
+UCharacterUtility now ports all primitive operations used by the name decoder:
+noncharacter detection, two-char integer packing, null-terminated byte-string
+read/compare/skip and bounded delimiter scanning. Unsigned byte-to-character
+conversion, empty-field handling, returned offsets and negative skip counts
+follow ICU4J. Explicit array/string bounds checks preserve exceptions on JS.
+
+JVM oracle tests compare all Unicode noncharacter values, random packed chars
+and randomized byte fields/skips/comparisons against the original internal
+methods. Common tests cover empty/unsigned fields, truncation and unterminated
+input. Character-name resources, decoder and public name lookup remain pending.
