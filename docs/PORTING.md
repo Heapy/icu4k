@@ -58,10 +58,21 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
   optimized filtered range enumeration and error-aware string iteration are ported.
 - BinaryBuffer replaces Java ByteBuffer for common binary readers. ICUBinary
   header authentication, version conversion and typed array operations are ported.
-- ICUData embeds pinned `uprops.icu` and `ulayout.icu` bytes across all targets;
+- ICUData embeds pinned `uprops.icu`, `ulayout.icu` and `ubidi.icu` bytes across all targets;
   other resources and filesystem/package scanning remain pending.
 - LayoutProps loads real Unicode 17 Indic positional/syllabic category and vertical
   orientation tries. The modern block trie in uprops also decodes correctly.
+- Legacy Trie2_16/Trie2_32 decoding, serialization, optimized range iteration,
+  string iteration, equality and hashing are implemented. Alternate lead-code-unit
+  values remain distinct from lead-code-point values.
+- UCharacterProperty loads both property tries, additional vectors, script
+  extensions and the block trie. General categories, Unicode age and numeric
+  decoding are implemented; its full property dispatcher remains pending.
+- UBiDiProps reads real bidi/shaping data, mirror tables, joining groups and
+  paired-bracket properties. The bidi reordering algorithm remains unported.
+- UProperty identifiers, UCharacterEnums, category/direction names and constants
+  are implemented. UCharacter exposes category/numeric/bidi and legality APIs;
+  case mapping, names, normalization and the full property dispatcher are pending.
 - The remaining ICU4J classes and data algorithms are unported. No complete API
   compatibility is claimed.
 
@@ -103,8 +114,8 @@ ranges against ICU4J.
 
 ## Unicode data dependency chain
 
-The next data layer is `CodePointMap -> CodePointTrie` plus `Trie2_16` and a
-common endian-aware binary reader. `UCharacterProperty` reads `uprops.icu`:
+The data layer now includes `CodePointMap -> CodePointTrie`, legacy `Trie2`
+and a common endian-aware binary reader. `UCharacterProperty` reads `uprops.icu`:
 legacy Trie2 main/additional property maps, additional vectors, script extensions,
 and a modern CodePointTrie for blocks. `ulayout.icu` contains the modern tries for
 Indic positional/syllabic categories and vertical orientation. Preserve these
@@ -129,10 +140,10 @@ macOS arm64. Actual layout property tries and the modern block trie from uprops
 were compared against ICU4J's UCharacter property API over the full Unicode range.
 Embedded resources match the ICU4J 78.3 artifact byte-for-byte.
 
-Next prerequisites for the main property API: legacy Trie2 decoding and lookup,
-then UCharacterProperty's vectors, numeric data and script extensions. The full
-UCharacter property API also depends on case, bidi and normalization tables;
-these are still pending. MutableCodePointTrie construction/compaction is pending.
+The main property data, numeric decoding and bidi property tables are now ported.
+The complete UCharacter property dispatcher still requires case/normalization,
+emoji and other derived-property data. MutableCodePointTrie and Trie2Writable
+construction/compaction remain pending.
 
 Common adaptations: binary APIs accept BinaryBuffer or ByteArray and serialize
 into ByteArray instead of Java streams. ICUBinary failures use the common
@@ -142,3 +153,30 @@ been silently replaced by host-JDK behavior; they remain explicit pending work.
 CI run `38375483112` for commit `a0e07ea` passed all JVM/JS/Linux Native and
 macOS arm64 suites, including the real ICU data checks. GitHub Actions were then
 updated from deprecated Node 20 actions to released Node 24 actions.
+
+## Legacy tries and character property validation
+
+Trie2 tests compare the full Unicode range, all UTF-16 single-unit lookups,
+filtered/unfiltered range iteration, lead-surrogate-specific ranges, serialized
+bytes, version signatures, both byte orders, hashes and bidirectional string
+iteration against ICU4J. Both 16-bit and signed 32-bit tries are covered;
+common tests also check different values for lead code units vs. code points.
+The two Trie2_16 tables in actual uprops.icu match upstream lookups.
+
+UCharacterProperty's main words, all additional-vector columns, ages, decimal
+and European digits, integer numeric values and exact Double bits were compared
+to ICU4J for every Unicode code point. Bidi class, mirrors, controls, joining
+properties, bracket properties and property-start boundaries likewise match
+ICU4J over the full Unicode range. Raw ubidi.icu bytes match the upstream artifact.
+
+Public UCharacter category/identifier/whitespace/legality predicates and nullable
+code-point-to-string conversion are checked across the full Unicode range;
+radix boundaries and supplementary digits are checked separately. Enum/property
+constant values and original Byte/Int types are compared to upstream declarations.
+Local JVM, JS/Node and macOS arm64 suites passed after these changes.
+
+Some Java-specific APIs are intentionally still absent rather than approximated:
+Java identifier predicates depend on host-JDK Unicode data in ICU4J and need an
+explicit portability decision. Unicode identifier predicates already use pinned
+ICU data. Locale-sensitive case conversion, names, normalization, resource
+bundles, the bidi algorithm, formatting and the rest of ICU remain pending.
