@@ -60,6 +60,34 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Complete integer-property table, separate from the generic API's binary-property branch. */
+    internal fun getEnumeratedIntPropertyValue(c: Int, which: Int): Int = when (which) {
+        UProperty.SCRIPT -> io.github.heapy.icu4k.lang.UScript.getScript(c)
+        UProperty.BIDI_CLASS, UProperty.BLOCK, UProperty.JOINING_GROUP, UProperty.JOINING_TYPE,
+        UProperty.BIDI_PAIRED_BRACKET_TYPE, UProperty.INDIC_POSITIONAL_CATEGORY,
+        UProperty.INDIC_SYLLABIC_CATEGORY, UProperty.VERTICAL_ORIENTATION -> getTrieIntPropertyValue(c, which)
+        UProperty.GENERAL_CATEGORY, UProperty.NUMERIC_TYPE, UProperty.HANGUL_SYLLABLE_TYPE,
+        UProperty.IDENTIFIER_STATUS -> getDerivedIntPropertyValue(c, which)
+        UProperty.CANONICAL_COMBINING_CLASS, UProperty.NFD_QUICK_CHECK, UProperty.NFKD_QUICK_CHECK,
+        UProperty.NFC_QUICK_CHECK, UProperty.NFKC_QUICK_CHECK,
+        UProperty.LEAD_CANONICAL_COMBINING_CLASS, UProperty.TRAIL_CANONICAL_COMBINING_CLASS -> getNormalizationIntPropertyValue(c, which)
+        else -> getVectorIntPropertyValue(c, which)
+    }
+    fun getIntPropertyMaxValue(which: Int): Int = when {
+        which in UProperty.BINARY_START until UProperty.BINARY_LIMIT -> 1
+        which !in UProperty.INT_START until UProperty.INT_LIMIT -> -1
+        which == UProperty.SCRIPT -> getMaxValues(0) and 0x3ff
+        which in vectorIntProperties -> getVectorIntPropertyMaxValue(which)
+        else -> when (which) {
+            UProperty.BIDI_CLASS, UProperty.BLOCK, UProperty.JOINING_GROUP, UProperty.JOINING_TYPE,
+            UProperty.BIDI_PAIRED_BRACKET_TYPE, UProperty.INDIC_POSITIONAL_CATEGORY,
+            UProperty.INDIC_SYLLABIC_CATEGORY, UProperty.VERTICAL_ORIENTATION -> getTrieIntPropertyMaxValue(which)
+            UProperty.GENERAL_CATEGORY, UProperty.NUMERIC_TYPE, UProperty.HANGUL_SYLLABLE_TYPE,
+            UProperty.IDENTIFIER_STATUS -> getDerivedIntPropertyMaxValue(which)
+            else -> getNormalizationIntPropertyMaxValue(which)
+        }
+    }
+
     /** Normalization-dependent entries; canonical segment-starter data is ported separately. */
     internal fun hasNormalizationBinaryProperty(c: Int, which: Int): Boolean = when (which) {
         UProperty.FULL_COMPOSITION_EXCLUSION -> Norm2AllModes.getNFCInstance().impl.let { it.isCompNo(it.getNorm16(c)) }

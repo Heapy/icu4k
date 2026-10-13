@@ -166,6 +166,10 @@ class UCharacter private constructor() {
         fun toLowerCase(ch: Int): Int = UCaseProps.INSTANCE.tolower(ch)
         fun toUpperCase(ch: Int): Int = UCaseProps.INSTANCE.toupper(ch)
         fun toTitleCase(ch: Int): Int = UCaseProps.INSTANCE.totitle(ch)
+        /** All binary and enumerated properties have minimum zero, including undefined IDs. */
+        @Suppress("UNUSED_PARAMETER")
+        fun getIntPropertyMinValue(type: Int): Int = 0
+        fun getIntPropertyMaxValue(type: Int): Int = UCharacterProperty.INSTANCE.getIntPropertyMaxValue(type)
         fun foldCase(ch: Int, options: Int): Int = UCaseProps.INSTANCE.fold(ch, options)
         fun foldCase(ch: Int, defaultMapping: Boolean): Int = foldCase(ch, if (defaultMapping) FOLD_CASE_DEFAULT else FOLD_CASE_EXCLUDE_SPECIAL_I)
         fun foldCase(str: String, options: Int): String = CaseMapImpl.fold(options, str)

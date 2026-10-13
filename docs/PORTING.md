@@ -1322,3 +1322,17 @@ including surrogate values, and all seven integer maxima. Common tests exercise
 composition exclusions, class values, inertness, multi-character folding,
 negative-input casefold protection and default-ignorable removal. Public generic
 property dispatch and canonical segment-starter data remain pending.
+
+## Integer property table and public bounds
+
+UCharacterProperty now unifies all 27 enumerated integer-property entries,
+including Script, through getEnumeratedIntPropertyValue. The generic public
+value dispatcher also accepts binary property IDs and remains pending until its
+canonical-iteration dependency is implemented. No incomplete public value API
+is exposed.
+
+The complete getIntPropertyMaxValue dispatcher and UCharacter min/max APIs are
+ported, including binary maximum 1, undefined maximum -1 and minimum 0 for every
+ID. JVM tests compare 20,000 random code points per integer property, surrogate
+and invalid-input boundaries, and all property bounds from -10 through 0x8000.
+Common tests cover routing between data sources and undefined-property bounds.
