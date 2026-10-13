@@ -848,3 +848,12 @@ output reuses the pattern code-point emitter.
 JVM tests compare 600 mixed sets for diagnostic/regex output and matchesAt
 results or exceptions at every fixture offset. Common tests cover exact string
 matching, the legacy length check and empty-string exception behavior.
+
+## Property alias data resource
+
+The original ICU 78.3 pnames.icu resource is now embedded for common targets,
+with its 47,072-byte size and SHA-256 pinned in the data manifest. ICUData and
+ICUBinary expose independent copies through the existing resource mechanism.
+Generator verification checks all 25 embedded resources. Common tests verify
+the pnam/version-2 header, index offsets and copy isolation. The UPropertyAliases
+decoder and property-name resolution APIs are the next step and remain pending.

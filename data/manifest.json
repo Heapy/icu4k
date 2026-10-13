@@ -171,6 +171,13 @@
       "object": "DictionaryThaidictData",
       "sha256": "0c23739890c8460251a1807ee32f29c586a92bd216922f660d52f8041b4e1181",
       "size": 126144
+    },
+    {
+      "name": "pnames.icu",
+      "file": "data/icu78/pnames.icu",
+      "object": "PnamesData",
+      "sha256": "3614e5c55f31ec8bd920d654eee124198b29ebf8801cc2ebfbeb4f5c29e53285",
+      "size": 47072
     }
   ]
 }
