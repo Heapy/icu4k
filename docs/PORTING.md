@@ -1989,3 +1989,25 @@ payloads, including NaNs. Common tests cover signed zero, infinities, subnormals
 layout and embedding types through binary resources. Inference, both vectorizers,
 default-model/resource loading and automatic Thai/Myanmar dispatch remain pending;
 this step ports their model-decoding dependency, not a replacement segmenter.
+
+### Bidirectional LSTM inference and token vectorization
+
+Ported LSTMBreakEngine's complete recurrent computation, backward-first storage,
+merged forward/output pass, BIES class selection, script handling and engine
+factory from supplied model data. Both vectorizers retain upstream behavior:
+CODE_POINTS consumes UTF-16 units, while GRAPHEME_CLUSTER uses original compiled
+character rules through the ported rule engine/cache and retains next(start)'s
+boundary-count interpretation. Default model selection and trained-resource
+embedding remain pending.
+
+Float products explicitly round to binary32 before accumulation so Kotlin/JS
+preserves Java's separate multiplication/addition operations. Differential tests
+compare recurrent hidden/cell bits, token offsets/indices, cursor state and
+break queues against ICU4J for random finite model weights, both vectorizers,
+range slices, malformed/supplementary text and both phrase flags. Common tests
+exercise graph-cluster and unit tokenization with deterministic SINGLE output.
+
+A common cancellation fixture uses saturated gates and output bias to distinguish
+binary32 product rounding from a fused/wider multiply-add: correct rounding ties
+SINGLE with INSIDE and preserves the earlier INSIDE class. This exercises the
+rounding-sensitive decision on JS and Native, beyond JVM bit comparisons.

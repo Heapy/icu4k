@@ -8,7 +8,7 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class LSTMDataOracleTest {
-    private class Bundle(private val value: Any) : UResourceBundle() {
+    internal class Bundle(private val value: Any) : UResourceBundle() {
         override fun getULocale(): ULocale = ULocale.ROOT
         override fun getLocaleID(): String = "root"
         override fun getBaseName(): String = "test"
