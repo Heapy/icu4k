@@ -3,6 +3,8 @@
 package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.impl.Norm2AllModes
+import io.github.heapy.icu4k.impl.UCaseProps
+import io.github.heapy.icu4k.lang.UCharacter
 
 /** Legacy normalization API being ported. Quick-check tokens are shared with [Normalizer2]. */
 class Normalizer private constructor(private var text: UCharacterIterator, private var mode: Mode,
@@ -243,6 +245,28 @@ class Normalizer private constructor(private var text: UCharacterIterator, priva
             if (destStart < 0 || destStart > dest.size - length) throw IndexOutOfBoundsException()
             for (i in 0 until length) dest[destStart + i] = output[i]
             return length
+        }
+        fun getFC_NFKC_Closure(c: Int, dest: CharArray?): Int {
+            val closure = getFC_NFKC_Closure(c)
+            if (closure.isNotEmpty() && dest != null && closure.length <= dest.size) {
+                for (i in closure.indices) dest[i] = closure[i]
+            }
+            return closure.length
+        }
+        fun getFC_NFKC_Closure(c: Int): String {
+            val modes = Norm2AllModes.getNFKCInstance()
+            val nfkc = modes.comp
+            val folded = StringBuilder()
+            val foldedLength = UCaseProps.INSTANCE.toFullFolding(c, folded, 0)
+            if (foldedLength < 0) {
+                if (modes.impl.getCompQuickCheck(modes.impl.getNorm16(c)) != 0) return ""
+                UTF16.appendCodePoint(folded, c)
+            } else if (foldedLength > UCaseProps.MAX_STRING_LENGTH) {
+                UTF16.appendCodePoint(folded, foldedLength)
+            }
+            val kc1 = nfkc.normalize(folded)
+            val kc2 = nfkc.normalize(UCharacter.foldCase(kc1, 0))
+            return if (kc1 == kc2) "" else kc2
         }
         val NO: QuickCheckResult = QuickCheckResult.no
         val YES: QuickCheckResult = QuickCheckResult.yes

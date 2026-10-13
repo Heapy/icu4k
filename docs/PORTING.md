@@ -1800,3 +1800,14 @@ output buffer after successful and overflowing operations across all modes,
 Unicode 3.2, random UTF-16 slices and compatibility expansions. Common tests
 exercise array output, overflow accounting and composition across a concatenation
 boundary on all locally runnable targets.
+
+### FC_NFKC closure
+
+Ported both `Normalizer.getFC_NFKC_Closure` overloads with the original full-fold
+and NFKC derivation and composition-quick-check fast exit. The destination-array
+form returns the required length for null or undersized arrays and copies only
+when the complete closure fits. JVM tests compare every Unicode code point with
+ICU4J and check capacities around every nonempty result, plus invalid inputs.
+Common tests cover compatibility characters whose capital letters are exposed
+by normalization, preflight and unchanged undersized destinations. Legacy
+canonical comparison remains pending.
