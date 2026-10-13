@@ -1689,3 +1689,17 @@ position validation and independent cloned cursor state. JVM tests compare
 cursor operations and inherited BreakIterator defaults/text adapters with ICU4J;
 Common tests cover empty/supplementary text, retained text, cloning and errors.
 RuleBasedBreakIterator, its caches and dictionary integration remain pending.
+
+## Unhandled dictionary-break fallback
+
+UnhandledBreakEngine now ports script-wide handled-set accumulation and cursor
+skipping without adding boundaries. Readers capture one immutable-by-convention
+set snapshot; Common AtomicReference publication replaces the JVM volatile field.
+The original single-writer requirement for handleChar is retained, as are ignored
+start/phrase arguments and pre-existing deque contents.
+
+JVM tests compare membership for all Unicode code points after several scripts,
+all start/end combinations on mixed and malformed UTF-16 and unchanged break
+queues. A concurrency test runs one publisher with multiple readers. Common
+tests cover script accumulation and cursor behavior. Specific dictionary engines
+and RuleBasedBreakIterator integration remain pending.
