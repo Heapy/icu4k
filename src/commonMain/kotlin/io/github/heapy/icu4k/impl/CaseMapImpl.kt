@@ -97,7 +97,7 @@ internal object CaseMapImpl {
         edits?.addUnchanged(length)
         if (options and OMIT_UNCHANGED_TEXT == 0) dest.append(src, start, start + length)
     }
-    private fun appendResult(result: Int, dest: Appendable, cpLength: Int, options: Int, edits: Edits?) {
+    internal fun appendResult(result: Int, dest: Appendable, cpLength: Int, options: Int, edits: Edits?) {
         when {
             result < 0 -> {
                 edits?.addUnchanged(cpLength)
@@ -202,5 +202,69 @@ internal object CaseMapImpl {
         val dest = StringBuilder(src.length)
         internalToLower(locale, options, src, 0, src.length, null, dest, null)
         return dest.toString()
+    }
+    private fun internalToUpper(caseLocale: Int, options: Int, src: CharSequence, dest: Appendable, edits: Edits?) {
+        val latin = if (caseLocale == UCaseProps.LOC_TURKISH) LatinCase.TO_UPPER_TR else LatinCase.TO_UPPER_NORMAL
+        val start = 0
+        val limit = src.length
+        var iter: StringContextIterator? = null
+        var previous = start
+        var index = start
+        outer@ while (true) {
+            var lead: Int
+            while (true) {
+                if (index >= limit) break@outer
+                lead = src[index].code
+                val delta: Int
+                if (lead < LatinCase.LONG_S) {
+                    delta = latin[lead].toInt()
+                    if (delta == LatinCase.EXC) break
+                    ++index
+                    if (delta == 0) continue
+                } else if (lead >= 0xd800) {
+                    break
+                } else {
+                    val props = UCaseProps.getTrie().getFromU16SingleLead(lead.toChar())
+                    if (UCaseProps.propsHasException(props)) break
+                    ++index
+                    delta = UCaseProps.getDelta(props)
+                    if (UCaseProps.getTypeFromProps(props) != UCaseProps.LOWER || delta == 0) continue
+                }
+                appendUnchanged(src, previous, index - 1 - previous, dest, options, edits)
+                dest.append((lead + delta).toChar())
+                edits?.addReplace(1, 1)
+                previous = index
+            }
+            val cpStart = index++
+            var c = lead
+            if (lead in 0xd800..0xdbff && index < limit && src[index].code in 0xdc00..0xdfff) {
+                c = ((lead - 0xd800) shl 10) + src[index++].code - 0xdc00 + 0x10000
+            }
+            appendUnchanged(src, previous, cpStart - previous, dest, options, edits)
+            previous = cpStart
+            if (iter == null) iter = StringContextIterator(src, cpStart, index)
+            else iter.setCPStartAndLimit(cpStart, index)
+            c = UCaseProps.INSTANCE.toFullUpper(c, iter, dest, caseLocale)
+            if (c >= 0) {
+                appendResult(c, dest, index - cpStart, options, edits)
+                previous = index
+            }
+        }
+        appendUnchanged(src, previous, index - previous, dest, options, edits)
+    }
+    fun <A : Appendable> toUpper(caseLocale: Int, options: Int, src: CharSequence, dest: A, edits: Edits?): A {
+        edits?.reset()
+        if (caseLocale == UCaseProps.LOC_GREEK) GreekUpper.toUpper(options, src, dest, edits)
+        else internalToUpper(caseLocale, options, src, dest, edits)
+        return dest
+    }
+    fun toUpper(caseLocale: Int, options: Int, src: CharSequence): String {
+        if (src.isEmpty()) return src.toString()
+        if (src.length <= 100 && options and OMIT_UNCHANGED_TEXT == 0) {
+            val edits = Edits()
+            val replacements = toUpper(caseLocale, options or OMIT_UNCHANGED_TEXT, src, StringBuilder(), edits)
+            return applyEdits(src, replacements, edits)
+        }
+        return toUpper(caseLocale, options, src, StringBuilder(src.length), null).toString()
     }
 }

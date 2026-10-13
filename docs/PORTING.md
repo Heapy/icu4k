@@ -245,3 +245,18 @@ algorithms on JS and Native as well.
 Uppercasing (including Greek's separate state machine), titlecasing, locale
 adapters and common wrapping of Java IOException from custom JVM Appendables
 remain pending. Common Appendables currently propagate their own failures.
+
+## String uppercase
+
+CaseMapImpl uppercasing now includes the original Latin/trie fast paths and
+GreekUpper's original letter tables and context state machine. Greek casing
+handles accent removal, disjunctive eta, precomposed versus combining dialytika,
+trailing capital iotas for ypogegrammeni, and non-Greek full uppercase mappings.
+Short-string reconstruction and Appendable output retain exact Edits spans.
+
+The string oracle now compares uppercase output and fine spans over all Unicode
+code points, locale IDs 0 through 6, option bits, arbitrary malformed UTF-16,
+and 200 generated Greek/diacritic sequences. A regression specifically covers
+the distinction between precomposed and combining dialytika in vowel state.
+Titlecase and public locale adapters remain pending, as do the rest of the
+previously listed ICU subsystems.

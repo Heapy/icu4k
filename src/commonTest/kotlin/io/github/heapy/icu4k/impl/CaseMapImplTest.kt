@@ -16,6 +16,19 @@ class CaseMapImplTest {
         val malformed = charArrayOf(0xdc00.toChar(), 'A', 0xd800.toChar()).concatToString()
         assertEquals(charArrayOf(0xdc00.toChar(), 'a', 0xd800.toChar()).concatToString(), CaseMapImpl.fold(0, malformed))
     }
+    @Test fun uppercaseIncludesGreekContextRules() {
+        assertEquals("STRASSE", CaseMapImpl.toUpper(1, 0, "Straße"))
+        assertEquals("İI", CaseMapImpl.toUpper(2, 0, "iı"))
+        assertEquals("ΑΪ ΑΫ", CaseMapImpl.toUpper(4, 0, "άι άυ"))
+        assertEquals("ΑΙ\u0308 ΑΥ\u0308", CaseMapImpl.toUpper(4, 0, "α\u0301ι α\u0301υ"))
+        assertEquals("Α\u0308Ι\u0308", CaseMapImpl.toUpper(4, 0, "α\u0301\u0308ι"))
+        assertEquals("Ή ΗΑ", CaseMapImpl.toUpper(4, 0, "ή ήα"))
+        val edits = io.github.heapy.icu4k.text.Edits()
+        val output = StringBuilder()
+        CaseMapImpl.toUpper(4, 0x4000, "Α άι", output, edits)
+        assertEquals("ΑΪ", output.toString())
+        assertEquals(0, edits.lengthDelta())
+    }
     @Test fun contextSeesBeyondMappingLimit() {
         val iter = CaseMapImpl.StringContextIterator("AΣB")
         iter.setLimit(2)
