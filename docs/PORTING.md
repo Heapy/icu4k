@@ -2213,3 +2213,21 @@ error messages/locations and low-level quote/escape/newline tokenization.
 Common tests cover tree flags, tags, variable ownership and source offsets.
 Full JVM, JS Node and macOS Arm64 suites pass. Set-category partitioning, DFA
 construction and compiled-data emission remain pending.
+
+### Rule compiler character categories and trie
+
+Ported RBBISetBuilder's linked range splitting, grouping by ordered original-set
+membership, dictionary category placement, category-expression trees, special
+{bof}/{eof} symbols, equivalent-category merging and first-character lookup.
+Trie construction uses the ported MutableCodePointTrie and the original FAST
+8/16-bit width selection; freezing releases the mutable trie and serialization
+returns Common bytes. Range/set/group debug output retains upstream formatting.
+
+Differential tests compare complete range lists, membership and dictionary/group
+flags, category trees/parents, merge results, debug dumps and byte-for-byte trie
+serialization against ICU4J. Coverage includes all 15 embedded rule sources,
+100 generated overlapping-set rules, dictionary alias/interning cases, Unicode
+endpoints and both sides of the 255-category width boundary. Common tests check
+range coverage, dictionary lookup, BOF/EOF behavior, split ownership and frozen
+trie reuse. Full JVM, JS Node and macOS Arm64 suites pass. DFA construction and
+complete compiled-rule serialization remain pending.
