@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.lang
 
+import io.github.heapy.icu4k.impl.IllegalIcuArgumentException
+import io.github.heapy.icu4k.impl.UPropertyAliases
 import io.github.heapy.icu4k.impl.CaseMapImpl
 import io.github.heapy.icu4k.impl.UCaseProps
 import io.github.heapy.icu4k.impl.UCharacterProperty
@@ -18,6 +20,28 @@ import io.github.heapy.icu4k.util.VersionInfo
  */
 class UCharacter private constructor() {
     companion object {
+        fun getPropertyName(property: Int, nameChoice: Int): String? = UPropertyAliases.INSTANCE.getPropertyName(property, nameChoice)
+        fun getPropertyEnum(propertyAlias: CharSequence): Int {
+            val value = UPropertyAliases.INSTANCE.getPropertyEnum(propertyAlias)
+            if (value == -1) throw IllegalIcuArgumentException("Invalid name: $propertyAlias")
+            return value
+        }
+        fun getPropertyValueName(property: Int, value: Int, nameChoice: Int): String? {
+            // Combining classes are unsigned bytes, including values with no UCD alias.
+            if ((property == UProperty.CANONICAL_COMBINING_CLASS || property == UProperty.LEAD_CANONICAL_COMBINING_CLASS || property == UProperty.TRAIL_CANONICAL_COMBINING_CLASS)
+                && value in 0..255 && nameChoice >= 0 && nameChoice < UProperty.NameChoice.COUNT) {
+                try { return UPropertyAliases.INSTANCE.getPropertyValueName(property, value, nameChoice) }
+                catch (_: IllegalArgumentException) { return null }
+            }
+            return UPropertyAliases.INSTANCE.getPropertyValueName(property, value, nameChoice)
+        }
+        fun getPropertyValueEnum(property: Int, valueAlias: CharSequence): Int {
+            val value = UPropertyAliases.INSTANCE.getPropertyValueEnum(property, valueAlias)
+            if (value == -1) throw IllegalIcuArgumentException("Invalid name: $valueAlias")
+            return value
+        }
+        fun getPropertyValueEnumNoThrow(property: Int, valueAlias: CharSequence): Int = UPropertyAliases.INSTANCE.getPropertyValueEnumNoThrow(property, valueAlias)
+
         const val UNASSIGNED: Byte = UCharacterEnums.ECharacterCategory.UNASSIGNED
         const val GENERAL_OTHER_TYPES: Byte = UCharacterEnums.ECharacterCategory.GENERAL_OTHER_TYPES
         const val UPPERCASE_LETTER: Byte = UCharacterEnums.ECharacterCategory.UPPERCASE_LETTER

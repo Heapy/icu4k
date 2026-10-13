@@ -870,3 +870,16 @@ JVM tests compare names, choices, value names and alias lookup across binary,
 integer, mask, numeric and string property ranges, plus 10,000 random loose-name
 comparisons. Common tests resolve real names and values on each target. Public
 UCharacter name adapters and UnicodeSet property parsing remain pending.
+
+## Public UCharacter property alias adapters
+
+UCharacter now exposes getPropertyName/getPropertyEnum and property-value name,
+enum and no-throw enum lookup through the common UPropertyAliases decoder.
+Unknown aliases throw IllegalIcuArgumentException as upstream does. Combining
+class values use the original unsigned-byte valid range and return null for
+valid values without names, while invalid name choices still throw.
+
+JVM tests compare combining-class boundaries and every name choice, several
+property families, unknown aliases and error messages with ICU4J. Common tests
+exercise names, alias resolution and unnamed combining-class values. This does
+not yet implement the complete property value dispatcher or UnicodeSet parser.
