@@ -481,3 +481,16 @@ all value-width boundaries. Delta encodings are compared at every width boundary
 Common tests verify round trips, copied inputs and lifecycle errors.
 Both compact trie reader/builder families are now ported; JVM IOException
 wrapping and the remaining full ICU subsystems are still pending.
+
+## Serialized Unicode sets
+
+USerializedSet ports ICU's compact BMP/supplementary boundary reader, copied
+input storage, singleton encoding, range enumeration and membership queries.
+Implicit U+10FFFF range ends and the original reset/error-state behavior are
+retained. This supports ICU data consumers; full mutable UnicodeSet and pattern
+parsing are still pending.
+
+JVM differential tests compare 200 generated boundary sets, range enumeration,
+membership around every boundary and random code points, singleton edge cases
+and truncated inputs. Common tests cover mixed BMP/supplementary ranges,
+singletons, copied storage and invalid data on every target.
