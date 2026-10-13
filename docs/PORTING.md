@@ -322,3 +322,18 @@ JVM oracle tests compare 60,000 mixed cursor and code-point operations over
 random ranges/UTF-16 against ICU4J. Common tests cover U+FFFF, pairs, split ranges,
 empty text and clone independence. RBBI runtime traversal and adapters between
 CharacterIterator and UCharacterIterator remain pending.
+
+## Break rule state machines
+
+Internal RBBIRuleEngine now ports RuleBasedBreakIterator.handleNext and
+handleSafePrevious, including beginning/end pseudo-categories, lookahead matches,
+rule-status indices, dictionary-character counting, surrogate cursor correction,
+forced progress and safe-reverse index pinning. This is the original rule layer;
+it is not exposed as a substitute for the complete public BreakIterator.
+
+JVM tests invoke ICU4J's original private state machines and compare returned
+positions, cursor positions, statuses and dictionary counts across all 15 rule
+sets and 600 text fixtures, including malformed UTF-16 and dictionary scripts.
+Common tests cover word/status output, emoji grapheme clusters, combining marks,
+CRLF and pinned/split-pair indices. Dictionary subdivision, BreakCache,
+DictionaryCache and public iterator/factory integration remain pending.
