@@ -3,11 +3,13 @@
 package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.util.OutputInt
+import io.github.heapy.icu4k.impl.Utility
+import io.github.heapy.icu4k.impl.PatternProps
 import io.github.heapy.icu4k.impl.BMPSet
 import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
 /** ICU inversion-list core. Pattern/property parsing is pending. */
-class UnicodeSet() : Iterable<String> {
+class UnicodeSet() : Iterable<String>, UnicodeMatcher {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
@@ -284,7 +286,58 @@ class UnicodeSet() : Iterable<String> {
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
     }
-    fun matchesIndexValue(v: Int): Boolean {
+    override fun toPattern(escapeUnprintable: Boolean): String = _generatePattern(StringBuilder(), escapeUnprintable).toString()
+    fun _generatePattern(result: StringBuilder, escapeUnprintable: Boolean, includeStrings: Boolean = true): StringBuilder {
+        result.append('[')
+        var i = 0
+        var limit = len and -2
+        if (len >= 4 && list[0] == 0 && limit == len && !hasStrings()) {
+            result.append('^'); i = 1; --limit
+        }
+        while (i < limit) {
+            val start = list[i]
+            val end = list[i + 1] - 1
+            if (end !in 0xd800..0xdbff) {
+                appendPatternRange(result, start, end, escapeUnprintable)
+                i += 2
+            } else {
+                val firstLead = i
+                do { i += 2 } while (i < limit && list[i] <= 0xdbff)
+                val firstAfterLead = i
+                while (i < limit && list[i] <= 0xdfff) {
+                    appendPatternRange(result, list[i], list[i + 1] - 1, escapeUnprintable)
+                    i += 2
+                }
+                for (j in firstLead until firstAfterLead step 2) appendPatternRange(result, list[j], list[j + 1] - 1, escapeUnprintable)
+            }
+        }
+        if (includeStrings) for (string in stringElements) {
+            result.append('{')
+            var index = 0
+            while (index < string.length) {
+                val lead = string[index].code
+                val cp = if (lead in 0xd800..0xdbff && index + 1 < string.length && string[index + 1].code in 0xdc00..0xdfff)
+                    ((lead - 0xd800) shl 10) + string[index + 1].code - 0xdc00 + 0x10000 else lead
+                appendPatternCodePoint(result, cp, escapeUnprintable)
+                index += UTF16.getCharCount(cp)
+            }
+            result.append('}')
+        }
+        return result.append(']')
+    }
+    private fun appendPatternRange(result: StringBuilder, start: Int, end: Int, escape: Boolean) {
+        appendPatternCodePoint(result, start, escape)
+        if (start != end) {
+            if (start + 1 != end || start == 0xdbff) result.append('-')
+            appendPatternCodePoint(result, end, escape)
+        }
+    }
+    private fun appendPatternCodePoint(result: StringBuilder, c: Int, escape: Boolean) {
+        if (if (escape) Utility.isUnprintable(c) else Utility.shouldAlwaysBeEscaped(c)) { Utility.escape(result, c); return }
+        if (c in intArrayOf(91, 93, 45, 94, 38, 92, 123, 125, 36, 58) || PatternProps.isWhiteSpace(c)) result.append('\\')
+        result.append(UTF16.valueOf(c))
+    }
+    override fun matchesIndexValue(v: Int): Boolean {
         for (i in 0 until getRangeCount()) {
             val low = getRangeStart(i)
             val high = getRangeEnd(i)
@@ -295,8 +348,8 @@ class UnicodeSet() : Iterable<String> {
         for (string in stringElements) if (string.isNotEmpty() && UTF16.charAt(string, 0) and 255 == v) return true
         return false
     }
-    fun addMatchSetTo(toUnionTo: UnicodeSet) { toUnionTo.addAll(this) }
-    fun matches(text: Replaceable, offset: IntArray, limit: Int, incremental: Boolean): Int {
+    override fun addMatchSetTo(toUnionTo: UnicodeSet) { toUnionTo.addAll(this) }
+    override fun matches(text: Replaceable, offset: IntArray, limit: Int, incremental: Boolean): Int {
         if (offset[0] == limit) return if (contains(UnicodeMatcher.ETHER.code)) {
             if (incremental) UnicodeMatcher.U_PARTIAL_MATCH else UnicodeMatcher.U_MATCH
         } else UnicodeMatcher.U_MISMATCH

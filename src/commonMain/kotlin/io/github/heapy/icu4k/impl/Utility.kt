@@ -6,6 +6,26 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** ICU utilities; currently the original escape decoder. */
 internal object Utility {
+    fun isUnprintable(c: Int): Boolean = c !in 0x20..0x7e
+    fun shouldAlwaysBeEscaped(c: Int): Boolean = when {
+        c < 0x20 -> true
+        c <= 0x7e -> false
+        c <= 0x9f -> true
+        c < 0xd800 -> false
+        c <= 0xdfff || c in 0xfdd0..0xfdef || c and 0xfffe == 0xfffe -> true
+        else -> c > 0x10ffff
+    }
+    fun <T : Appendable> escape(result: T, c: Int): T {
+        result.append('\\').append(if (c and -65536 != 0) 'U' else 'u')
+        for (shift in (if (c and -65536 != 0) 28 else 12) downTo 0 step 4) result.append("0123456789ABCDEF"[(c shr shift) and 15])
+        return result
+    }
+    fun escapeUnprintable(result: Appendable, c: Int): Boolean {
+        if (!isUnprintable(c)) return false
+        escape(result, c)
+        return true
+    }
+
     fun unescapeAndLengthAt(s: CharSequence, offset: Int): Int = unescapeAndLengthAt(s, offset, s.length)
     private fun unescapeAndLengthAt(s: CharSequence, initialOffset: Int, length: Int): Int {
         var offset = initialOffset

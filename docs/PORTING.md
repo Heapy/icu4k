@@ -748,3 +748,20 @@ JVM tests compare 150 mixed range/string sets at all start/limit combinations
 in both incremental modes, including frozen sets and malformed UTF-16, and
 all 256 index values. Common tests verify longest and partial matches, unchanged
 offsets on partial matches, ETHER and union behavior.
+
+## Generated UnicodeSet patterns and matcher integration
+
+UnicodeSet now implements UnicodeMatcher and generates toPattern output with
+the original inversion-list algorithm: economical code-point complements,
+adjacent ranges, surrogate range ordering, escaped metacharacters, whitespace,
+controls and noncharacters, plus sorted string elements. _generatePattern uses
+a common StringBuilder in place of StringBuffer and supports excluding strings.
+Utility adds the original printable/always-escape predicates and hexadecimal
+escape emitters. Cached parsed-pattern preservation will arrive with parsing;
+currently all sets are constructed from ranges and strings and generate output.
+
+JVM tests compare 1,200 generated sets in both escape modes, includeStrings
+modes and append-to-buffer behavior, then parse every generated pattern with
+ICU4J and compare the resulting set. Common tests cover ranges, complements,
+strings, surrogate boundaries and use through the UnicodeMatcher interface.
+The common pattern parser remains pending.
