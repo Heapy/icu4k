@@ -1675,3 +1675,17 @@ closeOver modes. Common tests cover long-s/sharp-s closures, string reduction,
 untouched simple-fold scratch and frozen rejection. The public closeOver
 selector and ADD_CASE_MAPPINGS string branch remain pending until word/titlecase
 iteration is available; the general pattern parser still depends on these.
+
+## BreakIterator base and CharSequence cursor
+
+BreakIterator now defines the Common boundary/text/status contract, original
+fallback preceding/isBoundary behavior, status-vector defaults, text adapters
+and word/kind constants. Concrete iterators must implement clone explicitly in
+Common Kotlin, which cannot provide Java Object.clone's generic shallow copy.
+Locale factories/service registration and locale metadata remain pending.
+
+CSCharacterIterator ports retained CharSequence traversal, dynamic length,
+position validation and independent cloned cursor state. JVM tests compare
+cursor operations and inherited BreakIterator defaults/text adapters with ICU4J;
+Common tests cover empty/supplementary text, retained text, cloning and errors.
+RuleBasedBreakIterator, its caches and dictionary integration remain pending.
