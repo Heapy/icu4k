@@ -2316,3 +2316,29 @@ match ICU4J. Common tests cover casing, exact comparison, empty subtags and
 reset/identity semantics. Full JVM, JS Node and macOS Arm64 suites pass.
 LanguageTag, locale builders, ULocale and locale resource fallback remain
 pending; these are the parser dependencies, not a replacement locale layer.
+
+### LanguageTag parsing and canonicalization
+
+Ported LanguageTag's source-string parser, all syntax predicates and ASCII
+canonicalization methods, component getters/toString, grandfathered mappings
+(including prefix mappings), variant/extension deduplication, private use and
+parse status/error offsets. Unicode extension true/yes removal follows the
+original order. The parser preserves the release behavior for malformed legacy
+suffixes, including original-length reporting after mapping.
+
+Variant uppercasing and extension singleton lowercasing retain ICU4J's host
+default-locale dependence through Common CaseMapImpl. Minimal platform adapters
+only discover the host language: java.util.Locale on JVM, Intl on JS,
+NSLocale on macOS and POSIX locale environment variables on Linux. Algorithms
+and ICU data remain in commonMain; no production ICU4J dependency is introduced.
+Full ULocale default management and parseLocale(BaseLocale, LocaleExtensions)
+conversion remain pending, as do the broader locale builders/resource layer.
+
+Differential tests compare components, strings and status metadata for 3000
+mixed valid/invalid generated tags, all grandfathered replacements, duplicate
+subtags, extensions, private use, validators and canonicalizers. They also check
+all UTF-16 singleton predicates and English/Turkish/Azeri/Lithuanian default
+casing. A separate ICU class loader with assertions disabled verifies release
+legacy-error behavior. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
+production sources also compile on the macOS host (Linux runtime tests run in
+Linux CI).
