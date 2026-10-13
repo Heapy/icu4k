@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.lang
 
+import io.github.heapy.icu4k.impl.CaseMapImpl
 import io.github.heapy.icu4k.impl.UCaseProps
 import io.github.heapy.icu4k.impl.UCharacterProperty
 import io.github.heapy.icu4k.impl.UBiDiProps
@@ -118,20 +119,7 @@ class UCharacter private constructor() {
         fun toTitleCase(ch: Int): Int = UCaseProps.INSTANCE.totitle(ch)
         fun foldCase(ch: Int, options: Int): Int = UCaseProps.INSTANCE.fold(ch, options)
         fun foldCase(ch: Int, defaultMapping: Boolean): Int = foldCase(ch, if (defaultMapping) FOLD_CASE_DEFAULT else FOLD_CASE_EXCLUDE_SPECIAL_I)
-        fun foldCase(str: String, options: Int): String = buildString {
-            val cases = UCaseProps.INSTANCE
-            var index = 0
-            while (index < str.length) {
-                val cp = UTF16.charAt(str, index)
-                index += UTF16.getCharCount(cp)
-                val result = cases.toFullFolding(cp, this, options)
-                when {
-                    result < 0 -> if ((options and 0x4000) == 0) append(UTF16.valueOf(cp))
-                    result > UCaseProps.MAX_STRING_LENGTH -> append(UTF16.valueOf(result))
-                    // Otherwise the mapping has already been appended.
-                }
-            }
-        }
+        fun foldCase(str: String, options: Int): String = CaseMapImpl.fold(options, str)
         fun foldCase(str: String, defaultMapping: Boolean): String = foldCase(str, if (defaultMapping) FOLD_CASE_DEFAULT else FOLD_CASE_EXCLUDE_SPECIAL_I)
         fun getNumericValue(ch: Int): Int = UCharacterProperty.INSTANCE.getNumericValue(ch)
         fun getUnicodeNumericValue(ch: Int): Double = UCharacterProperty.INSTANCE.getUnicodeNumericValue(ch)

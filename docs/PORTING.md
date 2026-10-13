@@ -227,3 +227,21 @@ Common tests cover these boundaries; JVM differential tests cover 30,000
 interleaved operations over arbitrary UTF-16 plus title option combinations.
 String mapping loops, Latin fast paths, Greek uppercase and title boundaries
 remain pending.
+
+## String lowercasing and folding
+
+CaseMapImpl lowercasing and folding now retain the ICU Latin delta fast path,
+trie fast path, context-sensitive exception handling, unchanged text batching,
+Appendable output, Edits reset/recording and the short-string replacement-only
+optimization. Public UCharacter.foldCase delegates to this shared implementation.
+All four original LatinCase tables are retained for subsequent uppercasing.
+
+JVM oracle tests compare output and every fine edit span for all Unicode code
+points in a single string, locale IDs 0 through 6, default/Turkic folding, extra
+option bits and OMIT_UNCHANGED_TEXT. Random malformed UTF-16 and explicit final
+sigma, Lithuanian and Turkic contexts are covered. Common tests exercise these
+algorithms on JS and Native as well.
+
+Uppercasing (including Greek's separate state machine), titlecasing, locale
+adapters and common wrapping of Java IOException from custom JVM Appendables
+remain pending. Common Appendables currently propagate their own failures.
