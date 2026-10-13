@@ -1602,3 +1602,17 @@ JVM tests compare both maxima and complete character sets, including calling set
 APIs before length APIs and repeated reads. Common tests cover replacement,
 extended-name punctuation, repeated conversion and frozen-set rejection.
 Character-name iteration remains pending.
+
+## Character-name iteration
+
+ValueIterator and UCharacterNameIterator now port reusable result containers,
+ordered group/algorithmic range interleaving, extended-name gaps, range clamping,
+reset and exhaustion. UCharacter exposes modern and extended iterator factories
+and the original empty deprecated Unicode_1_Name iterator. Per-instance group
+scratch replaces static synchronized arrays. setRange preserves the original
+cursor behavior; reset explicitly resets algorithm/group cursors.
+
+JVM tests compare full modern/extended traversals, randomly changing ranges,
+algorithmic transitions, reset, outside-Unicode ranges and unchanged exhausted
+results. Common tests cover public factories, reuse, range validation, fallback
+names and the deprecated empty iterator.

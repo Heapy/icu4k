@@ -179,6 +179,14 @@ class UCharacter private constructor() {
         fun isULowercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.LOWERCASE)
         fun isUUppercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.UPPERCASE)
         fun isUWhiteSpace(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.WHITE_SPACE)
+        fun getNameIterator(): io.github.heapy.icu4k.util.ValueIterator = UCharacterNameIterator(io.github.heapy.icu4k.impl.UCharacterName.INSTANCE, io.github.heapy.icu4k.impl.UCharacterNameChoice.UNICODE_CHAR_NAME)
+        fun getExtendedNameIterator(): io.github.heapy.icu4k.util.ValueIterator = UCharacterNameIterator(io.github.heapy.icu4k.impl.UCharacterName.INSTANCE, io.github.heapy.icu4k.impl.UCharacterNameChoice.EXTENDED_CHAR_NAME)
+        @Deprecated("Unicode_1_Name has no values")
+        fun getName1_0Iterator(): io.github.heapy.icu4k.util.ValueIterator = object : io.github.heapy.icu4k.util.ValueIterator {
+            override fun next(element: io.github.heapy.icu4k.util.ValueIterator.Element): Boolean = false
+            override fun reset() { }
+            override fun setRange(start: Int, limit: Int) { }
+        }
         fun getCharFromName(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.UNICODE_CHAR_NAME, name)
         fun getCharFromExtendedName(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.EXTENDED_CHAR_NAME, name)
         fun getCharFromNameAlias(name: String?): Int = io.github.heapy.icu4k.impl.UCharacterName.INSTANCE.getCharFromName(io.github.heapy.icu4k.impl.UCharacterNameChoice.CHAR_NAME_ALIAS, name)
