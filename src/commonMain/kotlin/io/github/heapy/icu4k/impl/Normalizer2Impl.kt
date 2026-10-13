@@ -57,6 +57,46 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun getFCD16(c: Int): Int {
+        if (c < minDecompNoCP) return 0
+        if (c <= 0xffff && !singleLeadMightHaveNonZeroFCD16(c)) return 0
+        return getFCD16FromNormData(c)
+    }
+    fun getFCD16FromNormData(initialCodePoint: Int): Int {
+        var c = initialCodePoint
+        var norm16 = getNorm16(c)
+        if (norm16 >= limitNoNo) {
+            if (norm16 >= MIN_NORMAL_MAYBE_YES) {
+                norm16 = getCCFromNormalYesOrMaybe(norm16)
+                return norm16 or (norm16 shl 8)
+            } else if (norm16 >= minMaybeYes) return 0
+            else if (norm16 < minMaybeNo) {
+                val deltaTrailCC = norm16 and DELTA_TCCC_MASK
+                if (deltaTrailCC <= DELTA_TCCC_1) return deltaTrailCC shr OFFSET_SHIFT
+                c = mapAlgorithmic(c, norm16)
+                norm16 = getRawNorm16(c)
+            }
+        }
+        if (norm16 <= minYesNo || isHangulLVT(norm16)) return 0
+        val mapping = getData(norm16)
+        val firstUnit = extraData!![mapping].code
+        var fcd16 = firstUnit shr 8
+        if (firstUnit and MAPPING_HAS_CCC_LCCC_WORD != 0) fcd16 = fcd16 or (extraData!![mapping - 1].code and 0xff00)
+        return fcd16
+    }
+    private fun getFCD16FromMaybeOrNonZeroCC(initialNorm16: Int): Int {
+        if (initialNorm16 >= MIN_NORMAL_MAYBE_YES) {
+            val cc = getCCFromNormalYesOrMaybe(initialNorm16)
+            return cc or (cc shl 8)
+        }
+        if (initialNorm16 >= minMaybeYes) return 0
+        return extraData!![getDataForMaybe(initialNorm16)].code shr 8
+    }
+    internal fun getTrailCCFromCompYesAndZeroCC(norm16: Int): Int = if (norm16 <= minYesNo) 0 else extraData!![norm16 shr OFFSET_SHIFT].code shr 8
+    private fun mapAlgorithmic(c: Int, norm16: Int): Int = c + (norm16 shr DELTA_SHIFT) - centerNoNoDelta
+    private fun isHangulLVT(norm16: Int): Boolean = norm16 == (minYesNoMappingsOnly or HAS_COMP_BOUNDARY_AFTER)
+    private fun getDataForMaybe(norm16: Int): Int = (norm16 - minMaybeNo + limitNoNo) shr OFFSET_SHIFT
+    private fun getData(norm16: Int): Int = (if (norm16 >= minMaybeNo) norm16 - minMaybeNo + limitNoNo else norm16) shr OFFSET_SHIFT
     fun getCompQuickCheck(norm16: Int): Int = when {
         norm16 < minNoNo || norm16 >= MIN_YES_YES_WITH_CC -> 1
         norm16 >= minMaybeNo -> 2

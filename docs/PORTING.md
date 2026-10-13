@@ -1118,3 +1118,16 @@ JVM tests compare these operations for every Unicode code point in all five
 normalization datasets, every BMP smallFCD lookup and all 16-bit direct class
 helper inputs. Common tests read accents, inert characters and decomposition
 classification. Full FCD, reordering and normalization remain pending.
+
+## FCD computation
+
+Normalizer2Impl now ports FCD computation from norm data and its smallFCD fast
+path, algorithmic delta mappings, variable mapping CCC words and Hangul LVT
+handling. The internal maybe/nonzero-class and composition-yes trailing-class
+helpers are in place for the normalization loops.
+
+JVM tests compare FCD and direct-data FCD for every Unicode code point and
+adjacent invalid values across all five datasets, plus trailing-class helper
+results within its preconditions. Common tests cover accents, decomposing
+characters, Hangul and lead surrogate code points. Complete normalization
+algorithms are still pending.
