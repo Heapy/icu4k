@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.breakiter
 
-import io.github.heapy.icu4k.impl.ICUBinary
 import io.github.heapy.icu4k.lang.UCharacter
 import io.github.heapy.icu4k.lang.UProperty
 import io.github.heapy.icu4k.lang.UScript
@@ -19,10 +18,7 @@ internal class BurmeseBreakEngine : DictionaryBreakEngine() {
     private val markSet = UnicodeSet(endWordSet)
         .retainAll(UnicodeSet().applyPropertyAlias("gc", "M"))
         .add(0x20).compact().freeze()
-    // The pinned root break resource maps Mymr to burmesedict.dict. Resource-bundle lookup
-    // is pending; this reads the same embedded dictionary through the common binary decoder.
-    private val dictionary = (DictionaryData.read(ICUBinary.getRequiredData("brkitr/burmesedict.dict"))
-        as DictionaryData.TrieData.Bytes).matcher()
+    private val dictionary = checkNotNull(DictionaryData.loadDictionaryFor("Mymr"))
 
     init { setCharacters(endWordSet) }
     override fun equals(other: Any?): Boolean = other is BurmeseBreakEngine

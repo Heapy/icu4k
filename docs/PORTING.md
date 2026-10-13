@@ -1875,3 +1875,19 @@ trees with ICU4J, including handles, keys, values and container lookups. Common
 fixtures exercise every container width, scalar payloads, length-prefixed
 strings, pooled keys/strings and missing/mismatched pool validation. These tests
 do not claim coverage of the unported locale fallback or cache layers.
+
+### Dictionary lookup through binary resources
+
+Connected `DictionaryData.loadDictionaryFor` to the original root break bundle's
+`dictionaries` table and the common dictionary decoder. The Myanmar, Lao, Khmer
+and Thai engine constructors now resolve their script keys through this table,
+removing their temporary per-engine filename mappings. Both byte and UTF-16
+tries are selected from the actual dictionary indexes. Missing script keys
+throw the common MissingResourceException.
+
+Differential tests enumerate every root dictionary entry, load it through ICU4J
+and the common path, and compare matcher type, candidate lengths/values, counts
+and cursor positions on Southeast Asian/CJK/supplementary text. Unknown and
+case-mismatched script names are checked too. Common tests run script lookup on
+all locally runnable targets. This reads the root-defined dictionary table;
+general locale/default-locale resolution and resource fallback remain pending.

@@ -4,9 +4,12 @@
 package io.github.heapy.icu4k.impl.breakiter
 
 import io.github.heapy.icu4k.impl.ICUBinary
+import io.github.heapy.icu4k.impl.ICUData
+import io.github.heapy.icu4k.impl.ICUResourceBundleReader
+import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.BinaryBuffer
 
-/** Binary dictionary decoding, independent of the pending resource-bundle locale lookup. */
+/** Dictionary decoding and script-to-file resolution from the pinned root break bundle. */
 internal object DictionaryData {
     const val TRIE_TYPE_BYTES = 0
     const val TRIE_TYPE_UCHARS = 1
@@ -26,6 +29,22 @@ internal object DictionaryData {
     const val IX_RESERVED7 = 7
     const val IX_COUNT = 8
     private const val DATA_FORMAT_ID = 0x44696374
+
+    private val rootBundle by lazy { ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/root.res")) }
+    private val dictionaries by lazy {
+        rootBundle.getTable(rootBundle.getTable(rootBundle.rootResource)!!.getResource("dictionaries"))!!
+    }
+    /** The dictionaries table is defined in root; locale bundle fallback is ported separately. */
+    fun loadDictionaryFor(dictType: String): DictionaryMatcher? {
+        val filename = rootBundle.getString(dictionaries.getResource(dictType))
+            ?: throw MissingResourceException("Can't find resource for dictionaries/$dictType", ICUData.ICU_BRKITR_BASE_NAME,
+                "dictionaries/$dictType")
+        return when (val data = read(ICUBinary.getRequiredData("${ICUData.ICU_BRKITR_NAME}/$filename"))) {
+            is TrieData.Bytes -> data.matcher()
+            is TrieData.Chars -> data.matcher()
+            null -> null
+        }
+    }
 
     sealed class TrieData(val indexes: IntArray) {
         class Bytes(indexes: IntArray, val data: ByteArray) : TrieData(indexes) {

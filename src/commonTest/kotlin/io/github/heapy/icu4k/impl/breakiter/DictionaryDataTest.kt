@@ -30,4 +30,13 @@ class DictionaryDataTest {
         assertTrue(thai.matcher().matches(cursor, 7, lengths, count, 20, null) > 0)
         assertTrue(count[0] > 0)
     }
+    @Test fun resolvesScriptDictionariesThroughOriginalResourceTable() {
+        for (script in listOf("Thai", "Laoo", "Khmr", "Mymr", "Hira")) {
+            assertNotNull(DictionaryData.loadDictionaryFor(script))
+        }
+        assertFailsWith<io.github.heapy.icu4k.util.MissingResourceException> {
+            DictionaryData.loadDictionaryFor("Latn")
+        }
+    }
+
 }
