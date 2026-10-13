@@ -1,0 +1,72 @@
+{
+  "upstream_commit": "21d1eb0f306e1141c10931e914dfc038c06121da",
+  "groups": {
+    "production": {
+      "paths": [
+        "icu4j/main/charset/src/main/java",
+        "icu4j/main/collate/src/main/java",
+        "icu4j/main/core/src/main/java",
+        "icu4j/main/currdata/src/main/java",
+        "icu4j/main/langdata/src/main/java",
+        "icu4j/main/regiondata/src/main/java",
+        "icu4j/main/translit/src/main/java"
+      ],
+      "counts": {
+        "header": {
+          "cloc_url": "github.com/AlDanial/cloc",
+          "cloc_version": "2.10",
+          "elapsed_seconds": 2.31406879425049,
+          "n_files": 632,
+          "n_lines": 318233,
+          "files_per_second": 273.112018782787,
+          "lines_per_second": 137520.976381808
+        },
+        "Java": {
+          "nFiles": 632,
+          "blank": 27551,
+          "comment": 122255,
+          "code": 168427
+        },
+        "SUM": {
+          "blank": 27551,
+          "comment": 122255,
+          "code": 168427,
+          "nFiles": 632
+        }
+      }
+    },
+    "tests": {
+      "paths": [
+        "icu4j/main/charset/src/test/java",
+        "icu4j/main/collate/src/test/java",
+        "icu4j/main/common_tests/src/test/java",
+        "icu4j/main/core/src/test/java",
+        "icu4j/main/framework/src/test/java",
+        "icu4j/main/translit/src/test/java"
+      ],
+      "counts": {
+        "header": {
+          "cloc_url": "github.com/AlDanial/cloc",
+          "cloc_version": "2.10",
+          "elapsed_seconds": 1.8264901638031,
+          "n_files": 356,
+          "n_lines": 209668,
+          "files_per_second": 194.909344191999,
+          "lines_per_second": 114792.843758562
+        },
+        "Java": {
+          "nFiles": 356,
+          "blank": 21065,
+          "comment": 25488,
+          "code": 163115
+        },
+        "SUM": {
+          "blank": 21065,
+          "comment": 25488,
+          "code": 163115,
+          "nFiles": 356
+        }
+      }
+    }
+  }
+}
