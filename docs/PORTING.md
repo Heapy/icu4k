@@ -720,3 +720,18 @@ Differential JVM tests compare 4,000 composed valid/invalid escape fixtures at
 every offset, strict error messages and lenient decoding. Common fixtures
 exercise numeric escapes, surrogate joining and invalid forms. Other Utility
 methods remain pending.
+
+## Rule character iteration and symbol contracts
+
+RuleCharacterIterator now ports the original code-point iteration, option
+flags, variable expansion, escapes, ignored whitespace, position snapshots,
+raw-buffer access and code-unit jumping. SymbolTable and UnicodeMatcher
+contracts are common interfaces. ParsePosition provides mutable index and
+errorIndex in common code in place of java.text.ParsePosition; its diagnostic
+class name is portable. UnicodeSet does not yet implement UnicodeMatcher.
+
+JVM differential tests exercise 600 rule strings under all eight option
+combinations, including repeated end/error calls and snapshot restoration.
+Common tests cover symbol expansion, undefined references, escaped values,
+position independence while inside a variable and code-unit jumping. The
+UnicodeSet pattern parser and concrete matcher implementations remain pending.
