@@ -60,6 +60,46 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Normalization-dependent entries; canonical segment-starter data is ported separately. */
+    internal fun hasNormalizationBinaryProperty(c: Int, which: Int): Boolean = when (which) {
+        UProperty.FULL_COMPOSITION_EXCLUSION -> Norm2AllModes.getNFCInstance().impl.let { it.isCompNo(it.getNorm16(c)) }
+        UProperty.NFD_INERT, UProperty.NFKD_INERT, UProperty.NFC_INERT, UProperty.NFKC_INERT ->
+            Norm2AllModes.getN2WithImpl(which - UProperty.NFD_INERT)!!.isInert(c)
+        UProperty.CHANGES_WHEN_CASEFOLDED -> changesWhenCasefolded(c)
+        UProperty.CHANGES_WHEN_NFKC_CASEFOLDED -> {
+            val impl = Norm2AllModes.getNFKC_CFInstance().impl
+            val src = io.github.heapy.icu4k.text.UTF16.valueOf(c)
+            val dest = StringBuilder()
+            impl.compose(src, 0, src.length, false, true, Normalizer2Impl.ReorderingBuffer(impl, dest, 5))
+            !Normalizer2Impl.UTF16Plus.equal(dest, src)
+        }
+        else -> throw IllegalArgumentException("Not a normalization binary property: $which")
+    }
+    private fun changesWhenCasefolded(initialCodePoint: Int): Boolean {
+        var c = initialCodePoint
+        val nfd = Norm2AllModes.getNFCInstance().impl.getDecomposition(c)
+        if (nfd != null) {
+            c = io.github.heapy.icu4k.text.UTF16.charAt(nfd, 0)
+            if ((if (c > 0xffff) 2 else 1) != nfd.length) c = -1
+        } else if (c < 0) return false
+        return if (c >= 0) UCaseProps.INSTANCE.toFullFolding(c, StringBuilder(), 0) >= 0
+        else io.github.heapy.icu4k.lang.UCharacter.foldCase(nfd!!, true) != nfd
+    }
+    internal fun getNormalizationIntPropertyValue(c: Int, which: Int): Int = when (which) {
+        UProperty.CANONICAL_COMBINING_CLASS -> Norm2AllModes.getNFCInstance().decomp.getCombiningClass(c)
+        UProperty.NFD_QUICK_CHECK, UProperty.NFKD_QUICK_CHECK, UProperty.NFC_QUICK_CHECK, UProperty.NFKC_QUICK_CHECK ->
+            Norm2AllModes.getN2WithImpl(which - UProperty.NFD_QUICK_CHECK)!!.getQuickCheck(c)
+        UProperty.LEAD_CANONICAL_COMBINING_CLASS -> Norm2AllModes.getNFCInstance().impl.getFCD16(c) shr 8
+        UProperty.TRAIL_CANONICAL_COMBINING_CLASS -> Norm2AllModes.getNFCInstance().impl.getFCD16(c) and 0xff
+        else -> throw IllegalArgumentException("Not a normalization integer property: $which")
+    }
+    internal fun getNormalizationIntPropertyMaxValue(which: Int): Int = when (which) {
+        UProperty.CANONICAL_COMBINING_CLASS, UProperty.LEAD_CANONICAL_COMBINING_CLASS, UProperty.TRAIL_CANONICAL_COMBINING_CLASS -> 255
+        UProperty.NFD_QUICK_CHECK, UProperty.NFKD_QUICK_CHECK -> 1
+        UProperty.NFC_QUICK_CHECK, UProperty.NFKC_QUICK_CHECK -> 2
+        else -> throw IllegalArgumentException("Not a normalization integer property: $which")
+    }
+
     internal fun hasPosixBinaryProperty(c: Int, which: Int): Boolean = when (which) {
         UProperty.POSIX_ALNUM -> hasVectorBinaryProperty(c, UProperty.ALPHABETIC) || getType(c) == UCharacterCategory.DECIMAL_DIGIT_NUMBER.toInt()
         UProperty.POSIX_BLANK -> if (c <= 0x9f) c == 9 || c == 0x20 else getType(c) == UCharacterCategory.SPACE_SEPARATOR.toInt()

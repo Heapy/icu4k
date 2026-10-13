@@ -1307,3 +1307,18 @@ Common tests cover filtering, append boundaries, string elements, retained set
 changes and alias rejection. JVM oracle tests compare all four modes, mutable
 and frozen sets, filters with and without strings, malformed UTF-16, both append
 operations, properties and Appendable output.
+
+## Normalization-backed character properties
+
+UCharacterProperty now implements internal normalization dispatch for canonical,
+leading and trailing combining classes, four normalization quick checks and
+maximum values, full composition exclusion, four inertness properties and the
+changes-when-casefolded/NFKC-casefolded properties. Canonical decomposition before
+casefold testing follows the original algorithm; per-call builders replace the
+shared JVM scratch builder.
+
+JVM tests compare all fourteen properties for every Unicode code point,
+including surrogate values, and all seven integer maxima. Common tests exercise
+composition exclusions, class values, inertness, multi-character folding,
+negative-input casefold protection and default-ignorable removal. Public generic
+property dispatch and canonical segment-starter data remain pending.
