@@ -494,3 +494,19 @@ JVM differential tests compare 200 generated boundary sets, range enumeration,
 membership around every boundary and random code points, singleton edge cases
 and truncated inputs. Common tests cover mixed BMP/supplementary ranges,
 singletons, copied storage and invalid data on every target.
+
+## UnicodeSet inversion-list core
+
+UnicodeSet now ports constructors/copy/set, validated code-point and string
+membership, singleton insertion with adjacent-range collapse, append-range fast
+paths, original union polarity algorithm, string-element deduplication, range
+accessors, size, compact, clear and value equality/hash. Sorted string elements
+use binary insertion in a common list instead of java.util.TreeSet. The original
+HIGH sentinel and buffer/capacity rules remain intact.
+
+JVM oracle tests compare 10,000 mixed insert/union/clear/compact operations, all
+range boundaries, sizes, hashes, membership and copy behavior. Full Unicode
+membership is also checked after covering the entire range. Common tests cover
+range merging, strings versus supplementary code points and maximum bounds.
+Removal/intersection/complement, freezing, spans, iteration, pattern parsing,
+property resolution and dictionary integration remain pending.
