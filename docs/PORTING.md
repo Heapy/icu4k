@@ -678,3 +678,19 @@ Differential JVM tests cover 300 overlapping/malformed fixtures at every limit
 under ALL and backward-contained metadata modes, supplementary strings and long
 suffixes. Common tests cover greedy versus contained paths and overlaps with
 code-point spans. Public UnicodeSet span/freeze integration remains pending.
+
+## Public UnicodeSet spans and freezing
+
+UnicodeSet now exposes span/spanBack overloads, spanAndCount and freeze using
+the original dispatcher: cached BMPSet when strings are irrelevant, cached
+UnicodeSetStringSpan for frozen string sets, and directional preprocessing for
+thawed sets. Fully contained strings remain relevant for counting even when
+BMPSet handles ordinary spans. Frozen sets reject mutations and clone returns
+the same object; cloneAsThawed copies editable data without frozen caches.
+
+JVM differential tests exercise 180 sets before and after freezing, all span
+conditions, every input boundary and out-of-bounds clamping, greedy overlaps,
+supplementary and malformed UTF-16, long suffixes and unchanged count outputs
+at the end. Common tests cover frozen string paths, thawed-copy independence
+and counts reduced by fully contained strings. Pattern/property parsing and
+the remaining UnicodeSet API are still pending.

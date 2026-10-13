@@ -4,13 +4,15 @@ package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.util.OutputInt
 import io.github.heapy.icu4k.impl.BMPSet
+import io.github.heapy.icu4k.impl.UnicodeSetStringSpan
 
-/** ICU inversion-list core. Pattern/property parsing and frozen span acceleration are pending. */
+/** ICU inversion-list core. Pattern/property parsing is pending. */
 class UnicodeSet() : Iterable<String> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
     private var list = IntArray(25).also { it[0] = HIGH }
     private var len = 1
     private var bmpSet: BMPSet? = null
+    private var stringSpan: UnicodeSetStringSpan? = null
     private var buffer: IntArray? = null
     private var stringElements = ArrayList<String>()
     constructor(other: UnicodeSet) : this() { set(other) }
@@ -47,7 +49,7 @@ class UnicodeSet() : Iterable<String> {
         for (i in 0 until getRangeCount()) result += getRangeEnd(i) - getRangeStart(i) + 1
         return result
     }
-    fun contains(c: Int): Boolean { validate(c); return bmpSet?.contains(c) ?: (findCodePoint(c) and 1 != 0) }
+    fun contains(c: Int): Boolean { validate(c); return bmpSet?.contains(c) ?: stringSpan?.contains(c) ?: (findCodePoint(c) and 1 != 0) }
     fun contains(start: Int, end: Int): Boolean {
         validate(start); validate(end)
         val i = findCodePoint(start)
@@ -282,7 +284,51 @@ class UnicodeSet() : Iterable<String> {
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
     }
-    fun isFrozen(): Boolean = bmpSet != null
+    fun freeze(): UnicodeSet {
+        if (!isFrozen()) {
+            compact()
+            if (hasStrings()) stringSpan = UnicodeSetStringSpan(this, ArrayList(stringElements), UnicodeSetStringSpan.ALL)
+            if (stringSpan == null || !stringSpan!!.needsStringSpanUTF16()) bmpSet = BMPSet(list, len)
+        }
+        return this
+    }
+    fun span(s: CharSequence, condition: SpanCondition): Int = span(s, 0, condition)
+    fun span(s: CharSequence, start: Int, condition: SpanCondition): Int {
+        val index = if (start < 0) 0 else if (start >= s.length) return s.length else start
+        bmpSet?.let { return it.span(s, index, condition, null) }
+        stringSpan?.let { return it.span(s, index, condition) }
+        if (hasStrings()) {
+            val which = if (condition == SpanCondition.NOT_CONTAINED) UnicodeSetStringSpan.FWD_UTF16_NOT_CONTAINED else UnicodeSetStringSpan.FWD_UTF16_CONTAINED
+            val engine = UnicodeSetStringSpan(this, ArrayList(stringElements), which)
+            if (engine.needsStringSpanUTF16()) return engine.span(s, index, condition)
+        }
+        return spanCodePointsAndCount(s, index, condition, null)
+    }
+    fun spanAndCount(s: CharSequence, start: Int, condition: SpanCondition, outCount: OutputInt?): Int {
+        require(outCount != null) { "outCount must not be null" }
+        val index = if (start < 0) 0 else if (start >= s.length) return s.length else start
+        stringSpan?.let { return it.spanAndCount(s, index, condition, outCount) }
+        bmpSet?.let { return it.span(s, index, condition, outCount) }
+        if (hasStrings()) {
+            val which = if (condition == SpanCondition.NOT_CONTAINED) UnicodeSetStringSpan.FWD_UTF16_NOT_CONTAINED else UnicodeSetStringSpan.FWD_UTF16_CONTAINED
+            return UnicodeSetStringSpan(this, ArrayList(stringElements), which or UnicodeSetStringSpan.WITH_COUNT).spanAndCount(s, index, condition, outCount)
+        }
+        return spanCodePointsAndCount(s, index, condition, outCount)
+    }
+    fun spanBack(s: CharSequence, condition: SpanCondition): Int = spanBack(s, s.length, condition)
+    fun spanBack(s: CharSequence, fromIndex: Int, condition: SpanCondition): Int {
+        if (fromIndex <= 0) return 0
+        val index = minOf(fromIndex, s.length)
+        bmpSet?.let { return it.spanBack(s, index, condition) }
+        stringSpan?.let { return it.spanBack(s, index, condition) }
+        if (hasStrings()) {
+            val which = if (condition == SpanCondition.NOT_CONTAINED) UnicodeSetStringSpan.BACK_UTF16_NOT_CONTAINED else UnicodeSetStringSpan.BACK_UTF16_CONTAINED
+            val engine = UnicodeSetStringSpan(this, ArrayList(stringElements), which)
+            if (engine.needsStringSpanUTF16()) return engine.spanBack(s, index, condition)
+        }
+        return spanCodePointsBack(s, index, condition)
+    }
+    fun isFrozen(): Boolean = bmpSet != null || stringSpan != null
     fun cloneAsThawed(): UnicodeSet = UnicodeSet(this)
     fun clone(): UnicodeSet = if (isFrozen()) this else UnicodeSet(this)
     /** Internal code-point-only freezing used by the string span engine. */
