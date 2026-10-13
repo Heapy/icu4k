@@ -1002,3 +1002,17 @@ invalid integer for all eight entries, plus maxima. Common tests cover bracket
 classification, block/error indexing and source rejection. Script and
 normalization entries, binary properties and the public complete dispatcher
 still remain pending.
+
+## UScript data operations
+
+UScript now exposes all ICU 78.3 script constants, getScript, hasScript,
+getScriptExtensions, getCodeFromName and long/short names. Script and extension
+lookup ports the original tagged vector and terminated char-array algorithms.
+MutableSet<Int> replaces JVM BitSet for output, including clearing and the
+original signed return value. Invalid getScript inputs are rejected; extension
+lookup retains the resource error value behavior.
+
+JVM tests compare every Unicode code point and adjacent invalid inputs for
+script/extension results and sampled membership, plus all script names. Common
+tests cover prolonged-sound-mark extensions, names and invalid inputs. Locale
+selection, script usage/sample metadata and remaining UScript APIs are pending.
