@@ -188,6 +188,110 @@ class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : Cod
         index[i] = newBlock
         return newBlock
     }
+    private fun compactWholeDataBlocks(fastILimit: Int, allSameBlocks: AllSameBlocks): Int {
+        var capacity = ASCII_LIMIT + CodePointTrie.SMALL_DATA_BLOCK_LENGTH + 4
+        val limit = highStart shr CodePointTrie.SHIFT_3
+        var blockLength = CodePointTrie.FAST_DATA_BLOCK_LENGTH
+        var inc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK
+        var i = 0
+        while (i < limit) {
+            if (i == fastILimit) { blockLength = CodePointTrie.SMALL_DATA_BLOCK_LENGTH; inc = 1 }
+            var value = index[i]
+            if (flags[i] == MIXED) {
+                val p = value
+                value = data[p]
+                if (allValuesSameAs(data, p + 1, blockLength - 1, value)) {
+                    flags[i] = ALL_SAME
+                    index[i] = value
+                } else {
+                    capacity += blockLength
+                    i += inc
+                    continue
+                }
+            } else if (inc > 1) {
+                var allSame = true
+                for (j in i + 1 until i + inc) if (index[j] != value) { allSame = false; break }
+                if (!allSame) {
+                    if (getDataBlock(i) < 0) return -1
+                    capacity += blockLength
+                    i += inc
+                    continue
+                }
+            }
+            var other = allSameBlocks.findOrAdd(i, inc, value)
+            if (other == AllSameBlocks.OVERFLOW) {
+                var jInc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK
+                var j = 0
+                while (true) {
+                    if (j == i) { allSameBlocks.add(i, inc, value); break }
+                    if (j == fastILimit) jInc = 1
+                    if (flags[j] == ALL_SAME && index[j] == value) {
+                        allSameBlocks.add(j, jInc + inc, value)
+                        other = j
+                        break
+                    }
+                    j += jInc
+                }
+            }
+            if (other >= 0) { flags[i] = SAME_AS; index[i] = other }
+            else capacity += blockLength
+            i += inc
+        }
+        return capacity
+    }
+    private fun compactData(fastILimit: Int, newData: IntArray, dataNullIndex: Int, mixedBlocks: MixedBlocks): Int {
+        var length = 0
+        var i = 0
+        while (length < ASCII_LIMIT) {
+            index[i] = length
+            length += CodePointTrie.FAST_DATA_BLOCK_LENGTH
+            i += SMALL_DATA_BLOCKS_PER_BMP_BLOCK
+        }
+        var blockLength = CodePointTrie.FAST_DATA_BLOCK_LENGTH
+        mixedBlocks.init(newData.size, blockLength)
+        mixedBlocks.extend(newData, 0, 0, length)
+        val limit = highStart shr CodePointTrie.SHIFT_3
+        var inc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK
+        var fastLength = 0
+        i = ASCII_I_LIMIT
+        while (i < limit) {
+            if (i == fastILimit) {
+                blockLength = CodePointTrie.SMALL_DATA_BLOCK_LENGTH
+                inc = 1
+                fastLength = length
+                mixedBlocks.init(newData.size, blockLength)
+                mixedBlocks.extend(newData, 0, 0, length)
+            }
+            if (flags[i] == ALL_SAME) {
+                val value = index[i]
+                var n = mixedBlocks.findAllSameBlock(newData, value)
+                while (n >= 0 && i == dataNullIndex && i >= fastILimit && n < fastLength && isStartOfSomeFastBlock(n, index, fastILimit)) {
+                    n = findAllSameBlock(newData, n + 1, length, value, blockLength)
+                }
+                if (n >= 0) index[i] = n
+                else {
+                    n = getAllSameOverlap(newData, length, value, blockLength)
+                    index[i] = length - n
+                    val previous = length
+                    while (n < blockLength) { newData[length++] = value; ++n }
+                    mixedBlocks.extend(newData, 0, previous, length)
+                }
+            } else if (flags[i] == MIXED) {
+                val block = index[i]
+                var n = mixedBlocks.findBlock(newData, data, block)
+                if (n >= 0) index[i] = n
+                else {
+                    n = getOverlap(newData, length, data, block, blockLength)
+                    index[i] = length - n
+                    val previous = length
+                    while (n < blockLength) newData[length++] = data[block + n++]
+                    mixedBlocks.extend(newData, 0, previous, length)
+                }
+            } else index[i] = index[index[i]]
+            i += inc
+        }
+        return length
+    }
     private fun maskValues(mask: Int) {
         initialValue = initialValue and mask
         errorValue = errorValue and mask
@@ -435,11 +539,14 @@ class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : Cod
         private const val MAX_UNICODE = 0x10ffff
         private const val UNICODE_LIMIT = 0x110000
         private const val BMP_LIMIT = 0x10000
+        private const val ASCII_LIMIT = 0x80
+        private const val ASCII_I_LIMIT = ASCII_LIMIT shr CodePointTrie.SHIFT_3
         private const val I_LIMIT = UNICODE_LIMIT shr CodePointTrie.SHIFT_3
         private const val BMP_I_LIMIT = BMP_LIMIT shr CodePointTrie.SHIFT_3
         private const val SMALL_DATA_BLOCKS_PER_BMP_BLOCK = 1 shl (CodePointTrie.FAST_SHIFT - CodePointTrie.SHIFT_3)
         private const val ALL_SAME: Byte = 0
         private const val MIXED: Byte = 1
+        private const val SAME_AS: Byte = 2
         private const val INITIAL_DATA_LENGTH = 1 shl 14
         private const val MEDIUM_DATA_LENGTH = 1 shl 17
         private const val MAX_DATA_LENGTH = UNICODE_LIMIT

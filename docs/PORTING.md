@@ -1365,3 +1365,17 @@ incremental extension and repeated initialization. Constant-block tests exercise
 capacity overflow, eviction and most-used selection. Common tests cover append
 tracking, first-occurrence lookup, table reset and constant-block eviction.
 The main immutable compaction/build passes are still pending.
+
+## Trie data compaction passes
+
+MutableCodePointTrie.compactWholeDataBlocks and compactData now port the original
+whole-block classification/deduplication, constant-block overflow fallback,
+capacity estimation, linear ASCII offsets, fast-to-small block transition,
+constant/mixed block lookup and adjacent overlap. The data-null block safeguard
+avoids reusing the start of a partially constant fast block.
+
+JVM oracle tests compare capacity, every block flag/index entry, selected null
+block, final data length and the complete data array after both original
+internal passes. Fixtures cover both fast-range sizes, supplementary/high-end
+ranges, more than 32 constant values, random 32-bit values and mixed ASCII.
+Index compaction and final immutable building remain pending.
