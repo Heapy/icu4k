@@ -6,7 +6,232 @@ import io.github.heapy.icu4k.impl.UCharacterProperty
 
 /** Script values and Script_Extensions backed by pinned ICU data. Locale selection is pending. */
 class UScript private constructor() {
+    enum class ScriptUsage { NOT_ENCODED, UNKNOWN, EXCLUDED, LIMITED_USE, ASPIRATIONAL, RECOMMENDED }
     companion object {
+        private val scriptProps = intArrayOf(
+            10485824, // Zyyy
+            10486543, // Zinh
+            27264552, // Arab
+            77595953, // Armn
+            10488213, // Beng
+            39858437, // Bopo
+            73405380, // Cher
+            71304162, // Copt
+            77595695, // Cyrl
+            71369748, // Dsrt
+            10488069, // Deva
+            10490528, // Ethi
+            10490067, // Geor
+            4260656, // Goth
+            77595561, // Grek
+            10488469, // Gujr
+            10488341, // Guru
+            44063575, // Hani
+            10529792, // Hang
+            27264464, // Hebr
+            44052555, // Hira
+            10488981, // Knda
+            44052651, // Kana
+            44046208, // Khmr
+            44043941, // Laoo
+            77594700, // Latn
+            10489109, // Mlym
+            4200486, // Mong
+            44044288, // Mymr
+            4200079, // Ogam
+            4260608, // Ital
+            10488597, // Orya
+            4200096, // Runr
+            10489221, // Sinh
+            23070480, // Syrc
+            10488725, // Taml
+            10488853, // Telu
+            27264908, // Thaa
+            44043799, // Thai
+            10489664, // Tibt
+            6296768, // Cans
+            39887496, // Yiii
+            4200195, // Tglg
+            4200227, // Hano
+            4200259, // Buhd
+            4200291, // Tagb
+            2107406, // Brai
+            21039104, // Cprt
+            6297856, // Limb
+            4259840, // Linb
+            4260992, // Osma
+            4260944, // Shaw
+            39852368, // Tale
+            4260736, // Ugar
+            0,
+            4200960, // Bugi
+            71314432, // Glag
+            21039616, // Khar
+            6334464, // Sylo
+            39852416, // Talu
+            6303024, // Tfng
+            4260768, // Xpeo
+            6298373, // Bali
+            6298560, // Batk
+            0,
+            4263941, // Brah
+            6334976, // Cham
+            0,
+            0,
+            0,
+            0,
+            4272467, // Egyp
+            0,
+            44063575, // Hans
+            44063575, // Hant
+            4287260, // Hmng
+            88149153, // Hung
+            0,
+            6334852, // Java
+            6334730, // Kali
+            0,
+            0,
+            6298624, // Lepc
+            4261447, // Lina
+            23070784, // Mand
+            0,
+            21039488, // Mero
+            23070666, // Nkoo
+            21040128, // Orkh
+            4260715, // Perm
+            4237376, // Phag
+            21039360, // Phnx
+            6385408, // Plrd
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6333769, // Vaii
+            0,
+            4268032, // Xsux
+            0,
+            2162128, // Zzzz
+            4260512, // Cari
+            44052555, // Jpan
+            39852576, // Lana
+            4260480, // Lyci
+            21039392, // Lydi
+            6298714, // Olck
+            4237616, // Rjng
+            6334594, // Saur
+            4315216, // Sgnw
+            6298499, // Sund
+            0,
+            6335424, // Mtei
+            21039168, // Armi
+            21039872, // Avst
+            6361347, // Cakm
+            10529792, // Kore
+            4264067, // Kthi
+            21039832, // Mani
+            21039968, // Phli
+            21040015, // Phlp
+            0,
+            21039936, // Prti
+            20973568, // Samr
+            39889536, // Tavt
+            0,
+            0,
+            6334112, // Bamu
+            6333648, // Lisu
+            0,
+            21039712, // Sarb
+            4287206, // Bass
+            4308000, // Dupl
+            4261120, // Elba
+            4264725, // Gran
+            0,
+            0,
+            21096450, // Mend
+            21039520, // Merc
+            21039765, // Narb
+            21039254, // Nbat
+            21039219, // Palm
+            4264638, // Sind
+            71375028, // Wara
+            0,
+            0,
+            4287055, // Mroo
+            37859780, // Nshu
+            4264323, // Shrd
+            4264144, // Sora
+            4265600, // Takr
+            37847593, // Tang
+            0,
+            4277248, // Hluw
+            4264456, // Khoj
+            4265092, // Tirh
+            4261175, // Aghb
+            4264274, // Mahj
+            37820183, // Ahom
+            21039348, // Hatr
+            4265486, // Modi
+            4264591, // Mult
+            4266688, // Pauc
+            4265358, // Sidd
+            90302729, // Adlm
+            4267022, // Bhks
+            4267122, // Marc
+            6362130, // Newa
+            73467061, // Osge
+            44063575, // Hanb
+            10490130, // Jamo
+            0,
+            4267280, // Gonm
+            4266588, // Soyo
+            4266507, // Zanb
+            4265995, // Dogr
+            4267377, // Gong
+            4267749, // Maka
+            71396928, // Medf
+            23137554, // Rohg
+            21040962, // Sogd
+            21040921, // Sogo
+            21041137, // Elym
+            6414600, // Hmnp
+            4266446, // Nand
+            6415073, // Wcho
+            21041087, // Chrs
+            4266252, // Diak
+            37850213, // Kits
+            21040776, // Yezi
+            4272101, // Cpmn
+            21041020, // Ougr
+            4287164, // Tnsa
+            4317840, // Toto
+            71370114, // Vith
+            37822235, // Kawi
+            4318438, // Nagm
+            0,
+            88149341, // Gara
+            4284700, // Gukh
+            4287813, // Krai
+            4318672, // Onao
+            4266948, // Sunu
+            4261314, // Todr
+            4264850, // Tutg
+            71397025, // Berf
+            21039440, // Sidt
+            37873365, // Tayo
+            4267462, // Tols
+        )
+        private fun getScriptProps(script: Int): Int = if (script in scriptProps.indices) scriptProps[script] else 0
+        fun getSampleString(script: Int): String {
+            val sample = getScriptProps(script) and 0x1fffff
+            return if (sample == 0) "" else io.github.heapy.icu4k.text.UTF16.valueOf(sample)
+        }
+        fun getUsage(script: Int): ScriptUsage = ScriptUsage.entries[(getScriptProps(script) shr 21) and 7]
+        fun isRightToLeft(script: Int): Boolean = getScriptProps(script) and (1 shl 24) != 0
+        fun breaksBetweenLetters(script: Int): Boolean = getScriptProps(script) and (1 shl 25) != 0
+        fun isCased(script: Int): Boolean = getScriptProps(script) and (1 shl 26) != 0
+
         const val INVALID_CODE: Int = -1
         const val COMMON: Int = 0
         const val INHERITED: Int = 1

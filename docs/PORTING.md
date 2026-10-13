@@ -1016,3 +1016,12 @@ JVM tests compare every Unicode code point and adjacent invalid inputs for
 script/extension results and sampled membership, plus all script names. Common
 tests cover prolonged-sound-mark extensions, names and invalid inputs. Locale
 selection, script usage/sample metadata and remaining UScript APIs are pending.
+
+## UScript metadata
+
+UScript now ports the pinned script metadata table, ScriptUsage enum, sample
+strings, usage, right-to-left, line-break-between-letters and cased flags.
+Out-of-range script values retain the original empty/default metadata behavior.
+JVM tests compare every script entry and invalid bounds with ICU4J; common tests
+exercise representative flags and supplementary-capable sample generation.
+Locale-to-script selection remains pending.
