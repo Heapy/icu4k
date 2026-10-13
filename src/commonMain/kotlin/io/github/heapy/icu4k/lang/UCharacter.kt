@@ -19,6 +19,26 @@ import io.github.heapy.icu4k.util.VersionInfo
  * complete property dispatcher are added in subsequent stages.
  */
 class UCharacter private constructor() {
+    interface NumericType {
+        companion object {
+            const val NONE = 0
+            const val DECIMAL = 1
+            const val DIGIT = 2
+            const val NUMERIC = 3
+            @Deprecated("Use property maximum") const val COUNT = 4
+        }
+    }
+    interface HangulSyllableType {
+        companion object {
+            const val NOT_APPLICABLE = 0
+            const val LEADING_JAMO = 1
+            const val VOWEL_JAMO = 2
+            const val TRAILING_JAMO = 3
+            const val LV_SYLLABLE = 4
+            const val LVT_SYLLABLE = 5
+            @Deprecated("Use property maximum") const val COUNT = 6
+        }
+    }
     enum class IdentifierStatus { RESTRICTED, ALLOWED }
     enum class IdentifierType { NOT_CHARACTER, DEPRECATED, DEFAULT_IGNORABLE, NOT_NFKC, NOT_XID, EXCLUSION, OBSOLETE, TECHNICAL, UNCOMMON_USE, LIMITED_USE, INCLUSION, RECOMMENDED }
     companion object {

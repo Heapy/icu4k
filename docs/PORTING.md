@@ -974,3 +974,17 @@ JVM tests compare all seven entries and maxima against ICU4J's dispatcher on
 tests read real stored values and verify unsupported-source rejection. Full
 integer and binary dispatch, normalization-backed properties and public
 getIntPropertyValue remain pending.
+
+## Derived integer property entries
+
+UCharacterProperty now implements the derived General_Category, Numeric_Type,
+Hangul_Syllable_Type and Identifier_Status entries and maxima. Hangul mapping
+uses the upstream GCB-to-HST table and excludes supplementary GCB vowels, as
+required since Unicode 16 for Kirat Rai. NumericType and HangulSyllableType
+constants are exposed by UCharacter. These remain internal dispatch components
+until the other property sources are ported.
+
+JVM tests compare all Unicode code points plus adjacent invalid values for all
+four entries against ICU4J. Common tests cover Jamo, LV/LVT syllables, the
+supplementary exclusion, decimal digits and identifier status. Normalization,
+script and other dispatch sources remain pending.

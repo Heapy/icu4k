@@ -59,6 +59,29 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    /** Derived entries backed by main/additional property data, without normalization. */
+    internal fun getDerivedIntPropertyValue(c: Int, which: Int): Int = when (which) {
+        UProperty.GENERAL_CATEGORY -> getType(c)
+        UProperty.NUMERIC_TYPE -> {
+            val ntv = numericTypeValue(c)
+            when { ntv == 0 -> 0; ntv < NTV_DIGIT_START -> 1; ntv < NTV_NUMERIC_START -> 2; else -> 3 }
+        }
+        UProperty.HANGUL_SYLLABLE_TYPE -> {
+            if (c > 0xffff) 0 else {
+                val gcb = (getAdditional(c, 2) and 0x3e0) ushr 5
+                if (gcb < gcbToHst.size) gcbToHst[gcb] else 0
+            }
+        }
+        UProperty.IDENTIFIER_STATUS -> if (getAdditional(c, 2) ushr 26 >= 0x3c) 1 else 0
+        else -> throw IllegalArgumentException("Not a derived integer property: $which")
+    }
+    internal fun getDerivedIntPropertyMaxValue(which: Int): Int = when (which) {
+        UProperty.GENERAL_CATEGORY -> 29
+        UProperty.NUMERIC_TYPE -> 3
+        UProperty.HANGUL_SYLLABLE_TYPE -> 5
+        UProperty.IDENTIFIER_STATUS -> 1
+        else -> throw IllegalArgumentException("Not a derived integer property: $which")
+    }
     /** Direct-vector entries of the original integer-property dispatch table. */
     internal fun getVectorIntPropertyValue(c: Int, which: Int): Int {
         val property = vectorIntProperties[which] ?: throw IllegalArgumentException("Not a vector integer property: $which")
@@ -169,6 +192,7 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
 
     private data class VectorIntProperty(val column: Int, val mask: Int, val shift: Int)
     companion object {
+        private val gcbToHst = intArrayOf(0, 0, 0, 0, 1, 0, 4, 5, 3, 2)
         private val vectorIntProperties = mapOf(
             UProperty.DECOMPOSITION_TYPE to VectorIntProperty(2, 0x1f, 0),
             UProperty.EAST_ASIAN_WIDTH to VectorIntProperty(0, 0x7000, 12),
