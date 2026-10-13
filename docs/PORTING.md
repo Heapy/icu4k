@@ -1588,3 +1588,17 @@ public lookup over ordinary, algorithmic, alias, random extended and malformed
 names. Common tests exercise all public lookup modes, category validation,
 case-insensitivity and null/empty/invalid input. Name-character/length metadata
 and name iteration remain pending.
+
+## Character-name metadata
+
+UCharacterName now calculates maximum name/ISO-comment lengths and character
+bitsets using the original algorithmic, extended-category and compressed-group
+passes. Token lengths are cached with original byte semantics; alternate-field
+and ISO-length behavior are retained. A lazy metadata holder replaces shared
+initialization scratch. Character-set APIs clear the destination and enumerate
+characters 255 down to 1, as in ICU4J.
+
+JVM tests compare both maxima and complete character sets, including calling set
+APIs before length APIs and repeated reads. Common tests cover replacement,
+extended-name punctuation, repeated conversion and frozen-set rejection.
+Character-name iteration remains pending.

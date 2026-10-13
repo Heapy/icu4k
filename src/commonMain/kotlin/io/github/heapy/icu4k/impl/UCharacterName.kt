@@ -42,6 +42,87 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         groupString = strings
         return true
     }
+    private class NameMetadata(val nameChars: IntArray, val isoChars: IntArray, val maxName: Int, val maxISO: Int)
+    private val nameMetadata = lazy { buildNameMetadata() }
+    fun getMaxCharNameLength(): Int = nameMetadata.value.maxName
+    fun getMaxISOCommentLength(): Int = nameMetadata.value.maxISO
+    fun getCharNameCharacters(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        set.clear()
+        convertNameChars(nameMetadata.value.nameChars, set)
+    }
+    fun getISOCommentCharacters(set: io.github.heapy.icu4k.text.UnicodeSet) {
+        set.clear()
+        convertNameChars(nameMetadata.value.isoChars, set)
+    }
+    private fun convertNameChars(chars: IntArray, set: io.github.heapy.icu4k.text.UnicodeSet) {
+        for (c in 255 downTo 1) if (chars[c ushr 5] and (1 shl (c and 31)) != 0) set.add(c)
+    }
+    private fun buildNameMetadata(): NameMetadata {
+        val names = IntArray(8)
+        val iso = IntArray(8)
+        addChars(names, "0123456789ABCDEF<>-")
+        var maxName = 0
+        for (i in algorithms.lastIndex downTo 0) maxName = algorithms[i].add(names, maxName)
+        for (i in TYPE_NAMES.lastIndex downTo 0) maxName = maxOf(maxName, 9 + addChars(names, TYPE_NAMES[i]))
+        var maxISO = 0
+        val offsets = CharArray(LINES_PER_GROUP_ + 2)
+        val lengths = CharArray(LINES_PER_GROUP_ + 2)
+        val tokenLengths = ByteArray(tokenTable.size)
+        for (group in 0 until m_groupcount_) {
+            val offset = getGroupLengths(group, offsets, lengths)
+            for (line in 0 until LINES_PER_GROUP_) {
+                var lineOffset = offset + offsets[line].code
+                var length = lengths[line].code
+                if (length == 0) continue
+                var parsed = addGroupNameChars(lineOffset, length, tokenLengths, names)
+                maxName = maxOf(maxName, parsed[0])
+                lineOffset += parsed[1]
+                if (parsed[1] >= length) continue
+                length -= parsed[1]
+                parsed = addGroupNameChars(lineOffset, length, tokenLengths, names)
+                maxName = maxOf(maxName, parsed[0])
+                lineOffset += parsed[1]
+                if (parsed[1] >= length) continue
+                length -= parsed[1]
+                parsed = addGroupNameChars(lineOffset, length, tokenLengths, iso)
+                if (parsed[1] > maxISO) maxISO = length
+            }
+        }
+        return NameMetadata(names, iso, maxName, maxISO)
+    }
+    private fun addGroupNameChars(offset: Int, length: Int, tokenLengths: ByteArray, set: IntArray): IntArray {
+        var nameLength = 0
+        var parsedLength = 0
+        while (parsedLength < length) {
+            var b = groupString[offset + parsedLength++].toInt() and 255
+            if (b == ';'.code) break
+            if (b >= tokenTable.size) {
+                addChar(set, b)
+                ++nameLength
+            } else {
+                var token = tokenTable[b].code
+                if (token == 0xfffe) {
+                    b = (b shl 8) or (groupString[offset + parsedLength].toInt() and 255)
+                    token = tokenTable[b].code
+                    ++parsedLength
+                }
+                if (token == 0xffff) {
+                    addChar(set, b)
+                    ++nameLength
+                } else {
+                    var tokenLength = tokenLengths[b]
+                    if (tokenLength == 0.toByte()) {
+                        val buffer = StringBuilder()
+                        UCharacterUtility.getNullTermByteSubString(buffer, tokenString, token)
+                        tokenLength = addChars(set, buffer).toByte()
+                        tokenLengths[b] = tokenLength
+                    }
+                    nameLength += tokenLength.toInt()
+                }
+            }
+        }
+        return intArrayOf(nameLength, parsedLength)
+    }
     fun getCharFromName(choice: Int, name: String?): Int {
         if (choice >= UCharacterNameChoice.CHAR_NAME_CHOICE_COUNT || name.isNullOrEmpty()) return -1
         var result = getExtendedChar(name.lowercase(), choice)
@@ -397,6 +478,10 @@ internal class UCharacterName(bytes: io.github.heapy.icu4k.util.BinaryBuffer = I
         fun getGroupOffset(codepoint: Int): Int = codepoint and GROUP_MASK_
         fun getGroupMinFromCodepoint(codepoint: Int): Int = codepoint and GROUP_MASK_.inv()
         val INSTANCE: UCharacterName by lazy { UCharacterName() }
+        private fun addChar(set: IntArray, ch: Int) {
+            val index = ch ushr 5
+            set[index] = set[index] or (1 shl (ch and 31))
+        }
         private fun addChars(set: IntArray, str: CharSequence): Int {
             for (i in str.length - 1 downTo 0) {
                 val ch = str[i].code
