@@ -54,6 +54,14 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
   pending; cursor cloning shares storage as upstream does.
 - CodePointMap range options, value filters, shared range iterator and
   bidirectional string iterator are implemented and checked against ICU4J.
+- CodePointTrie FAST/SMALL × 8/16/32-bit formats, binary decoding/encoding,
+  optimized filtered range enumeration and error-aware string iteration are ported.
+- BinaryBuffer replaces Java ByteBuffer for common binary readers. ICUBinary
+  header authentication, version conversion and typed array operations are ported.
+- ICUData embeds pinned `uprops.icu` and `ulayout.icu` bytes across all targets;
+  other resources and filesystem/package scanning remain pending.
+- LayoutProps loads real Unicode 17 Indic positional/syllabic category and vertical
+  orientation tries. The modern block trie in uprops also decodes correctly.
 - The remaining ICU4J classes and data algorithms are unported. No complete API
   compatibility is claimed.
 
@@ -102,3 +110,31 @@ and a modern CodePointTrie for blocks. `ulayout.icu` contains the modern tries f
 Indic positional/syllabic categories and vertical orientation. Preserve these
 versioned ICU resources and their format validation; do not substitute host-JDK
 Unicode properties, whose version and coverage differ between targets.
+
+## Portable data and trie validation
+
+`data/manifest.json` pins the source commit, sizes and SHA-256 checksums of raw
+ICU data. Regenerate portable Base64 sources with `python3 scripts/generate-data.py`;
+CI runs `--check` to verify generated sources and the raw-file checksums.
+Generated resource strings contain only ASCII. Resource storage is decoded lazily
+per file, and readers receive private byte copies. Raw data and generated assets
+are not hand-written algorithm code and should be counted separately.
+
+CodePointTrie tests compare all 1,114,112 Unicode code points for all six formats
+against ICU4J-built tries, including a fixture requiring packed 18-bit data
+indexes. They check exact serialized bytes, both endiannesses, filtered ranges,
+ASCII/BMP/supplementary access, invalid-code-point error values, and unpaired
+surrogate string iteration. Common tests exercise all six formats on JVM, JS and
+macOS arm64. Actual layout property tries and the modern block trie from uprops
+were compared against ICU4J's UCharacter property API over the full Unicode range.
+Embedded resources match the ICU4J 78.3 artifact byte-for-byte.
+
+Next prerequisites for the main property API: legacy Trie2 decoding and lookup,
+then UCharacterProperty's vectors, numeric data and script extensions. The full
+UCharacter property API also depends on case, bidi and normalization tables;
+these are still pending. MutableCodePointTrie construction/compaction is pending.
+
+Common adaptations: binary APIs accept BinaryBuffer or ByteArray and serialize
+into ByteArray instead of Java streams. ICUBinary failures use the common
+ICUUncheckedIOException. Filesystem, classloader and package scanning have not
+been silently replaced by host-JDK behavior; they remain explicit pending work.

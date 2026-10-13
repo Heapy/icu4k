@@ -13,5 +13,11 @@ Toolchain: Kotlin 2.4.21, Gradle 9.8.1; JDK 25 to run Gradle.
 ./gradlew macosArm64Test
 ```
 
+Pinned ICU data is embedded for JVM, JS and Native. To verify generated data:
+
+```sh
+python3 scripts/generate-data.py --check
+```
+
 See [porting scope](docs/PORTING.md) for measured source size and stages.
 Unicode's upstream license and third-party notices are retained in LICENSE.
