@@ -1973,3 +1973,19 @@ rules cover long wraparound, remote/random seeks, dictionary mixed text, both
 phrase flags, cloning and direct insertion/retention limits. Common tests walk
 400 boundaries and refill remotely in both directions. The public iterator
 facade, rule compiler, global engine registry and locale factories remain pending.
+
+### LSTM model decoding
+
+Ported LSTMBreakEngine's model structures, embedding/class enums and complete
+nine-block matrix/vector decoding into `LSTMData`. Resource scalars, dictionary
+strings and raw int-vector payloads come from the common ResB reader. Float bits
+are reinterpreted directly, preserving the original row-major block order,
+unknown-token embedding row and last-index-wins duplicate dictionary behavior.
+Added the common UResourceTypeMismatchException for typed resource failures.
+
+Differential tests instantiate ICU4J LSTMData with independently supplied model
+values and compare every matrix/vector float bit across random dimensions and
+payloads, including NaNs. Common tests cover signed zero, infinities, subnormals,
+layout and embedding types through binary resources. Inference, both vectorizers,
+default-model/resource loading and automatic Thai/Myanmar dispatch remain pending;
+this step ports their model-decoding dependency, not a replacement segmenter.
