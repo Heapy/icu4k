@@ -45,3 +45,16 @@ while (iterator.next() != BreakIterator.DONE) {
 // Boundaries/statuses: 3/200, 5/100, 6/0.
 val binaryRules: ByteArray = RuleBasedBreakIterator.compileRules("[a-z]+;.;")
 ```
+
+The locale identity and language-tag core is available through `ULocale`:
+
+```kotlin
+import io.github.heapy.icu4k.util.ULocale
+
+val locale = ULocale.forLanguageTag("en-US-u-ca-japanese")
+println(locale.getName()) // en_US@calendar=japanese
+println(locale.toLanguageTag()) // en-US-u-ca-japanese
+```
+
+ULocale display names, defaults, likely subtags and resource factories are still
+being ported.

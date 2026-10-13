@@ -2491,3 +2491,28 @@ The original key/type resource bytes are also compared. Common tests exercise
 aliases, timezone data, special patterns, metadata and outputs. Full JVM, JS
 Node and macOS Arm64 suites pass. All four data/model/parser generators pass
 --check. ULocale and locale/resource factory integration remain pending.
+
+### ULocale identity, keywords and BCP47 core
+
+Started the public ULocale facade with normalized single/field constructors,
+standard locale constants, immutable identity/hash/ordering/clone, base and ISO
+fields, keyword access/update, structural fallback and extension access. Ported
+legacy/Unicode key/type fallback syntax, forLanguageTag/toLanguageTag and the
+public strict Builder, including IllformedLocaleException index/message rules.
+POSIX, private-use variants, Unicode attributes/typeless types and unknown keys
+retain upstream behavior. Internal already-normalized construction avoids a
+second normalization for keyword updates and fallback.
+
+The name normalization factory currently uses the ported GC-aware locale cache;
+SoftCache-specific concurrent publication remains to be integrated when that
+shared cache implementation is ported. Default/category management, JDK locale
+interop/serialization, CLDR canonicalization/likely subtags, locale availability,
+display names and resource/service APIs are still pending. This is the identity
+and tag-conversion core, not completion of ULocale or ICU4J.
+
+Differential tests compare focused and 400 generated ICU/BCP inputs,
+constructor overloads, fields/ISO codes, extensions, keyword updates, fallback
+chains, all-pairs ordering/equality, strict builder mutations/failures, mapping
+fallbacks and exception metadata. Common tests cover public conversion,
+round trips, POSIX (including Unicode case equivalents), builder state after
+failure and immutable cloning. Full JVM, JS Node and macOS Arm64 suites pass.
