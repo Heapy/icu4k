@@ -166,6 +166,20 @@ class UCharacter private constructor() {
         fun toLowerCase(ch: Int): Int = UCaseProps.INSTANCE.tolower(ch)
         fun toUpperCase(ch: Int): Int = UCaseProps.INSTANCE.toupper(ch)
         fun toTitleCase(ch: Int): Int = UCaseProps.INSTANCE.totitle(ch)
+        fun hasBinaryProperty(ch: Int, property: Int): Boolean = UCharacterProperty.INSTANCE.hasBinaryProperty(ch, property)
+        fun hasBinaryProperty(s: CharSequence, property: Int): Boolean {
+            if (s.length == 1) return hasBinaryProperty(s[0].code, property)
+            if (s.length == 2) {
+                val c = UTF16.charAt(s, 0)
+                if (c > 0xffff) return hasBinaryProperty(c, property)
+            }
+            return property in UProperty.BASIC_EMOJI..UProperty.RGI_EMOJI && io.github.heapy.icu4k.impl.EmojiProps.INSTANCE.hasBinaryProperty(s, property)
+        }
+        fun isUAlphabetic(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.ALPHABETIC)
+        fun isULowercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.LOWERCASE)
+        fun isUUppercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.UPPERCASE)
+        fun isUWhiteSpace(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.WHITE_SPACE)
+        fun getIntPropertyValue(ch: Int, type: Int): Int = UCharacterProperty.INSTANCE.getIntPropertyValue(ch, type)
         /** All binary and enumerated properties have minimum zero, including undefined IDs. */
         @Suppress("UNUSED_PARAMETER")
         fun getIntPropertyMinValue(type: Int): Int = 0

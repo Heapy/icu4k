@@ -12,8 +12,8 @@ import io.github.heapy.icu4k.util.VersionInfo
 
 /**
  * Unicode property data and numeric algorithms from ICU4J UCharacterProperty.
- * Binary/int property dispatch will be added with its case/bidi/normalization
- * dependencies; this class currently exposes the raw data and numeric layer.
+ * Includes binary and integer property dispatch via case, bidi, normalization
+ * and emoji data, together with the raw data and numeric layer.
  */
 class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.getRequiredData("uprops.icu")) {
     val m_unicodeVersion_: VersionInfo
@@ -58,6 +58,26 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         m_scriptExtensions_ = bytes.readChars(scriptLength)
         m_blockTrie_ = CodePointTrie.fromBinary(null, CodePointTrie.ValueWidth.BITS_16, bytes)
         advanceTo(indexes[8])
+    }
+
+    fun hasBinaryProperty(c: Int, which: Int): Boolean {
+        if (which !in UProperty.BINARY_START until UProperty.BINARY_LIMIT) return false
+        if (which in vectorBinaryProperties) return hasVectorBinaryProperty(c, which)
+        return when (which) {
+            UProperty.FULL_COMPOSITION_EXCLUSION, UProperty.NFD_INERT, UProperty.NFKD_INERT,
+            UProperty.NFC_INERT, UProperty.NFKC_INERT, UProperty.SEGMENT_STARTER,
+            UProperty.CHANGES_WHEN_CASEFOLDED, UProperty.CHANGES_WHEN_NFKC_CASEFOLDED -> hasNormalizationBinaryProperty(c, which)
+            UProperty.POSIX_ALNUM, UProperty.POSIX_BLANK, UProperty.POSIX_GRAPH,
+            UProperty.POSIX_PRINT, UProperty.POSIX_XDIGIT -> hasPosixBinaryProperty(c, which)
+            in UProperty.EMOJI..UProperty.EMOJI_COMPONENT, in UProperty.EXTENDED_PICTOGRAPHIC..UProperty.RGI_EMOJI -> EmojiProps.INSTANCE.hasBinaryProperty(c, which)
+            else -> hasAuxiliaryBinaryProperty(c, which)
+        }
+    }
+    fun getIntPropertyValue(c: Int, which: Int): Int = when {
+        which < UProperty.INT_START -> if (hasBinaryProperty(c, which)) 1 else 0
+        which < UProperty.INT_LIMIT -> getEnumeratedIntPropertyValue(c, which)
+        which == UProperty.GENERAL_CATEGORY_MASK -> getMask(getType(c))
+        else -> 0
     }
 
     /** Complete integer-property table, separate from the generic API's binary-property branch. */

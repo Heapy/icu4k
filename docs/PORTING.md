@@ -1428,3 +1428,17 @@ compare every Unicode segment-starter flag and canonical start set, including
 range endpoints and untouched destinations for absent sets, plus property
 starts and invalid lookups. Common tests cover initialization, composed Latin
 characters, Hangul and non-starters.
+
+## Public generic character-property dispatch
+
+UCharacterProperty now routes all 76 binary properties and the generic integer
+API, including binary values, all 27 enumerated values, the general-category
+mask and undefined IDs. UCharacter exposes both hasBinaryProperty overloads,
+getIntPropertyValue and the four Unicode alphabetic/lowercase/uppercase/white-
+space predicates. Single-code-point strings route to scalar properties;
+multi-code-point strings route only to the relevant emoji string properties.
+
+JVM tests compare every binary property for every Unicode code point, generic
+integer dispatch and invalid input outcomes, malformed/supplementary strings,
+emoji sequences and convenience predicates. Common tests exercise public
+routing, category masks, undefined IDs, normalization and emoji properties.
