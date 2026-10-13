@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.impl.data.UbidiData
 import io.github.heapy.icu4k.impl.data.UlayoutData
 import io.github.heapy.icu4k.impl.data.UpropsData
 
@@ -22,10 +23,11 @@ object ICUData {
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
     private fun itemPath(name: String): String = name.removePrefix("/").removePrefix("$ICU_BASE_NAME/")
-    fun exists(resourceName: String): Boolean = itemPath(resourceName) in setOf("uprops.icu", "ulayout.icu")
+    fun exists(resourceName: String): Boolean = itemPath(resourceName) in setOf("uprops.icu", "ulayout.icu", "ubidi.icu")
 
     /** Returns a private copy, so callers cannot mutate cached resource data. */
     fun getBytes(resourceName: String): ByteArray? = when (itemPath(resourceName)) {
+        "ubidi.icu" -> UbidiData.copy()
         "uprops.icu" -> UpropsData.copy()
         "ulayout.icu" -> UlayoutData.copy()
         else -> null

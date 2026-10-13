@@ -5,6 +5,13 @@
   "source_directory": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata",
   "resources": [
     {
+      "name": "ubidi.icu",
+      "file": "data/icu78/ubidi.icu",
+      "object": "UbidiData",
+      "sha256": "ffce9f4ad5d032c702e59bc63ec2a3b59f6e7cf38b0f44f0b36d13743df4d260",
+      "size": 28768
+    },
+    {
       "name": "ulayout.icu",
       "file": "data/icu78/ulayout.icu",
       "object": "UlayoutData",
