@@ -9,9 +9,12 @@ import io.github.heapy.icu4k.impl.breakiter.RBBIBreakCache
 import io.github.heapy.icu4k.impl.breakiter.RBBIDictionaryCache
 import io.github.heapy.icu4k.util.BinaryBuffer
 
-/** Compiled-rule boundary iteration. Rule compilation and locale factories are being ported. */
+/** Rule compilation and boundary iteration. Locale factories are being ported. */
 class RuleBasedBreakIterator private constructor(private val data: RBBIDataWrapper, private val phraseBreaking: Boolean,
                                                   private val registry: LanguageBreakEngineRegistry) : BreakIterator() {
+    /** Compiles ICU break-rule syntax into a reusable boundary iterator. */
+    constructor(rules: String) : this(RBBIDataWrapper.get(BinaryBuffer(compileRules(rules))), false, LanguageBreakEngineRegistry.shared)
+
     private var engine = RBBIRuleEngine(data, StringCharacterIterator(""))
     private var dictionary = RBBIDictionaryCache(engine.text, data, registry::get, phraseBreaking)
     private var cache = RBBIBreakCache(engine, dictionary)
@@ -85,6 +88,9 @@ class RuleBasedBreakIterator private constructor(private val data: RBBIDataWrapp
     override fun hashCode(): Int = data.fRuleSource.hashCode()
     override fun toString(): String = data.fRuleSource
     companion object {
+        /** Compiles rules to ICU binary data without platform stream dependencies. */
+        fun compileRules(rules: String): ByteArray = RBBIRuleBuilder.compileRules(rules)
+
         fun getInstanceFromCompiledRules(bytes: BinaryBuffer): RuleBasedBreakIterator =
             RuleBasedBreakIterator(RBBIDataWrapper.get(bytes), false, LanguageBreakEngineRegistry.shared)
         fun getInstanceFromCompiledRules(bytes: BinaryBuffer, phraseBreaking: Boolean,

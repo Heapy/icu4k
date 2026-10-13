@@ -2252,3 +2252,26 @@ both sides of the 255-state export boundary. Deterministic state/status/reverse
 debug output is compared too; node-set iteration order is unspecified. Common
 tests exercise tagged lookahead, safe tables, binary sizes and absent-direction
 handling. Full JVM, JS Node and macOS Arm64 suites pass.
+
+### Complete break-rule compilation and public string API
+
+Ported RBBIRuleBuilder orchestration: scan, set categories, DFA, iterative
+row/column optimization, safe reverse synthesis, trie and complete ICU binary
+emission. Headers, offsets, alignment, status records, UTF-8 stripped source
+and NUL termination follow ICU4J exactly. An explicit replacement of unpaired
+UTF-16 units with '?' preserves Java's UTF-8 encoder policy on all targets.
+The original owner state is composed from the existing front-end result.
+Global ICUDebug discovery remains pending; internal compiler debugging can
+still be supplied explicitly.
+
+Public RuleBasedBreakIterator(String) now compiles and loads rules. The Common
+compileRules(String): ByteArray API replaces the platform OutputStream sink;
+its bytes can be passed to the existing BinaryBuffer compiled-rule factory.
+Full compiler binary output is compared byte-for-byte against ICU4J for all
+15 embedded rule sources, custom rules and 60 generated rule sets. Public
+constructor tests compare forward/backward/offset navigation, statuses,
+cloning, source identity and syntax errors, including malformed UTF-16 source
+units, lookahead, chaining, BOF/EOF, dictionary sets and supplementary input.
+Common tests exercise the public pipeline and Java-compatible UTF-8 replacement
+on JVM, JS Node and macOS Arm64. All three full test suites pass. Locale
+factories and the broader ICU4J library scope remain incomplete.

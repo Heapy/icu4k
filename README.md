@@ -30,3 +30,18 @@ import io.github.heapy.icu4k.text.Normalizer2
 val composed = Normalizer2.getNFCInstance().normalize("e\u0301") // é
 val decomposed = Normalizer2.getNFDInstance().normalize("é") // e + U+0301
 ```
+
+Common Kotlin break rules can be compiled and used directly:
+
+```kotlin
+import io.github.heapy.icu4k.text.BreakIterator
+import io.github.heapy.icu4k.text.RuleBasedBreakIterator
+
+val iterator = RuleBasedBreakIterator("[a-z]+{200};[0-9]+{100};.;")
+iterator.setText("abc12!")
+while (iterator.next() != BreakIterator.DONE) {
+    println("${iterator.current()}: ${iterator.getRuleStatus()}")
+}
+// Boundaries/statuses: 3/200, 5/100, 6/0.
+val binaryRules: ByteArray = RuleBasedBreakIterator.compileRules("[a-z]+;.;")
+```
