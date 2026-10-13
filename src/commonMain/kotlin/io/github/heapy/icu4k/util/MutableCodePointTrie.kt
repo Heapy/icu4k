@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
-/** Mutable 32-bit Unicode map. Immutable compaction is being ported separately. */
+/** Mutable 32-bit Unicode map which compacts into an immutable FAST or SMALL trie. */
 class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : CodePointMap() {
     private var index = IntArray(BMP_I_LIMIT)
     private var index3NullOffset = -1
@@ -187,6 +187,96 @@ class MutableCodePointTrie(initialValue: Int, private var errorValue: Int) : Cod
         flags[i] = MIXED
         index[i] = newBlock
         return newBlock
+    }
+    /** Builds a compact trie and resets this builder, including after build failure. */
+    fun buildImmutable(type: CodePointTrie.Type?, valueWidth: CodePointTrie.ValueWidth?): CodePointTrie {
+        require(type != null && valueWidth != null) { "The type and valueWidth must be specified." }
+        return try { build(type, valueWidth) } finally { clear() }
+    }
+    private fun compactTrie(fastILimit: Int): Int {
+        highValue = get(MAX_UNICODE)
+        var realHighStart = findHighStart()
+        realHighStart = (realHighStart + CodePointTrie.CP_PER_INDEX_2_ENTRY - 1) and (CodePointTrie.CP_PER_INDEX_2_ENTRY - 1).inv()
+        if (realHighStart == UNICODE_LIMIT) highValue = initialValue
+        val fastLimit = fastILimit shl CodePointTrie.SHIFT_3
+        if (realHighStart < fastLimit) {
+            for (i in (realHighStart shr CodePointTrie.SHIFT_3) until fastILimit) {
+                flags[i] = ALL_SAME
+                index[i] = highValue
+            }
+            highStart = fastLimit
+        } else highStart = realHighStart
+        val ascii = IntArray(ASCII_LIMIT) { get(it) }
+        val allSame = AllSameBlocks()
+        val capacity = compactWholeDataBlocks(fastILimit, allSame)
+        val newData = ascii.copyOf(capacity)
+        val nullIndex = allSame.findMostUsed()
+        val mixed = MixedBlocks()
+        dataLength = compactData(fastILimit, newData, nullIndex, mixed)
+        data = newData
+        if (dataLength > 0x3ffff + CodePointTrie.SMALL_DATA_BLOCK_LENGTH) {
+            throw IndexOutOfBoundsException("The trie data exceeds limitations of the data structure.")
+        }
+        if (nullIndex >= 0) {
+            dataNullOffset = index[nullIndex]
+            initialValue = data[dataNullOffset]
+        } else dataNullOffset = CodePointTrie.NO_DATA_NULL_OFFSET
+        val length = compactIndex(fastILimit, mixed)
+        highStart = realHighStart
+        return length
+    }
+    private fun build(type: CodePointTrie.Type, width: CodePointTrie.ValueWidth): CodePointTrie {
+        when (width) {
+            CodePointTrie.ValueWidth.BITS_32 -> Unit
+            CodePointTrie.ValueWidth.BITS_16 -> maskValues(0xffff)
+            CodePointTrie.ValueWidth.BITS_8 -> maskValues(0xff)
+        }
+        val fastLimit = if (type == CodePointTrie.Type.FAST) BMP_LIMIT else CodePointTrie.SMALL_LIMIT
+        var indexLength = compactTrie(fastLimit shr CodePointTrie.SHIFT_3)
+        if (width == CodePointTrie.ValueWidth.BITS_32 && indexLength and 1 != 0) index16!![indexLength++] = 0xffee.toChar()
+        val indexBytes = indexLength * 2
+        if (width == CodePointTrie.ValueWidth.BITS_16) {
+            if ((indexLength xor dataLength) and 1 != 0) data[dataLength++] = errorValue
+            if (data[dataLength - 1] != errorValue || data[dataLength - 2] != highValue) {
+                data[dataLength++] = highValue
+                data[dataLength++] = errorValue
+            }
+        } else if (width == CodePointTrie.ValueWidth.BITS_32) {
+            if (data[dataLength - 1] != errorValue || data[dataLength - 2] != highValue) {
+                if (data[dataLength - 1] != highValue) data[dataLength++] = highValue
+                data[dataLength++] = errorValue
+            }
+        } else {
+            var and3 = (indexBytes + dataLength) and 3
+            if (and3 == 0 && data[dataLength - 1] == errorValue && data[dataLength - 2] == highValue) {
+                // Already aligned with the required special values.
+            } else if (and3 == 3 && data[dataLength - 1] == highValue) data[dataLength++] = errorValue
+            else {
+                while (and3 != 2) { data[dataLength++] = highValue; and3 = (and3 + 1) and 3 }
+                data[dataLength++] = highValue
+                data[dataLength++] = errorValue
+            }
+        }
+        val trieIndex = if (highStart <= fastLimit) CharArray(indexLength) { index[it * SMALL_DATA_BLOCKS_PER_BMP_BLOCK].toChar() }
+        else if (indexLength == index16!!.size) index16!!.also { index16 = null }
+        else index16!!.copyOf(indexLength)
+        return when (width) {
+            CodePointTrie.ValueWidth.BITS_16 -> {
+                val values = CharArray(dataLength) { data[it].toChar() }
+                if (type == CodePointTrie.Type.FAST) CodePointTrie.Fast16(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+                else CodePointTrie.Small16(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+            }
+            CodePointTrie.ValueWidth.BITS_32 -> {
+                val values = data.copyOf(dataLength)
+                if (type == CodePointTrie.Type.FAST) CodePointTrie.Fast32(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+                else CodePointTrie.Small32(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+            }
+            CodePointTrie.ValueWidth.BITS_8 -> {
+                val values = ByteArray(dataLength) { data[it].toByte() }
+                if (type == CodePointTrie.Type.FAST) CodePointTrie.Fast8(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+                else CodePointTrie.Small8(trieIndex, values, highStart, index3NullOffset, dataNullOffset)
+            }
+        }
     }
     private fun compactIndex(fastILimit: Int, mixedBlocks: MixedBlocks): Int {
         val fastIndexLength = fastILimit shr (CodePointTrie.FAST_SHIFT - CodePointTrie.SHIFT_3)

@@ -1393,3 +1393,21 @@ the complete index16 array, mutable indexes, flags, index length and null offset
 Additional fixtures assign 131,072 unique values to force 18-bit data offsets;
 both FAST and SMALL fast-range sizes are exercised. The compactTrie orchestration
 and final immutable builder remain pending.
+
+## Complete immutable trie builder
+
+MutableCodePointTrie now exposes buildImmutable with the original compactTrie
+orchestration and final FAST/SMALL 8/16/32-bit construction. It finds and rounds
+highStart, pins the fast range, chooses the null block, enforces data limits,
+masks narrow values, aligns indexes/data, appends high/error values and clears
+the builder in finally. Invalid null parameters are rejected before clearing.
+As in ICU4J, clearing restores the original initial value but keeps an error
+value that was masked by a narrow build.
+
+JVM tests compare the complete serialized binary and every Unicode lookup for
+all six type/width combinations over empty, BMP, supplementary, high-tail,
+high-end and 18-bit-offset fixtures, then compare a second build after reuse.
+Common tests verify value truncation, binary round-trip, builder reset, immutable
+independence and null-argument behavior.
+A limit-exceeding fixture compares the thrown exception, cleared state and a
+successful subsequent build with ICU4J.
