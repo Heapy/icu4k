@@ -2387,3 +2387,32 @@ case-key equality/hash quirks and lvariant removal also match ICU4J. Common test
 cover immutable snapshots, canonical/private ordering, errors without unintended
 mutation and original duplicate/type behavior. Full JVM, JS Node and macOS Arm64
 suites pass.
+
+### GC-aware locale object cache
+
+Ported LocaleObjectCache's lookup/normalization/creation protocol in Common:
+cleanup before lookup, normalized-key recheck, null-result handling, creation
+outside storage locks, replacement publication and post-publication cleanup.
+Concurrent misses may return distinct newly created values, matching upstream.
+Constructor validation and callback/error timing follow the original cache.
+
+JVM storage retains ConcurrentHashMap, SoftReference and ReferenceQueue,
+including unconditional queued-key removal. JS uses WeakRef and
+FinalizationRegistry; primitive values are weakly boxed because JS weak
+references require objects. Native uses Kotlin WeakReference with mutex-protected
+mutable maps and bounded rotating cleanup batches, avoiding whole-map copies
+or full scans on each hit. POSIX mutex storage is reclaimed by a Native Cleaner.
+Native reference lifecycle APIs are described in the official documentation:
+https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native.ref/-weak-reference/ .
+JS/Native use weak rather than JVM soft retention, so eviction frequency is
+platform-dependent; cached values are never required for correctness.
+
+Common tests verify exact protocol ordering, normalization hits/nulls and object,
+String and integer values. JVM differential tests compare callbacks, failures,
+constructor arguments, cleared/enqueued references and stale queued entries that
+remove replacements. An eight-thread forced concurrent miss test verifies
+creation stays outside storage locks. Native tests exercise four concurrent
+workers and forced GC, proving both referent collection and stale-key release.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux production sources compile.
+A subsequent macOS Native test run including forced GC also passes. BaseLocale
+and its integration into locale builders/tag conversion remain pending.
