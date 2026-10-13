@@ -1194,3 +1194,16 @@ JVM tests compare all two-code-point raw decompositions and 100,000 arbitrary
 pairs per normalization dataset with ICU4J. Common tests cover table-based
 accent composition, both Hangul steps and rejected pairs. Full-string
 recomposition and composition scanning remain pending.
+
+## Canonical recomposition
+
+Normalizer2Impl.recompose now ports the original state machine over an NFD
+buffer: forward-starter tracking, blocking classes, contiguous-mode blocking,
+Hangul L+V(+T), packed pair composition, supplementary starter resizing and
+buffer flushing. It retains the original supplementary-to-BMP replacement
+branch rather than silently changing upstream behavior.
+
+JVM tests compare 600 random decomposed buffers per dataset, both contiguous
+modes and nonzero recomposition start offsets with ICU4J's original private
+method. Common tests cover Hangul, accents and discontiguous composition.
+The main composition scan and public normalization facade remain pending.

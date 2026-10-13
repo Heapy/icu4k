@@ -57,6 +57,79 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    internal fun recompose(buffer: ReorderingBuffer, recomposeStartIndex: Int, onlyContiguous: Boolean) {
+        val sb = buffer.getStringBuilder()
+        var p = recomposeStartIndex
+        if (p == sb.length) return
+        var compositionsList = -1
+        var starter = -1
+        var starterIsSupplementary = false
+        var prevCC = 0
+        while (true) {
+            val c = codePointAt(sb, p)
+            p += if (c > 0xffff) 2 else 1
+            val norm16 = getNorm16(c)
+            val cc = getCCFromYesOrMaybeYes(norm16)
+            if (norm16 >= minMaybeNo && norm16 <= JAMO_VT && compositionsList >= 0 && (prevCC < cc || prevCC == 0)) {
+                if (norm16 == JAMO_VT) {
+                    if (c < Hangul.JAMO_T_BASE) {
+                        val prev = (sb[starter].code - Hangul.JAMO_L_BASE).toChar().code
+                        if (prev < Hangul.JAMO_L_COUNT) {
+                            val pRemove = p - 1
+                            var syllable = Hangul.HANGUL_BASE + (prev * Hangul.JAMO_V_COUNT + c - Hangul.JAMO_V_BASE) * Hangul.JAMO_T_COUNT
+                            if (p != sb.length) {
+                                val t = (sb[p].code - Hangul.JAMO_T_BASE).toChar().code
+                                if (t < Hangul.JAMO_T_COUNT) { ++p; syllable += t }
+                            }
+                            sb[starter] = syllable.toChar()
+                            sb.deleteRange(pRemove, p)
+                            p = pRemove
+                        }
+                    }
+                    if (p == sb.length) break
+                    compositionsList = -1
+                    continue
+                }
+                val compositeAndFwd = combine(compositionsList, c)
+                if (compositeAndFwd >= 0) {
+                    val composite = compositeAndFwd shr 1
+                    val pRemove = p - if (c > 0xffff) 2 else 1
+                    sb.deleteRange(pRemove, p)
+                    p = pRemove
+                    if (starterIsSupplementary) {
+                        if (composite > 0xffff) {
+                            sb[starter] = io.github.heapy.icu4k.text.UTF16.getLeadSurrogate(composite)
+                            sb[starter + 1] = io.github.heapy.icu4k.text.UTF16.getTrailSurrogate(composite)
+                        } else {
+                            // Preserve the original branch's replacement with c.
+                            sb[starter] = c.toChar()
+                            sb.deleteAt(starter + 1)
+                            starterIsSupplementary = false
+                            --p
+                        }
+                    } else if (composite > 0xffff) {
+                        starterIsSupplementary = true
+                        sb[starter] = io.github.heapy.icu4k.text.UTF16.getLeadSurrogate(composite)
+                        sb.insert(starter + 1, io.github.heapy.icu4k.text.UTF16.getTrailSurrogate(composite))
+                        ++p
+                    } else sb[starter] = composite.toChar()
+                    if (p == sb.length) break
+                    compositionsList = if (compositeAndFwd and 1 != 0) getCompositionsListForComposite(getRawNorm16(composite)) else -1
+                    continue
+                }
+            }
+            prevCC = cc
+            if (p == sb.length) break
+            if (cc == 0) {
+                compositionsList = getCompositionsListForDecompYes(norm16)
+                if (compositionsList >= 0) {
+                    starterIsSupplementary = c > 0xffff
+                    starter = p - if (starterIsSupplementary) 2 else 1
+                }
+            } else if (onlyContiguous) compositionsList = -1
+        }
+        buffer.flush()
+    }
     fun composePair(a: Int, initialB: Int): Int {
         val norm16 = getNorm16(a)
         var b = initialB
