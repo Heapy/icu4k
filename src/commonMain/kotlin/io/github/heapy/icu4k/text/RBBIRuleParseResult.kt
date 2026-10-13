@@ -10,4 +10,6 @@ internal class RBBIRuleParseResult(val fRules: String, val fDebugEnv: String? = 
     var fChainRules = false
     var fLookAheadHardBreak = false
     val fUSetNodes = ArrayList<RBBINode>()
+    val fStatusSets = HashMap<Set<Int>, Int>()
+    val fRuleStatusVals = ArrayList<Int>()
 }

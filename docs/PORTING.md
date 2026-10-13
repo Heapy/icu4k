@@ -2231,3 +2231,24 @@ endpoints and both sides of the 255-category width boundary. Common tests check
 range coverage, dictionary lookup, BOF/EOF behavior, split ownership and frozen
 trie reuse. Full JVM, JS Node and macOS Arm64 suites pass. DFA construction and
 complete compiled-rule serialization remain pending.
+
+### Rule compiler DFA and safe reverse table
+
+Ported RBBITableBuilder's complete forward-table pipeline: variable/set
+flattening, synthetic BOF/end nodes, nullable/first/last/follow position sets,
+rule chaining and BOF fixup, DFA state discovery, lookahead slot mapping,
+accepting/lookahead/tag flags and sorted shared status records. Added equivalent
+column/state discovery and removal, safe-pair synthesis, safe-state compaction,
+8/16-bit table export/alignment and debug dumps. The builder consumes the
+existing front-end state and category builder directly; full compiler owner
+orchestration and complete rule-data emission remain pending.
+
+Differential tests compare tree structure, nullable and all position sets,
+per-state positions/transitions/flags, lookahead maps, status records, optimized
+tables, synthesized safe rows and serialized table bytes with ICU4J. Coverage
+includes all 15 embedded rule sources, 100 generated expressions, chaining,
+BOF/EOF, dictionary categories, lookahead conflicts, combined status tags and
+both sides of the 255-state export boundary. Deterministic state/status/reverse
+debug output is compared too; node-set iteration order is unspecified. Common
+tests exercise tagged lookahead, safe tables, binary sizes and absent-direction
+handling. Full JVM, JS Node and macOS Arm64 suites pass.
