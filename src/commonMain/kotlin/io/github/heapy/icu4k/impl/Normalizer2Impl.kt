@@ -186,6 +186,150 @@ internal class Normalizer2Impl {
         return p
     }
     private fun getPreviousTrailCC(s: CharSequence, start: Int, p: Int): Int = if (start == p) 0 else getFCD16(codePointBefore(s, p))
+    private fun hasCompBoundaryBefore(s: CharSequence, p: Int, limit: Int): Boolean = p == limit || hasCompBoundaryBefore(codePointAt(s, p))
+    private fun hasCompBoundaryAfter(s: CharSequence, start: Int, p: Int, contiguous: Boolean): Boolean = start == p || hasCompBoundaryAfter(codePointBefore(s, p), contiguous)
+
+    fun compose(s: CharSequence, initialSrc: Int, limit: Int, onlyContiguous: Boolean, doCompose: Boolean, buffer: ReorderingBuffer): Boolean {
+        var src = initialSrc
+        var prevBoundary = src
+        val trie = normTrie as io.github.heapy.icu4k.util.CodePointTrie.Fast
+        while (true) {
+            var prevSrc: Int
+            var c: Int
+            var norm16 = 0
+            while (true) {
+                if (src == limit) {
+                    if (prevBoundary != limit && doCompose) buffer.append(s, prevBoundary, limit)
+                    return true
+                }
+                c = s[src].code
+                if (c < minCompNoMaybeCP) { ++src; continue }
+                norm16 = trie.bmpGet(c)
+                if (norm16 < minNoNo) { ++src; continue }
+                prevSrc = src++
+                if (!UTF16Plus.isLeadSurrogate(c)) break
+                if (src != limit && s[src].code in 0xdc00..0xdfff) {
+                    c = ((c - 0xd800) shl 10) + s[src++].code - 0xdc00 + 0x10000
+                    norm16 = trie.suppGet(c)
+                    if (norm16 >= minNoNo) break
+                }
+            }
+            if (norm16 < minMaybeNo) {
+                if (!doCompose) return false
+                if (isAlgorithmicNoNo(norm16)) {
+                    if (norm16HasCompBoundaryAfter(norm16, onlyContiguous) || hasCompBoundaryBefore(s, src, limit)) {
+                        if (prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+                        buffer.append(mapAlgorithmic(c, norm16), 0)
+                        prevBoundary = src
+                        continue
+                    }
+                } else if (norm16 < minNoNoCompBoundaryBefore) {
+                    if (norm16HasCompBoundaryAfter(norm16, onlyContiguous) || hasCompBoundaryBefore(s, src, limit)) {
+                        if (prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+                        var mapping = getData(norm16)
+                        val length = extraData!![mapping++].code and MAPPING_LENGTH_MASK
+                        buffer.append(extraData!!, mapping, mapping + length)
+                        prevBoundary = src
+                        continue
+                    }
+                } else if (norm16 >= minNoNoEmpty) {
+                    if (hasCompBoundaryBefore(s, src, limit) || hasCompBoundaryAfter(s, prevBoundary, prevSrc, onlyContiguous)) {
+                        if (prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+                        prevBoundary = src
+                        continue
+                    }
+                }
+            } else if (norm16 == JAMO_VT && prevBoundary != prevSrc) {
+                val prev = s[prevSrc - 1].code
+                if (c < Hangul.JAMO_T_BASE) {
+                    val l = (prev - Hangul.JAMO_L_BASE).toChar().code
+                    if (l < Hangul.JAMO_L_COUNT) {
+                        if (!doCompose) return false
+                        var t = if (src != limit) s[src].code - Hangul.JAMO_T_BASE else -1
+                        if (t > 0 && t < Hangul.JAMO_T_COUNT) ++src
+                        else t = if (hasCompBoundaryBefore(s, src, limit)) 0 else -1
+                        if (t >= 0) {
+                            val syllable = Hangul.HANGUL_BASE + (l * Hangul.JAMO_V_COUNT + c - Hangul.JAMO_V_BASE) * Hangul.JAMO_T_COUNT + t
+                            --prevSrc
+                            if (prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+                            buffer.append(syllable.toChar())
+                            prevBoundary = src
+                            continue
+                        }
+                    }
+                } else if (Hangul.isHangulLV(prev)) {
+                    if (!doCompose) return false
+                    --prevSrc
+                    if (prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+                    buffer.append((prev + c - Hangul.JAMO_T_BASE).toChar())
+                    prevBoundary = src
+                    continue
+                }
+            } else if (norm16 > JAMO_VT) {
+                var cc = getCCFromNormalYesOrMaybe(norm16)
+                if (onlyContiguous && getPreviousTrailCC(s, prevBoundary, prevSrc) > cc) {
+                    if (!doCompose) return false
+                } else {
+                    var n16: Int
+                    while (true) {
+                        if (src == limit) {
+                            if (doCompose) buffer.append(s, prevBoundary, limit)
+                            return true
+                        }
+                        val prevCC = cc
+                        c = codePointAt(s, src)
+                        n16 = normTrie[c]
+                        if (n16 >= MIN_YES_YES_WITH_CC) {
+                            cc = getCCFromNormalYesOrMaybe(n16)
+                            if (prevCC > cc) {
+                                if (!doCompose) return false
+                                break
+                            }
+                        } else break
+                        src += if (c > 0xffff) 2 else 1
+                    }
+                    if (norm16HasCompBoundaryBefore(n16)) {
+                        if (n16 < minNoNo) src += if (c > 0xffff) 2 else 1
+                        continue
+                    }
+                }
+            }
+            if (prevBoundary != prevSrc && !norm16HasCompBoundaryBefore(norm16)) {
+                c = codePointBefore(s, prevSrc)
+                norm16 = normTrie[c]
+                if (!norm16HasCompBoundaryAfter(norm16, onlyContiguous)) prevSrc -= if (c > 0xffff) 2 else 1
+            }
+            if (doCompose && prevBoundary != prevSrc) buffer.append(s, prevBoundary, prevSrc)
+            val recomposeStartIndex = buffer.length()
+            decomposeShort(s, prevSrc, src, false, onlyContiguous, buffer)
+            src = decomposeShort(s, src, limit, true, onlyContiguous, buffer)
+            recompose(buffer, recomposeStartIndex, onlyContiguous)
+            if (!doCompose) {
+                if (!buffer.equals(s, prevSrc, src)) return false
+                buffer.remove()
+            }
+            prevBoundary = src
+        }
+    }
+
+    fun composeAndAppend(s: CharSequence, doCompose: Boolean, onlyContiguous: Boolean, buffer: ReorderingBuffer) {
+        var src = 0
+        val limit = s.length
+        if (!buffer.isEmpty()) {
+            val firstStarter = findNextCompBoundary(s, 0, limit, onlyContiguous)
+            if (firstStarter != 0) {
+                val lastStarter = findPreviousCompBoundary(buffer.getStringBuilder(), buffer.length(), onlyContiguous)
+                val middle = StringBuilder().append(buffer.getStringBuilder(), lastStarter, buffer.length())
+                buffer.removeSuffix(buffer.length() - lastStarter)
+                middle.append(s, 0, firstStarter)
+                compose(middle, 0, middle.length, onlyContiguous, true, buffer)
+                src = firstStarter
+            }
+        }
+        if (doCompose) compose(s, src, limit, onlyContiguous, true, buffer)
+        else buffer.append(s, src, limit)
+    }
+
     /** Packed quick-check span (bits 31..1) and maybe flag (bit 0). */
     fun composeQuickCheck(s: CharSequence, initialSrc: Int, limit: Int, onlyContiguous: Boolean, doSpan: Boolean): Int {
         var src = initialSrc

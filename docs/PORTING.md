@@ -1243,3 +1243,18 @@ JVM tests compare random mixed/malformed strings at every start, quick-check
 mode and both append modes across all five datasets. Common tests verify local
 repair without decomposing safe spans and append-boundary repair. Main
 composition scanning and the public facade remain pending.
+
+## Full-string composition
+
+Normalizer2Impl.compose and composeAndAppend now port the original composition
+scan, algorithmic and explicit mapping fast paths, empty mappings, Hangul L/V/T
+composition, canonical-order checks, FCC trailing-class checks, local
+boundary-based decomposition/recomposition, isNormalized comparison and append
+boundary merging. The original fast paths are retained rather than substituting
+an unconditional decomposition pass.
+
+JVM oracle tests compare output and isNormalized status on mixed, random Unicode
+and malformed UTF-16 strings, including nonzero starts, both contiguous modes,
+all five normalization datasets and both append modes. Common tests cover
+canonical composition, Hangul and composition across an append boundary.
+The public Normalizer2 facade and canonical-iteration data remain pending.
