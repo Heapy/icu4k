@@ -15,7 +15,6 @@ internal class UnicodeSetStringSpan private constructor(
     private var spanLengths: ShortArray? = null
     private var maxLength16 = 0
     private var someRelevant = false
-    private val offsets = OffsetList()
 
     constructor(set: UnicodeSet, setStrings: ArrayList<String>, which: Int) :
         this(UnicodeSet(0, UnicodeSet.MAX_VALUE).retainAll(set), setStrings, which == ALL) {
@@ -70,6 +69,47 @@ internal class UnicodeSetStringSpan private constructor(
         spanNotSet!!.add(c)
     }
 
+    fun spanAndCount(s: CharSequence, start: Int, condition: UnicodeSet.SpanCondition, outCount: OutputInt): Int {
+        if (condition == UnicodeSet.SpanCondition.NOT_CONTAINED) return spanNot(s, start, outCount)
+        if (condition == UnicodeSet.SpanCondition.CONTAINED) return spanContainedAndCount(s, start, outCount)
+        var pos = start
+        var rest = s.length - start
+        var count = 0
+        while (rest != 0) {
+            val cpLength = spanOne(spanSet, s, pos, rest)
+            var maxInc = if (cpLength > 0) cpLength else 0
+            for (string in strings) {
+                if (maxInc < string.length && string.length <= rest && matches16CPB(s, pos, s.length, string, string.length))
+                    maxInc = string.length
+            }
+            if (maxInc == 0) { outCount.value = count; return pos }
+            ++count; pos += maxInc; rest -= maxInc
+        }
+        outCount.value = count
+        return pos
+    }
+    private fun spanContainedAndCount(s: CharSequence, start: Int, outCount: OutputInt): Int {
+        // Per-call scratch retains the original ring algorithm without shared mutable state.
+        val offsets = OffsetList()
+        offsets.setMaxLength(maxLength16)
+        var pos = start
+        var rest = s.length - start
+        var count = 0
+        while (rest != 0) {
+            val cpLength = spanOne(spanSet, s, pos, rest)
+            if (cpLength > 0) offsets.addOffsetAndCount(cpLength, count + 1)
+            for (string in strings) {
+                val length = string.length
+                if (length <= rest && !offsets.hasCountAtOffset(length, count + 1) && matches16CPB(s, pos, s.length, string, length))
+                    offsets.addOffsetAndCount(length, count + 1)
+            }
+            if (offsets.isEmpty()) { outCount.value = count; return pos }
+            val minOffset = offsets.popMinimum(outCount)
+            count = outCount.value; pos += minOffset; rest -= minOffset
+        }
+        outCount.value = count
+        return pos
+    }
     internal fun spanNot(s: CharSequence, start: Int, outCount: OutputInt?): Int {
         val length = s.length
         var pos = start

@@ -635,3 +635,19 @@ start/limit. Common tests cover false starts, supplementary counts and empty
 input, including preservation of an existing count at end-of-input.
 CONTAINED/SIMPLE string machines and public span/freeze integration remain
 pending.
+
+## String spans with element counts
+
+UnicodeSetStringSpan.spanAndCount now dispatches NOT_CONTAINED, greedy SIMPLE
+and minimum-element-count CONTAINED paths. Fully code-point-contained strings
+remain relevant for counts. CONTAINED uses the original offset/count ring
+algorithm with per-call scratch in common code, avoiding shared mutable scratch
+and JVM-only synchronization. This introduces a ring allocation per contained
+count call compared with ICU4J's synchronized reusable ring.
+
+JVM oracle tests compare counts and end positions for 300 overlapping/malformed
+fixtures at every start, all conditions and ALL/forward-count preprocessing.
+Concurrent calls on one span object are checked separately. Common tests
+exercise paths where greedy matching stops earlier and strings reduce counts.
+Optimized non-counting forward/reverse CONTAINED/SIMPLE spans and public
+UnicodeSet span/freeze integration remain pending.
