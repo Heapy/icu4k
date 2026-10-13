@@ -1515,3 +1515,18 @@ JVM oracle tests compare all Unicode noncharacter values, random packed chars
 and randomized byte fields/skips/comparisons against the original internal
 methods. Common tests cover empty/unsigned fields, truncation and unterminated
 input. Character-name resources, decoder and public name lookup remain pending.
+
+## Algorithmic character names
+
+UCharacterName.AlgorithmName now ports range/type metadata, hex-suffix and
+factorized name generation, inverse lookup, factor-string traversal and name
+character/maximum-length metadata. Per-call scratch buffers replace the original
+synchronized shared buffers. Original factor masking and metadata traversal
+behavior are retained. Utility.hex(long[, places]) is also ported.
+
+JVM tests compare both algorithm types, every name/inverse lookup in a CJK-range
+fixture, factorized combinations, malformed suffixes and metadata bitsets.
+Common tests cover CJK-style names, factorized names and setter validation.
+The full name data reader and public lookup API remain pending.
+Common tests also verify fullwidth/Arabic hex digits and out-of-bounds padding
+widths on JVM, JS and Native.

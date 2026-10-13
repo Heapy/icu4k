@@ -6,6 +6,18 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** ICU utilities; currently the original escape decoder. */
 internal object Utility {
+    fun hex(ch: Long): String = hex(ch, 4)
+    fun hex(number: Long, places: Int): String {
+        if (number == Long.MIN_VALUE) return "-8000000000000000"
+        val negative = number < 0
+        val value = if (negative) -number else number
+        var result = value.toString(16).uppercase()
+        if (result.length < places) {
+            if (places > 16) throw IndexOutOfBoundsException("Hex padding width: $places")
+            result = "0000000000000000".substring(result.length, places) + result
+        }
+        return if (negative) "-$result" else result
+    }
     fun isUnprintable(c: Int): Boolean = c !in 0x20..0x7e
     fun shouldAlwaysBeEscaped(c: Int): Boolean = when {
         c < 0x20 -> true
