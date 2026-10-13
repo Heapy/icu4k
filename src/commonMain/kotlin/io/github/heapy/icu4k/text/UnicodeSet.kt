@@ -46,6 +46,34 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    /** Rank of a contained code point; string elements do not participate. */
+    fun indexOf(c: Int): Int {
+        validate(c)
+        var i = 0
+        var n = 0
+        while (true) {
+            val start = list[i++]
+            if (c < start) return -1
+            val limit = list[i++]
+            if (c < limit) return n + c - start
+            n += limit - start
+        }
+    }
+    /** Code point at the given rank, or -1 outside the code-point portion. */
+    fun charAt(index: Int): Int {
+        var remaining = index
+        if (remaining >= 0) {
+            var i = 0
+            val limit = len and -2
+            while (i < limit) {
+                val start = list[i++]
+                val count = list[i++] - start
+                if (remaining < count) return start + remaining
+                remaining -= count
+            }
+        }
+        return -1
+    }
     fun size(): Int {
         var result = stringElements.size
         for (i in 0 until getRangeCount()) result += getRangeEnd(i) - getRangeStart(i) + 1

@@ -775,3 +775,16 @@ delegates its code-point fallback to super.matches rather than duplicating it.
 The existing exhaustive-direction UnicodeSet matcher oracle continues to cover
 this fallback; common tests additionally exercise the public filter hierarchy
 and the base filter's distinct incremental boundary behavior.
+
+## UnicodeSet code-point rank and selection
+
+UnicodeSet.indexOf and charAt now use the original inversion-list scans to
+convert contained code points to their ordered ranks and back. String elements
+are excluded from these ranks even though size includes them. Invalid code
+points are rejected; out-of-range ranks return -1, including extreme integers.
+
+JVM oracle tests cover 100 random range sets and their complements, string
+members, frozen sets, supplementary boundaries and rank/selection inverses.
+Common tests cover gaps, string exclusion, empty sets and the full Unicode
+range. This completes these two APIs; the remaining UnicodeSet API and pattern
+parser still require further porting.
