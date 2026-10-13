@@ -19,7 +19,12 @@ import io.github.heapy.icu4k.util.VersionInfo
  * complete property dispatcher are added in subsequent stages.
  */
 class UCharacter private constructor() {
+    enum class IdentifierStatus { RESTRICTED, ALLOWED }
+    enum class IdentifierType { NOT_CHARACTER, DEPRECATED, DEFAULT_IGNORABLE, NOT_NFKC, NOT_XID, EXCLUSION, OBSOLETE, TECHNICAL, UNCOMMON_USE, LIMITED_USE, INCLUSION, RECOMMENDED }
     companion object {
+        fun hasIdentifierType(c: Int, type: IdentifierType): Boolean = UCharacterProperty.INSTANCE.hasIDType(c, type.ordinal)
+        fun getIdentifierTypes(c: Int, types: MutableSet<IdentifierType>): Int = UCharacterProperty.INSTANCE.getIDTypes(c, types)
+
         fun getPropertyName(property: Int, nameChoice: Int): String? = UPropertyAliases.INSTANCE.getPropertyName(property, nameChoice)
         fun getPropertyEnum(propertyAlias: CharSequence): Int {
             val value = UPropertyAliases.INSTANCE.getPropertyEnum(propertyAlias)

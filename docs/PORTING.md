@@ -946,3 +946,17 @@ JVM tests compare recognition at valid and beyond-end offsets, collection
 ordering and array copying with ICU4J. Common tests cover default callbacks,
 unchanged output on unrecognized properties, supplementary detection and
 caller-owned target arrays. Pattern parsing and case closure remain pending.
+
+## Identifier type properties
+
+UCharacterProperty now decodes Identifier_Type's exclusive values and combinable
+bits from additional-vector column 2, with original ordinal predicates and
+caller-set output. UCharacter exposes IdentifierType/IdentifierStatus enums,
+hasIdentifierType and getIdentifierTypes. MutableSet replaces JVM EnumSet in
+the common output API; output is cleared before filling. Identifier_Status's
+integer-property dispatch is not yet wired by this change.
+
+JVM tests compare 20,000 random code points and boundary/invalid inputs against
+ICU4J, all twelve predicates and output sets, including invalid internal type
+indices. Common tests verify recommended, ignorable and noncharacter data and
+caller-set replacement. The rest of the property dispatcher remains pending.

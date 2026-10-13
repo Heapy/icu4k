@@ -58,6 +58,26 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
         advanceTo(indexes[8])
     }
 
+    fun hasIDType(c: Int, typeIndex: Int): Boolean {
+        if (typeIndex !in idTypeToEncoded.indices) return false
+        val encoded = idTypeToEncoded[typeIndex]
+        val value = getAdditional(c, 2) ushr 26
+        return if (encoded and 0x80 != 0) value < 0x30 && value and encoded != 0 else value == encoded
+    }
+    fun hasIDType(c: Int, type: io.github.heapy.icu4k.lang.UCharacter.IdentifierType): Boolean = hasIDType(c, type.ordinal)
+    fun getIDTypes(c: Int, types: MutableSet<io.github.heapy.icu4k.lang.UCharacter.IdentifierType>): Int {
+        types.clear()
+        val value = getAdditional(c, 2) ushr 26
+        val entries = io.github.heapy.icu4k.lang.UCharacter.IdentifierType.entries
+        if (value and 0x30 == 0x30 || value == 0) {
+            val index = when (value) { 0 -> 0; 0x30 -> 1; 0x31 -> 2; 0x32 -> 3; 0x3e -> 10; 0x3f -> 11
+                else -> throw IllegalStateException("unknown IdentifierType data value 0x${value.toString(16).padStart(2, '0')}") }
+            types.add(entries[index])
+            return 1
+        }
+        for (index in 4..9) if (value and idTypeToEncoded[index] != 0) types.add(entries[index])
+        return types.size
+    }
     fun getProperty(ch: Int): Int = m_trie_[ch]
     fun getType(c: Int): Int = getProperty(c) and TYPE_MASK
     fun getAdditional(codepoint: Int, column: Int): Int {
@@ -138,6 +158,7 @@ class UCharacterProperty internal constructor(bytes: BinaryBuffer = ICUBinary.ge
     }
 
     companion object {
+        private val idTypeToEncoded = intArrayOf(0, 0x30, 0x31, 0x32, 0x81, 0xa0, 0x82, 0x84, 0x88, 0x90, 0x3e, 0x3f)
         val INSTANCE: UCharacterProperty by lazy { UCharacterProperty() }
         const val TYPE_MASK = 0x1f
         const val LATIN_CAPITAL_LETTER_I_WITH_DOT_ABOVE_: Char = '\u0130'
