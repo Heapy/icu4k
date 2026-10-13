@@ -2160,3 +2160,19 @@ table. A Common grammar trajectory test exercises a literal rule's consume,
 push/pop and action sequence across local targets. Scanner actions, syntax-tree
 construction, set categories, DFA construction and serialization remain pending;
 this ports the compiler's original grammar data, not a substitute compiler.
+
+### Rule compiler syntax nodes
+
+Ported RBBINode's node types/precedence, metadata and position sets, copy
+constructor, variable-expanding tree cloning, flattenVariables depth guard,
+flattenSets, preorder node discovery and original debug formatting. UnicodeSet
+nodes and input sets retain upstream sharing, while copied position containers
+remain independent. Copy intentionally clears rule-root/lookahead-end flags;
+flattenVariables restores the variable root's rule-root/chaining flags. Debug
+serial allocation uses a Common atomic counter for concurrent compiler sessions.
+
+Differential tests compare randomized expression trees and position references,
+variable/set expansion, parent values, discovery order, shared-node behavior,
+copy flags and debug output against ICU4J's actual private node class. Common
+tests verify ownership, independent containers and depth/type errors on local
+targets. Scanner actions and DFA/set-category construction remain pending.
