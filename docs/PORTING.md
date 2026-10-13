@@ -666,3 +666,15 @@ and forward-contained metadata modes, including long prefixes and supplementary
 strings. Common tests distinguish greedy from contained paths and validate
 code-point/string overlap. Optimized reverse spans and public UnicodeSet
 span/freeze integration remain pending.
+
+## Optimized reverse string spans
+
+UnicodeSetStringSpan.spanBack now ports the original reverse overlap machine
+for CONTAINED and SIMPLE, including suffix metadata, long suffix fallback,
+latest-end longest matches, pending decrements and single-code-point progression.
+The offset ring is local to each call, as in the forward common implementation.
+
+Differential JVM tests cover 300 overlapping/malformed fixtures at every limit
+under ALL and backward-contained metadata modes, supplementary strings and long
+suffixes. Common tests cover greedy versus contained paths and overlaps with
+code-point spans. Public UnicodeSet span/freeze integration remains pending.

@@ -69,6 +69,86 @@ internal class UnicodeSetStringSpan private constructor(
         spanNotSet!!.add(c)
     }
 
+    fun spanBack(s: CharSequence, length: Int, condition: UnicodeSet.SpanCondition): Int {
+        if (condition == UnicodeSet.SpanCondition.NOT_CONTAINED) return spanNotBack(s, length)
+        var pos = if (length == 0) 0 else spanSet.spanCodePointsBack(s, length, UnicodeSet.SpanCondition.CONTAINED)
+        if (pos == 0) return 0
+        var spanLength = length - pos
+        val offsets = OffsetList()
+        offsets.setMaxLength(if (condition == UnicodeSet.SpanCondition.CONTAINED) maxLength16 else 0)
+        val backOffset = if (all) strings.size else 0
+        val lengths = spanLengths!!
+        while (true) {
+            if (condition == UnicodeSet.SpanCondition.CONTAINED) {
+                for (i in strings.indices) {
+                    var overlap = lengths[backOffset + i].toInt()
+                    if (overlap == ALL_CP_CONTAINED.toInt()) continue
+                    val string = strings[i]
+                    val length16 = string.length
+                    if (overlap >= LONG_SPAN) overlap = length16 - if (codePointAt(string, 0) > 0xffff) 2 else 1
+                    if (overlap > spanLength) overlap = spanLength
+                    var dec = length16 - overlap
+                    while (true) {
+                        if (dec > pos) break
+                        if (!offsets.containsOffset(dec) && matches16CPB(s, pos - dec, length, string, length16)) {
+                            if (dec == pos) return 0
+                            offsets.addOffset(dec)
+                        }
+                        if (overlap == 0) break
+                        --overlap; ++dec
+                    }
+                }
+            } else {
+                var maxDec = 0
+                var maxOverlap = 0
+                for (i in strings.indices) {
+                    var overlap = lengths[backOffset + i].toInt()
+                    val string = strings[i]
+                    val length16 = string.length
+                    if (overlap >= LONG_SPAN) overlap = length16
+                    if (overlap > spanLength) overlap = spanLength
+                    var dec = length16 - overlap
+                    while (true) {
+                        if (dec > pos || overlap < maxOverlap) break
+                        if ((overlap > maxOverlap || dec > maxDec) && matches16CPB(s, pos - dec, length, string, length16)) {
+                            maxDec = dec; maxOverlap = overlap
+                            break
+                        }
+                        --overlap; ++dec
+                    }
+                }
+                if (maxDec != 0 || maxOverlap != 0) {
+                    pos -= maxDec
+                    if (pos == 0) return 0
+                    spanLength = 0
+                    continue
+                }
+            }
+            if (spanLength != 0 || pos == length) {
+                if (offsets.isEmpty()) return pos
+            } else {
+                if (offsets.isEmpty()) {
+                    val oldPos = pos
+                    pos = spanSet.spanCodePointsBack(s, oldPos, UnicodeSet.SpanCondition.CONTAINED)
+                    spanLength = oldPos - pos
+                    if (pos == 0 || spanLength == 0) return pos
+                    continue
+                } else {
+                    spanLength = spanOneBack(spanSet, s, pos)
+                    if (spanLength > 0) {
+                        if (spanLength == pos) return 0
+                        pos -= spanLength
+                        offsets.shift(spanLength)
+                        spanLength = 0
+                        continue
+                    }
+                }
+            }
+            pos -= offsets.popMinimum(null)
+            spanLength = 0
+        }
+    }
+
     fun span(s: CharSequence, start: Int, condition: UnicodeSet.SpanCondition): Int {
         if (condition == UnicodeSet.SpanCondition.NOT_CONTAINED) return spanNot(s, start, null)
         val limit = if (start >= s.length) s.length else spanSet.spanCodePointsAndCount(s, start, UnicodeSet.SpanCondition.CONTAINED, null)
