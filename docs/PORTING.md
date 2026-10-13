@@ -1703,3 +1703,19 @@ all start/end combinations on mixed and malformed UTF-16 and unchanged break
 queues. A concurrency test runs one publisher with multiple readers. Common
 tests cover script accumulation and cursor behavior. Specific dictionary engines
 and RuleBasedBreakIterator integration remain pending.
+
+### Myanmar dictionary segmentation
+
+Ported `BurmeseBreakEngine` with the original three-word candidate lookahead,
+short-root/prefix combination thresholds, unknown-word resynchronization,
+combining-mark attachment and terminal-boundary removal. The original property
+set expressions are constructed via property aliases and set intersection.
+The engine reads the pinned `burmesedict.dict` directly through the common
+binary decoder; the general `DictionaryData.loadDictionaryFor` resource-bundle
+lookup remains pending. This is the root bundle's Mymr dictionary, not a
+replacement dictionary or segmentation heuristic.
+
+JVM differential tests compare script handling across Unicode and break counts,
+queues and cursor positions for Myanmar prose, marks, mixed text and 500 seeded
+random strings, including range slices and both phrase flags. Common tests
+exercise the embedded dictionary on JVM, JS and macOS Native.
