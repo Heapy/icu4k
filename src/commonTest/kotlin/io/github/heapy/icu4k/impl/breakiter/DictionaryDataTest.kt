@@ -14,7 +14,13 @@ class DictionaryDataTest {
                     assertTrue(data.data.isNotEmpty())
                     assertEquals(0, data.matcher().getType())
                 }
-                is DictionaryData.TrieData.Chars -> assertTrue(data.data.isNotEmpty())
+                is DictionaryData.TrieData.Chars -> {
+                    assertTrue(data.data.isNotEmpty())
+                    assertEquals(1, data.matcher().getType())
+                    val count = IntArray(1)
+                    data.matcher().matches(StringCharacterIterator("日本語"), 3, IntArray(20), count, 20, null)
+                    assertTrue(count[0] > 0)
+                }
             }
         }
         val thai = DictionaryData.read(ICUBinary.getRequiredData("brkitr/thaidict.dict")) as DictionaryData.TrieData.Bytes

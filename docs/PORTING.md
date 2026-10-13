@@ -418,3 +418,22 @@ resources and match a Thai fixture on every target.
 Resource-bundle-driven script-to-file lookup (loadDictionaryFor), CharsTrie/
 CharsDictionaryMatcher and the language engines remain pending. The binary
 decoder does not substitute fixed locale mappings for the original factory.
+
+## Character trie reader and CJK matching
+
+CharsTrie now reads ICU's compact UTF-16 branch/linear/value encoding, including
+intermediate node values, code-point entry methods, signed wide values, saved
+identity-checked and packed states, unique values and next-character enumeration.
+CharsDictionaryMatcher uses this reader, and decoded character dictionaries can
+create matchers. The original code-point length/count behavior is preserved.
+
+Oracle tests compare FAST/SMALL builder output for randomized keys, all value
+width boundaries and signed extremes, and traversal over 1,000 real CJK keys.
+They also compare candidate lengths/counts/weights and cursor positions for
+1,000 CJK words plus supplementary/joiner/empty/failure fixtures under multiple
+limits. Common tests exercise intermediate values, state restoration and real
+Japanese dictionary lookup on every target.
+
+CharsTrie Entry/Iterator and builders, language segmentation algorithms,
+normalization and script/UnicodeSet integration remain pending. Matching dictionary
+words alone is not the complete CJK segmentation algorithm.

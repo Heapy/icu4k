@@ -31,7 +31,9 @@ internal object DictionaryData {
         class Bytes(indexes: IntArray, val data: ByteArray) : TrieData(indexes) {
             fun matcher(): DictionaryMatcher = BytesDictionaryMatcher(data, indexes[IX_TRANSFORM])
         }
-        class Chars(indexes: IntArray, val data: String) : TrieData(indexes)
+        class Chars(indexes: IntArray, val data: String) : TrieData(indexes) {
+            fun matcher(): DictionaryMatcher = CharsDictionaryMatcher(data)
+        }
     }
     fun read(bytes: BinaryBuffer): TrieData? {
         ICUBinary.readHeader(bytes, DATA_FORMAT_ID, null)
