@@ -1750,3 +1750,19 @@ marks, mixed text and 500 seeded random strings. Both direct range division and
 base-class dispatch are compared for break counts, queues and cursor positions,
 including bounded iterators, short spans and both phrase flags. Common tests
 exercise segmentation using the embedded dictionary on JVM, JS and Native.
+
+### Thai dictionary segmentation
+
+Ported `ThaiBreakEngine`, including the original labelled three-word lookahead
+(the successful third candidate exits without another backup), unknown-word
+resynchronization, mark attachment and PAIYANNOI/MAIYAMOK suffix handling with
+previous-character checks. Thai-specific begin/end sets and the four-unit
+minimum span are retained. The pinned root dictionary `thaidict.dict` is decoded
+in common code; general resource-bundle dictionary resolution remains pending.
+
+Differential tests compare every Unicode code point for script handling and
+compare counts, queues and cursors for Thai prose, short spans, mixed text,
+500 random strings and dictionary words followed by combinations of repetition
+and abbreviation signs. Tests exercise bounded iterators, direct range division,
+base dispatch and both phrase flags. Common tests load the embedded dictionary
+and segment Thai on every locally runnable target.
