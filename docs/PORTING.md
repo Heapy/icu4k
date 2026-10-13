@@ -1843,3 +1843,18 @@ remains. This comparator does not implicitly enable canonical equivalence.
 Differential tests compare exact integer results for all option combinations,
 nulls, expansions, supplementary mappings and random/malformed UTF-16. Common
 tests cover ordering, Turkic folding and invalid-setter state across targets.
+
+### UTF16 substring search and replacement
+
+Ported string-needle indexOf/lastIndexOf overloads and string replacement. The
+surrogate-boundary filters, recursive retry positions and original-source
+replacement index accounting follow ICU4J. In particular, the no-fromIndex
+search overloads retain upstream's extra lookahead unit for a needle ending in
+a lead surrogate; this differs from the explicit-fromIndex overloads and can
+throw at the end of the source. Empty needles also retain the original bounds
+exception. Explicit checks preserve these behaviors on JS as well as JVM/Native.
+
+Differential tests cover random/malformed UTF-16, surrogate fragments, empty
+needles, negative/oversized starting positions and replacements. Common tests
+include complete supplementary matches, rejected trail fragments and the
+original no-offset lookahead behavior.

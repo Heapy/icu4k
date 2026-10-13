@@ -289,6 +289,63 @@ object UTF16 {
         if (newLimit != limit && newLimit < target.size) target[newLimit] = '\u0000'
         return newLimit
     }
+    private fun searchUnit(source: String, index: Int): Int {
+        if (index < 0 || index >= source.length) throw IndexOutOfBoundsException("String index: $index")
+        return source[index].code
+    }
+    fun indexOf(source: String, str: String): Int = substringIndexOf(source, str, 0, true)
+    fun indexOf(source: String, str: String, fromIndex: Int): Int = substringIndexOf(source, str, fromIndex, false)
+    private fun substringIndexOf(source: String, str: String, fromIndex: Int, firstCall: Boolean): Int {
+        val first = searchUnit(str, 0)
+        val last = searchUnit(str, str.length - 1)
+        if (!isTrailSurrogate(first) && !isLeadSurrogate(last)) return source.indexOf(str, fromIndex)
+        val result = source.indexOf(str, fromIndex)
+        val resultEnd = result + str.length
+        if (result >= 0) {
+            // Retain ICU4J's distinct no-fromIndex lookahead, including bounds behavior.
+            if (isLeadSurrogate(last) && result < source.length - 1 &&
+                isTrailSurrogate(searchUnit(source, resultEnd + if (firstCall) 1 else 0))) {
+                return indexOf(source, str, resultEnd + 1)
+            }
+            if (isTrailSurrogate(first) && result > 0 && isLeadSurrogate(searchUnit(source, result - 1))) {
+                return indexOf(source, str, resultEnd + 1)
+            }
+        }
+        return result
+    }
+    fun lastIndexOf(source: String, str: String): Int = substringLastIndexOf(source, str, source.length, true)
+    fun lastIndexOf(source: String, str: String, fromIndex: Int): Int = substringLastIndexOf(source, str, fromIndex, false)
+    private fun substringLastIndexOf(source: String, str: String, fromIndex: Int, firstCall: Boolean): Int {
+        val first = searchUnit(str, 0)
+        val last = searchUnit(str, str.length - 1)
+        if (!isTrailSurrogate(first) && !isLeadSurrogate(last)) return source.lastIndexOf(str, fromIndex)
+        val result = source.lastIndexOf(str, fromIndex)
+        if (result >= 0) {
+            if (isLeadSurrogate(last) && result < source.length - 1 &&
+                isTrailSurrogate(searchUnit(source, result + str.length + if (firstCall) 1 else 0))) {
+                return lastIndexOf(source, str, result - 1)
+            }
+            if (isTrailSurrogate(first) && result > 0 && isLeadSurrogate(searchUnit(source, result - 1))) {
+                return lastIndexOf(source, str, result - 1)
+            }
+        }
+        return result
+    }
+    fun replace(source: String, oldStr: String, newStr: String): String {
+        var index = indexOf(source, oldStr)
+        if (index == -1) return source
+        val result = StringBuilder(source)
+        var resultIndex = index
+        while (index != -1) {
+            result.deleteRange(resultIndex, resultIndex + oldStr.length)
+            result.insert(resultIndex, newStr)
+            val lastEndIndex = index + oldStr.length
+            index = indexOf(source, oldStr, lastEndIndex)
+            resultIndex += newStr.length + index - lastEndIndex
+        }
+        return result.toString()
+    }
+
     /** Unicode string ordering with optional full case folding. Null sorts first. */
     class StringComparator(codepointcompare: Boolean, ignorecase: Boolean, foldcaseoption: Int) : Comparator<String?> {
         private var codePointCompare = if (codepointcompare) Normalizer.COMPARE_CODE_POINT_ORDER else 0
