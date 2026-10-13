@@ -1471,3 +1471,18 @@ JVM oracle tests compare source IDs from -10 through 0x8000 and complete boundar
 sets for each helper and all three layout sources. Common tests cover source
 routing, preserved destination entries, hardcoded points and invalid layout
 sources. Age access was already present and was retained.
+
+## CharacterProperties sets and maps
+
+CharacterPropertiesImpl now combines inclusion boundaries by source, narrows
+integer-property inclusions to actual value transitions and supports cache
+clearing. CharacterProperties ports frozen binary-property sets (including
+emoji strings) and immutable integer-property maps with the original Script
+null value, FAST/SMALL selection and width selection. Atomic immutable-map
+caches replace JVM synchronized cache arrays; inclusion sets retain the original
+mutable-but-do-not-modify contract.
+
+JVM tests compare every range/string in all 76 binary sets, all 27 integer maps
+at every Unicode code point, complete map binaries and all property inclusion
+sets. Common tests cover frozen mutation rejection, cached identity, Script
+error values, emoji sequences, inclusion cache clearing and invalid property IDs.
