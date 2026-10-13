@@ -179,6 +179,7 @@ class UCharacter private constructor() {
         fun isULowercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.LOWERCASE)
         fun isUUppercase(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.UPPERCASE)
         fun isUWhiteSpace(ch: Int): Boolean = hasBinaryProperty(ch, UProperty.WHITE_SPACE)
+        fun getCombiningClass(ch: Int): Int = io.github.heapy.icu4k.text.Normalizer2.getNFDInstance().getCombiningClass(ch)
         fun getIntPropertyValue(ch: Int, type: Int): Int = UCharacterProperty.INSTANCE.getIntPropertyValue(ch, type)
         /** All binary and enumerated properties have minimum zero, including undefined IDs. */
         @Suppress("UNUSED_PARAMETER")

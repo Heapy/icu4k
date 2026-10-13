@@ -1442,3 +1442,18 @@ JVM tests compare every binary property for every Unicode code point, generic
 integer dispatch and invalid input outcomes, malformed/supplementary strings,
 emoji sequences and convenience predicates. Common tests exercise public
 routing, category masks, undefined IDs, normalization and emoji properties.
+
+## CanonicalIterator
+
+CanonicalIterator now ports segmentation by canonical starters, recursive
+composition extraction, equivalent-piece permutation, Cartesian-product
+iteration, reset/source reuse and the original recursion/result-count guards.
+Result order remains unspecified. Its two zero-option canonical equality checks
+use the existing NFD normalizer (equal NFD forms), because the legacy
+Normalizer.compare API is not yet ported. No casefold or comparison-order options
+are involved in these checks. UCharacter.getCombiningClass is also exposed.
+
+JVM oracle tests compare complete result sets for canonical Latin, Greek,
+Hangul, supplementary and malformed UTF-16 inputs, reuse/reset and standalone
+permutation behavior. Common tests cover Latin/Hangul equivalents, empty input,
+output-set retention and the permutation-depth guard.
