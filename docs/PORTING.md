@@ -1766,3 +1766,19 @@ compare counts, queues and cursors for Thai prose, short spans, mixed text,
 and abbreviation signs. Tests exercise bounded iterators, direct range division,
 base dispatch and both phrase flags. Common tests load the embedded dictionary
 and segment Thai on every locally runnable target.
+
+### Legacy normalization iteration and source offsets
+
+Ported the stateful `Normalizer` iterator dependency used by CJK segmentation:
+forward/backward normalization segments, source-index mapping, cursor resets and
+seeks, cloning, text replacement, mode/option changes and text accessors. Modes
+NONE/NFD/NFC/NFKD/NFKC/FCD and the Unicode 3.2 filtered variants use the existing
+Normalizer2 engines. Mode changes preserve buffered output as in ICU4J. String
+normalize, quickCheck and isNormalized entry points are also available.
+
+JVM differential tests exercise complete forward/backward walks, random changes
+of direction and mode, seeks inside UTF-16 pairs, cloning buffered segments,
+iterator ownership, compatibility expansions and Unicode 3.2 options. Common
+tests verify expansion offsets and clone independence across targets. Legacy
+Normalizer's remaining static overloads, comparison/concatenation helpers and
+compatibility aliases are still pending; this does not mark the class complete.
