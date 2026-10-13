@@ -828,3 +828,15 @@ JVM tests compare 2,000 mixed set pairs under every style and exercise iterable
 and string/code-point helpers against ICU4J. Common tests distinguish the three
 orders and cover supplementary code points, prefix ordering and validation.
 Pattern parsing and the remaining UnicodeSet API remain pending.
+
+## Public UnicodeSetIterator
+
+UnicodeSetIterator now ports code-point and range traversal, sorted strings,
+IS_STRING tagging, reset/rebinding, skipToStrings and getString. Public mutable
+fields retain the upstream stale/undefined values outside their documented
+modes; iteration does not add concurrent-modification checks. The string field
+and getString may be null before a string has been produced, matching Java.
+
+Differential tests compare 400 random sets through point/range/string-only
+modes, including all public result fields and reset behavior. Common tests
+exercise supplementary elements, empty strings, skipping and empty iterators.
