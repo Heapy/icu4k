@@ -13,14 +13,15 @@ import io.github.heapy.icu4k.text.UnicodeSet
 import io.github.heapy.icu4k.text.UnicodeSetIterator
 import io.github.heapy.icu4k.text.UTF16
 
-/** ICU's default dictionary-based CJK word/phrase engine. Optional ML phrase dispatch is pending. */
-internal class CjkBreakEngine(private val korean: Boolean) : DictionaryBreakEngine() {
+/** ICU dictionary-based CJK segmentation with optional Japanese ML phrase breaking. */
+internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhraseBreaking: Boolean = false) : DictionaryBreakEngine() {
     private val hangulWordSet = UnicodeSet(0xac00, 0xd7a3).freeze()
     private val digitOrOpenPunctuationOrAlphabetSet = propertyUnion("Nd", "Pi", "Ps")
         .addAll(UnicodeSet().applyPropertyAlias("Alphabetic", "")).freeze()
     private val closePunctuationSet = propertyUnion("Pc", "Pd", "Pe", "Pf", "Po").freeze()
     private val dictionary = checkNotNull(DictionaryData.loadDictionaryFor("Hira"))
     private val skipSet = HashSet<String>()
+    private var mlBreakEngine: MlBreakEngine? = null
     init {
         if (korean) setCharacters(hangulWordSet)
         else {
@@ -29,11 +30,15 @@ internal class CjkBreakEngine(private val korean: Boolean) : DictionaryBreakEngi
                 .addAll(UnicodeSet().applyPropertyAlias("sc", "Katakana"))
                 .add(0x30fc).add(0xff70).add(0xff9e).add(0xff9f)
             setCharacters(cj)
-            val ja = ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/ja.res"))
-            val extensions = ja.getArray(ja.getTable(ja.rootResource)!!.getResource("extensions"))!!
-            for (i in 0 until extensions.size) skipSet.add(ja.getString(extensions.getContainerResource(i))!!)
-            val hiragana = UnicodeSetIterator(UnicodeSet().applyPropertyAlias("sc", "Hiragana").freeze())
-            while (hiragana.next()) skipSet.add(hiragana.getString()!!)
+            if (useMlPhraseBreaking) {
+                mlBreakEngine = MlBreakEngine(digitOrOpenPunctuationOrAlphabetSet, closePunctuationSet)
+            } else {
+                val ja = ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/ja.res"))
+                val extensions = ja.getArray(ja.getTable(ja.rootResource)!!.getResource("extensions"))!!
+                for (i in 0 until extensions.size) skipSet.add(ja.getString(extensions.getContainerResource(i))!!)
+                val hiragana = UnicodeSetIterator(UnicodeSet().applyPropertyAlias("sc", "Hiragana").freeze())
+                while (hiragana.next()) skipSet.add(hiragana.getString()!!)
+            }
         }
     }
     override fun equals(other: Any?): Boolean = other is CjkBreakEngine && korean == other.korean
@@ -69,6 +74,9 @@ internal class CjkBreakEngine(private val korean: Boolean) : DictionaryBreakEngi
                 positions[++numCodePoints] = normalizer.getIndex()
                 index = normalizer.getIndex()
             }
+        }
+        if (useMlPhraseBreaking && isPhraseBreaking && !korean) {
+            return mlBreakEngine!!.divideUpRange(text, rangeStart, rangeEnd, cursor, numCodePoints, positions, foundBreaks)
         }
         val best = IntArray(numCodePoints + 1) { Int.MAX_VALUE }
         best[0] = 0

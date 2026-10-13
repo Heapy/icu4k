@@ -1911,3 +1911,28 @@ The optional ICUConfig-controlled ML phrase path and MlBreakEngine/model loading
 remain pending. This class currently ports the original default dictionary path;
 it does not substitute a dictionary heuristic for the ML configuration or claim
 that the whole segmentation stack is complete.
+
+### Japanese AdaBoost phrase model and engine
+
+Ported `MlBreakEngine`: thirteen feature maps, negative-sum bias, six-code-point
+window indexing, unigram/bigram/trigram scoring, source-position correction and
+phrase punctuation rules. CjkBreakEngine dispatches Japanese phrase requests to
+this engine when its explicit `useMlPhraseBreaking` constructor option is true;
+word and Korean dispatch retain the original paths. Platform ICUConfig/system
+property integration remains pending; Common code currently exposes the option
+explicitly rather than reading JVM system properties.
+
+ICU4J 78.3's distributed data omits jaml.res. The pinned ICU source tag contains
+`icu4c/source/data/brkitr/adaboost/jaml.txt`; it is retained with SHA-256
+845816d923c9b376a91c7eaf18d8e5f7c64903f30b4c62f5292f7c0db5d1e779.
+`scripts/generate-ml-model.py` validates and compiles all 1433 original features
+into deterministic ResB 2 string/array32/int-vector/table32 data, requiring no
+native genrb. It also generates the JVM oracle resource so ICU4J can execute its
+own ML path using the same original model. CI checks both generated artifacts
+and the common embedding manifest (35 resources).
+
+Raw model resource trees are compared with ICU4J's reader. CJK/ML differential
+tests compare word/phrase and Korean/Japanese dispatch, normalization, random
+slices, supplementary/malformed text, queues and cursor positions. Common tests
+exercise the Japanese model on JVM, JS and macOS Native. This does not complete
+ICUConfig or the remaining RuleBasedBreakIterator/cache/factory stack.

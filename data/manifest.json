@@ -241,6 +241,15 @@
       "object": "BreakRootResourceData",
       "sha256": "5cd1b4b21532efca579424d31a37ee4968bb356cdc3d74ed370c7074b17aca3b",
       "size": 800
+    },
+    {
+      "name": "brkitr/jaml.res",
+      "file": "data/icu78/brkitr/jaml.res",
+      "object": "BreakJapaneseMlResourceData",
+      "sha256": "8c1edb75f3eeb944a80cff25803f20f0d7f887b90cb59556bdea74c6fbe1126e",
+      "size": 25852,
+      "generated_from": "icu4c/source/data/brkitr/adaboost/jaml.txt",
+      "generator": "scripts/generate-ml-model.py"
     }
   ]
 }

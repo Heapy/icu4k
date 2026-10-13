@@ -21,4 +21,16 @@ class CjkBreakEngineTest {
             for (i in 0 until breaks.size()) assertTrue(breaks.elementAt(i) in 1 until source.length)
         }
     }
+    @Test fun japaneseModelSegmentsPhrasesOnEveryTarget() {
+        val engine = CjkBreakEngine(false, true)
+        val source = "東京都に行きます"
+        val text = StringCharacterIterator(source)
+        val breaks = DictionaryBreakEngine.DequeI()
+        val count = engine.findBreaks(text, 0, source.length, breaks, true)
+        assertEquals(source.length, text.getIndex())
+        assertEquals(count, breaks.size())
+        assertTrue(count > 0)
+        for (i in 0 until breaks.size()) assertTrue(breaks.elementAt(i) in 1..source.length)
+    }
+
 }
