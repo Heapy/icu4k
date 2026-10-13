@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.util.OutputInt
+
 /** ICU inversion-list core. Pattern/property parsing and frozen span acceleration are pending. */
 class UnicodeSet() : Iterable<String> {
     enum class SpanCondition { NOT_CONTAINED, CONTAINED, SIMPLE, CONDITION_COUNT }
@@ -277,6 +279,36 @@ class UnicodeSet() : Iterable<String> {
             return UTF16.valueOf(cp)
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
+    }
+    /** Original unfrozen code-point span fallback; caller handles empty/clamped input. */
+    internal fun spanCodePointsAndCount(s: CharSequence, start: Int, condition: SpanCondition, outCount: OutputInt?): Int {
+        val contained = condition != SpanCondition.NOT_CONTAINED
+        var next = start
+        var count = 0
+        do {
+            val lead = s[next].code
+            var cp = lead
+            if (lead in 0xd800..0xdbff && next + 1 < s.length && s[next + 1].code in 0xdc00..0xdfff)
+                cp = ((lead - 0xd800) shl 10) + s[next + 1].code - 0xdc00 + 0x10000
+            if (contained != contains(cp)) break
+            ++count
+            next += if (cp > 0xffff) 2 else 1
+        } while (next < s.length)
+        if (outCount != null) outCount.value = count
+        return next
+    }
+    internal fun spanCodePointsBack(s: CharSequence, fromIndex: Int, condition: SpanCondition): Int {
+        val contained = condition != SpanCondition.NOT_CONTAINED
+        var previous = fromIndex
+        do {
+            val trail = s[previous - 1].code
+            var cp = trail
+            if (trail in 0xdc00..0xdfff && previous >= 2 && s[previous - 2].code in 0xd800..0xdbff)
+                cp = ((s[previous - 2].code - 0xd800) shl 10) + trail - 0xdc00 + 0x10000
+            if (contained != contains(cp)) break
+            previous -= if (cp > 0xffff) 2 else 1
+        } while (previous > 0)
+        return previous
     }
     private fun union(other: IntArray, otherLen: Int): UnicodeSet {
         ensureBufferCapacity(len + otherLen)

@@ -581,3 +581,14 @@ UTF-16 fixtures at every position and span-length boundaries. Common tests cover
 wraparound, minimum counts and rejection of matches that split a surrogate pair.
 The constructor/preprocessing and main string-aware span machines remain
 pending, as does UnicodeSet.freeze integration.
+
+## Unfrozen code-point span fallback
+
+UnicodeSet's original forward span/count and reverse code-point fallback loops
+are ported as internal dependencies for string-span preprocessing. They preserve
+code-point-at/before behavior at arbitrary UTF-16 indices and optional counts.
+Public span methods are still pending until string elements are handled.
+
+JVM tests compare 200 malformed UTF-16 fixtures at every forward/backward index
+for every SpanCondition with ICU4J's original unfrozen fallback. Common tests
+cover supplementary counts and starting on a trail surrogate.
