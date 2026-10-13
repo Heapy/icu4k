@@ -2296,3 +2296,23 @@ long cache-spanning input, builder reuse and original null-trie hash/equality
 quirks. Common tests verify suppression, builder snapshot independence and the
 upstream isBoundary behavior that leaves the delegate on a suppressed boundary.
 Full JVM, JS Node and macOS Arm64 suites pass.
+
+### Locale parser primitives
+
+Started the original locale implementation layer with complete AsciiUtil,
+StringTokenIterator, ParseStatus and LocaleSyntaxException ports. ASCII casing
+and predicates deliberately avoid Unicode case folding. Case-insensitive
+comparison preserves Java's exact UTF-16/length difference on every target;
+keys cache the ASCII-lowercased string hash. Title casing retains upstream's
+first-character behavior, including unchanged digit/non-ASCII-leading strings.
+Tokenization preserves empty tokens, delimiter-set UTF-16 semantics, restart
+positions, exhausted state and partial state changes on invalid offsets.
+
+Differential tests check every UTF-16 unit, 1000 random strings, casing/key
+hashes/equality and exact comparison values, plus token states across 150 random
+inputs, delimiter sets, all valid start offsets, invalid offsets and text
+replacement. Status reset/error metadata and syntax exception indices also
+match ICU4J. Common tests cover casing, exact comparison, empty subtags and
+reset/identity semantics. Full JVM, JS Node and macOS Arm64 suites pass.
+LanguageTag, locale builders, ULocale and locale resource fallback remain
+pending; these are the parser dependencies, not a replacement locale layer.
