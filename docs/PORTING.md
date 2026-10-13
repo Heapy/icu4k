@@ -1144,3 +1144,15 @@ JVM tests compare both operations for every Unicode code point and adjacent
 invalid values across all five normalization datasets. Common tests cover
 accents, compatibility ligatures, Hangul raw/recursive differences and deletion.
 Full-string decomposition/reordering and composition remain pending.
+
+## Normalization boundaries and inertness
+
+Normalizer2Impl now ports decomposition, composition and FCD before/after
+boundaries and inert predicates, including contiguous composition, algorithmic
+delta trail classes and variable mapping lead/trail classes. Norm16-level
+decomposition boundary helpers are available for the upcoming string loops.
+
+JVM tests compare all predicates for every Unicode code point and adjacent
+invalid values in all five datasets and both contiguous modes. Common tests
+cover accents, composing starters and inert punctuation. Full-string ordering
+and normalization are still pending.

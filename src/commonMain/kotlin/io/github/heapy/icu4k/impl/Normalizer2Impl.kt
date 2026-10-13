@@ -57,6 +57,51 @@ internal class Normalizer2Impl {
     fun getNorm16(c: Int): Int = if (UTF16Plus.isLeadSurrogate(c)) 1 else normTrie[c]
     fun getRawNorm16(c: Int): Int = normTrie[c]
 
+    fun hasDecompBoundaryBefore(c: Int): Boolean = c < minLcccCP ||
+        (c <= 0xffff && !singleLeadMightHaveNonZeroFCD16(c)) || norm16HasDecompBoundaryBefore(getNorm16(c))
+    fun norm16HasDecompBoundaryBefore(norm16: Int): Boolean {
+        if (norm16 < minNoNoCompNoMaybeCC) return true
+        if (norm16 >= limitNoNo) return norm16 <= MIN_NORMAL_MAYBE_YES || norm16 == JAMO_VT
+        val mapping = norm16 shr OFFSET_SHIFT
+        val data = extraData!!
+        return data[mapping].code and MAPPING_HAS_CCC_LCCC_WORD == 0 || data[mapping - 1].code and 0xff00 == 0
+    }
+    fun hasDecompBoundaryAfter(c: Int): Boolean {
+        if (c < minDecompNoCP || (c <= 0xffff && !singleLeadMightHaveNonZeroFCD16(c))) return true
+        return norm16HasDecompBoundaryAfter(getNorm16(c))
+    }
+    fun norm16HasDecompBoundaryAfter(norm16: Int): Boolean {
+        if (norm16 <= minYesNo || isHangulLVT(norm16)) return true
+        if (norm16 >= limitNoNo) {
+            if (norm16 >= minMaybeYes) return norm16 <= MIN_NORMAL_MAYBE_YES || norm16 == JAMO_VT
+            if (norm16 < minMaybeNo) return norm16 and DELTA_TCCC_MASK <= DELTA_TCCC_1
+        }
+        val mapping = getData(norm16)
+        val data = extraData!!
+        val firstUnit = data[mapping].code
+        if (firstUnit > 0x1ff) return false
+        if (firstUnit <= 0xff) return true
+        return firstUnit and MAPPING_HAS_CCC_LCCC_WORD == 0 || data[mapping - 1].code and 0xff00 == 0
+    }
+    fun isDecompInert(c: Int): Boolean {
+        val norm16 = getNorm16(c)
+        return norm16 < minYesNo || norm16 == JAMO_VT || (norm16 >= minMaybeYes && norm16 <= MIN_NORMAL_MAYBE_YES)
+    }
+    fun hasCompBoundaryBefore(c: Int): Boolean = c < minCompNoMaybeCP || norm16HasCompBoundaryBefore(getNorm16(c))
+    private fun norm16HasCompBoundaryBefore(norm16: Int): Boolean = norm16 < minNoNoCompNoMaybeCC || isAlgorithmicNoNo(norm16)
+    fun hasCompBoundaryAfter(c: Int, onlyContiguous: Boolean): Boolean = norm16HasCompBoundaryAfter(getNorm16(c), onlyContiguous)
+    private fun norm16HasCompBoundaryAfter(norm16: Int, onlyContiguous: Boolean): Boolean =
+        norm16 and HAS_COMP_BOUNDARY_AFTER != 0 && (!onlyContiguous || isTrailCC01ForCompBoundaryAfter(norm16))
+    private fun isTrailCC01ForCompBoundaryAfter(norm16: Int): Boolean = norm16 == INERT ||
+        (if (isAlgorithmicNoNo(norm16)) norm16 and DELTA_TCCC_MASK <= DELTA_TCCC_1 else extraData!![norm16 shr OFFSET_SHIFT].code <= 0x1ff)
+    fun isCompInert(c: Int, onlyContiguous: Boolean): Boolean {
+        val norm16 = getNorm16(c)
+        return norm16 < minNoNo && norm16 and HAS_COMP_BOUNDARY_AFTER != 0 &&
+            (!onlyContiguous || norm16 == INERT || extraData!![norm16 shr OFFSET_SHIFT].code <= 0x1ff)
+    }
+    fun hasFCDBoundaryBefore(c: Int): Boolean = hasDecompBoundaryBefore(c)
+    fun hasFCDBoundaryAfter(c: Int): Boolean = hasDecompBoundaryAfter(c)
+    fun isFCDInert(c: Int): Boolean = getFCD16(c) <= 1
     fun getDecomposition(initialCodePoint: Int): String? {
         var c = initialCodePoint
         if (c < minDecompNoCP) return null
