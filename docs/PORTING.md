@@ -905,3 +905,17 @@ JVM tests compare 400 random sets for range fields/formatting, search positions,
 stripping and gap filling. Common tests exercise entry reuse, exhaustion,
 string exclusion and bridge behavior. JVM stream adapters are not part of the
 common range view; the common pattern parser remains pending.
+
+## UnicodeSetSpanner
+
+UnicodeSetSpanner now ports countIn, deleteFrom, replaceFrom and trim with all
+original overloads, CountMethod and TrimOption values. It retains the supplied
+set rather than freezing or copying it, alternates the original span conditions,
+uses minimum element counts for replacements, and preserves the input sequence
+identity when trimming makes no change. Equality and hashing delegate to the set.
+
+JVM differential tests compare 180 mixed frozen/thawed sets over all span,
+count and trim options, overlapping strings, supplementary and malformed text,
+empty input and several replacements. Common tests verify counting/replacement,
+source retention, unchanged trim identity and equality. The common pattern
+parser and the rest of ICU4J remain in progress.
