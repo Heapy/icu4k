@@ -2092,3 +2092,19 @@ multiword titlecasing and dictionary scripts), random sets, every case-sensitive
 code point and the complete Unicode range. Common tests distinguish case closure
 from one-step mappings and exercise root word-title mappings across platforms.
 The general UnicodeSet expression parser and locale case APIs remain pending.
+
+### String-range parser dependency
+
+Ported StringRange's complete expansion and both compaction algorithms, plus the
+common ICUException base type. Expansion preserves prefix alignment, recursive
+Cartesian code-point ranges, validation order/messages and output identity.
+Fast compaction retains source iteration order and final-code-point grouping;
+moreCompact groups by code-point length and performs the original descending
+pivot merges, preserving sorted output and shortened end strings. Empty and
+malformed input behavior is retained rather than silently normalized.
+
+Differential tests compare expansion results and partial output on failure,
+random compaction pairs/order for both modes, and exact int-array comparator
+results. Common tests cover rectangular ranges, shortened endpoints and
+supplementary characters. This supplies the string-range dependency of the
+pending general UnicodeSet parser; that parser is not yet marked complete.
