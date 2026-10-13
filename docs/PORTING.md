@@ -919,3 +919,17 @@ count and trim options, overlapping strings, supplementary and malformed text,
 empty input and several replacements. Common tests verify counting/replacement,
 source retention, unchanged trim identity and equality. The common pattern
 parser and the rest of ICU4J remain in progress.
+
+## CharSequences utilities
+
+CharSequences now ports matching prefixes at character boundaries, single-code-
+point detection/equality, UTF-16 comparisons, content equality, boundary checks,
+code-point search and array extraction. The original private constructor and
+instance codePointLength shape are retained. UnicodeSet delegates its string/
+code-point comparison to this shared implementation. The original array builder's
+UTF-16 cast of the previous result is retained for malformed-input compatibility.
+
+JVM tests compare 3,000 random malformed UTF-16 fixtures with all valid prefix
+start pairs, boundaries, comparisons, equality, search and extracted arrays.
+Common tests cover supplementary pairs, differing trails and CharSequence content.
+The complete ICU4J port and UnicodeSet pattern parser remain in progress.

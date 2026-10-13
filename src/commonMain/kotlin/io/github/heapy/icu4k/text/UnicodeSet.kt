@@ -829,23 +829,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             result.append(UTF16.valueOf(c))
         }
 
-        fun compare(string: CharSequence, codePoint: Int): Int {
-            require(codePoint in MIN_VALUE..MAX_VALUE)
-            val length = string.length
-            if (length == 0) return -1
-            val offset = codePoint - 0x10000
-            if (offset < 0) {
-                val result = string[0].code - codePoint
-                return if (result != 0) result else length - 1
-            }
-            val result = string[0].code - ((offset ushr 10) + 0xd800)
-            if (result != 0) return result
-            if (length > 1) {
-                val trailResult = string[1].code - ((offset and 1023) + 0xdc00)
-                if (trailResult != 0) return trailResult
-            }
-            return length - 2
-        }
+        fun compare(string: CharSequence, codePoint: Int): Int = io.github.heapy.icu4k.lang.CharSequences.compare(string, codePoint)
         fun compare(codePoint: Int, string: CharSequence): Int = -compare(string, codePoint)
         fun <T : Comparable<T>> compare(first: Iterable<T>, other: Iterable<T>): Int = compare(first.iterator(), other.iterator())
         fun <T : Comparable<T>> compare(first: Iterator<T>, other: Iterator<T>): Int {
