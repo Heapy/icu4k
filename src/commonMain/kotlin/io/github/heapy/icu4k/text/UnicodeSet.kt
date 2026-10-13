@@ -452,6 +452,63 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet> {
         }
         override fun remove(): Nothing = throw UnsupportedOperationException()
     }
+    override fun toString(): String = toPattern(true)
+    fun getRegexEquivalent(): String {
+        if (!hasStrings()) return toString()
+        val result = _generatePattern(StringBuilder("(?:"), true, false)
+        for (string in stringElements) {
+            result.append('|')
+            var i = 0
+            while (i < string.length) {
+                val cp = UTF16.charAt(string, i)
+                appendPatternCodePoint(result, cp, true)
+                i += UTF16.getCharCount(cp)
+            }
+        }
+        return result.append(')').toString()
+    }
+    fun matchesAt(text: CharSequence, offset: Int): Int {
+        var lastLength = -1
+        run strings@ {
+            if (!hasStrings()) return@strings
+            val firstChar = checkedMatchChar(text, offset)
+            var trial: String? = null
+            val iterator = stringElements.iterator()
+            while (iterator.hasNext()) {
+                trial = iterator.next()
+                val firstStringChar = checkedMatchChar(trial, 0)
+                if (firstStringChar < firstChar) continue
+                if (firstStringChar > firstChar) return@strings
+            }
+            while (true) {
+                val tempLength = matchesAtSubstring(text, offset, trial!!)
+                if (lastLength > tempLength) return@strings
+                lastLength = tempLength
+                if (!iterator.hasNext()) break
+                trial = iterator.next()
+            }
+        }
+        if (lastLength < 2) {
+            val cp = UTF16.charAt(text, offset)
+            if (contains(cp)) lastLength = UTF16.getCharCount(cp)
+        }
+        return offset + lastLength
+    }
+    private fun checkedMatchChar(text: CharSequence, index: Int): Char {
+        if (index < 0 || index >= text.length) throw IndexOutOfBoundsException()
+        return text[index]
+    }
+    private fun matchesAtSubstring(text: CharSequence, offset: Int, substring: CharSequence): Int {
+        val length = substring.length
+        if (text.length + offset > length) return -1
+        var i = 0
+        var j = offset
+        while (i < length) {
+            if (checkedMatchChar(substring, i) != checkedMatchChar(text, j)) return -1
+            ++i; ++j
+        }
+        return i
+    }
     override fun toPattern(escapeUnprintable: Boolean): String = _generatePattern(StringBuilder(), escapeUnprintable).toString()
     fun _generatePattern(result: StringBuilder, escapeUnprintable: Boolean, includeStrings: Boolean = true): StringBuilder {
         result.append('[')

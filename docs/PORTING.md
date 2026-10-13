@@ -835,3 +835,16 @@ The already ported UnicodeSetIterator now shares nextString between point and
 range traversal. Its existing oracle and common tests are retained, including
 reset, skipping and mixed traversal coverage. This is a refactor of an existing
 port, not an additional completed ICU4J class.
+
+## UnicodeSet extra match and representations
+
+UnicodeSet now exposes matchesAt, getRegexEquivalent and the original
+pattern-based toString. matchesAt retains upstream's internal length check,
+first-string selection and exceptional empty-string behavior rather than
+silently correcting its legacy semantics. Explicit checked character access
+keeps those exception paths consistent on JS and Native. Regex-equivalent
+output reuses the pattern code-point emitter.
+
+JVM tests compare 600 mixed sets for diagnostic/regex output and matchesAt
+results or exceptions at every fixture offset. Common tests cover exact string
+matching, the legacy length check and empty-string exception behavior.
