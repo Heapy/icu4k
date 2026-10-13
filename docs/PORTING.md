@@ -891,3 +891,17 @@ and UnicodeSet implements it through its already verified freeze machinery.
 The JVM-only Cloneable marker is omitted from the common contract; explicit
 cloneAsThawed is available on every target. Common tests exercise generic
 interface use, idempotence, frozen mutation rejection and copy independence.
+
+## UnicodeSet range views and legacy code-point utilities
+
+UnicodeSet.ranges now provides the original reused mutable EntryRange per
+iterator, range formatting and unsupported removal. addBridges fills only
+interior gaps covered by the supplied set. Legacy findIn/findLastIn/stripFrom
+retain code-point-only semantics, including the original reverse UTF-16 cursor
+behavior; these are separate from string-aware spans. Pattern code-point
+formatting is shared with EntryRange without allocating temporary sets.
+
+JVM tests compare 400 random sets for range fields/formatting, search positions,
+stripping and gap filling. Common tests exercise entry reuse, exhaustion,
+string exclusion and bridge behavior. JVM stream adapters are not part of the
+common range view; the common pattern parser remains pending.

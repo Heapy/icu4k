@@ -47,6 +47,61 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    class EntryRange internal constructor() {
+        @kotlin.jvm.JvmField var codepoint = 0
+        @kotlin.jvm.JvmField var codepointEnd = 0
+        override fun toString(): String = buildString {
+            appendPatternCodePoint(this, codepoint, false)
+            if (codepoint != codepointEnd) { append('-'); appendPatternCodePoint(this, codepointEnd, false) }
+        }
+    }
+    /** Reuses one mutable entry per iterator. Do not alter the set during traversal. */
+    fun ranges(): Iterable<EntryRange> = Iterable {
+        object : MutableIterator<EntryRange> {
+            private var pos = 0
+            private val result = EntryRange()
+            override fun hasNext(): Boolean = pos < len - 1
+            override fun next(): EntryRange {
+                if (!hasNext()) throw NoSuchElementException()
+                result.codepoint = list[pos++]
+                result.codepointEnd = list[pos++] - 1
+                return result
+            }
+            override fun remove(): Nothing = throw UnsupportedOperationException()
+        }
+    }
+    fun addBridges(dontCare: UnicodeSet): UnicodeSet {
+        val gaps = UnicodeSet(this).complement().removeAllStrings()
+        val iterator = UnicodeSetIterator(gaps)
+        while (iterator.nextRange()) if (iterator.codepoint != 0 && iterator.codepointEnd != MAX_VALUE && dontCare.contains(iterator.codepoint, iterator.codepointEnd)) add(iterator.codepoint, iterator.codepointEnd)
+        return this
+    }
+    fun findIn(value: CharSequence, fromIndex: Int, findNot: Boolean): Int {
+        var index = fromIndex
+        while (index < value.length) {
+            val cp = UTF16.charAt(value, index)
+            if (contains(cp) != findNot) break
+            index += UTF16.getCharCount(cp)
+        }
+        return index
+    }
+    fun findLastIn(value: CharSequence, fromIndex: Int, findNot: Boolean): Int {
+        var index = fromIndex - 1
+        while (index >= 0) {
+            val cp = UTF16.charAt(value, index)
+            if (contains(cp) != findNot) break
+            index -= UTF16.getCharCount(cp)
+        }
+        return if (index < 0) -1 else index
+    }
+    fun stripFrom(source: CharSequence, matches: Boolean): String = buildString {
+        var pos = 0
+        while (pos < source.length) {
+            val inside = findIn(source, pos, !matches)
+            append(source.subSequence(pos, inside))
+            pos = findIn(source, inside, matches)
+        }
+    }
     enum class ComparisonStyle { SHORTER_FIRST, LEXICOGRAPHIC, LONGER_FIRST }
     override fun compareTo(other: UnicodeSet): Int = compareTo(other, ComparisonStyle.SHORTER_FIRST)
     fun compareTo(other: UnicodeSet, style: ComparisonStyle): Int {
@@ -556,11 +611,6 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
             appendPatternCodePoint(result, end, escape)
         }
     }
-    private fun appendPatternCodePoint(result: StringBuilder, c: Int, escape: Boolean) {
-        if (if (escape) Utility.isUnprintable(c) else Utility.shouldAlwaysBeEscaped(c)) { Utility.escape(result, c); return }
-        if (c in intArrayOf(91, 93, 45, 94, 38, 92, 123, 125, 36, 58) || PatternProps.isWhiteSpace(c)) result.append('\\')
-        result.append(UTF16.valueOf(c))
-    }
     override fun matchesIndexValue(v: Int): Boolean {
         for (i in 0 until getRangeCount()) {
             val low = getRangeStart(i)
@@ -773,6 +823,12 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        private fun appendPatternCodePoint(result: StringBuilder, c: Int, escape: Boolean) {
+            if (if (escape) Utility.isUnprintable(c) else Utility.shouldAlwaysBeEscaped(c)) { Utility.escape(result, c); return }
+            if (c in intArrayOf(91, 93, 45, 94, 38, 92, 123, 125, 36, 58) || PatternProps.isWhiteSpace(c)) result.append('\\')
+            result.append(UTF16.valueOf(c))
+        }
+
         fun compare(string: CharSequence, codePoint: Int): Int {
             require(codePoint in MIN_VALUE..MAX_VALUE)
             val length = string.length
