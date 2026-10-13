@@ -1936,3 +1936,23 @@ tests compare word/phrase and Korean/Japanese dispatch, normalization, random
 slices, supplementary/malformed text, queues and cursor positions. Common tests
 exercise the Japanese model on JVM, JS and macOS Native. This does not complete
 ICUConfig or the remaining RuleBasedBreakIterator/cache/factory stack.
+
+### RuleBasedBreakIterator dictionary cache
+
+Ported the complete DictionaryCache state and algorithms into
+`RBBIDictionaryCache`, with explicit text/rule-data/language-engine dependencies
+for the pending iterator owner. Population uses the original dictionary category
+threshold and engine dispatch, inserts range endpoints only when dictionary
+breaks exist, and retains the early return for spans of at most one code unit.
+Sequential/random following and preceding preserve cache positions, first/other
+rule statuses and stale output values after misses/reset. Copying clones the
+deque and rebinds owner dependencies without sharing cursor state.
+
+JVM tests inspect ICU4J's actual internal cache and compare every state field,
+boundary queue, status and text cursor while populating word/line ranges,
+walking in both directions, seeking randomly, resetting and cloning. Coverage
+includes CJ/Korean/Lao/Khmer text, mixed supplementary text and phrase mode.
+Common tests verify endpoint statuses, short-span retention and copy independence.
+The outer RuleBasedBreakIterator, main BreakCache and global engine registry
+remain pending. Thai/Myanmar automatic dispatch also has an upstream LSTM path;
+that dependency has not yet been ported or claimed by these cache tests.
