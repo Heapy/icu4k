@@ -381,3 +381,23 @@ Oracle tests compare FAST/SMALL trie enumeration, copied bytes, values, object
 reuse, truncation at eight limits, reset, stopped readers and every position
 inside a long shared linear prefix. Common tests cover iteration and truncation
 on JVM/JS/Native. BytesTrieBuilder and dictionary integration remain pending.
+
+## Byte dictionary matching and cursor adapters
+
+BytesDictionaryMatcher now uses the common BytesTrie, offset transforms and
+ZWJ/ZWNJ special bytes, returning candidate lengths/values with ICU limit and
+cursor semantics. CharacterIteratorWrapper and UCharacterIteratorWrapper bridge
+both common cursor contracts, and UCharacterIterator exposes the corresponding
+factory and getCharacterIterator API. Cloning copies cursor state.
+
+Compatibility quirks are retained: the CharacterIterator adapter treats U+FFFF
+as DONE, retains absolute indices for bounded input, and moveIndex returns the
+code unit at the resulting position. BytesDictionaryMatcher counts code points
+rather than UTF-16 units and leaves count untouched on empty input, as upstream.
+
+JVM oracle fixtures cover BMP/supplementary transforms, joiners, failed prefixes,
+zero/limited maximum lengths, result limits and optional values. Adapter tests
+compare 30,000 mixed operations on bounded UTF-16/noncharacter input. Common
+tests cover candidate values and shared/independent cursor behavior. Actual
+dictionary resources/loaders, character-trie matcher and language engines remain
+pending.

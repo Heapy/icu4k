@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.impl.CharacterIteratorWrapper
+import io.github.heapy.icu4k.impl.UCharacterIteratorWrapper
 import io.github.heapy.icu4k.impl.ReplaceableUCharacterIterator
 import io.github.heapy.icu4k.impl.UCharArrayIterator
 
@@ -21,6 +23,8 @@ abstract class UCharacterIterator protected constructor() : UForwardCharacterIte
     abstract fun getText(fillIn: CharArray, offset: Int): Int
     /** Copies cursor state; implementations may share their underlying storage. */
     abstract fun clone(): UCharacterIterator
+
+    open fun getCharacterIterator(): CharacterIterator = UCharacterIteratorWrapper(this)
 
     open fun currentCodePoint(): Int {
         val lead = current()
@@ -80,6 +84,7 @@ abstract class UCharacterIterator protected constructor() : UForwardCharacterIte
 
     companion object {
         const val DONE = UForwardCharacterIterator.DONE
+        fun getInstance(source: CharacterIterator): UCharacterIterator = CharacterIteratorWrapper(source)
         fun getInstance(source: Replaceable): UCharacterIterator = ReplaceableUCharacterIterator(source)
         fun getInstance(source: String): UCharacterIterator = ReplaceableUCharacterIterator(source)
         fun getInstance(source: StringBuilder): UCharacterIterator = ReplaceableUCharacterIterator(source)
