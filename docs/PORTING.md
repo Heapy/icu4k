@@ -788,3 +788,17 @@ members, frozen sets, supplementary boundaries and rank/selection inverses.
 Common tests cover gaps, string exclusion, empty sets and the full Unicode
 range. This completes these two APIs; the remaining UnicodeSet API and pattern
 parser still require further porting.
+
+## UnicodeSet inclusion and intersection predicates
+
+UnicodeSet now ports containsAll/containsNone/containsSome for sets, ranges
+and input text. Set predicates scan inversion lists and compare string members;
+text containment retains the original code-point fast path and recursive string
+segmentation fallback. Text disjointness uses the shared NOT_CONTAINED span.
+Empty strings are excluded from recursive progress as upstream does.
+
+Differential tests compare 1,200 random mixed sets, complements, frozen sets,
+range pairs (including reversed bounds) and supplementary/malformed text.
+Common tests distinguish string membership from code-point membership and
+segmentation, as well as empty input. Iterable overloads and other UnicodeSet
+APIs remain pending.

@@ -46,6 +46,78 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String> {
     fun getRangeEnd(index: Int): Int = list[index * 2 + 1] - 1
     fun hasStrings(): Boolean = stringElements.isNotEmpty()
     fun isEmpty(): Boolean = len == 1 && !hasStrings()
+    fun containsAll(other: UnicodeSet): Boolean {
+        var needA = true; var needB = true
+        var aPtr = 0; var bPtr = 0
+        val aLen = len - 1; val bLen = other.len - 1
+        var startA = 0; var startB = 0; var limitA = 0; var limitB = 0
+        while (true) {
+            if (needA) {
+                if (aPtr >= aLen) { if (needB && bPtr >= bLen) break; return false }
+                startA = list[aPtr++]; limitA = list[aPtr++]
+            }
+            if (needB) {
+                if (bPtr >= bLen) break
+                startB = other.list[bPtr++]; limitB = other.list[bPtr++]
+            }
+            if (startB >= limitA) { needA = true; needB = false; continue }
+            if (startB >= startA && limitB <= limitA) { needA = false; needB = true; continue }
+            return false
+        }
+        return stringElements.containsAll(other.stringElements)
+    }
+    fun containsNone(other: UnicodeSet): Boolean {
+        var needA = true; var needB = true
+        var aPtr = 0; var bPtr = 0
+        val aLen = len - 1; val bLen = other.len - 1
+        var startA = 0; var startB = 0; var limitA = 0; var limitB = 0
+        while (true) {
+            if (needA) {
+                if (aPtr >= aLen) break
+                startA = list[aPtr++]; limitA = list[aPtr++]
+            }
+            if (needB) {
+                if (bPtr >= bLen) break
+                startB = other.list[bPtr++]; limitB = other.list[bPtr++]
+            }
+            if (startB >= limitA) { needA = true; needB = false; continue }
+            if (startA >= limitB) { needA = false; needB = true; continue }
+            return false
+        }
+        var a = 0; var b = 0
+        while (a < stringElements.size && b < other.stringElements.size) {
+            val comparison = stringElements[a].compareTo(other.stringElements[b])
+            if (comparison == 0) return false
+            if (comparison < 0) ++a else ++b
+        }
+        return true
+    }
+    fun containsNone(start: Int, end: Int): Boolean {
+        validate(start); validate(end)
+        var i = 0
+        while (start >= list[i]) ++i
+        return i and 1 == 0 && end < list[i]
+    }
+    fun containsNone(s: CharSequence): Boolean = span(s, SpanCondition.NOT_CONTAINED) == s.length
+    fun containsSome(other: UnicodeSet): Boolean = !containsNone(other)
+    fun containsSome(start: Int, end: Int): Boolean = !containsNone(start, end)
+    fun containsSome(s: CharSequence): Boolean = !containsNone(s)
+    fun containsAll(s: String): Boolean {
+        var i = 0
+        while (i < s.length) {
+            val cp = UTF16.charAt(s, i)
+            if (!contains(cp)) return hasStrings() && containsAllFrom(s, 0)
+            i += UTF16.getCharCount(cp)
+        }
+        return true
+    }
+    private fun containsAllFrom(s: String, i: Int): Boolean {
+        if (i >= s.length) return true
+        val cp = UTF16.charAt(s, i)
+        if (contains(cp) && containsAllFrom(s, i + UTF16.getCharCount(cp))) return true
+        for (string in stringElements) if (string.isNotEmpty() && s.startsWith(string, i) && containsAllFrom(s, i + string.length)) return true
+        return false
+    }
     /** Rank of a contained code point; string elements do not participate. */
     fun indexOf(c: Int): Int {
         validate(c)
