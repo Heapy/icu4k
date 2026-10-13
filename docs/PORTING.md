@@ -1616,3 +1616,17 @@ JVM tests compare full modern/extended traversals, randomly changing ranges,
 algorithmic transitions, reset, outside-Unicode ranges and unchanged exhausted
 results. Common tests cover public factories, reuse, range validation, fallback
 names and the deprecated empty iterator.
+
+## Portable numeric-literal dependency for property aliases
+
+ICUNumberParsing replaces Java Double.parseDouble semantics needed by numeric
+property aliases: decimal/hex literals, optional type suffixes, ASCII trim,
+signed Infinity/NaN and syntax rejection. Hex conversion extracts significand
+bits and applies round-to-nearest/ties-to-even directly, including subnormal,
+underflow, signed-zero and overflow cases; decimal conversion uses the Common
+stdlib after Java-syntax validation.
+
+JVM oracle tests compare bits and rejection outcomes for random long hex
+mantissas/exponents, random Double hex/decimal strings and boundary fixtures.
+Common tests cover rounding ties, subnormals and syntax across JVM/JS/Native.
+This dependency will be connected by the pending applyPropertyAlias port.
