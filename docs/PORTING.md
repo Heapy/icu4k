@@ -45,12 +45,15 @@ python3 scripts/measure-upstream.py /path/to/icu > docs/upstream-size.json
   version components are rejected before integer overflow. Historical constants,
   resource-backed timezone lookup and command-line entry point are not ported.
 - UTF16 traversal, random access, offset conversion, surrogate operations and
-  mutation are implemented for common strings/builders and array slices. Search,
-  replacement by substring and StringComparator are still pending.
+  mutation are implemented for common strings/builders and array slices. Code-point
+  search/replacement is also ported; substring search/replacement and
+  StringComparator remain pending.
 - Replaceable and ReplaceableString are implemented with shared builder storage.
 - UForwardCharacterIterator, UCharacterIterator and its replaceable/array
   implementations are ported. The java.text.CharacterIterator adapters remain
   pending; cursor cloning shares storage as upstream does.
+- CodePointMap range options, value filters, shared range iterator and
+  bidirectional string iterator are implemented and checked against ICU4J.
 - The remaining ICU4J classes and data algorithms are unported. No complete API
   compatibility is claimed.
 
@@ -83,3 +86,19 @@ Kotlin/JS 2.4.21 emits `?` for unpaired surrogates in string literals. Tests bui
 such strings from runtime code units to avoid testing corrupted compiler output.
 This also matters for future generated Unicode fixtures: use numeric arrays or
 escaped runtime decoding for arbitrary UTF-16 data.
+
+CI for commit `fac6f85` passed JVM, JS and Linux Native tests on Ubuntu, and
+macOS arm64 tests on macOS. Local JVM/JS/macOS suites also passed with
+CodePointMap and code-point search/replacement. CodePointMap tests compare
+surrogate overrides and filters over 100 seeded maps with boundary-aligned
+ranges against ICU4J.
+
+## Unicode data dependency chain
+
+The next data layer is `CodePointMap -> CodePointTrie` plus `Trie2_16` and a
+common endian-aware binary reader. `UCharacterProperty` reads `uprops.icu`:
+legacy Trie2 main/additional property maps, additional vectors, script extensions,
+and a modern CodePointTrie for blocks. `ulayout.icu` contains the modern tries for
+Indic positional/syllabic categories and vertical orientation. Preserve these
+versioned ICU resources and their format validation; do not substitute host-JDK
+Unicode properties, whose version and coverage differ between targets.
