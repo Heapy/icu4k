@@ -1063,3 +1063,17 @@ JVM tests compare every Unicode code point and adjacent invalid values for all
 five entries with ICU4J. Common tests check the class distinctions and non-ASCII
 digits. Normalization/emoji binary entries and the full public dispatcher are
 still pending.
+
+## Emoji properties and sequences
+
+The pinned uemoji.icu resource and EmojiProps decoder are now common. The
+original FAST/8 code-point trie, six UTF-16 sequence tries, property starts,
+code-point/string predicates and addStrings enumeration are ported, including
+RGI_Emoji union behavior. The manifest pins the 14,400-byte original resource;
+the generator now checks 26 resources.
+
+JVM tests compare every Unicode code point for emoji property IDs, all decoded
+sequence sets and sequence/prefix lookups, and property starts against ICU4J.
+Common tests exercise code-point emoji, keycaps, ZWJ sequences and enumeration.
+Public UCharacter binary dispatch and normalization-backed properties remain
+pending.

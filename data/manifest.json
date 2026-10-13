@@ -178,6 +178,13 @@
       "object": "PnamesData",
       "sha256": "3614e5c55f31ec8bd920d654eee124198b29ebf8801cc2ebfbeb4f5c29e53285",
       "size": 47072
+    },
+    {
+      "name": "uemoji.icu",
+      "file": "data/icu78/uemoji.icu",
+      "object": "UemojiData",
+      "sha256": "a92ca494ad7c7e923d35d92bbfbbb60b67dbf3bb9f2df143c0bba9f1ee024ccd",
+      "size": 14400
     }
   ]
 }
