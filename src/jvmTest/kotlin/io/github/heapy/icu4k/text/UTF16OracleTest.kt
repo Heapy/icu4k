@@ -49,6 +49,26 @@ class UTF16OracleTest {
         }
     }
 
+    @Test fun codePointSearchAndReplacementMatchIcu() {
+        val codePoints = listOf(0, 0x61, 0xd800, 0xdbff, 0xdc00, 0xdfff, 0x10000, 0x10ffff)
+        for (text in texts()) for (cp in codePoints) {
+            assertEquals(JavaUTF16.indexOf(text, cp), UTF16.indexOf(text, cp))
+            assertEquals(JavaUTF16.lastIndexOf(text, cp), UTF16.lastIndexOf(text, cp))
+            for (from in -1..text.length + 1) {
+                assertEquals(JavaUTF16.indexOf(text, cp, from), UTF16.indexOf(text, cp, from))
+                assertEquals(JavaUTF16.lastIndexOf(text, cp, from), UTF16.lastIndexOf(text, cp, from))
+            }
+            for (replacement in codePoints) {
+                if (cp == 0 || replacement == 0) {
+                    assertFailsWith<IllegalArgumentException> { JavaUTF16.replace(text, cp, replacement) }
+                    assertFailsWith<IllegalArgumentException> { UTF16.replace(text, cp, replacement) }
+                } else {
+                    assertEquals(JavaUTF16.replace(text, cp, replacement), UTF16.replace(text, cp, replacement))
+                }
+            }
+        }
+    }
+
     @Test fun everyUnicodeCodePoint() {
         for (cp in 0..0x10ffff) {
             assertEquals(JavaUTF16.valueOf(cp), UTF16.valueOf(cp))

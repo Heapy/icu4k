@@ -141,6 +141,44 @@ object UTF16 {
         return target.deleteRange(offset16 - (boundary shr 2), offset16 + (boundary and 3))
     }
 
+    fun indexOf(source: String, char32: Int, fromIndex: Int = 0): Int =
+        searchCodePoint(source, char32, fromIndex, backwards = false)
+
+    fun lastIndexOf(source: String, char32: Int, fromIndex: Int = source.length - 1): Int =
+        searchCodePoint(source, char32, fromIndex, backwards = true)
+
+    private fun searchCodePoint(source: String, char32: Int, fromIndex: Int, backwards: Boolean): Int {
+        val text = valueOf(char32)
+        var from = fromIndex
+        while (true) {
+            val found = if (backwards) source.lastIndexOf(text, from) else source.indexOf(text, from)
+            if (found < 0 || !isSurrogate(char32)) return found
+            // Preserve ICU's surrogate search semantics, including consecutive leads.
+            val followedByTrail = isLeadSurrogate(char32) && found + 1 < source.length && isTrailSurrogate(source[found + 1].code)
+            val precededByLead = found > 0 && isLeadSurrogate(source[found - 1].code)
+            if (!followedByTrail && !precededByLead) return found
+            from = found + if (backwards) -1 else 1
+        }
+    }
+
+    fun replace(source: String, oldChar32: Int, newChar32: Int): String {
+        require(oldChar32 in 1..CODEPOINT_MAX_VALUE && newChar32 in 1..CODEPOINT_MAX_VALUE) { "Illegal replacement codepoint" }
+        val replacement = valueOf(newChar32)
+        var match = indexOf(source, oldChar32)
+        if (match < 0) return source
+        val width = getCharCount(oldChar32)
+        return buildString {
+            var copiedUntil = 0
+            while (match >= 0) {
+                append(source, copiedUntil, match)
+                append(replacement)
+                copiedUntil = match + width
+                match = indexOf(source, oldChar32, copiedUntil)
+            }
+            append(source, copiedUntil, source.length)
+        }
+    }
+
     /** Returns a new builder, as ICU does; does not mutate [source]. */
     fun reverse(source: CharSequence): StringBuilder {
         val result = StringBuilder(source.length)

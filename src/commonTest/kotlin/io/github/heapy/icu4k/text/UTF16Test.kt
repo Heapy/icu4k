@@ -42,6 +42,14 @@ class UTF16Test {
         assertEquals(units(0xdc00, 0x62, 0xd800, 0xd83d, 0xde00, 0x61), UTF16.reverse(text).toString())
     }
 
+    @Test fun searchesWholeCodePoints() {
+        assertEquals(1, UTF16.indexOf(text, 0x1f600))
+        assertEquals(-1, UTF16.indexOf(text, 0xd83d))
+        assertEquals(3, UTF16.indexOf(text, 0xd800))
+        assertEquals(5, UTF16.lastIndexOf(text, 0xdc00))
+        assertEquals("axb" + units(0xdc00), UTF16.replace("a" + units(0xd800, 0xdc00) + "b" + units(0xdc00), 0x10000, 'x'.code))
+    }
+
     @Test fun validatesCodePointsAndOffsets() {
         assertEquals("\udbff\udfff", UTF16.valueOf(0x10ffff))
         assertEquals(units(0xd800), UTF16.valueOf(0xd800))
