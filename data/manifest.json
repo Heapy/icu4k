@@ -1,0 +1,22 @@
+{
+  "upstream": "unicode-org/icu",
+  "tag": "release-78.3",
+  "commit": "21d1eb0f306e1141c10931e914dfc038c06121da",
+  "source_directory": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata",
+  "resources": [
+    {
+      "name": "ulayout.icu",
+      "file": "data/icu78/ulayout.icu",
+      "object": "UlayoutData",
+      "sha256": "beb174008d5767279a3cd3706a27e1acafef5d72aa516c7ea970663bcd8863ae",
+      "size": 14448
+    },
+    {
+      "name": "uprops.icu",
+      "file": "data/icu78/uprops.icu",
+      "object": "UpropsData",
+      "sha256": "b60c40ecc64c8ffa44060a390c0903aa621f5faf5496289072ac8e0047f352c1",
+      "size": 170864
+    }
+  ]
+}

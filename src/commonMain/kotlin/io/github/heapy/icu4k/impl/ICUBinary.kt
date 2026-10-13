@@ -9,6 +9,10 @@ import io.github.heapy.icu4k.util.VersionInfo
 
 /** Portable ICU data-header authentication and binary array operations. */
 object ICUBinary {
+    fun getData(itemPath: String): BinaryBuffer? = ICUData.getBytes(itemPath)?.let { BinaryBuffer(it) }
+    fun getRequiredData(itemPath: String): BinaryBuffer = getData(itemPath)
+        ?: throw ICUUncheckedIOException("Missing ICU data resource: $itemPath")
+
     fun interface Authenticate { fun isDataVersionAcceptable(version: ByteArray): Boolean }
 
     fun readHeaderAndDataVersion(bytes: BinaryBuffer, dataFormat: Int, authenticate: Authenticate?): VersionInfo =
