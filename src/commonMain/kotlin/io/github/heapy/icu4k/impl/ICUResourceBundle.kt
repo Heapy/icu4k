@@ -44,7 +44,36 @@ open class ICUResourceBundle : UResourceBundle {
     override fun equals(other: Any?): Boolean = this === other || other is ICUResourceBundle &&
         getBaseName() == other.getBaseName() && getLocaleID() == other.getLocaleID()
     override fun hashCode(): Int = 42
+    enum class OpenType { LOCALE_DEFAULT_ROOT, LOCALE_ROOT, LOCALE_ONLY, DIRECT }
     companion object {
+        private fun getDefaultScript(language: String, region: String?): String =
+            LocaleFallbackData.DEFAULT_SCRIPT_TABLE["${language}_$region"]
+                ?: LocaleFallbackData.DEFAULT_SCRIPT_TABLE[language] ?: "Latn"
+        fun getParentLocaleID(name: String, origName: String, openType: OpenType): String? {
+            if (name.endsWith('_') || ULocale.getVariant(name).isNotEmpty()) {
+                val last = name.lastIndexOf('_')
+                return if (last >= 0) name.substring(0, last) else null
+            }
+            val locale = ULocale(name)
+            val language = locale.getLanguage()
+            val script = locale.getScript()
+            val region = locale.getCountry()
+            if (openType == OpenType.LOCALE_DEFAULT_ROOT) {
+                LocaleFallbackData.PARENT_LOCALE_TABLE[name]?.let { return if (it == "root") null else it }
+            }
+            if (script.isNotEmpty() && region.isNotEmpty()) {
+                return if (getDefaultScript(language, region) == script) "${language}_$region" else "${language}_$script"
+            }
+            if (region.isNotEmpty()) {
+                val originalScript = ULocale.getScript(origName)
+                return "${language}_${if (originalScript.isNotEmpty()) originalScript else getDefaultScript(language, region)}"
+            }
+            if (script.isNotEmpty()) {
+                return if (openType != OpenType.LOCALE_DEFAULT_ROOT || getDefaultScript(language, null) == script) language else null
+            }
+            return null
+        }
+
         const val NO_INHERITANCE_MARKER = "∅∅∅"
         protected const val INSTALLED_LOCALES = "InstalledLocales"
     }

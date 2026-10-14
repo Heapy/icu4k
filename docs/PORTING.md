@@ -2673,3 +2673,26 @@ resource bundles and compare values, metadata and string-retention fields.
 JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
 Concrete array/table child construction depends on alias resolution and remains
 unfinished, together with named bundle factories and locale/path fallback.
+
+### Locale parent selection and fallback data
+
+ICUResourceBundle.OpenType and getParentLocaleID now implement the original
+variant/trailing-underscore truncation, explicit CLDR parent overrides, regional
+default-script selection and original-script restoration. Explicit parent and
+non-default-script root routing apply only to LOCALE_DEFAULT_ROOT, as upstream
+requires; other opening modes retain their separate selection behavior.
+
+The 1,066 default-script and 199 parent-locale entries are extracted from pinned
+ICU 78.3 LocaleFallbackData.java into data/locale-fallback.json, with source commit
+and SHA-256 metadata. generate-locale-fallback.py verifies the extracted data's
+checksum and emits Common tables; CI checks the output. The maps are unmodifiable,
+including entries, keys, values and iterators. JVM uses Collections.unmodifiableMap
+to reject Java default mutators as well; JS/Native use the Common live-view wrapper.
+
+JVM differential tests compare every map entry and over 4,000 locale/original
+locale pairs across all four opening modes. Common tests cover representative
+parent/script/variant paths and collection mutation contracts; JVM tests also
+exercise compute/merge/replaceAll and ensure callbacks do not run. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+This supplies parent selection for the unfinished bundle factory; bundle-chain
+construction, concrete array/table objects and general aliases remain pending.
