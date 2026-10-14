@@ -3742,3 +3742,20 @@ The public MeasureUnit build/toString bridges and conversion comparators are not
 ported yet; these implementation classes are not claimed complete. Full
 MeasureUnit/Currency, conversion/preferences and the complete ICU4J port remain
 unfinished.
+
+### Text trie and collection views
+
+TextTrieMap now uses a shared compressed prefix trie with simple Unicode case
+folding, longest/all-prefix callbacks, partial-match reporting, lead code points,
+and live mutable value iterators. JVM searches synchronize on the trie instance;
+JS/Native use the shared reentrant lock. CharIterator retains source exhaustion
+and surrogate-pair behavior, including unchanged indices after failed reads.
+CollectionSet preserves the source live collection view, duplicate entries,
+identity equality, delegated mutations and typed-array sentinel behavior. JVM
+array conversions and collection calls retain Java backing-collection semantics.
+
+Oracle tests compare generated Unicode keys and queries, malformed offsets,
+iterator removal, array conversion and immutable collections against ICU4J 78.3.
+Common tests exercise compressed branches, supplementary folding and reentrant
+callbacks. JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile.
+These dependencies do not complete Currency, MeasureUnit or the full ICU4J port.
