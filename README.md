@@ -142,3 +142,8 @@ support numeric annotations while the full NumberFormat implementation is pendin
 in Common code. `UFieldPosition` retains fraction-digit metadata; its JVM base is
 java.text.FieldPosition, with portable index/attribute carriers on JS and Native.
 Formatted-value span iteration and exports are still being ported.
+
+
+`StaticUnicodeSets` loads frozen CLDR parse symbols, separator/digit unions and the
+formatting trim sets from Common resources. These support upcoming span iteration
+and number parsing.

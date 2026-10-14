@@ -3447,3 +3447,29 @@ Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 FormattedValue/FormattedValueStringBuilderImpl span iteration, list/span field
 identities and attributed iterator exports remain unfinished, along with the
 complete ICU4J port.
+
+
+### Common StaticUnicodeSets
+
+StaticUnicodeSets now implements every key, frozen-set lookup, first-match set
+selection and currency selection. Its resource sink loads general/number parse
+lenients from the pinned root bundle, skips date data and preserves symbol
+classification precedence. Other grouping separators include apostrophe data;
+lenient/strict separator and digit unions are frozen after construction. Infinity
+and approximately-sign classes retain the source's curated patterns.
+
+The default formatting trim set is specifically Zs + TAB + Bidi_Control +
+Variation_Selector, while strict ignorables are only Bidi_Control. The port does
+not substitute the broader Default_Ignorable_Code_Point property. Null-key lookup
+returns UnicodeSet.EMPTY; the explicit EMPTY key retains a separately allocated
+frozen set, matching source identity. Unknown parse classes throw the source
+AssertionError diagnostic; missing required apostrophe data is not silently filled.
+
+Common tests verify freeze/identity, symbols, currency selection and trim span
+boundaries. JVM tests compare every set's complete pattern, size and frozen state,
+set/currency choices and forward/backward spans against ICU4J. A cold isolated
+class-loader test starts eight concurrent lookups and verifies one published frozen
+set. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+No new binary resources are required. Formatted-value span iteration/exports,
+number parsing and the complete ICU4J port remain unfinished.
