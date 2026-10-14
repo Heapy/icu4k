@@ -61,10 +61,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         return cursor.readInt()
     }
     private fun charAt(offset: Int): Int = bytes.sliceAt(offset).readUnsignedShort()
-    private fun BinaryBuffer.sliceAt(offset: Int): BinaryBuffer {
-        if (offset < 0 || offset > limit) throw IndexOutOfBoundsException()
-        return BinaryBuffer(this.bytes, order, arrayOffset + offset, limit - offset)
-    }
+    private fun BinaryBuffer.sliceAt(offset: Int): BinaryBuffer = slice(offset)
     private fun unitAt(offset: Int): Int {
         if (offset !in units.indices) throw IndexOutOfBoundsException()
         return units[offset].code

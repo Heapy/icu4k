@@ -2597,3 +2597,11 @@ identity on cache hits/misses, pooled reads, failure/retry and embedded loading.
 JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
 The reader cache does not provide locale fallback or alias/sink enumeration;
 those remain part of the unfinished resource-bundle facade.
+
+Read-only reader inputs now retain shared storage for absolute internal slices.
+BinaryBuffer.slice(index, length) validates against the current limit without
+changing the source cursor; nested slices preserve offsets, order and protection.
+The reader no longer accesses the defensive bytes snapshot on every scalar read.
+Regression tests prove binary resource views still observe changes through the
+original writable owner, including when reader input is read-only. JVM, JS Node
+and macOS Arm64 suites pass.

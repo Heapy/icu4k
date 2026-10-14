@@ -39,6 +39,12 @@ class BinaryBuffer(
     /** Shares the remaining bytes, with an independent cursor and byte order. */
     fun slice(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset + position, remaining, isReadOnly)
 
+    /** Shares an absolute range within [limit], without changing this buffer's cursor. */
+    fun slice(index: Int, length: Int = limit - index): BinaryBuffer {
+        if (index < 0 || index > limit || length < 0 || length > limit - index) throw IndexOutOfBoundsException("Invalid buffer slice")
+        return BinaryBuffer(storage, order, arrayOffset + index, length, isReadOnly)
+    }
+
     /** Shares storage and preserves cursor state without permitting writes through this view. */
     fun asReadOnlyBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, true).also {
         it.limit = limit

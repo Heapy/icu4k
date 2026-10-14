@@ -186,4 +186,19 @@ class ResourceBundleReaderTest {
         assertEquals(2, attempts)
     }
 
+    @Test fun readerBinaryViewsKeepSharingReadOnlyInputStorage() {
+        val input = fixture { body ->
+            body.position = 152; body.writeInt(3); body.writeByte(1); body.writeByte(2); body.writeByte(3)
+        }
+        val reader = ICUResourceBundleReader(input.asReadOnlyBuffer())
+        val value = ICUResourceBundleReader.ReaderValue().also { it.reader = reader; it.res = 0x10000026 }
+        val binary = value.getBinary()
+        assertTrue(binary.isReadOnly)
+        assertEquals(1, binary.readUnsignedByte())
+        input.bytes[32 + 156] = 9
+        assertEquals(9, binary.getByte(0).toInt())
+        assertEquals(9, value.getBinary().readUnsignedByte())
+        assertEquals(0, input.position)
+    }
+
 }
