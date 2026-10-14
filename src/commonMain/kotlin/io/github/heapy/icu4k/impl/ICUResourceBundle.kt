@@ -209,6 +209,78 @@ open class ICUResourceBundle : UResourceBundle {
             getAvailableULocales(ICUData.ICU_BASE_NAME, ICUResourceBundleReader.embeddedLoader, type)
         fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
             getAvailEntry(baseName, loader).getLocaleNameSet()
+        fun getFunctionalEquivalent(baseName: String, loader: ICUResourceLoader, resName: String, keyword: String,
+                                    locID: ULocale, isAvailable: BooleanArray?, omitDefault: Boolean): ULocale {
+            var keywordValue = locID.getKeywordValue(keyword) ?: ""
+            val baseLocale = locID.getBaseName()
+            var defaultValue: String? = null
+            var parent = ULocale(baseLocale)
+            var defaultLocale: ULocale? = null
+            var lookForDefault = keywordValue.isEmpty() || keywordValue == "default"
+            if (lookForDefault) keywordValue = ""
+            var fullBase: ULocale? = null
+            var defaultDepth = 0
+            var resourceDepth = 0
+            // Upstream uses its default loader for lookup; the argument is used for availability only.
+            var bundle: ICUResourceBundle? = getBundleInstance(baseName, parent.getBaseName())
+            if (isAvailable != null) {
+                if (isAvailable.isEmpty()) throw IndexOutOfBoundsException("Index 0 out of bounds for length 0")
+                isAvailable[0] = false
+                val locales = getAvailEntry(baseName, loader).getULocaleList(ULocale.AvailableType.DEFAULT)!!
+                for (locale in locales) if (parent == locale) { isAvailable[0] = true; break }
+            }
+            do {
+                val current = bundle!!
+                try {
+                    val resource = current[resName] as ICUResourceBundle
+                    defaultValue = resource.getString("default")
+                    if (lookForDefault) { keywordValue = defaultValue; lookForDefault = false }
+                    defaultLocale = current.getULocale()
+                } catch (_: MissingResourceException) { }
+                if (defaultLocale == null) { bundle = current.getParent(); defaultDepth++ }
+            } while (bundle != null && defaultLocale == null)
+            parent = ULocale(baseLocale)
+            bundle = getBundleInstance(baseName, parent.getBaseName())
+            do {
+                val current = bundle!!
+                try {
+                    val resource = current[resName] as ICUResourceBundle
+                    resource[keywordValue]
+                    fullBase = resource.getULocale()
+                    if (resourceDepth > defaultDepth) {
+                        defaultValue = resource.getString("default")
+                        defaultLocale = current.getULocale()
+                        defaultDepth = resourceDepth
+                    }
+                } catch (_: MissingResourceException) { }
+                if (fullBase == null) { bundle = current.getParent(); resourceDepth++ }
+            } while (bundle != null && fullBase == null)
+            if (fullBase == null && defaultValue != null && defaultValue != keywordValue) {
+                keywordValue = defaultValue
+                parent = ULocale(baseLocale)
+                bundle = getBundleInstance(baseName, parent.getBaseName())
+                resourceDepth = 0
+                do {
+                    val current = bundle!!
+                    try {
+                        val resource = current[resName] as ICUResourceBundle
+                        val item = resource[keywordValue] as ICUResourceBundle
+                        fullBase = current.getULocale()
+                        if (fullBase.getBaseName() != item.getULocale().getBaseName()) fullBase = null
+                        if (fullBase != null && resourceDepth > defaultDepth) {
+                            defaultValue = resource.getString("default")
+                            defaultLocale = current.getULocale()
+                            defaultDepth = resourceDepth
+                        }
+                    } catch (_: MissingResourceException) { }
+                    if (fullBase == null) { bundle = current.getParent(); resourceDepth++ }
+                } while (bundle != null && fullBase == null)
+            }
+            val found = fullBase ?: throw MissingResourceException(
+                "Could not find locale containing requested or default keyword.", baseName, "$keyword=$keywordValue")
+            return if (omitDefault && defaultValue!!.equals(keywordValue) && resourceDepth <= defaultDepth) found
+                else ULocale(found.getBaseName() + "@" + keyword + "=" + keywordValue)
+        }
         fun getKeywordValues(baseName: String, keyword: String?, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Array<String> {
             val keywords = HashSet<String>()
             val locales = getAvailEntry(baseName, loader).getULocaleList(ULocale.AvailableType.DEFAULT)!!

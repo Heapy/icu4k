@@ -2848,3 +2848,22 @@ Linux x64 production sources compile. Availability metadata comes from upstream
 indexes; it does not imply that every listed locale payload is embedded. Full
 resource scanning, Java locale/resource interoperability and the rest of ICU4J
 remain unfinished.
+
+### Functional-equivalent keyword locale selection
+
+ICUResourceBundle.getFunctionalEquivalent now ports the original three searches:
+locate the relevant default, find the requested resource, then fall back to that
+default while checking its actual locale ownership. It retains default/resource
+depth updates, omitDefault decisions, alias ownership distinctions, installed
+locale availability output and the original lookup-loader behavior (the supplied
+loader controls availability; primary lookup uses the default loader).
+
+Common tests cover default/requested keywords, unknown values, alias owners,
+availability flags, absent default markers and early default-loader failure.
+A Common bounds guard rejects empty isAvailable arrays, preventing JS from silently
+ignoring the invalid write; the exception category matches upstream. JVM tests
+compare 256 locale/keyword/resource/omitDefault combinations with ICU4J, including
+result names, missing-resource metadata and output flags, and test absent-default
+and output-array error boundaries. Full JVM, JS Node and macOS Arm64 suites pass;
+Linux x64 production sources compile. Java-resource dispatch and the other
+unfinished ICU4J components remain outside this completed service method.
