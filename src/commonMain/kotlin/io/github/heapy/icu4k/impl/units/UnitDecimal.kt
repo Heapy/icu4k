@@ -20,16 +20,13 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
     }
     fun subtract(other: UnitDecimal): UnitDecimal = add(other.negate())
     fun multiply(other: UnitDecimal): UnitDecimal = of(sign * other.sign, multiplyNatural(magnitude, other.magnitude), checkedScale(scale.toLong() + other.scale, sign * other.sign == 0))
-    fun round(precision: Int = 34): UnitDecimal {
-        require(precision > 0)
-        if (this.precision <= precision) return this
+    fun round(precision: Int = 34, mode: Rounding = Rounding.HALF_EVEN): UnitDecimal {
+        require(precision >= 0)
+        if (precision == 0 || this.precision <= precision) return this
         val drop = this.precision - precision
-        var result = magnitude.substring(0, precision)
-        val discarded = magnitude.substring(precision)
-        if (roundUp(result, discarded, "5" + "0".repeat(drop - 1))) result = addNatural(result, "1")
-        var newScale = checkedScale(scale.toLong() - drop, sign == 0)
-        if (result.length > precision) { result = result.dropLast(1); newScale = checkedScale(newScale.toLong() - 1, false) }
-        return of(sign, result, newScale)
+        var result = setScale(checkedScale(scale.toLong() - drop, sign == 0), mode)
+        if (result.precision > precision) result = result.setScale(checkedScale(result.scale.toLong() - 1, result.sign == 0), Rounding.DOWN)
+        return result
     }
     fun divide(other: UnitDecimal, precision: Int = 34): UnitDecimal {
         require(precision > 0)
