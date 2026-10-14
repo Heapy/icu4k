@@ -134,9 +134,43 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
         fun clearExtensions(): Builder { builder.clearExtensions(); return this }
         fun build(): ULocale = getInstance(builder.getBaseLocale(), builder.getLocaleExtensions())
     }
+    @Deprecated("This API is ICU internal only.")
+    enum class Minimize { FAVOR_SCRIPT, FAVOR_REGION }
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        fun addLikelySubtags(locale: ULocale?): ULocale {
+            val loc = locale!!
+            val trailing = likelyTrailing(loc.localeID)
+            val max = LikelySubtags.INSTANCE.makeMaximizedLsrFrom(ULocale(loc.getLanguage(), loc.getScript(), loc.getCountry()), true)
+            return ULocale(likelyTagString(max.language, max.script, max.region, trailing))
+        }
+        @Suppress("DEPRECATION")
+        fun minimizeSubtags(locale: ULocale?): ULocale = minimizeSubtags(locale, Minimize.FAVOR_REGION)
+        @Deprecated("This API is ICU internal only.")
+        @Suppress("DEPRECATION")
+        fun minimizeSubtags(locale: ULocale?, favor: Minimize?): ULocale {
+            val loc = locale!!
+            val trailing = likelyTrailing(loc.localeID)
+            val min = LikelySubtags.INSTANCE.minimizeSubtags(loc.getLanguage(), loc.getScript(), loc.getCountry(), favor)
+            return ULocale(likelyTagString(min.language, min.script, min.region, trailing))
+        }
+        private fun likelyTrailing(id: String): String? {
+            val variant = LocaleIDParser(id).getVariant()
+            val index = if (variant.isNotEmpty()) id.indexOf(variant).let { if (it > 0) it - 1 else it }
+                else id.indexOf('@').let { if (it < 0) id.length else it }
+            return if (index < id.length) id.substring(index) else null
+        }
+        private fun likelyTagString(language: String, script: String, region: String, trailing: String?): String = buildString {
+            append(language.ifEmpty { "und" })
+            if (script.isNotEmpty()) append('_').append(script)
+            if (region.isNotEmpty()) append('_').append(region)
+            if (trailing != null && trailing.length > 1) {
+                val separators = if (trailing[0] == '_') { if (trailing[1] == '_') 2 else 0 } else 1
+                if (region.isNotEmpty()) append(if (separators == 2) trailing.substring(1) else trailing)
+                else { if (separators == 1) append('_'); append(trailing) }
+            }
+        }
         fun getDefault(): ULocale = LocaleDefaults.get()
         fun getDefault(category: Category?): ULocale = LocaleDefaults.get(category!!)
         fun setDefault(locale: ULocale?) = LocaleDefaults.set(locale!!)

@@ -3243,3 +3243,35 @@ Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 A subsequent full JVM run passes with the cold concurrency test, and the data
 generator check passes for all 46 resources. LikelySubtags and ULocale canonicalize/
 addLikelySubtags remain to be ported; the complete ICU4J objective remains active.
+
+
+### Common LikelySubtags engine and ULocale maximization/minimization
+
+LikelySubtags now loads optional language/region alias arrays, the compact byte
+trie and decoded LSR table from langInfo. Its data equality and hash behavior,
+optimized first-letter states, default/unknown fallbacks, macroregion handling,
+explicit-subtag flags and private-use/pseudolocale identities follow ICU4J.
+Each lookup clones the trie cursor, sharing only the immutable serialized data.
+Matcher canonicalization retains the source's limited language/region alias rules
+and its conditional loss of variants/keywords when an alias changes.
+
+ULocale.addLikelySubtags and both minimizeSubtags strategies are implemented in
+Common code. Their trailing variant/keyword reconstruction follows the source,
+including empty-region separators and null-favor selection. Minimization's raw
+lookup intentionally does not apply the maximizer's alias map. compareLikely
+ports the source lookup/cache-bit behavior for future locale-distance matching;
+toString enumerates and sorts the complete trie table. A JVM extension adds the
+java.util.Locale maximization overload using raw Java fields, preserving its
+conversion differences from ULocale and private-use handling.
+
+Common tests cover maximization/minimization, trailing identity, unknowns,
+pseudolocales, aliases and all pinned LSR records. Legacy language aliases in the
+data are canonicalized before checking the maximization round trip. JVM tests
+compare all data fields and serialized trie bytes, the complete formatted trie,
+3,564 language/script/region combinations with both unknown modes and three favor
+choices, and every full resource tuple against ICU4J. Additional tests cover Java
+locale inputs, variants/keywords/private use and compareLikely's updated cache bits.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+ULocale's full CLDR canonicalize/AliasReplacer and the remainder of ICU4J are still
+unfinished. No new binary resources are needed for this stage.

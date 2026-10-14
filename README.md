@@ -109,9 +109,10 @@ Java locale availability lists. Import the corresponding `util`/`impl` extension
 Remaining locale services and Java callable facade compatibility are still being ported.
 
 
-The Common LSR resource codec and pinned `langInfo.res`/`metadata.res` provide the
-foundation for likely-subtags and alias canonicalization. Their engines and
-ULocale entry points are still being ported.
+`ULocale.addLikelySubtags` and `ULocale.minimizeSubtags` use the Common CLDR trie
+engine and pinned `langInfo.res`. For example, `ULocale.addLikelySubtags(ULocale("en"))`
+is `en_Latn_US`. Both minimization strategies preserve variants and keywords.
+Full CLDR alias canonicalization remains in progress.
 
 
 `Region` provides pinned territory IDs, numeric/three-letter aliases, deprecated
