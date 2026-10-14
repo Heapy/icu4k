@@ -3635,3 +3635,35 @@ the source's repeated character reads and invalid-key toString callback rather
 than converting the input up front. Currency display oracle tests compare keyword
 lookups and callback traces; Common tests cover aliases, defaults and null inputs.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+### CurrencyDisplayNames, CurrencyData and ICU currency display provider
+
+CurrencyDisplayNames now provides Common factories and symbol/name/plural lookup;
+Java Locale factories are JVM extensions. CurrencyData supplies complete display
+contracts, format/spacing records and fallback DefaultInfo instances.
+ICUCurrencyDisplayInfoProvider implements locale/substitution selection, regular,
+narrow, formal and variant symbols, plural fallback, parsing maps, unit patterns,
+currency-specific formatting and spacing. The resource sink retains no-root
+behavior, first-filled formatting slots, parent parsing-map overwrites, variant-only
+parsing symbols and strict diagnostics for unexpected types/plural keys.
+
+Single-item locale/format/variant/plural caches use atomic publication. Parsing
+holds an actual soft reference on JVM and the established weak-reference fallback
+on JS/Native. The default resource loader allows extra JVM classpath locale bundles.
+Source behaviors are intentionally retained: parsing/unit maps are mutable despite
+the public documentation, spacing arrays are shared, DEFAULT spacing flags remain
+false, and cached null ISO keys can cause subsequent NullPointerException. Plural
+fallback with no substitution still depends on the unit-pattern key set.
+
+Eight pinned curr bundles (root, pool, en, fr, ar, ja, es, he) are embedded, bringing
+the checked manifest to 68 resources. JVM oracle tests compare all metadata currency
+codes across twelve locales and both substitution modes, complete parsing maps,
+all symbol styles/plural categories, format info and spacing. Regional classpath
+locales include en_CA, en_GB, es_MX and zh_TW. Additional tests cover mutable maps,
+null cache keys, DefaultInfo and CharSequence callbacks. Common tests verify
+localized output, no-substitution behavior, mutable maps and spacing array aliasing.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile;
+generated data checks pass.
+
+Full Currency/MeasureUnit, DecimalFormatSymbols, remaining locale payloads and the
+complete ICU4J port remain unfinished.

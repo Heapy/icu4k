@@ -443,6 +443,70 @@
       "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/supplementalData.res",
       "sha256": "c436ac61f4f792cb097e95c981c0f814af27e62308215c3c05d8fc66ad34dcb2",
       "size": 27568
+    },
+    {
+      "name": "curr/root.res",
+      "file": "data/icu78/curr/root.res",
+      "object": "CurrencyRootResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/root.res",
+      "sha256": "ea750cf7a5a8ce71032d7258b4ecdccbe51fed5744e1588aeb911a45ff4c36c7",
+      "size": 1056
+    },
+    {
+      "name": "curr/pool.res",
+      "file": "data/icu78/curr/pool.res",
+      "object": "CurrencyPoolResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/pool.res",
+      "sha256": "9162df5b51187e88569f8d7be46d6884b7487dc2a226d68072b4f20ded0277b5",
+      "size": 193392
+    },
+    {
+      "name": "curr/en.res",
+      "file": "data/icu78/curr/en.res",
+      "object": "CurrencyEnResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/en.res",
+      "sha256": "1aa8a2c15d50f559d317877df0fbace7cb1b345df9dbe8925ce87f92e576e1ff",
+      "size": 27456
+    },
+    {
+      "name": "curr/fr.res",
+      "file": "data/icu78/curr/fr.res",
+      "object": "CurrencyFrResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/fr.res",
+      "sha256": "65a489e13965e331aff83b82d66597f5a9755a8a762c6b103a37eb6807f5506f",
+      "size": 30368
+    },
+    {
+      "name": "curr/ar.res",
+      "file": "data/icu78/curr/ar.res",
+      "object": "CurrencyArResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/ar.res",
+      "sha256": "ca69a9c0dfe182e60dd5893dbff5646f10405e597a4f96076de67ae43bb8b3fb",
+      "size": 13792
+    },
+    {
+      "name": "curr/ja.res",
+      "file": "data/icu78/curr/ja.res",
+      "object": "CurrencyJaResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/ja.res",
+      "sha256": "81dbd95fcc6d3d4c16c804a3ee1d23f3b6c072137b8c634196b5d693ea5abfe6",
+      "size": 11840
+    },
+    {
+      "name": "curr/es.res",
+      "file": "data/icu78/curr/es.res",
+      "object": "CurrencyEsResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/es.res",
+      "sha256": "503356ee3e18c48ab617195677ef09530b3f22944896af0738dfdf1dd228389e",
+      "size": 20864
+    },
+    {
+      "name": "curr/he.res",
+      "file": "data/icu78/curr/he.res",
+      "object": "CurrencyHeResourceData",
+      "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/he.res",
+      "sha256": "e9fbf7efee245a155fc50119b8a7a5d81615f22c45f276bdb285b8ddcc32520c",
+      "size": 10512
     }
   ]
 }
