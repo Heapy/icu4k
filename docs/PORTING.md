@@ -2729,3 +2729,39 @@ Common tests use a CharSequence whose toString throws, proving query conversion
 is not part of lookup. JVM differential tests compare 3,000 arbitrary byte/UTF-16
 cases for both overloads, including read-only buffers and unchanged cursor state.
 Full JVM, JS Node and macOS Arm64 suites pass.
+
+### ICU bundle factory, concrete containers and aliases
+
+ICUResourceBundle now provides binary bundle factories, whole-bundle alias
+handling, mode/default-sensitive SoftCache entries, exact DIRECT/noFallback
+behavior, missing-locale parent selection and existing-bundle %%Parent/truncation
+chains. The Common ICUResourceLoader boundary replaces ClassLoader and preserves
+upstream's cache keys excluding the loader and original-locale path state.
+The default-locale identity boundary remains the existing host adapter; mutable
+ULocale defaults/categories are still unfinished.
+
+Concrete ResourceArray and ResourceTable implement index/key lookup, typed string
+array extraction, sorted mutable local key sets and the object-lookup fast paths.
+The common child factory resolves alias resources before returning objects.
+Alias handling supports relative paths, implicit containing paths, absolute
+bundle names, ICUDATA/ICUDATA-subtree loader selection, /LOCALE requested-bundle
+lookup and original cycle detection. Path fallback reconstructs resource paths
+when aliases switch containers/locales. at, findTopLevel, findWithFallback and
+getWithFallback retain their distinct lookup/marker semantics.
+
+KeyTypeData now uses this general bundle API; its special two-file raw alias
+resolver was removed. Common ResB fixtures cover parents, all modes, noFallback,
+%%Parent, nested fallback after aliases, requested-locale aliases, ICUDATA aliases,
+cycles, mixed arrays and binary/vector/integer resources. JVM differential tests
+compare opening outcomes, complete parent chains, key sets, paths, aliases and
+collection/index behavior with ICU4J under a controlled default locale.
+The protected-setter path also has regression coverage after a Kotlin/JVM
+synthetic-accessor failure was found and removed. Full JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 production sources compile.
+
+The ICU binary factory is implemented independently of the unfinished
+UResourceBundle ICU-vs-Java dispatch. Whole-bundle %%ALIAS currently uses this ICU
+factory; ResourceBundleWrapper/Java-resource targets remain pending with that
+dispatch. Optimized string/value path APIs, sink enumeration, locale availability
+and remaining bundle services are not complete. Only the manifest's resource
+subset is embedded; custom loaders can supply other binary bundles.

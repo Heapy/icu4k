@@ -319,17 +319,15 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             IntArray(size) { charAt(byteOffset + 2 * (1 + it)) })
     }
     /** Common counterpart of the caller-supplied ClassLoader resource lookup. */
-    fun interface ResourceLoader {
-        fun getData(fullName: String): BinaryBuffer?
-    }
+    fun interface ResourceLoader : ICUResourceLoader
     companion object {
         private data class ReaderCacheKey(val baseName: String, val localeID: String) {
             override fun hashCode(): Int = baseName.hashCode() xor localeID.hashCode()
         }
-        private val embeddedLoader = ResourceLoader { name -> ICUData.getBytes(name)?.let { BinaryBuffer(it) } }
+        internal val embeddedLoader: ICUResourceLoader = ResourceLoader { name -> ICUData.getBytes(name)?.let { BinaryBuffer(it) } }
         // Cache keys intentionally omit the loader, matching ICU4J's first-publication semantics.
-        private val readers = object : SoftCache<ReaderCacheKey, ICUResourceBundleReader, ResourceLoader>() {
-            override fun createInstance(key: ReaderCacheKey, data: ResourceLoader): ICUResourceBundleReader? {
+        private val readers = object : SoftCache<ReaderCacheKey, ICUResourceBundleReader, ICUResourceLoader>() {
+            override fun createInstance(key: ReaderCacheKey, data: ICUResourceLoader): ICUResourceBundleReader? {
                 val fullName = getFullName(key.baseName, key.localeID)
                 try {
                     val input = data.getData(fullName) ?: return null
@@ -339,7 +337,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
                 }
             }
         }
-        fun getReader(baseName: String?, localeID: String?, loader: ResourceLoader = embeddedLoader): ICUResourceBundleReader? =
+        fun getReader(baseName: String?, localeID: String?, loader: ICUResourceLoader = embeddedLoader): ICUResourceBundleReader? =
             readers.getInstance(ReaderCacheKey(baseName ?: "", localeID ?: ""), loader)
 
         fun getFullName(baseName: String?, localeName: String): String {

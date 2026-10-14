@@ -4,7 +4,7 @@
 package io.github.heapy.icu4k.impl.locale
 
 import io.github.heapy.icu4k.impl.ICUData
-import io.github.heapy.icu4k.impl.ICUResourceBundleReader
+import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.util.Output
 
 /** Original legacy/BCP47 key/type mapping initialized from ICU keyTypeData.res. */
@@ -105,32 +105,16 @@ object KeyTypeData {
     fun isDeprecated(key: String): Boolean = key in deprecatedKeys
     fun isDeprecated(key: String, type: String): Boolean = type in deprecatedTypes[key].orEmpty()
     fun getValueType(key: String): ValueType = valueTypes[key] ?: ValueType.single
-    private data class Resource(val reader: ICUResourceBundleReader, val value: Int)
-    /** Direct ICUDATA alias resolution for the original key/type data bundles. */
+    private data class Resource(val bundle: ICUResourceBundle?)
+    /** Resource lookup and aliases are shared with the general bundle implementation. */
     private class Resources {
-        private val readers = HashMap<String, ICUResourceBundleReader>()
-        fun root(name: String): Resource {
-            val reader = readers.getOrPut(name) { ICUResourceBundleReader.getReader(ICUData.ICU_BASE_NAME, name)!! }
-            return Resource(reader, reader.rootResource)
-        }
-        private fun rawChild(node: Resource, key: String): Resource = Resource(node.reader,
-            node.reader.getTable(node.value)?.getResource(key) ?: ICUResourceBundleReader.RES_BOGUS)
-        fun child(node: Resource, key: String): Resource = rawChild(resolve(node, HashSet()), key)
-        private fun resolve(node: Resource, visited: MutableSet<String>): Resource {
-            val alias = node.reader.getAlias(node.value) ?: return node
-            if (!visited.add(alias)) throw IllegalArgumentException("Circular references in the resource bundles")
-            check(alias.startsWith("/ICUDATA/")) { "Unsupported direct key/type resource alias: $alias" }
-            val path = alias.removePrefix("/ICUDATA/").split('/')
-            var target = root(path[0])
-            for (part in path.drop(1)) target = rawChild(resolve(target, visited), part)
-            return resolve(target, visited)
-        }
+        fun root(name: String): Resource = Resource(ICUResourceBundle.getBundleInstance(ICUData.ICU_BASE_NAME, name, disableFallback = true))
+        fun child(node: Resource, key: String): Resource = Resource(node.bundle?.at(key))
         fun entries(node: Resource): List<Pair<String, Resource>> {
-            val resolved = resolve(node, HashSet())
-            val table = resolved.reader.getTable(resolved.value) ?: return emptyList()
-            return List(table.size) { table.getKey(it)!! to Resource(resolved.reader, table.getContainerResource(it)) }
+            val bundle = node.bundle ?: return emptyList()
+            return bundle.keySet().map { key -> key to Resource(bundle.at(key)) }
         }
-        fun string(node: Resource): String = resolve(node, HashSet()).let { it.reader.getString(it.value)!! }
+        fun string(node: Resource): String = node.bundle!!.getString()
     }
     private fun region(value: String): Boolean = value.length == 2 && AsciiUtil.isAlphaString(value) || value.length == 3 && AsciiUtil.isNumericString(value)
     private fun parts(value: String, min: Int, max: Int, predicate: (Char) -> Boolean): Boolean =

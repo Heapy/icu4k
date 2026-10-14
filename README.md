@@ -58,3 +58,20 @@ println(locale.toLanguageTag()) // en-US-u-ca-japanese
 
 ULocale display names, defaults, likely subtags and resource factories are still
 being ported.
+
+ICU binary bundles support typed lookup, aliases and locale/path fallback:
+
+```kotlin
+import io.github.heapy.icu4k.impl.ICUData
+import io.github.heapy.icu4k.impl.ICUResourceBundle
+
+val bundle = ICUResourceBundle.getBundleInstance(
+    ICUData.ICU_BRKITR_BASE_NAME, "root", disableFallback = true,
+)
+println(bundle.getWithFallback("dictionaries/Mymr").getString()) // burmesedict.dict
+```
+
+The embedded resource subset is listed in `data/manifest.json`.
+`ICUResourceLoader` can supply additional binary bundles on every target.
+The `UResourceBundle` factory dispatch, Java bundle interoperability and bundle
+service/enumeration APIs remain in progress.
