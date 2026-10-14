@@ -4,9 +4,11 @@ package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.UResourceTypeMismatchException
+import io.github.heapy.icu4k.util.ICUUncheckedIOException
 
 /** Binary ResB value decoding. Locale fallback and the resource-object facade are separate. */
-internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: ICUResourceBundleReader? = null) {
+internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: ICUResourceBundleReader? = null,
+    private val loadPool: (() -> ICUResourceBundleReader?)? = null) {
     private val bytes: BinaryBuffer
     private val keys: ByteArray
     private val units: CharArray
@@ -49,8 +51,9 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
             else charArrayOf('\u0000')
         poolChecksum = if (count > 7) intAt(32) else 0
         if (usesPoolBundle) {
-            check(pool != null && pool.isPoolBundle) { "pool bundle is missing" }
-            check(poolChecksum == pool.poolChecksum) { "pool bundle checksum mismatch" }
+            if (pool == null) pool = loadPool?.invoke()
+            check(pool != null && pool!!.isPoolBundle) { "pool.res is not a pool bundle" }
+            check(poolChecksum == pool!!.poolChecksum) { "pool.res has a different checksum than this bundle" }
         }
     }
     private fun intAt(offset: Int): Int {
@@ -252,7 +255,38 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
         return Container(size, byteOffset + 2 * ((size + 2) and -2), false,
             IntArray(size) { charAt(byteOffset + 2 * (1 + it)) })
     }
+    /** Common counterpart of the caller-supplied ClassLoader resource lookup. */
+    fun interface ResourceLoader {
+        fun getData(fullName: String): BinaryBuffer?
+    }
     companion object {
+        private data class ReaderCacheKey(val baseName: String, val localeID: String) {
+            override fun hashCode(): Int = baseName.hashCode() xor localeID.hashCode()
+        }
+        private val embeddedLoader = ResourceLoader { name -> ICUData.getBytes(name)?.let { BinaryBuffer(it) } }
+        // Cache keys intentionally omit the loader, matching ICU4J's first-publication semantics.
+        private val readers = object : SoftCache<ReaderCacheKey, ICUResourceBundleReader, ResourceLoader>() {
+            override fun createInstance(key: ReaderCacheKey, data: ResourceLoader): ICUResourceBundleReader? {
+                val fullName = getFullName(key.baseName, key.localeID)
+                try {
+                    val input = data.getData(fullName) ?: return null
+                    return ICUResourceBundleReader(input, loadPool = { getReader(key.baseName, "pool", data) })
+                } catch (ex: ICUUncheckedIOException) {
+                    throw ICUUncheckedIOException("Data file $fullName is corrupt - ${ex.message}", ex)
+                }
+            }
+        }
+        fun getReader(baseName: String?, localeID: String?, loader: ResourceLoader = embeddedLoader): ICUResourceBundleReader? =
+            readers.getInstance(ReaderCacheKey(baseName ?: "", localeID ?: ""), loader)
+
+        fun getFullName(baseName: String?, localeName: String): String {
+            if (baseName.isNullOrEmpty()) {
+                return if (localeName.isEmpty()) resourceDefaultLocaleName() else "$localeName.res"
+            }
+            if ('.' !in baseName) return baseName + (if (baseName.endsWith('/')) "" else "/") + localeName + ".res"
+            val path = baseName.replace('.', '/')
+            return path + (if (localeName.isEmpty()) "" else "_$localeName") + ".res"
+        }
         private val PUBLIC_TYPES = intArrayOf(0, 1, 2, 3, 2, 2, 0, 7, 8, 8, -1, -1, -1, -1, 14, -1)
         const val RES_BOGUS = -1
         fun RES_GET_TYPE(res: Int): Int = res ushr 28

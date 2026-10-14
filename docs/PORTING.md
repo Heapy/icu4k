@@ -2574,3 +2574,26 @@ outputs with ICU4J. Common fixtures cover scalar getters, mixed/empty string
 arrays, invalid indexes, binary read-only views and cursor/storage sharing.
 Full JVM, JS Node and macOS Arm64 suites pass. General resource-bundle loading,
 locale fallback, alias resolution and sink enumeration remain incomplete.
+
+### Named reader loading and reader cache
+
+ICUResourceBundleReader.getReader loads named resources through a Common
+ResourceLoader interface replacing the JVM ClassLoader boundary. The default
+loader reads the pinned embedded ICUData. SoftCache keys retain upstream's
+base-name/locale identity and XOR hash, intentionally excluding the loader.
+Null input names normalize to empty strings; missing resources are cached.
+Bundles with pooled data load pool.res through the same cache, validate the
+pool flag and checksum, and retain the pool reader. Corrupt binary headers
+report the full resource name and preserve the cause; failed construction is
+not cached. KeyTypeData now uses the shared reader cache.
+
+getFullName preserves slash paths, dotted Java bundle names, suffixes and the
+special empty-name host-default convention. Full host locale identifiers come
+from JVM Locale, JS Intl, macOS NSLocale and Linux locale environment variables;
+this boundary does not yet implement ULocale's mutable default/category API.
+JVM differential tests change host defaults (root, country, script and Unicode
+extensions) and compare the original naming results. Common tests cover loader
+identity on cache hits/misses, pooled reads, failure/retry and embedded loading.
+JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+The reader cache does not provide locale fallback or alias/sink enumeration;
+those remain part of the unfinished resource-bundle facade.

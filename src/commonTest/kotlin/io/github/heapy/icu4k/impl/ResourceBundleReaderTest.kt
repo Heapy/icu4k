@@ -126,4 +126,64 @@ class ResourceBundleReaderTest {
         assertFailsWith<IllegalStateException> { ICUResourceBundleReader(bad, pool) }
     }
 
+    @Test fun namedReadersCacheHitsMissesAndAutomaticallyLoadPoolBundles() {
+        val base = "icu4k-test/reader-pool"
+        val requests = mutableListOf<String>()
+        val loader = ICUResourceBundleReader.ResourceLoader { name ->
+            requests.add(name)
+            when (name) {
+                "$base/pool.res" -> fixture(attributes = 2) { body ->
+                    body.position = 50; body.writeShort('v'.code); body.writeShort(0)
+                }
+                "$base/child.res" -> fixture(attributes = 4 or (4 shl 16), poolLimit = 4) { body ->
+                    body.position = 0; body.writeInt(0x50000001)
+                    body.position = 8; body.writeInt(9)
+                    body.position = 28; body.writeInt(16)
+                    body.position = 38; body.writeShort(1); body.writeShort(0); body.writeShort(1)
+                }
+                else -> null
+            }
+        }
+        val reader = assertNotNull(ICUResourceBundleReader.getReader(base, "child", loader))
+        assertEquals(listOf("$base/child.res", "$base/pool.res"), requests)
+        val value = ICUResourceBundleReader.ReaderValue().also { it.reader = reader; it.res = reader.rootResource }
+        val table = value.getTable()
+        val key = UResource.Key()
+        assertTrue(table.getKeyAndValue(0, key, value))
+        assertEquals("a", key.toString()); assertEquals("v", value.getString())
+        assertSame(reader, ICUResourceBundleReader.getReader(base, "child", ICUResourceBundleReader.ResourceLoader { error("cached reader") }))
+        assertNull(ICUResourceBundleReader.getReader(base, "missing", loader))
+        assertNull(ICUResourceBundleReader.getReader(base, "missing", ICUResourceBundleReader.ResourceLoader { error("cached miss") }))
+        assertEquals(3, requests.size)
+        assertNotNull(ICUResourceBundleReader.getReader(ICUData.ICU_BRKITR_BASE_NAME, "root"))
+    }
+    @Test fun fullResourceNamesPreservePathAndJavaBundleConventions() {
+        for ((base, locale, expected) in listOf(
+            Triple("a/b", "en_US", "a/b/en_US.res"),
+            Triple("a/b/", "", "a/b/.res"),
+            Triple("org.example.Bundle", "", "org/example/Bundle.res"),
+            Triple("org.example.Bundle", "fr", "org/example/Bundle_fr.res"),
+            Triple("", "en", "en.res"),
+            Triple(null, "root", "root.res")
+        )) assertEquals(expected, ICUResourceBundleReader.getFullName(base, locale))
+        assertEquals(resourceDefaultLocaleName(), ICUResourceBundleReader.getFullName("", ""))
+    }
+
+    @Test fun corruptReadersAreNotCachedAndReportTheResourceName() {
+        var attempts = 0
+        val loader = ICUResourceBundleReader.ResourceLoader {
+            attempts++
+            if (attempts == 1) {
+                fixture { }.also { it.position = 2; it.writeByte(0); it.position = 0 }
+            } else fixture { }
+        }
+        val failure = assertFailsWith<io.github.heapy.icu4k.util.ICUUncheckedIOException> {
+            ICUResourceBundleReader.getReader("icu4k-test/corrupt", "child", loader)
+        }
+        assertEquals("Data file icu4k-test/corrupt/child.res is corrupt - ICU data file error: Not an ICU data file", failure.message)
+        assertNotNull(failure.cause)
+        assertNotNull(ICUResourceBundleReader.getReader("icu4k-test/corrupt", "child", loader))
+        assertEquals(2, attempts)
+    }
+
 }

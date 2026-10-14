@@ -88,4 +88,20 @@ class ResourceBundleReaderOracleTest {
             visit(root)
         }
     }
+    @Test fun fullNamesMatchOriginalIncludingHostDefaults() {
+        val saved = java.util.Locale.getDefault()
+        try {
+            for (locale in listOf(java.util.Locale.ROOT, java.util.Locale.US, java.util.Locale.forLanguageTag("zh-Hant-TW"),
+                java.util.Locale.forLanguageTag("de-DE-u-ca-japanese"), java.util.Locale("ja", "JP", "JP"))) {
+                java.util.Locale.setDefault(locale)
+                for (base in listOf(null, "", "a/b", "a/b/", "org.example.Bundle")) {
+                    for (id in listOf("", "root", "en_US", "zh_Hant_TW")) {
+                        assertEquals(com.ibm.icu.impl.ICUResourceBundleReader.getFullName(base, id),
+                            ICUResourceBundleReader.getFullName(base, id), "$locale/$base/$id")
+                    }
+                }
+            }
+        } finally { java.util.Locale.setDefault(saved) }
+    }
+
 }

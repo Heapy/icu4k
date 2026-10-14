@@ -5,7 +5,6 @@ package io.github.heapy.icu4k.impl.locale
 
 import io.github.heapy.icu4k.impl.ICUData
 import io.github.heapy.icu4k.impl.ICUResourceBundleReader
-import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.Output
 
 /** Original legacy/BCP47 key/type mapping initialized from ICU keyTypeData.res. */
@@ -111,7 +110,7 @@ object KeyTypeData {
     private class Resources {
         private val readers = HashMap<String, ICUResourceBundleReader>()
         fun root(name: String): Resource {
-            val reader = readers.getOrPut(name) { ICUResourceBundleReader(BinaryBuffer(ICUData.getBytes("$name.res")!!)) }
+            val reader = readers.getOrPut(name) { ICUResourceBundleReader.getReader(ICUData.ICU_BASE_NAME, name)!! }
             return Resource(reader, reader.rootResource)
         }
         private fun rawChild(node: Resource, key: String): Resource = Resource(node.reader,
