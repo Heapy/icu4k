@@ -4081,3 +4081,26 @@ message comparisons. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
 tests compile. BreakIterator user registration/availability, LocaleDisplayNames,
 service display-name enumeration, public Currency/MeasureUnit and the complete
 ICU4J port remain unfinished.
+
+### Locale display-name components and capitalization
+
+LocaleDisplayNameComponents extracts the source component lookup and constructor
+context rules: language/canonical aliases, stand-alone/contextual scripts, region,
+variant, keyword and keyword-value names; short-name fallback; substitution;
+contextTransforms flags; sentence-based capitalization; and currency-specific
+ASCII-uppercase lookup with raw-value fallback. Pattern compilation and parenthesis
+selection are retained for the upcoming composite-name renderer. Contexts use
+last-value-wins selection. Currency lookups use the originally requested locale;
+capitalization uses the effective display locale and a synchronized reusable
+sentence iterator. Short names identical to input codes fall back to full names,
+including English US -> United States. Region fr/ar/ja data is embedded; all 98
+generated resources verify.
+
+Oracle tests compare seven display locales across length/substitution/four
+capitalization modes, component kinds, legacy language/country codes, unknown
+values, currency keywords and script-number errors. Common tests cover actual
+localized strings, short-name fallback, context override order and capitalization.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile. The engine
+is internal pending LocaleDisplayNames' full locale composition, UI lists and
+public/cache/provider facade. Locale service factories, BreakIterator registration,
+Currency/MeasureUnit and the complete ICU4J port remain unfinished.

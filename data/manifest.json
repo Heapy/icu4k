@@ -697,6 +697,27 @@
       "object": "BreakEnUsPosixResourceData",
       "sha256": "d25d60b5ffdba350601501eb6081180aa04b4946137dfcbc326d9eb07d932021",
       "size": 160
+    },
+    {
+      "name": "region/fr.res",
+      "file": "data/icu78/region/fr.res",
+      "object": "RegionFrResourceData",
+      "sha256": "4bf823ba8cd45c43c0176b9f253bb1159ddfc3d98c5f24fe1e1bb0ff7715d3a9",
+      "size": 5680
+    },
+    {
+      "name": "region/ar.res",
+      "file": "data/icu78/region/ar.res",
+      "object": "RegionArResourceData",
+      "sha256": "0c541c1d65732fcdfee2ba5a0ac5c403f7aba442b5433373a8bf37f9033e40b9",
+      "size": 7632
+    },
+    {
+      "name": "region/ja.res",
+      "file": "data/icu78/region/ja.res",
+      "object": "RegionJaResourceData",
+      "sha256": "0fcc9f4586197b2f0f76a4ea1f4eee99781679a8be9d6e9aae415820c9354f44",
+      "size": 5296
     }
   ]
 }
