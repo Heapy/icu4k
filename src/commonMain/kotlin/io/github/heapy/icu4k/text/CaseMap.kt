@@ -6,7 +6,7 @@ import io.github.heapy.icu4k.impl.CaseMapImpl
 import io.github.heapy.icu4k.impl.UCaseProps
 import io.github.heapy.icu4k.util.ULocale
 
-/** Immutable options for Unicode case mapping. Titlecasing adapters are still being ported. */
+/** Immutable options for locale-sensitive Unicode case mapping. */
 sealed class CaseMap private constructor(protected val internalOptions: Int) {
     abstract fun omitUnchangedText(): CaseMap
 
@@ -34,6 +34,43 @@ sealed class CaseMap private constructor(protected val internalOptions: Int) {
             private val OMIT_UNCHANGED = Upper(CaseMapImpl.OMIT_UNCHANGED_TEXT)
         }
     }
+    class Title private constructor(options: Int) : CaseMap(options) {
+        fun wholeString(): Title = Title(CaseMapImpl.addTitleIteratorOption(internalOptions, CaseMapImpl.TITLECASE_WHOLE_STRING))
+        fun sentences(): Title = Title(CaseMapImpl.addTitleIteratorOption(internalOptions, CaseMapImpl.TITLECASE_SENTENCES))
+        override fun omitUnchangedText(): Title = if (internalOptions == 0 || internalOptions == CaseMapImpl.OMIT_UNCHANGED_TEXT) OMIT_UNCHANGED else Title(internalOptions or CaseMapImpl.OMIT_UNCHANGED_TEXT)
+        fun noLowercase(): Title = Title(internalOptions or 0x100)
+        fun noBreakAdjustment(): Title = Title(CaseMapImpl.addTitleAdjustmentOption(internalOptions, 0x200))
+        fun adjustToCased(): Title = Title(CaseMapImpl.addTitleAdjustmentOption(internalOptions, CaseMapImpl.TITLECASE_ADJUST_TO_CASED))
+        private fun prepare(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?): Pair<Int, CaseMapImpl.TitleIterator> {
+            val where = if (iterator == null && locale == null) ULocale.getDefault() else locale
+            val mode = internalOptions and 0xe0
+            if (mode != 0 && iterator != null) throw IllegalArgumentException("titlecasing iterator option together with an explicit iterator")
+            val selected = iterator ?: when (mode) {
+                0 -> BreakIterator.getWordInstance(where)
+                CaseMapImpl.TITLECASE_WHOLE_STRING -> WholeStringTitleIterator()
+                CaseMapImpl.TITLECASE_SENTENCES -> BreakIterator.getSentenceInstance(where)
+                else -> throw IllegalArgumentException("unknown titlecasing iterator option")
+            }
+            selected.setText(src!!)
+            val case = caseLocale(where)
+            return case to object : CaseMapImpl.TitleIterator {
+                override fun first(): Int = selected.first()
+                override fun next(): Int = selected.next()
+            }
+        }
+        fun apply(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?): String {
+            val (case, boundaries) = prepare(locale, iterator, src)
+            return CaseMapImpl.toTitle(case, internalOptions, boundaries, src!!)
+        }
+        fun <A : Appendable?> apply(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?, dest: A, edits: Edits?): A {
+            val (case, boundaries) = prepare(locale, iterator, src)
+            return mapToDestination(src, dest, edits) { text, output -> CaseMapImpl.toTitle(case, internalOptions, boundaries, text, output, edits) }
+        }
+        internal companion object {
+            val DEFAULT = Title(0)
+            private val OMIT_UNCHANGED = Title(CaseMapImpl.OMIT_UNCHANGED_TEXT)
+        }
+    }
     /** Locale-independent folding, optionally using the Turkic dotted-I mappings. */
     class Fold private constructor(options: Int) : CaseMap(options) {
         override fun omitUnchangedText(): Fold = if (internalOptions and 1 == 0) OMIT_UNCHANGED else TURKIC_OMIT_UNCHANGED
@@ -54,6 +91,7 @@ sealed class CaseMap private constructor(protected val internalOptions: Int) {
         private fun caseLocale(locale: ULocale?): Int = UCaseProps.getCaseLocale((locale ?: ULocale.getDefault()).getLanguage())
         fun toLower(): Lower = Lower.DEFAULT
         fun toUpper(): Upper = Upper.DEFAULT
+        fun toTitle(): Title = Title.DEFAULT
         fun fold(): Fold = Fold.DEFAULT
     }
 }
@@ -71,4 +109,21 @@ private fun <A : Appendable?> mapToDestination(src: CharSequence?, dest: A, edit
         operation(src, dest ?: MissingCaseDestination)
         return dest
     } catch (failure: Exception) { rethrowCaseMapException(failure) }
+}
+
+private class WholeStringTitleIterator : BreakIterator() {
+    private var length = 0
+    private fun unsupported(): Nothing = throw UnsupportedOperationException("should not occur")
+    override fun clone(): BreakIterator = WholeStringTitleIterator().also { it.length = length; copyLocaleMetadataTo(it) }
+    override fun first(): Int = 0
+    override fun next(): Int = length
+    override fun last(): Int = unsupported()
+    override fun next(n: Int): Int = unsupported()
+    override fun previous(): Int = unsupported()
+    override fun following(offset: Int): Int = unsupported()
+    override fun current(): Int = unsupported()
+    override fun getText(): CharacterIterator = unsupported()
+    override fun setText(newText: CharacterIterator) { length = newText.getEndIndex() }
+    override fun setText(newText: CharSequence) { length = newText.length }
+    override fun setText(newText: String) { length = newText.length }
 }

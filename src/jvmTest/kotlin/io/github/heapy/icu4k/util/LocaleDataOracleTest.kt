@@ -10,6 +10,12 @@ class LocaleDataOracleTest {
     private fun outcome(block: () -> Any?): Any? = try { block() } catch (failure: Throwable) {
         listOf(failure.javaClass.simpleName, failure.message?.replace("io.github.heapy.icu4k", "com.ibm.icu"))
     }
+    // Compare implicit region-array failures by type; generated JVM messages can be absent.
+    private fun regionOutcome(block: () -> Any?): Any? = try { block() } catch (failure: ArrayIndexOutOfBoundsException) {
+        listOf(failure.javaClass.simpleName)
+    } catch (failure: Throwable) {
+        listOf(failure.javaClass.simpleName, failure.message?.replace("io.github.heapy.icu4k", "com.ibm.icu"))
+    }
     @Test fun exemplarsDelimitersAndDisplayPatternsMatchSource() {
         val saved = Locale.getDefault()
         val display = Locale.getDefault(Locale.Category.DISPLAY)
@@ -61,10 +67,10 @@ class LocaleDataOracleTest {
                 val j = OriginalLocale.RegionValidateMap()
                 val k = ULocale.RegionValidateMap()
                 for (a in 'A'..'Z') for (b in 'A'..'Z') for (region in listOf("$a$b", "$a$b".lowercase()))
-                    assertEquals(outcome { j.isSet(region) }, outcome { k.isSet(region) }, "$host/$region")
+                    assertEquals(regionOutcome { j.isSet(region) }, regionOutcome { k.isSet(region) }, "$host/$region")
                 for (value in listOf("idzzzz", "IDzzzz", "inabc", "iDabc", "uszzzz", "ßdzzz", "ıdzzzz", "001zzzz", "gb", "xxzzzz")) {
                     val name = "en@rg=$value"
-                    assertEquals(outcome { OriginalLocale.getRegionForSupplementalData(OriginalLocale(name), true) }, outcome { ULocale.getRegionForSupplementalData(ULocale(name), true) }, "$host/$value")
+                    assertEquals(regionOutcome { OriginalLocale.getRegionForSupplementalData(OriginalLocale(name), true) }, regionOutcome { ULocale.getRegionForSupplementalData(ULocale(name), true) }, "$host/$value")
                 }
                 assertEquals(j.equals(OriginalLocale.RegionValidateMap()), k.equals(ULocale.RegionValidateMap()))
             }

@@ -3,6 +3,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.text.Edits
+import io.github.heapy.icu4k.text.rethrowCaseMapException
 
 /** Internal components of the ICU string casing algorithms. */
 internal object CaseMapImpl {
@@ -180,27 +181,32 @@ internal object CaseMapImpl {
         appendUnchanged(src, previous, index - previous, dest, options, edits)
     }
     fun <A : Appendable> toLower(caseLocale: Int, options: Int, src: CharSequence, dest: A, edits: Edits?): A {
-        edits?.reset()
-        internalToLower(caseLocale, options, src, 0, src.length, null, dest, edits)
-        return dest
+        try {
+            edits?.reset()
+            internalToLower(caseLocale, options, src, 0, src.length, null, dest, edits)
+            return dest
+        } catch (failure: Exception) { rethrowCaseMapException(failure) }
     }
     fun <A : Appendable> fold(options: Int, src: CharSequence, dest: A, edits: Edits?): A {
-        edits?.reset()
-        internalToLower(-1, options, src, 0, src.length, null, dest, edits)
-        return dest
+        try {
+            edits?.reset()
+            internalToLower(-1, options, src, 0, src.length, null, dest, edits)
+            return dest
+        } catch (failure: Exception) { rethrowCaseMapException(failure) }
     }
     fun toLower(caseLocale: Int, options: Int, src: CharSequence): String = lowerOrFold(caseLocale, options, src)
     fun fold(options: Int, src: CharSequence): String = lowerOrFold(-1, options, src)
     private fun lowerOrFold(locale: Int, options: Int, src: CharSequence): String {
-        if (src.isEmpty()) return src.toString()
         if (src.length <= 100 && options and OMIT_UNCHANGED_TEXT == 0) {
+            if (src.length == 0) return src.toString()
             val edits = Edits()
             val replacements = StringBuilder()
-            internalToLower(locale, options or OMIT_UNCHANGED_TEXT, src, 0, src.length, null, replacements, edits)
+            if (locale < 0) fold(options or OMIT_UNCHANGED_TEXT, src, replacements, edits)
+            else toLower(locale, options or OMIT_UNCHANGED_TEXT, src, replacements, edits)
             return applyEdits(src, replacements, edits)
         }
         val dest = StringBuilder(src.length)
-        internalToLower(locale, options, src, 0, src.length, null, dest, null)
+        if (locale < 0) fold(options, src, dest, null) else toLower(locale, options, src, dest, null)
         return dest.toString()
     }
     private fun internalToUpper(caseLocale: Int, options: Int, src: CharSequence, dest: Appendable, edits: Edits?) {
@@ -253,14 +259,16 @@ internal object CaseMapImpl {
         appendUnchanged(src, previous, index - previous, dest, options, edits)
     }
     fun <A : Appendable> toUpper(caseLocale: Int, options: Int, src: CharSequence, dest: A, edits: Edits?): A {
-        edits?.reset()
-        if (caseLocale == UCaseProps.LOC_GREEK) GreekUpper.toUpper(options, src, dest, edits)
-        else internalToUpper(caseLocale, options, src, dest, edits)
-        return dest
+        try {
+            edits?.reset()
+            if (caseLocale == UCaseProps.LOC_GREEK) GreekUpper.toUpper(options, src, dest, edits)
+            else internalToUpper(caseLocale, options, src, dest, edits)
+            return dest
+        } catch (failure: Exception) { rethrowCaseMapException(failure) }
     }
     fun toUpper(caseLocale: Int, options: Int, src: CharSequence): String {
-        if (src.isEmpty()) return src.toString()
         if (src.length <= 100 && options and OMIT_UNCHANGED_TEXT == 0) {
+            if (src.length == 0) return src.toString()
             val edits = Edits()
             val replacements = toUpper(caseLocale, options or OMIT_UNCHANGED_TEXT, src, StringBuilder(), edits)
             return applyEdits(src, replacements, edits)
@@ -268,7 +276,7 @@ internal object CaseMapImpl {
         return toUpper(caseLocale, options, src, StringBuilder(src.length), null).toString()
     }
 
-    /** Boundary adapter used until the common BreakIterator hierarchy is ported. */
+    /** Minimal boundary adapter shared by titlecasing entry points. */
     interface TitleIterator {
         fun first(): Int
         fun next(): Int
@@ -282,51 +290,53 @@ internal object CaseMapImpl {
     }
     fun <A : Appendable> toTitle(locale: Int, options: Int, boundaries: TitleIterator,
                                 src: CharSequence, dest: A, edits: Edits?): A {
-        edits?.reset()
-        val iter = StringContextIterator(src)
-        var previous = 0
-        var first = true
-        while (previous < src.length) {
-            var index = if (first) { first = false; boundaries.first() } else boundaries.next()
-            if (index == -1 || index > src.length) index = src.length
-            if (previous < index) {
-                var titleStart = previous
-                iter.setLimit(index)
-                var c = iter.nextCaseMapCP()
-                if (options and 0x200 == 0) {
-                    val toCased = options and TITLECASE_ADJUST_TO_CASED != 0
-                    while (if (toCased) UCaseProps.INSTANCE.getType(c) == UCaseProps.NONE else !isLNS(c)) {
-                        c = iter.nextCaseMapCP()
-                        if (c < 0) break
+        try {
+            edits?.reset()
+            val iter = StringContextIterator(src)
+            var previous = 0
+            var first = true
+            while (previous < src.length) {
+                var index = if (first) { first = false; boundaries.first() } else boundaries.next()
+                if (index == -1 || index > src.length) index = src.length
+                if (previous < index) {
+                    var titleStart = previous
+                    iter.setLimit(index)
+                    var c = iter.nextCaseMapCP()
+                    if (options and 0x200 == 0) {
+                        val toCased = options and TITLECASE_ADJUST_TO_CASED != 0
+                        while (if (toCased) UCaseProps.INSTANCE.getType(c) == UCaseProps.NONE else !isLNS(c)) {
+                            c = iter.nextCaseMapCP()
+                            if (c < 0) break
+                        }
+                        titleStart = iter.getCPStart()
+                        appendUnchanged(src, previous, titleStart - previous, dest, options, edits)
                     }
-                    titleStart = iter.getCPStart()
-                    appendUnchanged(src, previous, titleStart - previous, dest, options, edits)
-                }
-                if (titleStart < index) {
-                    c = UCaseProps.INSTANCE.toFullTitle(c, iter, dest, locale)
-                    appendResult(c, dest, iter.getCPLength(), options, edits)
-                    val titleLimit: Int
-                    if (titleStart + 1 < index && locale == UCaseProps.LOC_DUTCH) {
-                        if (c < 0) c = c.inv()
-                        if (c == 0x49 || c == 0xcd) {
-                            titleLimit = maybeTitleDutchIJ(src, c, titleStart + 1, index, dest, options, edits)
-                            iter.moveTo(titleLimit)
+                    if (titleStart < index) {
+                        c = UCaseProps.INSTANCE.toFullTitle(c, iter, dest, locale)
+                        appendResult(c, dest, iter.getCPLength(), options, edits)
+                        val titleLimit: Int
+                        if (titleStart + 1 < index && locale == UCaseProps.LOC_DUTCH) {
+                            if (c < 0) c = c.inv()
+                            if (c == 0x49 || c == 0xcd) {
+                                titleLimit = maybeTitleDutchIJ(src, c, titleStart + 1, index, dest, options, edits)
+                                iter.moveTo(titleLimit)
+                            } else titleLimit = iter.getCPLimit()
                         } else titleLimit = iter.getCPLimit()
-                    } else titleLimit = iter.getCPLimit()
-                    if (titleLimit < index) {
-                        if (options and 0x100 == 0) internalToLower(locale, options, src, titleLimit, index, iter, dest, edits)
-                        else appendUnchanged(src, titleLimit, index - titleLimit, dest, options, edits)
-                        iter.moveToLimit()
+                        if (titleLimit < index) {
+                            if (options and 0x100 == 0) internalToLower(locale, options, src, titleLimit, index, iter, dest, edits)
+                            else appendUnchanged(src, titleLimit, index - titleLimit, dest, options, edits)
+                            iter.moveToLimit()
+                        }
                     }
                 }
+                previous = index
             }
-            previous = index
-        }
-        return dest
+            return dest
+        } catch (failure: Exception) { rethrowCaseMapException(failure) }
     }
     fun toTitle(locale: Int, options: Int, boundaries: TitleIterator, src: CharSequence): String {
-        if (src.isEmpty()) return src.toString()
         if (src.length <= 100 && options and OMIT_UNCHANGED_TEXT == 0) {
+            if (src.length == 0) return src.toString()
             val edits = Edits()
             val replacements = toTitle(locale, options or OMIT_UNCHANGED_TEXT, boundaries, src, StringBuilder(), edits)
             return applyEdits(src, replacements, edits)

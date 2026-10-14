@@ -4056,3 +4056,28 @@ targeted JVM/JS/Native cache tests and Linux test compilation pass. Public facto
 currently use the resource creation path; user registration, availability/shim
 integration, CaseMap.Title, LocaleDisplayNames, Currency/MeasureUnit and the full
 ICU4J port remain unfinished.
+
+### Public CaseMap titlecasing
+
+CaseMap.Title now supplies default word, whole-string and sentence titlecasing,
+noLowercase, noBreakAdjustment, adjustToCased and omitUnchangedText options. It
+preserves conflicting-option errors, explicit-iterator validation, setText before
+case-locale selection, iterator state and nullable destination behavior. Common
+callers use ULocale; JVM adapters accept java.util.Locale. The title algorithm
+uses shared ICU case data and boundary factories. Internal appendable casing
+entry points now preserve IOException wrapping even for iterator callbacks;
+string lower/fold paths use those entry points too. Empty-string fast-path checks
+follow the source ordering rather than returning before option selection.
+
+Oracle tests compare all title mode/adjustment/lowercase/omit combinations on six
+locales with generated Unicode strings, contextual examples and length boundaries,
+including complete fine edit traces. Explicit iterator positions, IOException
+causes in short/long string and appendable paths, and empty CharSequence callback
+order across lower/upper/fold/title match ICU4J. Common tests cover title modes,
+Dutch/Turkic mappings, option errors, unchanged output and edit-reset boundaries.
+The existing region-validation oracle now compares implicit array failures by
+type, since JVM-generated bounds messages can be absent; other diagnostics retain
+message comparisons. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
+tests compile. BreakIterator user registration/availability, LocaleDisplayNames,
+service display-name enumeration, public Currency/MeasureUnit and the complete
+ICU4J port remain unfinished.
