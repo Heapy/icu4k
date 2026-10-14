@@ -3492,3 +3492,26 @@ list elements: arbitrary spans across mixed numeric fields can cycle in ICU4J
 itself and are not used for unbounded attributed export tests. Common tests cover
 numeric coalescing, trim boundaries and list span/element ordering. Full JVM,
 JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+### Common FormattedValue and attributed character export
+
+FormattedValue now exposes the complete text/append/field-iteration/attributed-
+iterator contract in Common Kotlin. FormatAttribute and
+FormatAttributedCharacterIterator bridge directly to Java types on JVM. JS and
+Native use a Common immutable attributed snapshot with independently cloned
+cursors, UTF-16 navigation, attributes and run limits constrained by one field or
+a set of fields. FormatField now shares the attribute identity base on all targets.
+FormattedValueStringBuilderImpl.toCharacterIterator is a Common member instead
+of a JVM-only extension.
+
+The portable snapshot stores ranges rather than allocating a map per code unit.
+Unconstrained runs retain added range boundaries even when adjacent values are
+equal; field-constrained runs can cross those boundaries. Empty/end cursors,
+invalid index failures, null constraints, clone equality and cursor hash codes
+match Java's AttributedString iterator. JVM oracle tests compare 160 generated
+snapshots with overlapping ranges and random cursor operations; Common tests
+exercise exported numeric overlap, clones and adjacent equal-valued runs.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+ListFormatter and its FormattedList implementation remain the next formatting
+stage. The full ICU4J port remains incomplete.

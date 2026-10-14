@@ -14,6 +14,15 @@ object FormattedValueStringBuilderImpl {
         var length = 0
         override fun unwrap(): FormatField? = normalField
     }
+    fun toCharacterIterator(self: FormattedStringBuilder, numericField: FormatField?): FormatAttributedCharacterIterator {
+        val position = ConstrainedFieldPosition()
+        val ranges = mutableListOf<FormatAttributeRange>()
+        while (nextPosition(self, position, numericField)) {
+            val field = position.getField()!!
+            ranges.add(FormatAttributeRange(field, position.getFieldValue() ?: field, position.getStart(), position.getLimit()))
+        }
+        return attributedCharacterIterator(self.toString(), ranges)
+    }
     fun findSpan(self: FormattedStringBuilder, value: Any?): Int {
         for (i in self.zero until self.zero + self.length) {
             val placeholder = fsbFieldAt(self.fields, i) as? SpanFieldPlaceholder ?: continue
