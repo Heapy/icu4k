@@ -3,9 +3,18 @@
 package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.impl.CSCharacterIterator
+import io.github.heapy.icu4k.util.ULocale
 
 /** Boundary iterator contract. Locale factories and concrete iterators are being ported. */
 abstract class BreakIterator protected constructor() {
+    private var validLocale: ULocale? = null
+    private var actualLocale: ULocale? = null
+    fun getLocale(type: ULocale.Type?): ULocale? = if (type === ULocale.ACTUAL_LOCALE) actualLocale else validLocale
+    internal fun setLocale(valid: ULocale?, actual: ULocale?) {
+        if ((valid == null) != (actual == null)) throw IllegalArgumentException()
+        validLocale = valid; actualLocale = actual
+    }
+    protected fun copyLocaleMetadataTo(target: BreakIterator) { target.validLocale = validLocale; target.actualLocale = actualLocale }
     /** Concrete iterators supply their copy operation in Common Kotlin. */
     abstract fun clone(): BreakIterator
     abstract fun first(): Int

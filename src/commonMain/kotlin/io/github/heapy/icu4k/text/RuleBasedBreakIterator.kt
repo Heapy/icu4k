@@ -19,6 +19,7 @@ class RuleBasedBreakIterator private constructor(private val data: RBBIDataWrapp
     private var dictionary = RBBIDictionaryCache(engine.text, data, registry::get, phraseBreaking)
     private var cache = RBBIBreakCache(engine, dictionary)
     override fun clone(): RuleBasedBreakIterator = RuleBasedBreakIterator(data, phraseBreaking, registry).also {
+        copyLocaleMetadataTo(it)
         it.engine = engine.copyFor(engine.text.clone())
         it.dictionary = dictionary.copyFor(it.engine.text, registry::get)
         it.cache = cache.copyFor(it.engine, it.dictionary)

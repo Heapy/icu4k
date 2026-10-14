@@ -4010,3 +4010,27 @@ embedded break-locale inventory expectation was updated for the added resources.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile. General
 BreakIterator factories/service registration, CaseMap.Title, LocaleDisplayNames,
 public Currency/MeasureUnit and the full ICU4J port remain unfinished.
+
+### Break rule data factory and locale metadata
+
+BreakIteratorDataFactory extracts resource-backed creation from BreakIteratorFactory:
+LOCALE_ROOT bundle fallback, kind-to-rule lookup, lb strict/normal/loose variants,
+Japanese/Korean lw=phrase selection, binary rule loading and ss=standard filters.
+BreakIterator now stores valid/actual locale pairs, validates paired null state,
+and preserves metadata in rule-based and filtered clones. ULocale.Type remains
+an opaque identity selector with mutable public JVM ACTUAL_LOCALE/VALID_LOCALE
+fields, as in the source. Filtered wrappers retain their own initially-null locale
+metadata rather than forwarding their delegate's metadata. Factory rule I/O errors
+use the source Assert.fail diagnostic format.
+
+Break data for el, ko, zh, zh_Hant, en_US and en_US_POSIX is embedded. All 95 pinned
+resources verify; embedded full-name inventory tests include the new locales.
+JVM oracle tests invoke the original private factory for all five kinds across
+root, English variants, CJK/phrase, Greek, filtered and unknown locales. They
+compare Unicode boundary sequences and metadata/clones. Invalid kind resource
+errors, mutable selector identity/field modifiers and rule-I/O assertion messages
+are verified separately. Common tests cover metadata, clone independence,
+filtered output and errors. Full JVM, JS Node and macOS Arm64 suites pass; Linux
+x64 tests compile. General BreakIterator service registration/cache/public factories,
+CaseMap.Title, LocaleDisplayNames, Currency/MeasureUnit and the full ICU4J port
+remain unfinished.

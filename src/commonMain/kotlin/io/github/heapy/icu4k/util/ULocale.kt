@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import kotlin.jvm.JvmField
 import io.github.heapy.icu4k.impl.LocaleDefaults
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.impl.LocaleIDParser
@@ -39,6 +40,9 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
             }
             builder.getLocaleExtensions()
         }
+    }
+    class Type private constructor() {
+        internal companion object { fun create(): Type = Type() }
     }
     fun clone(): ULocale = this
     fun getName(): String = localeID
@@ -169,6 +173,8 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        @JvmField var ACTUAL_LOCALE: Type? = Type.create()
+        @JvmField var VALID_LOCALE: Type? = Type.create()
         @Deprecated("This API is ICU internal only.")
         @Suppress("DEPRECATION")
         fun getRegionForSupplementalData(locale: ULocale?, inferRegion: Boolean): String {

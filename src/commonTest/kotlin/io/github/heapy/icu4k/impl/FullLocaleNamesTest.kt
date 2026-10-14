@@ -39,7 +39,7 @@ class FullLocaleNamesTest {
         } }
         assertEquals(setOf("", "en", "abcd"), ICUResourceBundle.getFullLocaleNameSet(base, loader))
         assertEquals(setOf(""), ICUResourceBundle.getFullLocaleNameSet("icu4k-test/full-names-missing", ICUResourceLoader { null }))
-        assertEquals(setOf("", "ja", "en", "fr", "de", "es", "Burmese_graphclust_model5_heavy", "Thai_graphclust_model4_heavy"), ICUResourceBundle.getFullLocaleNameSet(ICUData.ICU_BRKITR_BASE_NAME))
+        assertEquals(setOf("", "ja", "en", "fr", "de", "es", "el", "ko", "zh", "zh_Hant", "en_US", "en_US_POSIX", "Burmese_graphclust_model5_heavy", "Thai_graphclust_model4_heavy"), ICUResourceBundle.getFullLocaleNameSet(ICUData.ICU_BRKITR_BASE_NAME))
     }
     @Test fun asciiLinesUseReplacementAndDoNotChangeBufferCursor() {
         val buffer = BinaryBuffer(byteArrayOf(0, 65, -61, -87, 13, 10, 66, 13, 67))

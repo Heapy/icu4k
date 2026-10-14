@@ -86,7 +86,7 @@ class SimpleFilteredSentenceBreakIterator(
     }
     override fun hashCode(): Int = forwardsPartialTrie!!.hashCode() * 39 + backwardsTrie!!.hashCode() * 11 + delegate.hashCode()
     override fun clone(): SimpleFilteredSentenceBreakIterator =
-        SimpleFilteredSentenceBreakIterator(delegate.clone(), forwardsPartialTrie?.clone(), backwardsTrie?.clone()).also { it.text = text?.clone() }
+        SimpleFilteredSentenceBreakIterator(delegate.clone(), forwardsPartialTrie?.clone(), backwardsTrie?.clone()).also { it.text = text?.clone(); copyLocaleMetadataTo(it) }
     override fun first(): Int = delegate.first()
     override fun preceding(offset: Int): Int = internalPrev(delegate.preceding(offset))
     override fun previous(): Int = internalPrev(delegate.previous())

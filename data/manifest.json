@@ -655,6 +655,48 @@
       "object": "BreakEsResourceData",
       "sha256": "4f8af99a7e2296b41e3f68a5647a4175fdc68e72dfd3efd53b9fdd9d487d7d7f",
       "size": 2176
+    },
+    {
+      "name": "brkitr/el.res",
+      "file": "data/icu78/brkitr/el.res",
+      "object": "BreakElResourceData",
+      "sha256": "cd0669dd23b58a919caf928e8bb60a02284f68363a94a0b4de30372ccb53c712",
+      "size": 160
+    },
+    {
+      "name": "brkitr/ko.res",
+      "file": "data/icu78/brkitr/ko.res",
+      "object": "BreakKoResourceData",
+      "sha256": "cc01a2608c679ad93de5a4e5bd49158372b0db3285f34033ed15330c6caab5e8",
+      "size": 544
+    },
+    {
+      "name": "brkitr/zh.res",
+      "file": "data/icu78/brkitr/zh.res",
+      "object": "BreakZhResourceData",
+      "sha256": "a100184cf71a77f260cc99230d0a7f45f59b4480bf392e8670e9a54dbef3eab5",
+      "size": 272
+    },
+    {
+      "name": "brkitr/zh_Hant.res",
+      "file": "data/icu78/brkitr/zh_Hant.res",
+      "object": "BreakZhHantResourceData",
+      "sha256": "a100184cf71a77f260cc99230d0a7f45f59b4480bf392e8670e9a54dbef3eab5",
+      "size": 272
+    },
+    {
+      "name": "brkitr/en_US.res",
+      "file": "data/icu78/brkitr/en_US.res",
+      "object": "BreakEnUsResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80
+    },
+    {
+      "name": "brkitr/en_US_POSIX.res",
+      "file": "data/icu78/brkitr/en_US_POSIX.res",
+      "object": "BreakEnUsPosixResourceData",
+      "sha256": "d25d60b5ffdba350601501eb6081180aa04b4946137dfcbc326d9eb07d932021",
+      "size": 160
     }
   ]
 }
