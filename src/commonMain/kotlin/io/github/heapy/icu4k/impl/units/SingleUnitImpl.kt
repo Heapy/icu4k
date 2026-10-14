@@ -14,6 +14,7 @@ open class SingleUnitImpl {
     open fun copy(): SingleUnitImpl = SingleUnitImpl().also { it.index = index; it.simpleUnitID = simpleUnitID; it.dimensionality = dimensionality; it.prefix = prefix }
     open fun getNeutralIdentifier(): String {
         val power = abs(getDimensionality())
+        assertUnitIdentifierPower(power)
         val start = when { power == 1 -> ""; power == 2 -> "square-"; power == 3 -> "cubic-"; power <= 15 -> "pow$power-"; else -> throw IllegalArgumentException("Unit Identifier Syntax Error") }
         return start + getPrefix()!!.getIdentifier() + getSimpleUnitID()
     }
@@ -41,3 +42,6 @@ open class SingleUnitImpl {
     open fun getIndex(): Int = index
 }
 internal expect fun <T> unitArrayElement(values: Array<out T>, index: Int): T
+
+/** Source assertion, controlled by JVM assertion settings; no production validation on other targets. */
+internal expect fun assertUnitIdentifierPower(power: Int)

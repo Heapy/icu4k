@@ -8,3 +8,7 @@ internal actual fun parseUnitConstant(value: String): Long {
     if (number.scale() <= 0 && number >= java.math.BigDecimal.ZERO && number <= java.math.BigDecimal.valueOf(Long.MAX_VALUE)) return number.longValueExact()
     throw IllegalArgumentException("The unit constant value is not a valid non-negative long integer.")
 }
+
+internal actual fun assertUnitIdentifierPower(power: Int) {
+    if (SingleUnitImpl::class.java.desiredAssertionStatus() && power <= 0) throw AssertionError("this function does not support the dimensionless single units")
+}

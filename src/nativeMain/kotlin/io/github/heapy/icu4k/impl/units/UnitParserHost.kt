@@ -6,3 +6,5 @@ internal actual fun <T> unitArrayElement(values: Array<out T>, index: Int): T {
 internal actual fun parseUnitConstant(value: String): Long {
     return parseUnitConstantPortable(value)
 }
+
+internal actual fun assertUnitIdentifierPower(power: Int) {}
