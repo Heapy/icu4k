@@ -224,13 +224,13 @@ open class ICUResourceBundle : UResourceBundle {
         internal fun getAvailableJavaLocaleList(baseName: String, loader: ICUResourceLoader?,
             type: ULocale.AvailableType?, convert: (Array<ULocale>?) -> Any): Any =
             getAvailEntry(baseName, loader).getJavaLocaleList(type, convert)
-        fun getAvailableULocales(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader,
+        fun getAvailableULocales(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = defaultICUResourceLoader(),
                                 type: ULocale.AvailableType = ULocale.AvailableType.DEFAULT): Array<ULocale>? = getAvailEntry(baseName, loader).getULocaleList(type)
         fun getAvailableULocales(type: ULocale.AvailableType): Array<ULocale>? =
-            getAvailableULocales(ICUData.ICU_BASE_NAME, ICUResourceBundleReader.embeddedLoader, type)
-        fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
+            getAvailableULocales(ICUData.ICU_BASE_NAME, defaultICUResourceLoader(), type)
+        fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = defaultICUResourceLoader()): Set<String> =
             getAvailEntry(baseName, loader).getLocaleNameSet()
-        fun getFullLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
+        fun getFullLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = defaultICUResourceLoader()): Set<String> =
             getAvailEntry(baseName, loader).getFullLocaleNameSet()
         private fun createFullLocaleNameSet(baseName: String, loader: ICUResourceLoader): Set<String> {
             val directory = if (baseName.endsWith('/')) baseName else "$baseName/"
