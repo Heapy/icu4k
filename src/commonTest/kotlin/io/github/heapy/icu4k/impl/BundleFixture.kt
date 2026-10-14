@@ -79,6 +79,16 @@ internal object BundleFixture {
         "fr" to write(mapOf("target" to "fr"), noFallback = true),
         "es_419" to write(mapOf("target" to "latin-america"))
     )
+    fun childData(): Map<String, ByteArray> = mapOf(
+        "root" to write(mapOf("target" to "root", "groups" to mapOf(
+            "first" to mapOf("value" to "root-first"), "second" to Alias("/LOCALE/groups/first"),
+            "alias" to Alias("/LOCALE/groups/second"), "text" to Alias("/LOCALE/target")))),
+        "en" to write(mapOf("target" to "en", "groups" to mapOf(
+            "first" to mapOf("value" to "en-first"), "second" to mapOf("value" to "en-second"),
+            "alias" to Alias("/LOCALE/groups/second"), "text" to Alias("/LOCALE/target")))),
+        "en_US" to write(mapOf("target" to "US", "groups" to mapOf(
+            "first" to mapOf("value" to "US-first"), "alias" to Alias("/LOCALE/groups/second"), "text" to Alias("/LOCALE/target"))))
+    )
     fun loader(data: Map<String, ByteArray>): ICUResourceLoader = ICUResourceLoader { name ->
         data[name.substringAfterLast('/').removeSuffix(".res")]?.let { BinaryBuffer(it.copyOf()) }
     }

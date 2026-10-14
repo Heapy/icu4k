@@ -2785,4 +2785,21 @@ mismatches, shared callback objects, callback mutation and error propagation.
 JVM differential tests compare string/value outcomes and full typed sink traces
 for four opening modes and multiple locales, mutating key/value outputs during
 nested traversal. JVM, JS Node and macOS Arm64 suites pass; Linux x64 production
-sources compile. Child enumeration and remaining resource services are pending.
+sources compile. Remaining locale-availability/resource services are pending.
+
+### Child sinks with alias-target inheritance
+
+getAllChildrenWithFallback now enumerates immediate table children over the
+resource's parent chain. Aliases are resolved into independent ReaderValues.
+Aliased table targets additionally enumerate their own parent tables, retain
+cloned alias keys under callback mutation, and capture the value type before
+calling the sink. The original /LOCALE table-path redirection returns to the
+requested bundle when a parent alias changes the target key. Callback flags
+retain the outer resource's noFallback value, including alias-target parents.
+
+Common fixtures exercise table/scalar aliases, key/value mutation and target-key
+redirection through US/en/root tables. JVM differential tests compare every
+callback and error outcome for all opening modes, including direct bundles whose
+missing alias targets follow the original failure path. Full JVM, JS Node and
+macOS Arm64 suites pass; Linux x64 production sources compile. Locale availability,
+remaining resource services and UResourceBundle/Java dispatch are still pending.

@@ -85,6 +85,44 @@ open class ICUResourceBundle : UResourceBundle {
             "Can't find resource for bundle ${resourceClassName()}, key ${getType()}", path, getKey())
         bundle.getAllItemsWithFallback(UResource.Key(), ICUResourceBundleReader.ReaderValue(), sink, this)
     }
+    fun getAllChildrenWithFallback(path: String, sink: UResource.Sink) {
+        val allChildren = object : UResource.Sink() {
+            override fun put(key: UResource.Key, value: UResource.Value, noFallback: Boolean) {
+                val table = value.getTable()
+                var i = 0
+                while (table.getKeyAndValue(i++, key, value)) {
+                    if (value.getType() != ALIAS) {
+                        sink.put(key, value, noFallback)
+                        continue
+                    }
+                    val aliasPath = value.getAliasString()
+                    var target = getAliasedResource(aliasPath, wholeBundle.loader, "", null, 0, null, null, this@ICUResourceBundle)
+                    var impl = target as ICUResourceBundleImpl
+                    var aliasValue = ICUResourceBundleReader.ReaderValue().also { it.reader = impl.wholeBundle.reader; it.res = impl.getResource() }
+                    if (aliasValue.getType() != TABLE) {
+                        sink.put(key, aliasValue, noFallback)
+                        continue
+                    }
+                    var aliasType = TABLE
+                    var tablePath = aliasPath.substring("/LOCALE/".length)
+                    sink.put(key.clone(), aliasValue, noFallback)
+                    while (aliasType == TABLE && target.getParent() != null) {
+                        val next = target.getParent()!!.findWithFallback(tablePath)!!
+                        if (next.resourceKey!!.equals(target.resourceKey)) target = next
+                        else {
+                            tablePath = tablePath.substring(0, tablePath.lastIndexOf('/')) + "/" + next.resourceKey
+                            target = this@ICUResourceBundle.findWithFallback(tablePath)!!
+                        }
+                        impl = target as ICUResourceBundleImpl
+                        aliasValue = ICUResourceBundleReader.ReaderValue().also { it.reader = impl.wholeBundle.reader; it.res = impl.getResource() }
+                        aliasType = aliasValue.getType()
+                        sink.put(key.clone(), aliasValue, noFallback)
+                    }
+                }
+            }
+        }
+        getAllItemsWithFallback(path, allChildren)
+    }
     private fun getAllItemsWithFallback(key: UResource.Key, value: ICUResourceBundleReader.ReaderValue, sink: UResource.Sink, requested: UResourceBundle) {
         val impl = this as ICUResourceBundleImpl
         value.reader = impl.wholeBundle.reader
@@ -275,7 +313,7 @@ open class ICUResourceBundle : UResourceBundle {
         }
         @kotlin.jvm.JvmStatic
         protected fun getAliasedResource(path: String, initialLoader: ICUResourceLoader, baseName: String,
-                                         initialKeys: Array<String>?, depth: Int, basePath: Array<String>,
+                                         initialKeys: Array<String>?, depth: Int, basePath: Array<String>?,
                                          aliasesVisited: HashMap<String, String>?, requested: UResourceBundle): ICUResourceBundle {
             val visited = aliasesVisited ?: HashMap()
             if (visited[path] != null) throw IllegalArgumentException("Circular references in the resource bundles")
@@ -314,13 +352,13 @@ open class ICUResourceBundle : UResourceBundle {
                     val parts = if (keyPath.isEmpty()) emptyList() else keyPath.split('/')
                     if (parts.isNotEmpty()) keys = parts.toTypedArray()
                     parts.size
-                } else if (keys != null) depth else { keys = basePath; basePath.size }
+                } else if (keys != null) depth else { keys = basePath; basePath!!.size }
                 if (numKeys > 0) {
                     sub = bundle
                     for (i in 0 until numKeys) sub = sub?.get(keys!![i], visited, requested)
                 }
             }
-            return sub ?: throw MissingResourceException(locale, baseName, basePath.last())
+            return sub ?: throw MissingResourceException(locale, baseName, basePath!!.last())
         }
         private fun getDefaultScript(language: String, region: String?): String =
             LocaleFallbackData.DEFAULT_SCRIPT_TABLE["${language}_$region"]

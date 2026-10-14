@@ -73,5 +73,5 @@ println(bundle.getWithFallback("dictionaries/Mymr").getString()) // burmesedict.
 
 The embedded resource subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
-The `UResourceBundle` factory dispatch, Java bundle interoperability and bundle
-service/enumeration APIs remain in progress.
+The `UResourceBundle` factory dispatch, Java bundle interoperability and
+locale-availability/resource services remain in progress.
