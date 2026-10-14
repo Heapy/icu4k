@@ -3947,3 +3947,23 @@ locale outputs against ICU4J, restoring defaults afterwards. Full JVM, JS Node
 and macOS Arm64 suites pass; Linux x64 test sources compile. This core is internal
 pending the complete ICULocaleService facade and locale factories; sorted display
 names, public Currency/MeasureUnit and the full ICU4J port remain unfinished.
+
+### Locale display contexts and resource table access
+
+DisplayContext is ported with every source enum/type/value/ordinal. The complete
+ICUResourceTableAccess lookup preserves resource inheritance, deprecated language
+and country IDs, optional subtables, explicit Fallback locale resources, self-loop
+termination, empty-string substitution and caught malformed-resource exceptions.
+An internal ICUResourceBundle base-name bridge retains virtual protected lookup.
+LocaleDisplayNameDataTable and ResourceLocaleDisplayNameDataTable extract the
+source plain/substituting and resource-backed data tables for the future display
+name implementation. Region root/pool/en data is embedded; 85 resources verify.
+
+JVM oracle tests compare all keys from display tables in language/region bundles
+for en, en_US and root, plus deprecated/missing codes, optional/missing subtables,
+null/string defaults and all DisplayContext metadata. Common tests cover actual
+language/region names, substitution/no-substitution, plain tables, malformed
+resources and region resource discovery. Full JVM, JS Node and macOS Arm64 suites
+pass; Linux x64 tests compile. LocaleDisplayNames/LocaleDisplayNamesImpl, locale
+service factories, sorted service display names, public Currency/MeasureUnit and
+the complete ICU4J port remain unfinished.

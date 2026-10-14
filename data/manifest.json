@@ -606,6 +606,27 @@
       "object": "UnitLocaleIndexResourceData",
       "sha256": "0dbddba1c4950ab51595b7535dca218e9696be0ad016c49ec41689543488c56d",
       "size": 5008
+    },
+    {
+      "name": "region/root.res",
+      "file": "data/icu78/region/root.res",
+      "object": "RegionRootResourceData",
+      "sha256": "35cdcb6da2c4f6aaa8973b1c9f3dac2ee0d9a8a8d8313dec2e97fa62acbd4c61",
+      "size": 96
+    },
+    {
+      "name": "region/pool.res",
+      "file": "data/icu78/region/pool.res",
+      "object": "RegionPoolResourceData",
+      "sha256": "ea903183cff6acd830938d9d53737a1ce96849fd7bc631038eca7527b6523ba7",
+      "size": 89440
+    },
+    {
+      "name": "region/en.res",
+      "file": "data/icu78/region/en.res",
+      "object": "RegionEnResourceData",
+      "sha256": "c49018c1dcb939c9b7445f38a58b62a0193e79558762f30efa117b221b4efecb",
+      "size": 1456
     }
   ]
 }

@@ -33,6 +33,7 @@ open class ICUResourceBundle : UResourceBundle {
     }
     override fun getLocaleID(): String = wholeBundle.localeID
     override fun getBaseName(): String = wholeBundle.baseName
+    internal fun resourceBaseName(): String = getBaseName()
     override fun getULocale(): ULocale = wholeBundle.ulocale
     fun isRoot(): Boolean = wholeBundle.localeID.isEmpty() || wholeBundle.localeID == "root"
     public override fun getParent(): ICUResourceBundle? = parentBundle as ICUResourceBundle?
