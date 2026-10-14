@@ -310,6 +310,20 @@
       "object": "PoolResourceData",
       "sha256": "b24b21136532739b7c5981bdd32295107e6917a03a70ca47b3779802ae486d5d",
       "size": 172384
+    },
+    {
+      "name": "langInfo.res",
+      "file": "data/icu78/langInfo.res",
+      "object": "LanguageInfoResourceData",
+      "sha256": "a90e8c094e1d1aadb53aef08ab586a958a51a4e00b0c600f65507ed208a24070",
+      "size": 72752
+    },
+    {
+      "name": "metadata.res",
+      "file": "data/icu78/metadata.res",
+      "object": "LocaleMetadataResourceData",
+      "sha256": "c757d390e7fec918843f21d09436a0c4286519bd159fd077fa967021f8f00b54",
+      "size": 39104
     }
   ]
 }

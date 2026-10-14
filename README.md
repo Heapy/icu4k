@@ -107,3 +107,8 @@ defaults synchronize with java.util.Locale. JVM extensions `forLocale` and
 `Locale` and `ClassLoader`, expose `getLocale()`, and provide ICUResourceBundle's
 Java locale availability lists. Import the corresponding `util`/`impl` extensions.
 Remaining locale services and Java callable facade compatibility are still being ported.
+
+
+The Common LSR resource codec and pinned `langInfo.res`/`metadata.res` provide the
+foundation for likely-subtags and alias canonicalization. Their engines and
+ULocale entry points are still being ported.

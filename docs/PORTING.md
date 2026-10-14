@@ -3185,3 +3185,30 @@ null categories/loaders and missing-category recovery against ICU4J. Full JVM,
 JS Node and macOS Arm64 suites pass; Linux x64 test sources compile. These JVM APIs
 are Kotlin extensions; direct Java member/static facade compatibility and the
 complete ICU4J port remain unfinished.
+
+
+### Common LSR encoding and locale metadata foundation
+
+LSR now ports language/script/region identity, explicit-subtag flags, region
+indexes, equivalence versus equality, Java-compatible hash codes and resource
+encoding/decoding. The cached decoder shares strings through local language,
+script and region pools and retains the zero/one sentinel records. Numeric M49
+lookup is deferred until a numeric region is needed, including nullable-table
+behavior and the original absent-region diagnostic. Script-cache initialization
+and encoding evaluation order follow ICU4J.
+
+Pinned langInfo.res and metadata.res are embedded on every target, bringing the
+manifest to 45 binary resources. The existing resource reader loads their likely
+and alias tables, including the core pool dependency. These are prerequisites for
+likely-subtags matching and CLDR alias canonicalization; those engines and their
+ULocale entry points are not implemented by this stage. Region classification
+also remains a dependency, using supplementalData's validity, code-mapping and
+territory-containment tables.
+
+Common tests verify every well-formed region index, flags and string identity,
+nullable/numeric boundaries, alias resource lookup and decode/re-encode every LSR
+in the pinned likely table. JVM differential tests compare all decoded resource
+records, hash codes and encoding across language/region combinations and all
+script property codes with ICU4J. Full JVM, JS Node and macOS Arm64 suites pass;
+Linux x64 test sources compile. The generator check passes for all 45 resources.
+The complete ICU4J port remains unfinished.
