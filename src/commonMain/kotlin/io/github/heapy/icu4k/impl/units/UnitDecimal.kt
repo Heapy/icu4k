@@ -73,6 +73,54 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         if (exponent < 0) result = ONE.divide(result, working)
         return result.round(precision)
     }
+    enum class Rounding { UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY }
+    fun setScale(newScale: Int, rounding: Rounding = Rounding.HALF_EVEN): UnitDecimal {
+        if (newScale == scale) return this
+        if (sign == 0) return of(0, "0", newScale)
+        if (newScale > scale) return of(sign, zeros(magnitude, newScale.toLong() - scale), newScale)
+        val drop = scale.toLong() - newScale
+        val retained = magnitude.length.toLong() - drop
+        var integer = if (retained <= 0) "0" else magnitude.substring(0, retained.toInt())
+        val discarded = if (retained <= 0) magnitude else magnitude.substring(retained.toInt())
+        val nonzero = discarded.any { it != '0' }
+        if (nonzero) {
+            val halfway = if (drop > magnitude.length) -1 else when {
+                discarded[0] < '5' -> -1
+                discarded[0] > '5' -> 1
+                discarded.drop(1).any { it != '0' } -> 1
+                else -> 0
+            }
+            val up = when (rounding) {
+                Rounding.UP -> true
+                Rounding.DOWN -> false
+                Rounding.CEILING -> sign > 0
+                Rounding.FLOOR -> sign < 0
+                Rounding.HALF_UP -> halfway >= 0
+                Rounding.HALF_DOWN -> halfway > 0
+                Rounding.HALF_EVEN -> halfway > 0 || halfway == 0 && (integer.last() - '0') % 2 != 0
+                Rounding.UNNECESSARY -> throw ArithmeticException("Rounding necessary")
+            }
+            if (up) integer = addNatural(integer, "1")
+        }
+        return of(sign, integer, newScale)
+    }
+    fun stripTrailingZeros(): UnitDecimal {
+        if (sign == 0) return ZERO
+        val stripped = magnitude.trimEnd('0')
+        return of(sign, stripped, checkedScale(scale.toLong() - (magnitude.length - stripped.length), false))
+    }
+    fun integerValue(): UnitDecimal = setScale(0, Rounding.DOWN)
+    fun longValue(): Long {
+        var result = 0L
+        val end = if (scale >= 0) (magnitude.length.toLong() - scale).coerceAtLeast(0).toInt() else magnitude.length
+        for (i in 0 until end) result = result * 10 + (magnitude[i] - '0')
+        if (scale < 0) {
+            var exponent = -scale.toLong(); var base = 10L; var power = 1L
+            while (exponent != 0L) { if ((exponent and 1L) != 0L) power *= base; exponent = exponent ushr 1; if (exponent != 0L) base *= base }
+            result *= power
+        }
+        return result * sign
+    }
     /** Truncate toward zero and retain the low 32 bits, as required by BigDecimal.intValue(). */
     fun intValue(): Int {
         var result = 0
