@@ -3126,3 +3126,34 @@ also compare the added root probe with ICU4J. Full JVM, JS Node and macOS Arm64
 suites pass, Linux x64 test sources compile, and the data generator check passes.
 Mutable ULocale defaults/categories, Java Locale overloads and the rest of ICU4J
 remain unfinished.
+
+
+### Mutable ULocale defaults and JVM locale conversion
+
+ULocale now exposes general and DISPLAY/FORMAT category getDefault/setDefault
+APIs. Shared code uses an atomic general cache and a reentrant lock for updates
+and category state. Recursive initialization returns ROOT until the corresponding
+cache is populated. General setters change the host before publishing the new
+ULocale and update both categories. Category setters publish before calling the
+host, preserving ICU4J's ordering.
+
+JVM tracks actual java.util.Locale tokens and refreshes caches after external
+Java default changes. Its category setter ignores target failures, as upstream's
+reflective helper does; the general setter propagates failures. JS and Native
+initialize from the host locale and expose process-local mutable defaults and
+independent categories. Resource defaults now read ULocale.getDefault, so explicit
+changes affect bundle selection and default-language fallback on every target.
+Older Android runtimes without JDK locale categories are not targeted by this
+adapter yet.
+
+JVM extension functions ULocale.forLocale and ULocale.toLocale port upstream's
+conversion rules and soft-cache behavior. They preserve original Java Locale
+objects through conversion, script/keyword tag mapping, variant casing, Unicode
+attributes and types, and no_NO_NY to nn_NO. Java callable facade compatibility
+and java.util.Locale resource factory overloads remain unfinished.
+
+Common tests verify category independence, null boundaries, supplied instance
+retention and actual resource fallback after default changes. JVM tests compare
+conversion and external host changes with ICU4J, including cold isolated class
+initialization with Unicode extensions. Full JVM, JS Node and macOS Arm64 suites
+pass; Linux x64 test sources compile. The complete ICU4J port remains unfinished.

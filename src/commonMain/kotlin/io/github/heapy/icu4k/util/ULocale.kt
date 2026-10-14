@@ -2,18 +2,20 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.impl.LocaleDefaults
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.impl.LocaleIDParser
 import io.github.heapy.icu4k.impl.LocaleIDs
 import io.github.heapy.icu4k.impl.SoftCache
 import io.github.heapy.icu4k.impl.locale.*
 
-/** ICU locale identity and BCP47 conversion. Display/default/resource APIs are still being ported. */
+/** ICU locale identity and BCP47 conversion. Display names and remaining locale services are still being ported. */
 class ULocale private constructor(localeID: String, normalize: Boolean) : Comparable<ULocale> {
     private val localeID = if (normalize) getName(localeID) else localeID
     constructor(localeID: String) : this(localeID, true)
     constructor(a: String?, b: String?) : this(a, b, null)
     constructor(a: String?, b: String?, c: String?) : this(lscvToID(a, b, c, ""))
+    internal var platformLocale: Any? = null
     private val base: BaseLocale by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (this.localeID.isEmpty()) BaseLocale.ROOT else LocaleIDParser(this.localeID).let {
             BaseLocale.getInstance(it.getLanguage(), it.getScript(), it.getCountry(), it.getVariant())
@@ -132,8 +134,14 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
         fun clearExtensions(): Builder { builder.clearExtensions(); return this }
         fun build(): ULocale = getInstance(builder.getBaseLocale(), builder.getLocaleExtensions())
     }
+    enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        fun getDefault(): ULocale = LocaleDefaults.get()
+        fun getDefault(category: Category?): ULocale = LocaleDefaults.get(category!!)
+        fun setDefault(locale: ULocale?) = LocaleDefaults.set(locale!!)
+        fun setDefault(category: Category?, locale: ULocale?) = LocaleDefaults.set(category, locale!!)
+
         fun getAvailableLocales(): Array<ULocale> = ICUResourceBundle.getAvailableULocales()!!.copyOf()
         fun getAvailableLocalesByType(type: AvailableType?): Collection<ULocale> {
             if (type == null) throw IllegalArgumentException()

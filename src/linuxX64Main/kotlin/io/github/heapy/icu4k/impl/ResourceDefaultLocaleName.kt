@@ -6,7 +6,7 @@ import kotlinx.cinterop.toKString
 import platform.posix.getenv
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun resourceDefaultLocaleName(): String {
+internal actual fun initialPlatformLocaleName(): String {
     for (key in listOf("LC_ALL", "LC_CTYPE", "LANG")) {
         val value = getenv(key)?.toKString()
         if (!value.isNullOrEmpty()) return if (value == "C" || value == "POSIX" || value.startsWith("C.")) "en_US_POSIX"

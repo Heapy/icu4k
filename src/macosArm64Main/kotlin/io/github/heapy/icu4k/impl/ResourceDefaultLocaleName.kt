@@ -5,4 +5,4 @@ import platform.Foundation.NSLocale
 import platform.Foundation.currentLocale
 import platform.Foundation.localeIdentifier
 
-internal actual fun resourceDefaultLocaleName(): String = ULocale(NSLocale.currentLocale.localeIdentifier).getName()
+internal actual fun initialPlatformLocaleName(): String = ULocale(NSLocale.currentLocale.localeIdentifier).getName()

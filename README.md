@@ -101,4 +101,7 @@ Java factories return the ported `URLHandler` type and expose `get(java.net.URL)
 loads Java-style bundles through Common object/property providers. On JVM,
 `ICUClassLoaderResourceLoader` also loads actual Java resource-bundle classes and
 classpath `.properties`. The default ICU loader includes the pinned root and pool
-bundles. Mutable locale defaults/categories and Java Locale overloads remain in progress.
+bundles. ULocale defaults and DISPLAY/FORMAT categories are mutable on every target; JVM
+defaults synchronize with java.util.Locale. JVM extensions `forLocale` and
+`toLocale` bridge Java locale identities. Java Locale resource-factory overloads
+and remaining locale services are still being ported.
