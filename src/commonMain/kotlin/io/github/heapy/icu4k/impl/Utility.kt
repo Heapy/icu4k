@@ -6,6 +6,10 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** ICU utilities; currently the original escape decoder. */
 internal object Utility {
+    fun <A : Appendable> appendTo(string: CharSequence, appendable: A): A {
+        appendUtilityText(appendable, string)
+        return appendable
+    }
     fun escape(source: String): String = buildString {
         var i = 0
         while (i < source.length) {
@@ -138,3 +142,5 @@ internal object Utility {
     private fun digit16(c: Int): Int = when (c) { in 48..57 -> c - 48; in 65..70 -> c - 55; in 97..102 -> c - 87; else -> -1 }
     private val unescapeMap = intArrayOf(97, 7, 98, 8, 101, 27, 102, 12, 110, 10, 114, 13, 116, 9, 118, 11)
 }
+
+internal expect fun appendUtilityText(appendable: Appendable, string: CharSequence)

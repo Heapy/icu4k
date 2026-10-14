@@ -3515,3 +3515,14 @@ Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 
 ListFormatter and its FormattedList implementation remain the next formatting
 stage. The full ICU4J port remains incomplete.
+
+### SimpleCache and append-to utility
+
+ICUCache and SimpleCache now retain the whole-map reference strategy, SOFT/WEAK
+selection, null/sentinel keys, replacement and clearing. Map operations use the
+platform cache lock and the reference is atomically published. JVM uses actual
+SoftReference/WeakReference; JS and Native use their existing weak-reference
+fallback because those runtimes have no Java soft-reference primitive.
+Utility.appendTo preserves a single Appendable.append call, returns the input
+appendable and wraps JVM IOException in ICUUncheckedIOException. Common cache
+checks and the ListFormatter append-failure oracle pass in the full platform run.
