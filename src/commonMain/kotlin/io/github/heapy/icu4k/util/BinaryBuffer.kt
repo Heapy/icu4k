@@ -45,6 +45,12 @@ class BinaryBuffer(
         return BinaryBuffer(storage, order, arrayOffset + index, length, isReadOnly)
     }
 
+    /** Shares storage/cursor bounds; like ByteBuffer.duplicate(), starts in big-endian order. */
+    fun duplicate(): BinaryBuffer = BinaryBuffer(storage, ByteOrder.BIG_ENDIAN, arrayOffset, capacity, isReadOnly).also {
+        it.limit = limit
+        it.position = position
+    }
+
     /** Shares storage and preserves cursor state without permitting writes through this view. */
     fun asReadOnlyBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, true).also {
         it.limit = limit

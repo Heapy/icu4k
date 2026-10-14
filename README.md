@@ -80,3 +80,9 @@ external binary-data scanning, custom URL protocols and remaining resource servi
 `ICUResourceBundle.getFullLocaleNameSet` supports resource visitation, list-file and
 index fallback; JVM callers can use `ICUClassLoaderResourceLoader` for directories
 and JAR resources.
+
+ICU CmnD `.dat` packages can be opened in Common code with
+`ICUDataPackage.open(BinaryBuffer(datBytes))`. The package exposes item lookup and
+`asResourceLoader()` for binary bundles. It borrows the supplied storage; keep the
+validated package buffer's position and bounds unchanged. Automatic external
+`ICUBinary.dataPath` discovery is still being ported.

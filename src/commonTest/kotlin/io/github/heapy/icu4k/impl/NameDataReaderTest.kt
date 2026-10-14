@@ -20,7 +20,7 @@ class NameDataReaderTest {
     }
     @Test fun invalidHeadersAndTruncation() {
         val bytes = ICUData.getBytes("unames.icu")!!
-        assertFailsWith<ICUUncheckedIOException> { UCharacterName(BinaryBuffer(bytes.copyOf(10))) }
+        assertFailsWith<IndexOutOfBoundsException> { UCharacterName(BinaryBuffer(bytes.copyOf(10))) }
         val bad = bytes.copyOf(); bad[16] = 2
         assertFailsWith<ICUUncheckedIOException> { UCharacterName(BinaryBuffer(bad)) }
         assertFailsWith<ICUUncheckedIOException> { UCharacterName(BinaryBuffer(bytes.copyOf(bytes.size / 2))) }

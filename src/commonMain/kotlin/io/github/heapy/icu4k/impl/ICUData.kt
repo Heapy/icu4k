@@ -56,6 +56,7 @@ import io.github.heapy.icu4k.impl.data.UemojiData
 
 /** Version-pinned ICU resources available identically on JVM, JS and Native. */
 object ICUData {
+    internal const val PACKAGE_NAME = "icudt78b"
     const val ICU_BUNDLE = "data/icudata"
     const val ICU_BASE_NAME = "com/ibm/icu/impl/$ICU_BUNDLE"
     const val ICU_COLLATION_BASE_NAME = "$ICU_BASE_NAME/coll"

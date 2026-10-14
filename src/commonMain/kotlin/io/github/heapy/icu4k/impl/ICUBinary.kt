@@ -20,26 +20,27 @@ object ICUBinary {
 
     /** Sets byte order from UDataInfo and advances past the complete ICU header. */
     fun readHeader(bytes: BinaryBuffer, dataFormat: Int, authenticate: Authenticate?): Int {
-        require(bytes.position == 0) { "ICU data header must start at buffer position zero" }
-        bytes.requireRemaining(24)
         fun byte(index: Int): Int = bytes.getByte(index).toInt() and 255
-        if (byte(2) != 0xda || byte(3) != 0x27) throw ICUUncheckedIOException("ICU data file error: Not an ICU data file")
+        val magic1 = byte(2); val magic2 = byte(3)
+        if (magic1 != 0xda || magic2 != 0x27) throw ICUUncheckedIOException("ICU data file error: Not an ICU data file")
+        val authenticationError = "ICU data file error: Header authentication failed, please check if you have a valid ICU data file"
         val bigEndian = byte(8)
-        if (bigEndian !in 0..1 || byte(9) != 0 || byte(10) != 2) {
-            throw ICUUncheckedIOException("ICU data file error: Header authentication failed")
-        }
+        val charsetFamily = byte(9); val ucharSize = byte(10)
+        if (bigEndian !in 0..1 || charsetFamily != 0 || ucharSize != 2) throw ICUUncheckedIOException(authenticationError)
         bytes.order = if (bigEndian == 1) BinaryBuffer.ByteOrder.BIG_ENDIAN else BinaryBuffer.ByteOrder.LITTLE_ENDIAN
-        val headerSize = bytes.readUnsignedShort()
-        bytes.position = 4
-        val infoSize = bytes.readUnsignedShort()
-        if (infoSize < 20 || headerSize < infoSize + 4 || headerSize > bytes.limit) {
-            throw ICUUncheckedIOException("ICU data file error: Header size error")
-        }
-        val actualFormat = (byte(12) shl 24) or (byte(13) shl 16) or (byte(14) shl 8) or byte(15)
+        fun shortAt(index: Int): Int = if (bigEndian == 1) (byte(index) shl 8) or byte(index + 1)
+            else (byte(index + 1) shl 8) or byte(index)
+        val headerSize = shortAt(0)
+        val infoSize = shortAt(4)
+        if (infoSize < 20 || headerSize < infoSize + 4) throw ICUUncheckedIOException("Internal Error: Header size error")
         val formatVersion = ByteArray(4) { bytes.getByte(16 + it) }
+        val actualFormat = (byte(12) shl 24) or (byte(13) shl 16) or (byte(14) shl 8) or byte(15)
         if (actualFormat != dataFormat || (authenticate != null && !authenticate.isDataVersionAcceptable(formatVersion))) {
-            throw ICUUncheckedIOException("ICU data file error: Header authentication failed")
+            val format = (12..15).joinToString("") { byte(it).toString(16).padStart(2, '0') }
+            val version = formatVersion.joinToString(".") { (it.toInt() and 255).toString() }
+            throw ICUUncheckedIOException("$authenticationError; data format $format, format version $version")
         }
+        if (headerSize > bytes.limit) throw IllegalArgumentException("newPosition > limit: ($headerSize > ${bytes.limit})")
         bytes.position = headerSize
         return (byte(20) shl 24) or (byte(21) shl 16) or (byte(22) shl 8) or byte(23)
     }

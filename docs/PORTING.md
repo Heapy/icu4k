@@ -2941,3 +2941,38 @@ This is not yet the complete resource scanning subsystem: URLHandler custom
 protocol hooks and diagnostics, ICUBinary external dataPath folders/packages,
 Java-resource dispatch and the rest of ICU4J remain to be ported. Locale-name
 metadata still does not imply that every locale payload is embedded.
+
+### CmnD binary data packages
+
+DatPackageReader now ports ICU4J's complete CmnD version-1 package table reader:
+header authentication, first/last package-prefix validation, binary item search,
+relative name/data offsets, capacity-based final payload bound and immediate
+folder enumeration. Both icudt78b and icudt78l entry prefixes are accepted.
+Validation advances past the header; all later lookups leave package state alone.
+It preserves upstream's suffix-search behavior rather than replacing it with an
+endsWith check, and skips nested paths while continuing the table scan.
+
+ICUDataPackage exposes the reader to Common callers and supplies an
+ICUResourceLoader adapter for real binary bundles, locale fallback and resource
+visitation. Payload views share storage, retain read-only status and have their
+own cursors. BinaryBuffer.duplicate reproduces the original big-endian duplicate
+order; package payload extraction retains that behavior even for little-endian
+package tables. The caller must keep the borrowed package buffer's state stable.
+
+Package differential tests compare 82-item tables, both byte orders and package
+prefixes, mutable/read-only slices, folder/suffix combinations and malformed
+headers/tables with ICU4J's private reader. They also verify shared writes and the
+last item's capacity-based bound after changing the package limit. Common tests
+load real ResB fixtures through a little-endian package, including fallback,
+availability and full locale-name enumeration.
+
+These tests exposed and corrected existing ICUBinary.readHeader error fidelity:
+absolute header reads now leave the original position intact on authentication
+failure, preserve byte-order changes, distinguish short-buffer bounds failures
+from IO authentication rejection and retain original diagnostic messages. A JVM
+header matrix compares truncation, mutated fields, rejecting authenticators,
+messages and partial cursor/order state with ICU4J. An older name-reader test now
+expects the original short-header bounds exception. Full JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 production sources compile. Automatic dataPath
+folder/package discovery, external-file ownership, URL protocol extensions and
+the rest of ICU4J remain unfinished.

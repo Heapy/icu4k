@@ -38,4 +38,28 @@ class ICUBinaryOracleTest {
             assertEquals(j.position(), k.position)
         }
     }
+    @Test fun headerErrorsMessagesAndPartialStateMatchOriginal() {
+        fun outcome(block: () -> Int): Any = try { block() } catch (failure: Throwable) {
+            when (failure) {
+                is java.io.IOException, is io.github.heapy.icu4k.util.ICUUncheckedIOException -> listOf("io", failure.message)
+                is IndexOutOfBoundsException -> "bounds"
+                is IllegalArgumentException -> "argument"
+                else -> failure::class.simpleName!!
+            }
+        }
+        val good = ICUBinary.writeHeader(0x436d6e44, 0x01020304, 0x4e000000)
+        val cases = (0..good.size).map { good.copyOf(it) }.toMutableList()
+        for (index in listOf(0, 1, 2, 3, 4, 5, 8, 9, 10, 12, 15, 16, 19)) {
+            for (value in listOf(0, 1, 2, 127, 255)) cases.add(good.copyOf().also { it[index] = value.toByte() })
+        }
+        for ((i, data) in cases.withIndex()) for (reject in listOf(false, true)) {
+            val java = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
+            val common = BinaryBuffer(data, BinaryBuffer.ByteOrder.LITTLE_ENDIAN)
+            assertEquals(outcome { JavaBinary.readHeader(java, 0x436d6e44, if (reject) JavaBinary.Authenticate { false } else null) },
+                outcome { ICUBinary.readHeader(common, 0x436d6e44, if (reject) ICUBinary.Authenticate { false } else null) }, "case $i/$reject")
+            assertEquals(java.position(), common.position, "position $i/$reject")
+            assertEquals(java.order() == ByteOrder.BIG_ENDIAN, common.order == BinaryBuffer.ByteOrder.BIG_ENDIAN, "order $i/$reject")
+        }
+    }
+
 }
