@@ -3929,3 +3929,21 @@ protected construction and subclass callbacks, including all fallback states
 and terminal exceptions. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
 tests compile. ICULocaleService factories/facade, sorted ICUService display names,
 public Currency/MeasureUnit and the complete ICU4J port remain unfinished.
+
+### Locale service lookup/default core
+
+LocaleServiceCore extracts ICULocaleService's lookup overloads, key creation and
+validateFallbackLocale. Default locale identity changes update its base-name
+fallback, clear only the service-object cache, then publish the new default
+reference. String/ULocale key overloads preserve keyword and kind behavior.
+Locale lookup converts returned descriptors to actual ULocales by stripping any
+kind prefix; misses leave actual-return arrays unchanged and successful empty
+arrays retain bounds failures.
+
+Common tests cover default-locale changes invalidating cached fallback results,
+keyword-bearing actual locales, empty arrays and misses/null locale. JVM oracle
+tests compare successive default changes, fallback queries, kinds and actual
+locale outputs against ICU4J, restoring defaults afterwards. Full JVM, JS Node
+and macOS Arm64 suites pass; Linux x64 test sources compile. This core is internal
+pending the complete ICULocaleService facade and locale factories; sorted display
+names, public Currency/MeasureUnit and the full ICU4J port remain unfinished.
