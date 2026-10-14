@@ -16,3 +16,9 @@ internal actual fun assertUnitIdentifierPower(power: Int) {
 internal actual fun assertUnitFactor(condition: Boolean) {
     if (UnitConversionFactor::class.java.desiredAssertionStatus() && !condition) throw AssertionError()
 }
+
+internal actual fun assertUnitPreference(condition: Boolean, message: String?) {
+    if (UnitPreferences::class.java.desiredAssertionStatus() && !condition) {
+        if (message == null) throw AssertionError() else throw AssertionError(message)
+    }
+}

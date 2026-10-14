@@ -6,7 +6,7 @@ package io.github.heapy.icu4k.impl.units
 import io.github.heapy.icu4k.util.*
 import io.github.heapy.icu4k.impl.units.UnitIdentifierData.Constants
 
-/** Shared identifier model. Public MeasureUnit build bridges and conversion comparators are pending. */
+/** Shared identifier model. Public MeasureUnit build bridges are pending. */
 open class MeasureUnitImpl {
     private var identifier: String? = null
     private var complexity: UnitComplexity? = UnitComplexity.SINGLE
@@ -48,6 +48,22 @@ open class MeasureUnitImpl {
     open fun setComplexity(value: UnitComplexity?) { complexity = value }
     open fun getConstantDenominator(): Long = constantDenominator
     open fun setConstantDenominator(value: Long) { constantDenominator = value }
+    internal class MeasureUnitImplComparator(private val conversionRates: UnitConversionData) : Comparator<MeasureUnitImpl> {
+        override fun compare(a: MeasureUnitImpl, b: MeasureUnitImpl): Int {
+            val first = conversionRates.getSpecialMappingName(a)
+            val second = conversionRates.getSpecialMappingName(b)
+            if (first != null || second != null) {
+                if (first == null) return -1
+                if (second == null) return 1
+                return first.compareTo(second)
+            }
+            return conversionRates.getFactorToBase(a).getConversionRate().compareTo(conversionRates.getFactorToBase(b).getConversionRate())
+        }
+    }
+    internal class MeasureUnitImplWithIndexComparator(conversionRates: UnitConversionData) : Comparator<MeasureUnitImplWithIndex> {
+        private val comparator = MeasureUnitImplComparator(conversionRates)
+        override fun compare(a: MeasureUnitImplWithIndex, b: MeasureUnitImplWithIndex): Int = comparator.compare(a.unitImpl, b.unitImpl)
+    }
     class MeasureUnitImplWithIndex internal constructor(internal var index: Int, internal var unitImpl: MeasureUnitImpl)
     open fun extractIndividualUnitsWithIndices(): ArrayList<MeasureUnitImplWithIndex> = if (getComplexity() == UnitComplexity.MIXED) ArrayList(getSingleUnits().mapIndexed { i, unit -> MeasureUnitImplWithIndex(i, MeasureUnitImpl(unit)) }) else arrayListOf(MeasureUnitImplWithIndex(0, copy()))
     private fun constantString(value: Long): String {
