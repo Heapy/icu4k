@@ -20,6 +20,7 @@ python3 scripts/generate-data.py --check
 ```
 
 See [porting scope](docs/PORTING.md) for measured source size and stages.
+See the [ICU4J bug tracker](docs/ICU4J_BUGS.md) for upstream findings and reproductions.
 Unicode's upstream license and third-party notices are retained in LICENSE.
 
 Common Kotlin normalization is available through `Normalizer2`:
