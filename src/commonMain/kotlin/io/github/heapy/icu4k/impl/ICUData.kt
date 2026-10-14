@@ -70,6 +70,15 @@ object ICUData {
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
     private val resourceNames = setOf("res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
+    internal fun visitResources(directory: String, visitor: (String) -> Unit) {
+        val prefix = directory.removePrefix("/")
+        if (!prefix.startsWith("$ICU_BASE_NAME/")) return
+        val folder = prefix.removePrefix("$ICU_BASE_NAME/")
+        for (name in resourceNames) if (name.startsWith(folder)) {
+            val relative = name.substring(folder.length)
+            if ('/' !in relative) visitor(relative)
+        }
+    }
     private fun itemPath(name: String): String = name.removePrefix("/").removePrefix("$ICU_BASE_NAME/")
     fun exists(resourceName: String): Boolean = itemPath(resourceName) in resourceNames
 

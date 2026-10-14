@@ -324,7 +324,10 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         private data class ReaderCacheKey(val baseName: String, val localeID: String) {
             override fun hashCode(): Int = baseName.hashCode() xor localeID.hashCode()
         }
-        internal val embeddedLoader: ICUResourceLoader = ResourceLoader { name -> ICUData.getBytes(name)?.let { BinaryBuffer(it) } }
+        internal val embeddedLoader: ICUResourceLoader = object : ResourceLoader {
+            override fun getData(fullName: String): BinaryBuffer? = ICUData.getBytes(fullName)?.let { BinaryBuffer(it) }
+            override fun visitResources(directory: String, visitor: (String) -> Unit) = ICUData.visitResources(directory, visitor)
+        }
         // Cache keys intentionally omit the loader, matching ICU4J's first-publication semantics.
         private val readers = object : SoftCache<ReaderCacheKey, ICUResourceBundleReader, ICUResourceLoader>() {
             override fun createInstance(key: ReaderCacheKey, data: ICUResourceLoader): ICUResourceBundleReader? {

@@ -2906,3 +2906,38 @@ original configured engine. Node tests verify environment-driven registry setup
 and runtime switching. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
 production sources compile. Other configuration consumers and the full ICU4J
 port remain unfinished.
+
+### Debug parameter snapshots
+
+ICUDebug now preserves the one-time parameter snapshot, substring flag/value
+lookup, empty-string activation, help output and conditional null-argument
+behavior. JVM reads the original system property and ignores SecurityException;
+Node and Native use their host configuration environment boundary. Differential
+JVM tests compare return values, exceptions and exact output with isolated ICU4J
+classes. Common tests cover the same parsing boundaries. JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 production sources compile. The full port remains
+unfinished.
+
+### Full locale-name source selection
+
+ICUResourceBundle.getFullLocaleNameSet now uses the original lazy, prefix-keyed
+availability cache, scan/list/index source order, scan flag, locale-looking-name
+filter and root-name normalization. Returned sets reject mutation. The scan
+filter intentionally retains any name containing an underscore, including the
+embedded LSTM model names. The list-file path preserves whitespace and only
+skips empty lines and lines beginning with '#'.
+
+ICUResourceLoader now offers resource visitation and ASCII-line boundaries while
+remaining a SAM for existing binary-only loaders. The embedded loader enumerates
+its actual immediate resource files. ICUClassLoaderResourceLoader adapts JVM
+ClassLoader binary reads, privileged directory enumeration and file/JAR/wsjar
+visitation; list reads retain already delivered lines after read/close IO errors.
+JVM differential tests compare all three sources, nested-file exclusion, flag
+parsing, missing data, partial list reads and close failures with ICU4J. Common
+tests cover filtering, immutable cached sets, root normalization and ASCII lines.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+
+This is not yet the complete resource scanning subsystem: URLHandler custom
+protocol hooks and diagnostics, ICUBinary external dataPath folders/packages,
+Java-resource dispatch and the rest of ICU4J remain to be ported. Locale-name
+metadata still does not imply that every locale payload is embedded.

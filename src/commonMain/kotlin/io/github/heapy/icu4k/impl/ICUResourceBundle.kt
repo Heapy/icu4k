@@ -154,6 +154,13 @@ open class ICUResourceBundle : UResourceBundle {
             private val lock = createAvailabilityLock()
             private val ulocales = AtomicReference<Map<ULocale.AvailableType, Array<ULocale>>?>(null)
             private val names = AtomicReference<Set<String>?>(null)
+            private val fullNames = AtomicReference<Set<String>?>(null)
+            fun getFullLocaleNameSet(): Set<String> {
+                if (fullNames.load() == null) lock.withLock {
+                    if (fullNames.load() == null) fullNames.store(createFullLocaleNameSet(prefix, loader))
+                }
+                return fullNames.load()!!
+            }
             fun getULocaleList(type: ULocale.AvailableType): Array<ULocale>? {
                 if (ulocales.load() == null) lock.withLock {
                     if (ulocales.load() == null) ulocales.store(createULocaleList(prefix, loader))
@@ -209,6 +216,36 @@ open class ICUResourceBundle : UResourceBundle {
             getAvailableULocales(ICUData.ICU_BASE_NAME, ICUResourceBundleReader.embeddedLoader, type)
         fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
             getAvailEntry(baseName, loader).getLocaleNameSet()
+        fun getFullLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
+            getAvailEntry(baseName, loader).getFullLocaleNameSet()
+        private fun createFullLocaleNameSet(baseName: String, loader: ICUResourceLoader): Set<String> {
+            val directory = if (baseName.endsWith('/')) baseName else "$baseName/"
+            val names = HashSet<String>()
+            val skip = ICUConfig.get("com.ibm.icu.impl.ICUResourceBundle.skipRuntimeLocaleResourceScan", "false")
+            if (!"true".equals(skip, ignoreCase = true)) {
+                loader.visitResources(directory) { name -> if (name.endsWith(".res")) names.add(name.dropLast(4)) }
+                names.remove("res_index")
+                val iterator = names.iterator()
+                while (iterator.hasNext()) {
+                    val name = iterator.next()
+                    if ((name.length == 1 || name.length > 3) && '_' !in name) iterator.remove()
+                }
+            }
+            if (names.isEmpty()) loader.readAsciiLines(directory + "fullLocaleNames.lst") { line ->
+                if (line.isNotEmpty() && !line.startsWith('#')) names.add(line)
+            }
+            if (names.isEmpty()) {
+                try {
+                    val installed = getBundleInstance(baseName, "res_index", loader, true)[INSTALLED_LOCALES]
+                    val iterator = installed.getIterator()
+                    iterator.reset()
+                    while (iterator.hasNext()) names.add(iterator.next().getKey()!!)
+                } catch (_: MissingResourceException) { }
+            }
+            names.remove("root")
+            names.add(ULocale.ROOT.toString())
+            return localeReadOnlySet(names)
+        }
         fun getFunctionalEquivalent(baseName: String, loader: ICUResourceLoader, resName: String, keyword: String,
                                     locID: ULocale, isAvailable: BooleanArray?, omitDefault: Boolean): ULocale {
             var keywordValue = locID.getKeywordValue(keyword) ?: ""

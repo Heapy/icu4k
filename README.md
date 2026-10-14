@@ -76,4 +76,7 @@ Locale availability lists come from the pinned ICU indexes; not all listed local
 payloads are embedded yet. The embedded subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
 The `UResourceBundle` factory dispatch, Java bundle interoperability and
-full runtime locale-resource scanning and remaining resource services are in progress.
+external binary-data scanning, custom URL protocols and remaining resource services are in progress.
+`ICUResourceBundle.getFullLocaleNameSet` supports resource visitation, list-file and
+index fallback; JVM callers can use `ICUClassLoaderResourceLoader` for directories
+and JAR resources.
