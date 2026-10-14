@@ -133,6 +133,21 @@ object SimpleFormatterImpl {
         compiledPattern[1].code <= ARG_NUM_LIMIT -> 0
         else -> compiledPattern[1].code - ARG_NUM_LIMIT
     }
+    fun formatPrefixSuffix(compiledPattern: String, field: io.github.heapy.icu4k.text.FormatField?, start: Int, end: Int, output: FormattedStringBuilder): Int {
+        if (getArgumentLimit(compiledPattern) == 0) return output.splice(start, end, compiledPattern, 2, compiledPattern.length, field)
+        var length = 0
+        val suffixOffset: Int
+        if (compiledPattern[1] != '\u0000') {
+            val prefixLength = compiledPattern[1].code - ARG_NUM_LIMIT
+            length = output.insert(start, compiledPattern, 2, 2 + prefixLength, field)
+            suffixOffset = 3 + prefixLength
+        } else suffixOffset = 2
+        if (suffixOffset < compiledPattern.length) {
+            val suffixLength = compiledPattern[suffixOffset].code - ARG_NUM_LIMIT
+            length += output.insert(end + length, compiledPattern, 1 + suffixOffset, 1 + suffixOffset + suffixLength, field)
+        }
+        return length
+    }
     class IterInternal {
         companion object {
             const val DONE = -1L

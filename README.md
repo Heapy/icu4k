@@ -130,3 +130,9 @@ The complete locale payload set is still being ported.
 `SimpleFormatter` compiles ICU numbered patterns and supports apostrophe quoting,
 argument offsets and append/replace formatting, including use of the result builder
 as an argument during replacement. Example: `SimpleFormatter.compile("{1} in {0}")`.
+
+
+`FormattedStringBuilder` supplies centered UTF-16 edits with per-code-unit fields,
+and `SimpleFormatterImpl.formatPrefixSuffix` applies compiled wrappers to a span.
+`FormatField` uses Java Format.Field on JVM; extracted `NumberFormatField` identities
+support numeric annotations while the full NumberFormat implementation is pending.

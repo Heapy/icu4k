@@ -3380,3 +3380,38 @@ SimpleFormatterImpl.formatPrefixSuffix is still pending because its
 FormattedStringBuilder and formatting-field dependencies are not yet ported.
 This stage supplies the standalone formatting dependency for locale display names;
 those services and the complete ICU4J port remain unfinished.
+
+
+### Common FormattedStringBuilder and formatter prefix/suffix
+
+FormattedStringBuilder now ports centered char/field storage, prepend/append growth,
+insert/splice/removal, code-point access, append positions/fields, copy/subsequence,
+char/field array snapshots, wrapped-field identity comparison, debug rendering and
+unsupported mutable equality/hash operations. Copies and clear preserve upstream's
+append metadata behavior. CharSequence self-insertion retains source aliasing;
+typed builder insertion rejects self. Invalid code points preserve buffer mutation
+before Character-style validation, matching the original operation order.
+
+FormatField bridges to java.text.Format.Field on JVM and portable field identities
+on JS/Native. Extracted NumberFormatField implements the numeric singleton names,
+debug tokens and readResolve mapping in preparation for NumberFormat. JVM
+serialization canonicalizes recognized names and rejects APPROXIMATELY_SIGN, as
+the source does. This extracted field type does not complete NumberFormat or its
+Java member/static facade compatibility.
+
+SimpleFormatterImpl.formatPrefixSuffix is now implemented for attributed spans.
+It preserves the source's compiled-slice behavior, including long no-argument
+patterns with embedded segment markers. JVM code-point access delegates to
+Character's array operations; JS/Native share forward/backward surrogate rules
+and checked physical array reads.
+
+Common tests cover field storage, edits/copies, code points, debug tokens, wrappers,
+append offsets and prefix/suffix application. JVM differential tests compare 2,500
+randomized edits at five initial capacities, complete buffer/field/code-point
+snapshots, long wrapper patterns and append positions. Additional tests cover
+char/field arrays, CharSequence self-aliasing, invalid-code-point partial state,
+wrapped fields, invalid field diagnostics and numeric-field serialization.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+A subsequent full JVM suite passes with additional alias/failure tests. Locale
+display names, full number formatting and the rest of ICU4J remain unfinished.
