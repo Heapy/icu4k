@@ -2867,3 +2867,25 @@ result names, missing-resource metadata and output flags, and test absent-defaul
 and output-array error boundaries. Full JVM, JS Node and macOS Arm64 suites pass;
 Linux x64 production sources compile. Java-resource dispatch and the other
 unfinished ICU4J components remain outside this completed service method.
+
+### Runtime ICU configuration
+
+ICUConfig now preserves configuration-file defaults, per-query nonempty host
+property precedence, empty override fallback and caller defaults. The original
+six defaults are checksum-pinned in data/config/ICUConfig.properties; a generator
+produces Common defaults and the JVM classpath resource, and CI checks both.
+
+JVM retains Properties.load, privileged host/resource access where applicable,
+stream closing, ignored missing/IO failures and partial properties. Defaults are
+published incrementally during initialization so reentrant loading sees the same
+empty/partial state as ICU4J. Native and Node use environment overrides; browser JS
+uses pinned defaults when no Node environment is present. Native/Node reject NUL
+names at the environment boundary to avoid prefix lookup through C strings.
+
+Common tests cover all pinned defaults, caller fallback and empty names. Node
+checks dynamic overrides, empty/whitespace values and NUL names. JVM compares
+custom escaped/continued properties, missing files, partial read failures,
+close-failure precedence and reentrant initialization traces with ICU4J in isolated
+loaders. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources
+compile. Runtime resource scanning and other ICUConfig consumers remain part of
+the unfinished full ICU4J port.
