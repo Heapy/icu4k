@@ -324,6 +324,13 @@
       "object": "LocaleMetadataResourceData",
       "sha256": "c757d390e7fec918843f21d09436a0c4286519bd159fd077fa967021f8f00b54",
       "size": 39104
+    },
+    {
+      "name": "supplementalData.res",
+      "file": "data/icu78/supplementalData.res",
+      "object": "SupplementalResourceData",
+      "sha256": "f5b3db170dbf9534a9172fa54963efebb2d157031fa16430678c95343524487d",
+      "size": 241440
     }
   ]
 }

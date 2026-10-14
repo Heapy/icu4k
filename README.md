@@ -112,3 +112,8 @@ Remaining locale services and Java callable facade compatibility are still being
 The Common LSR resource codec and pinned `langInfo.res`/`metadata.res` provide the
 foundation for likely-subtags and alias canonicalization. Their engines and
 ULocale entry points are still being ported.
+
+
+`Region` provides pinned territory IDs, numeric/three-letter aliases, deprecated
+preferred values, and geographic/grouping containment in Common code. For example,
+`Region.getInstance("IT").getContainingRegion(Region.RegionType.CONTINENT)` is `150`.

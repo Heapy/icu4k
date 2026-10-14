@@ -3212,3 +3212,34 @@ records, hash codes and encoding across language/region combinations and all
 script property codes with ICU4J. Full JVM, JS Node and macOS Arm64 suites pass;
 Linux x64 test sources compile. The generator check passes for all 45 resources.
 The complete ICU4J port remains unfinished.
+
+
+### Common Region classification and containment
+
+Region now ports its complete public lookup/classification/containment API in
+Common code. Metadata territory aliases and supplementalData validity ranges,
+code mappings and containment create the shared region identities. String and
+numeric lookups retain deprecated single-replacement canonicalization, padded
+numeric alias fallback and original unknown-ID/code diagnostics. WORLD, UNKNOWN,
+CONTINENT, SUBCONTINENT and GROUPING special cases match upstream, including QO.
+
+Groupings contain their members without becoming geographic parents. Recursive
+parent/type and descendant/type queries preserve the source traversal semantics,
+including nullable type queries. Contained/available sets iterate by region ID;
+preferred-value lists retain data order. Views reject mutations, including JVM
+removeIf/replaceAll callbacks before evaluation. Region equality retains object
+identity; compareTo uses the region ID. Reentrant initialization publishes a
+fully built snapshot atomically and retries after a failed load.
+
+Pinned supplementalData.res brings the embedded manifest to 46 resources. Common
+tests verify aliases, numbers, classification, deprecated preferences, hierarchy,
+null boundaries and immutable views on JVM, JS and Native. JVM differential tests
+compare every available region and type, complete typed hierarchy, all-pairs
+containment/comparison, every metadata alias/code mapping and numeric lookups from
+-20 through 1200 with ICU4J. Cold isolated class-loader tests launch eight concurrent
+initial lookups and verify one region identity for both implementations.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+A subsequent full JVM run passes with the cold concurrency test, and the data
+generator check passes for all 46 resources. LikelySubtags and ULocale canonicalize/
+addLikelySubtags remain to be ported; the complete ICU4J objective remains active.
