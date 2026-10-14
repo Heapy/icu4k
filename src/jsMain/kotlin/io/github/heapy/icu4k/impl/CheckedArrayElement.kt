@@ -13,3 +13,8 @@ internal actual fun checkedSetArrayElement(values: BooleanArray, index: Int, val
     if (index !in values.indices) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
     values[index] = value
 }
+
+internal actual fun checkedSetArrayElement(values: Array<String?>, index: Int, value: String?) {
+    if (index !in values.indices) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
+    values[index] = value
+}

@@ -4,3 +4,5 @@ internal expect fun checkedArrayElement(values: Array<String>, index: Int): Stri
 internal expect fun checkedArrayElement(values: IntArray, index: Int): Int
 
 internal expect fun checkedSetArrayElement(values: BooleanArray, index: Int, value: Boolean)
+
+internal expect fun checkedSetArrayElement(values: Array<String?>, index: Int, value: String?)

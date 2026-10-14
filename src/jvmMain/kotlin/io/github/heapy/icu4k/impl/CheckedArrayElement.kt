@@ -6,3 +6,7 @@ internal actual fun checkedArrayElement(values: IntArray, index: Int): Int = val
 internal actual fun checkedSetArrayElement(values: BooleanArray, index: Int, value: Boolean) {
     values[index] = value
 }
+
+internal actual fun checkedSetArrayElement(values: Array<String?>, index: Int, value: String?) {
+    values[index] = value
+}

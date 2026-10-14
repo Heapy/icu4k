@@ -3885,3 +3885,27 @@ wrong-thread release rejection and 2,000 protected shared updates from four
 workers. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile.
 ICUService/ICULocaleService, public Currency/MeasureUnit and the complete ICU4J
 port remain unfinished.
+
+### ICUService lookup and registry
+
+ICUService now contains Key, Factory and SimpleFactory; factory registration,
+unregistration/reset; fallback lookup and descriptor caching; actual-ID output;
+visible-ID enumeration and single-ID display names; default hooks; service
+listeners and lock statistics. Factory changes invalidate caches. Delegating
+lookups start after the calling factory, retain source cache-hit behavior and
+avoid publishing delegated results. Visible maps preserve the oldest-to-newest
+factory update order and unmodifiable views; filtered ID sets and factory-list
+copies remain mutable as in ICU4J. Protected JVM fields and SimpleFactory's
+Java two-/three-argument constructors are retained.
+
+Common tests cover hidden overrides, cache invalidation, old visible snapshots,
+actual-ID output, factory delegation, callback errors and reset. JVM oracle tests
+compare fallback chains, repeated cached lookups, visible filtering, single-ID
+display names, delegated traces and statistics. Java reflection verifies the
+constructor and protected-field contracts. Full JVM, JS Node and macOS Arm64
+suites pass; Linux x64 tests compile. A further JVM suite passes after adding the
+JVM-only constructor overload and Java API checks.
+
+Sorted display-name enumeration/cache and debug tracing are not ported yet;
+ICUService is not claimed complete. ICULocaleService, public Currency/MeasureUnit
+and the complete ICU4J port remain unfinished.
