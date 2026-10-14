@@ -3552,3 +3552,34 @@ JVM retains String.format's FORMAT-locale digit localization. Portable localized
 pattern indices still require the numbering-system/number-formatting stage.
 Only selected locale payloads are embedded; the full data and ICU4J ports remain
 unfinished. SimpleCache remains subclassable as in the source.
+
+### NumberingSystem
+
+NumberingSystem now implements the default Latin constructor, custom factories,
+name and locale lookup, available-name enumeration, algorithmic status and digit
+validation in Common Kotlin. Its locale cache uses base name plus numbers keyword;
+native/finance fall back to default, traditional falls back through native, and
+unknown explicit system names fall back to the locale default. Name misses retain
+SoftCache's cached-null semantics. LATIN performs its own uncached resource lookup,
+matching source initialization. Java Locale lookup is a JVM extension.
+
+Numeric validation checks exactly ten code points without requiring uniqueness or
+Unicode decimal digits. Non-decimal numeric radices are rejected by the original
+combined count checks; algorithmic radices at least two and null algorithmic
+descriptions are accepted. Public getters remain overridable. The complete pinned
+numberingSystems.res bundle is embedded; the resource manifest now has 59 entries.
+
+JVM oracle tests compare every available named system, default state, seventeen
+locale identifiers with eleven keyword choices, Java locale conversion and null
+inputs. Factory comparisons cover extreme radices, repeated/non-digit characters,
+supplementary digits and unpaired surrogates. Common tests verify resource ordering,
+algorithmic systems, keyword fallback and supplementary descriptions. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 test sources compile; generated data
+checks pass.
+
+ListFormatter's portable localized pattern indices remain unfinished: the source
+uses JDK String.format/DecimalFormatSymbols, whose accepted digit systems and
+fallback differ from ICU digit descriptions (for example hanidec and mathbold).
+This needs the numeric-symbol/platform formatting stage rather than substituting
+the first ICU description character. Complete locale payload coverage, number
+formatting and the full ICU4J port remain unfinished.

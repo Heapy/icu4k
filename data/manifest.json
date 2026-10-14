@@ -427,6 +427,14 @@
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/he.res",
       "sha256": "24e1197b0b787dea89f6d2e4d3d4d953d6603db6d42be538aab4bf5ee708b65d",
       "size": 22128
+    },
+    {
+      "name": "numberingSystems.res",
+      "file": "data/icu78/numberingSystems.res",
+      "object": "NumberingSystemsResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/numberingSystems.res",
+      "sha256": "bcfe6407c0b9d08e985017d599a0de1d2bf351c9918cc76e347d6fb391af7ef7",
+      "size": 6704
     }
   ]
 }
