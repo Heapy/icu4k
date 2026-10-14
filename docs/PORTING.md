@@ -2696,3 +2696,23 @@ exercise compute/merge/replaceAll and ensure callbacks do not run. Full JVM,
 JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
 This supplies parent selection for the unfinished bundle factory; bundle-chain
 construction, concrete array/table objects and general aliases remain pending.
+
+### Reader shared UTF-16 and binary view fidelity
+
+The reader's 16-bit segment now retains a BinaryBuffer view rather than a copied
+CharArray, matching ICU4J's shared CharBuffer. Compact array references and
+no-inheritance marker checks therefore observe updates through the original
+writable owner, including when the reader itself receives a read-only view.
+Decoded strings still follow the original resource-cache retention rules.
+
+Binary resource views preserve the upstream BIG_ENDIAN result even for
+little-endian input: ICU4J's intermediate ByteBuffer.duplicate resets byte order
+before sliceWithOrder. This also applies to read-only input. Empty binary views
+retain their separate empty-buffer behavior. getVersion now returns VersionInfo
+from the resource header. Invalid index counts/data lengths throw ICUException,
+rather than the previous generic IllegalStateException.
+
+JVM differential fixtures cover both byte orders and input protection modes,
+binary payload/order/protection, compact references, marker updates and version.
+Common regressions cover shared compact storage and index-header exception types.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.

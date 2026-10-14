@@ -201,4 +201,31 @@ class ResourceBundleReaderTest {
         assertEquals(0, input.position)
     }
 
+    @Test fun compactResourcesAndMarkersReadSharedSixteenBitStorage() {
+        val input = fixture { body ->
+            body.position = 50; body.writeShort('v'.code); body.writeShort(0)
+            body.position = 54; repeat(3) { body.writeShort(0x2205) }; body.writeShort(0)
+            body.position = 64; body.writeShort(1); body.writeShort(1)
+            body.position = 72; body.writeShort('y'.code); body.writeShort(0)
+        }
+        val reader = ICUResourceBundleReader(input.asReadOnlyBuffer())
+        val array = reader.getArray(0x90000008.toInt())!!
+        assertEquals("v", reader.getString(array.getContainerResource(0)))
+        val value = ICUResourceBundleReader.ReaderValue().also { it.reader = reader; it.res = 0x60000003 }
+        assertTrue(value.isNoInheritanceMarker())
+        input.position = 32 + 54; input.writeShort('x'.code)
+        assertFalse(value.isNoInheritanceMarker())
+        input.position = 32 + 66; input.writeShort(12)
+        assertEquals("y", reader.getString(array.getContainerResource(0)))
+        assertEquals("17.0.0.0", reader.getVersion().toString())
+    }
+    @Test fun invalidIndexHeadersUseOriginalIcuExceptionType() {
+        val indexes = fixture { }
+        indexes.position = 32 + 4; indexes.writeInt(4); indexes.position = 0
+        assertEquals("not enough indexes", assertFailsWith<io.github.heapy.icu4k.util.ICUException> { ICUResourceBundleReader(indexes) }.message)
+        val length = fixture { }
+        length.position = 32 + 16; length.writeInt(1000); length.position = 0
+        assertEquals("not enough bytes", assertFailsWith<io.github.heapy.icu4k.util.ICUException> { ICUResourceBundleReader(length) }.message)
+    }
+
 }

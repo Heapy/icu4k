@@ -5,13 +5,15 @@ package io.github.heapy.icu4k.impl
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.UResourceTypeMismatchException
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
+import io.github.heapy.icu4k.util.ICUException
+import io.github.heapy.icu4k.util.VersionInfo
 
 /** Binary ResB value decoding. Locale fallback and the resource-object facade are separate. */
 internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: ICUResourceBundleReader? = null,
     private val loadPool: (() -> ICUResourceBundleReader?)? = null) {
     private val bytes: BinaryBuffer
     private val keys: ByteArray
-    private val units: CharArray
+    private val units: BinaryBuffer
     private val resourceCache: ResourceCache?
     private val localKeyLimit: Int
     private val poolStringIndexLimit: Int
@@ -32,8 +34,8 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         rootResource = intAt(0)
         val indexes0 = intAt(4)
         val count = indexes0 and 255
-        check(count > 4) { "not enough indexes" }
-        check(bytes.limit >= (1 + count) * 4 && bytes.limit >= intAt(16) * 4) { "not enough bytes" }
+        if (count <= 4) throw ICUException("not enough indexes")
+        if (bytes.limit < (1 + count) * 4 || bytes.limit < intAt(16) * 4) throw ICUException("not enough bytes")
         val attributes = if (count > 5) intAt(24) else 0
         noFallback = attributes and 1 != 0
         isPoolBundle = attributes and 2 != 0
@@ -48,9 +50,9 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             ByteArray(keysTop - start) { bytes.getByte(start + it) }
         } else byteArrayOf()
         val unitsTop = if (count > 6) intAt(28) * 4 else keysTop
-        units = if (unitsTop > keysTop) CharArray((unitsTop - keysTop) / 2) { charAt(keysTop + 2 * it).toChar() }
-            else charArrayOf('\u0000')
-        resourceCache = if (!isPoolBundle || units.size > 1) ResourceCache((intAt(16) - 1) or (units.size - 1)) else null
+        units = if (unitsTop > keysTop) bytes.slice(keysTop, unitsTop - keysTop)
+            else BinaryBuffer(byteArrayOf(0, 0), bytes.order)
+        resourceCache = if (!isPoolBundle || units.limit > 2) ResourceCache((intAt(16) - 1) or (units.limit / 2 - 1)) else null
         poolChecksum = if (count > 7) intAt(32) else 0
         if (usesPoolBundle) {
             if (pool == null) pool = loadPool?.invoke()
@@ -58,6 +60,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             check(poolChecksum == pool!!.poolChecksum) { "pool.res has a different checksum than this bundle" }
         }
     }
+    fun getVersion(): VersionInfo = ICUBinary.getVersionInfoFromCompactInt(dataVersion)
     private fun intAt(offset: Int): Int {
         val cursor = bytes.sliceAt(offset)
         return cursor.readInt()
@@ -65,8 +68,10 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
     private fun charAt(offset: Int): Int = bytes.sliceAt(offset).readUnsignedShort()
     private fun BinaryBuffer.sliceAt(offset: Int): BinaryBuffer = slice(offset)
     private fun unitAt(offset: Int): Int {
-        if (offset !in units.indices) throw IndexOutOfBoundsException()
-        return units[offset].code
+        if (offset < 0 || offset >= units.limit / 2) throw IndexOutOfBoundsException()
+        val first = units.getByte(offset * 2).toInt() and 255
+        val second = units.getByte(offset * 2 + 1).toInt() and 255
+        return if (units.order == BinaryBuffer.ByteOrder.BIG_ENDIAN) (first shl 8) or second else (second shl 8) or first
     }
     private fun stringAt(offset: Int, length: Int): String {
         if (length < 0 || offset < 0 || length > (bytes.limit - offset) / 2) throw IndexOutOfBoundsException()
@@ -84,8 +89,8 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         if (first < 0xdfef) { length = first and 0x3ff; offset++ }
         else if (first < 0xdfff) { length = ((first - 0xdfef) shl 16) or unitAt(offset + 1); offset += 2 }
         else { length = (unitAt(offset + 1) shl 16) or unitAt(offset + 2); offset += 3 }
-        if (length < 0 || offset > units.size - length) throw IndexOutOfBoundsException()
-        return units.concatToString(offset, offset + length)
+        if (length < 0 || offset > units.limit / 2 - length) throw IndexOutOfBoundsException()
+        return CharArray(length) { unitAt(offset + it).toChar() }.concatToString()
     }
     private fun getStringV2(res: Int): String {
         val offset = RES_GET_UINT(res)
@@ -156,7 +161,11 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         if (RES_GET_TYPE(res) != 1) return null
         val offset = RES_GET_UINT(res) * 4
         if (offset == 0) return BinaryBuffer(byteArrayOf()).asReadOnlyBuffer()
-        return bytes.sliceAt(offset + 4).also { it.limit = intAt(offset) }.slice().asReadOnlyBuffer()
+        val length = intAt(offset)
+        if (length == 0) return BinaryBuffer(byteArrayOf()).asReadOnlyBuffer()
+        val result = bytes.slice(offset + 4, length)
+        // ICU4J's ByteBuffer.duplicate resets order before sliceWithOrder, even for read-only input.
+        return result.asReadOnlyBuffer().also { it.order = BinaryBuffer.ByteOrder.BIG_ENDIAN }
     }
     class ReaderValue : UResource.Value() {
         lateinit var reader: ICUResourceBundleReader
