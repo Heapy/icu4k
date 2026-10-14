@@ -99,6 +99,45 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
         }
         return name
     }
+    fun getUiListCompareWholeItems(localeSet: Set<ULocale?>?, comparator: Comparator<LocaleUiListItem>?): MutableList<LocaleUiListItem> {
+        val result = ArrayList<LocaleUiListItem>()
+        val groups = HashMap<ULocale, MutableSet<ULocale>>()
+        val builder = ULocale.Builder()
+        for (original in localeSet!!) {
+            builder.setLocale(original!!)
+            val maximized = ULocale.addLikelySubtags(original)
+            val base = ULocale(maximized.getLanguage())
+            groups.getOrPut(base) { HashSet() }.add(maximized)
+        }
+        for ((base, values) in groups) {
+            if (values.size == 1) result.add(newUiRow(ULocale.minimizeSubtags(values.first(), ULocale.Minimize.FAVOR_SCRIPT)))
+            else {
+                val scripts = HashSet<String>(); val regions = HashSet<String>()
+                val maximumBase = ULocale.addLikelySubtags(base)
+                scripts.add(maximumBase.getScript()); regions.add(maximumBase.getCountry())
+                for (value in values) { scripts.add(value.getScript()); regions.add(value.getCountry()) }
+                val hasScripts = scripts.size > 1; val hasRegions = regions.size > 1
+                for (value in values) {
+                    val modified = builder.setLocale(value)
+                    if (!hasScripts) modified.setScript("")
+                    if (!hasRegions) modified.setRegion("")
+                    result.add(newUiRow(modified.build()))
+                }
+            }
+        }
+        sortLocaleUiItems(result, comparator)
+        return result
+    }
+    private fun newUiRow(modified: ULocale): LocaleUiListItem {
+        val minimized = ULocale.minimizeSubtags(modified, ULocale.Minimize.FAVOR_SCRIPT)
+        val inDisplay = LocaleDisplayNameComponents(locale).localeDisplayName(modified)!!
+        val inSelf = LocaleDisplayNameComponents(modified).localeDisplayName(modified)!!
+        val title = capitalization == DisplayContext.CAPITALIZATION_FOR_UI_LIST_OR_MENU
+        val casing = CaseMap.toTitle().wholeString().noLowercase()
+        return LocaleUiListItem(minimized, modified,
+            if (title) casing.apply(locale, null, inDisplay) else inDisplay,
+            if (title) casing.apply(modified, null, inSelf) else inSelf)
+    }
     fun localeDisplayName(localeId: String?): String? = localeDisplayName(ULocale(localeId!!))
     fun localeDisplayName(input: ULocale?): String? {
         val target = input!!

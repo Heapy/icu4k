@@ -4124,3 +4124,27 @@ unknown keywords, no-substitute and final French capitalization. Full JVM,
 JS Node and macOS Arm64 suites pass; Linux x64 tests compile. UI list generation
 and the public LocaleDisplayNames cache/provider facade remain unfinished, as do
 locale service factories, Currency/MeasureUnit and the complete ICU4J port.
+
+### Locale UI lists and item values
+
+The display-name engine now creates UI rows by validating inputs, maximizing and
+deduplicating locales by base language, seeding distinguishing scripts/regions
+with the language default, and retaining only required differences. Single rows
+and minimized fields use FAVOR_SCRIPT. Display/in-self names use standard full
+substituting display names independently of caller length/substitution contexts;
+only UI_LIST_OR_MENU applies whole-string/no-lowercase titlecasing to UI labels.
+The returned list is mutable and sorted with the caller's whole-item comparator.
+Null comparators preserve natural-sort failure behavior for multiple rows.
+
+LocaleUiListItem retains source field values, short-circuit equality, hash/string
+format and name comparator with modified-locale tie-breaking. JVM sorting uses
+List.sort; JS/Native use the portable stable-sort path and matching null-comparator
+failure type. Oracle tests compare grouped rows, defaults/unusual scripts/regions,
+legacy/unknown locales and keywords, display/in-self sorting, caller contexts,
+malformed variants and all nullable-item field combinations against ICU4J. Common
+tests cover deduplication, modified regions, French UI capitalization, mutable
+results, comparator ties and null sorting. Full JVM, JS Node and macOS Arm64 suites
+pass; Linux x64 tests compile. A further JVM suite passes after expanding row and
+nullable-field coverage. UI types/engine remain internal pending LocaleDisplayNames'
+public/cache/provider facade. Locale services, Currency/MeasureUnit and the full
+ICU4J port remain unfinished.
