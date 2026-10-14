@@ -104,6 +104,31 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         }
         return of(sign, integer, newScale)
     }
+    fun divideToScale(other: UnitDecimal, newScale: Int, rounding: Rounding = Rounding.HALF_EVEN): UnitDecimal {
+        if (other.sign == 0) throw ArithmeticException(if (sign == 0) "Division undefined" else "Division by zero")
+        if (sign == 0) return of(0, "0", newScale)
+        val shift = other.scale.toLong() + newScale - scale
+        val numerator = if (shift >= 0) zeros(magnitude, shift) else magnitude
+        val denominator = if (shift < 0) zeros(other.magnitude, -shift) else other.magnitude
+        val (quotient, remainder) = divideNatural(numerator, denominator)
+        var result = quotient
+        if (remainder != "0") {
+            val halfway = compareNatural(multiplyNatural(remainder, "2"), denominator)
+            val resultSign = sign * other.sign
+            val up = when (rounding) {
+                Rounding.UP -> true
+                Rounding.DOWN -> false
+                Rounding.CEILING -> resultSign > 0
+                Rounding.FLOOR -> resultSign < 0
+                Rounding.HALF_UP -> halfway >= 0
+                Rounding.HALF_DOWN -> halfway > 0
+                Rounding.HALF_EVEN -> halfway > 0 || halfway == 0 && (quotient.last() - '0') % 2 != 0
+                Rounding.UNNECESSARY -> throw ArithmeticException("Rounding necessary")
+            }
+            if (up) result = addNatural(result, "1")
+        }
+        return of(sign * other.sign, result, newScale)
+    }
     fun stripTrailingZeros(): UnitDecimal {
         if (sign == 0) return ZERO
         val stripped = magnitude.trimEnd('0')
