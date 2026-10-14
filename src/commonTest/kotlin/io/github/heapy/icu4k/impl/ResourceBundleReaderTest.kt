@@ -47,6 +47,46 @@ class ResourceBundleReaderTest {
             body.writeInt(32); body.writeInt(0x60000001)
             body.position = 208; for (v in intArrayOf(2, 36, 38, 0x20000030, 0x90000008.toInt())) body.writeInt(v)
         })
+        val value = ICUResourceBundleReader.ReaderValue().also { it.reader = reader }
+        for ((handle, expected) in listOf(32 to "ok", 0x60000001 to "v")) {
+            value.res = handle
+            assertEquals(0, value.getType()); assertEquals(expected, value.getString())
+            assertContentEquals(arrayOf(expected), value.getStringArrayOrStringAsArray())
+            assertEquals(expected, value.getStringOrFirstOfArray())
+            assertFailsWith<io.github.heapy.icu4k.util.UResourceTypeMismatchException> { value.getInt() }
+        }
+        value.res = 0x7fffffff
+        assertEquals(-1, value.getInt()); assertEquals(0xfffffff, value.getUInt())
+        value.res = 0x30000023; assertEquals("ja", value.getAliasString())
+        value.res = 0x10000026
+        val binary = value.getBinary()
+        assertContentEquals(byteArrayOf(1, 2, 3), binary.readBytes(3))
+        assertEquals(0, value.getBinary().position)
+        val readOnly = value.getBinary()
+        assertTrue(readOnly.isReadOnly)
+        for (buffer in listOf(readOnly, readOnly.slice(), readOnly.asReadOnlyBuffer())) {
+            assertFailsWith<UnsupportedOperationException> { buffer.writeByte(9) }
+            assertFailsWith<UnsupportedOperationException> { buffer.writeShort(9) }
+            assertFailsWith<UnsupportedOperationException> { buffer.writeInt(9) }
+            assertEquals(0, buffer.position)
+            buffer.bytes.fill(9)
+            assertEquals(1, buffer.getByte(0).toInt())
+        }
+        val mutable = BinaryBuffer(byteArrayOf(1, 2, 3))
+        mutable.position = 1
+        val view = mutable.asReadOnlyBuffer()
+        assertEquals(1, view.position)
+        mutable.writeByte(8)
+        assertEquals(8, view.readUnsignedByte())
+        assertEquals(2, mutable.position)
+        value.res = 0xe0000028.toInt(); assertEquals("[2]{-1, 42}", value.toString())
+        value.res = 0x90000008.toInt()
+        assertContentEquals(arrayOf("v", "x\u0000y"), value.getStringArray())
+        assertEquals("v", value.getStringOrFirstOfArray())
+        value.res = 0x8000002c.toInt()
+        assertFailsWith<io.github.heapy.icu4k.util.UResourceTypeMismatchException> { value.getStringArray() }
+        value.res = 0x80000000.toInt(); assertContentEquals(emptyArray(), value.getStringArray())
+        assertFailsWith<io.github.heapy.icu4k.util.UResourceTypeMismatchException> { value.getStringOrFirstOfArray() }
         assertEquals("ok", reader.getString(32))
         assertEquals("v", reader.getString(0x60000001))
         assertEquals("x\u0000y", reader.getString(0x60000003))

@@ -2549,5 +2549,28 @@ ASCII validation and mutation ordering, exact comparison differences, and the
 upstream hash algorithm (which repeats the first byte). Signed non-ASCII bytes
 also retain upstream conversion and comparison behavior. Value uses BinaryBuffer
 in place of java.nio.ByteBuffer and preserves the upstream debug rendering.
-Common regression tests pass on JVM, JS Node and macOS Arm64. ReaderValue and
-container adapters, bundle fallback and public resource enumeration remain pending.
+Common regression tests pass on JVM, JS Node and macOS Arm64. Bundle fallback and public resource enumeration remain pending.
+
+
+### Reader resource values and container adapters
+
+ICUResourceBundleReader.ReaderValue now implements all UResource.Value getters:
+public type mapping, string/alias, signed and unsigned 28-bit integers, vectors,
+binary blobs, arrays/tables, no-inheritance marker detection and string-array
+convenience conversions. Type mismatches throw UResourceTypeMismatchException.
+Array/Table adapters reuse caller-owned ReaderValue and Key outputs, retain raw
+key storage (including pool offsets), and leave outputs unchanged on failed
+lookups. They preserve the original use of the output value's reader.
+
+BinaryBuffer now supports read-only shared views with independent cursor state.
+Slices preserve this mode, writes fail before changing position, and the bytes
+property returns a defensive snapshot for read-only views. Binary resource values
+use these views instead of exposing mutable bundle storage. Writable buffers
+retain their existing direct byte-array access.
+
+Differential tests walk original Japanese/root, ML and LSTM resource trees,
+comparing value types, debug rendering, no-inheritance markers and container
+outputs with ICU4J. Common fixtures cover scalar getters, mixed/empty string
+arrays, invalid indexes, binary read-only views and cursor/storage sharing.
+Full JVM, JS Node and macOS Arm64 suites pass. General resource-bundle loading,
+locale fallback, alias resolution and sink enumeration remain incomplete.

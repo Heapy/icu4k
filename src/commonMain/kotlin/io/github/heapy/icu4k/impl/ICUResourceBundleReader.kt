@@ -3,6 +3,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.BinaryBuffer
+import io.github.heapy.icu4k.util.UResourceTypeMismatchException
 
 /** Binary ResB value decoding. Locale fallback and the resource-object facade are separate. */
 internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: ICUResourceBundleReader? = null) {
@@ -111,6 +112,47 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
         if (offset == 0) return intArrayOf()
         return bytes.sliceAt(offset + 4).readInts(intAt(offset))
     }
+    /** Shares binary storage while keeping an independent cursor. */
+    private fun binaryBuffer(res: Int): BinaryBuffer? {
+        if (RES_GET_TYPE(res) != 1) return null
+        val offset = RES_GET_UINT(res) * 4
+        if (offset == 0) return BinaryBuffer(byteArrayOf()).asReadOnlyBuffer()
+        return bytes.sliceAt(offset + 4).also { it.limit = intAt(offset) }.slice().asReadOnlyBuffer()
+    }
+    class ReaderValue : UResource.Value() {
+        lateinit var reader: ICUResourceBundleReader
+        var res: Int = 0
+        private fun mismatch(): Nothing = throw UResourceTypeMismatchException("")
+        override fun getType(): Int = PUBLIC_TYPES[RES_GET_TYPE(res)]
+        override fun getString(): String = reader.getString(res) ?: mismatch()
+        override fun getAliasString(): String = reader.getAlias(res) ?: mismatch()
+        override fun getInt(): Int = if (RES_GET_TYPE(res) == 7) RES_GET_INT(res) else mismatch()
+        override fun getUInt(): Int = if (RES_GET_TYPE(res) == 7) RES_GET_UINT(res) else mismatch()
+        override fun getIntVector(): IntArray = reader.getIntVector(res) ?: mismatch()
+        override fun getBinary(): BinaryBuffer = reader.binaryBuffer(res) ?: mismatch()
+        override fun getArray(): UResource.Array = reader.getArray(res)?.asArray() ?: mismatch()
+        override fun getTable(): UResource.Table = reader.getTable(res)?.asTable() ?: mismatch()
+        override fun isNoInheritanceMarker(): Boolean = reader.getString(res) == "∅∅∅"
+        private fun strings(array: Container): Array<String> = Array(array.size) {
+            reader.getString(array.getContainerResource(it)) ?: mismatch()
+        }
+        override fun getStringArray(): Array<String> = strings(reader.getArray(res) ?: mismatch())
+        override fun getStringArrayOrStringAsArray(): Array<String> {
+            reader.getArray(res)?.let { return strings(it) }
+            return arrayOf(reader.getString(res) ?: mismatch())
+        }
+        override fun getStringOrFirstOfArray(): String {
+            reader.getString(res)?.let { return it }
+            val array = reader.getArray(res) ?: mismatch()
+            if (array.size == 0) mismatch()
+            return reader.getString(array.getContainerResource(0)) ?: mismatch()
+        }
+    }
+    private fun setKey(offset: Int, key16: Boolean, key: UResource.Key) {
+        if (key16 && offset >= localKeyLimit) key.setBytes(pool!!.keys, offset - localKeyLimit)
+        else if (!key16 && offset < 0) key.setBytes(pool!!.keys, offset and 0x7fffffff)
+        else key.setBytes(keys, offset)
+    }
     private fun keyString(offset: Int, key16: Boolean): String {
         val keyBytes: ByteArray
         var position: Int
@@ -127,11 +169,12 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
     }
     inner class Container internal constructor(val size: Int, private val itemsOffset: Int, private val compact: Boolean,
                                                private val keyOffsets: IntArray? = null, private val key16: Boolean = true) {
-        fun getContainerResource(index: Int): Int {
+        fun getContainerResource(index: Int): Int = resource(this@ICUResourceBundleReader, index)
+        private fun resource(reader: ICUResourceBundleReader, index: Int): Int {
             if (index < 0 || index >= size) return RES_BOGUS
-            if (!compact) return intAt(itemsOffset + 4 * index)
-            var res16 = unitAt(itemsOffset + index)
-            if (res16 >= poolStringIndex16Limit) res16 += poolStringIndexLimit - poolStringIndex16Limit
+            if (!compact) return reader.intAt(itemsOffset + 4 * index)
+            var res16 = reader.unitAt(itemsOffset + index)
+            if (res16 >= reader.poolStringIndex16Limit) res16 += reader.poolStringIndexLimit - reader.poolStringIndex16Limit
             return (6 shl 28) or res16
         }
         fun getKey(index: Int): String? = if (index < 0 || index >= size || keyOffsets == null) null
@@ -145,6 +188,40 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
                 if (result < 0) limit = mid else if (result > 0) start = mid + 1 else return mid
             }
             return -1
+        }
+        fun asArray(): UResource.Array = object : UResource.Array {
+            override fun getSize(): Int = size
+            override fun getValue(i: Int, value: UResource.Value): Boolean {
+                if (i !in 0 until size) return false
+                val output = value as ReaderValue
+                output.res = resource(output.reader, i)
+                return true
+            }
+        }
+        fun asTable(): UResource.Table = object : UResource.Table {
+            override fun getSize(): Int = size
+            override fun getKeyAndValue(i: Int, key: UResource.Key, value: UResource.Value): Boolean {
+                if (i !in 0 until size) return false
+                val output = value as ReaderValue
+                output.reader.setKey(keyOffsets!![i], key16, key)
+                output.res = resource(output.reader, i)
+                return true
+            }
+            override fun findValue(key: CharSequence, value: UResource.Value): Boolean {
+                val output = value as ReaderValue
+                var start = 0
+                var limit = size
+                val candidate = UResource.Key()
+                while (start < limit) {
+                    val mid = (start + limit) ushr 1
+                    output.reader.setKey(keyOffsets!![mid], key16, candidate)
+                    val comparison = candidate.compareTo(key)
+                    if (comparison > 0) limit = mid
+                    else if (comparison < 0) start = mid + 1
+                    else { output.res = resource(output.reader, mid); return true }
+                }
+                return false
+            }
         }
         fun getResource(key: String): Int = getContainerResource(if (keyOffsets == null) key.toInt() else findTableItem(key))
     }
@@ -176,6 +253,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private val pool: IC
             IntArray(size) { charAt(byteOffset + 2 * (1 + it)) })
     }
     companion object {
+        private val PUBLIC_TYPES = intArrayOf(0, 1, 2, 3, 2, 2, 0, 7, 8, 8, -1, -1, -1, -1, 14, -1)
         const val RES_BOGUS = -1
         fun RES_GET_TYPE(res: Int): Int = res ushr 28
         fun RES_GET_UINT(res: Int): Int = res and 0x0fffffff

@@ -23,7 +23,17 @@ class ResourceBundleReaderOracleTest {
             assertEquals(root, k.rootResource)
             assertEquals(call(j, "getNoFallback"), k.noFallback)
             assertEquals(call(j, "getUsesPoolBundle"), k.usesPoolBundle)
+            val valueClass = Class.forName("com.ibm.icu.impl.ICUResourceBundleReader\$ReaderValue")
+            val original = valueClass.getDeclaredConstructor().also { it.isAccessible = true }.newInstance()
+            val readerField = valueClass.getDeclaredField("reader").also { it.isAccessible = true }
+            val resField = valueClass.getDeclaredField("res").also { it.isAccessible = true }
+            readerField.set(original, j)
+            val value = ICUResourceBundleReader.ReaderValue().also { it.reader = k }
             fun visit(res: Int) {
+                resField.setInt(original, res); value.res = res
+                assertEquals(call(original, "getType"), value.getType())
+                assertEquals(original.toString(), value.toString())
+                assertEquals(call(original, "isNoInheritanceMarker"), value.isNoInheritanceMarker())
                 when (ICUResourceBundleReader.RES_GET_TYPE(res)) {
                     0, 6 -> assertEquals(call(j, "getString", res), k.getString(res))
                     1 -> assertContentEquals(call(j, "getBinary", res, byteArrayOf()) as ByteArray, k.getBinary(res))
@@ -36,9 +46,31 @@ class ResourceBundleReaderOracleTest {
                         assertEquals(call(jc, "getSize"), kc.size)
                         assertEquals(-1, kc.getContainerResource(-1))
                         assertEquals(-1, kc.getContainerResource(kc.size))
+                        val adapter = if (table) value.getTable() else value.getArray()
+                        val output = ICUResourceBundleReader.ReaderValue().also { it.reader = k; it.res = 123 }
+                        val outputKey = UResource.Key("unchanged")
+                        if (table) {
+                            adapter as UResource.Table
+                            assertFalse(adapter.getKeyAndValue(-1, outputKey, output))
+                            assertFalse(adapter.getKeyAndValue(kc.size, outputKey, output))
+                            assertFalse(adapter.findValue("missing-key-for-test", output))
+                            assertEquals("unchanged", outputKey.toString()); assertEquals(123, output.res)
+                        } else {
+                            adapter as UResource.Array
+                            assertFalse(adapter.getValue(-1, output)); assertFalse(adapter.getValue(kc.size, output))
+                            assertEquals(123, output.res)
+                        }
                         for (i in 0 until kc.size) {
                             val jr = call(jc, "getContainerResource", j, i) as Int
                             assertEquals(jr, kc.getContainerResource(i))
+                            if (table) {
+                                assertTrue((adapter as UResource.Table).getKeyAndValue(i, outputKey, output))
+                                assertEquals(kc.getKey(i), outputKey.toString())
+                                assertEquals(jr, output.res)
+                                assertTrue(adapter.findValue(outputKey, output)); assertEquals(jr, output.res)
+                            } else {
+                                assertTrue((adapter as UResource.Array).getValue(i, output)); assertEquals(jr, output.res)
+                            }
                             if (table) {
                                 val key = call(jc, "getKey", j, i) as String
                                 assertEquals(key, kc.getKey(i))

@@ -6,11 +6,15 @@ package io.github.heapy.icu4k.util
  * checking capacity. Trie decoders copy the data they retain.
  */
 class BinaryBuffer(
-    val bytes: ByteArray,
+    bytes: ByteArray,
     var order: ByteOrder = ByteOrder.BIG_ENDIAN,
     val arrayOffset: Int = 0,
     val capacity: Int = bytes.size - arrayOffset,
+    val isReadOnly: Boolean = false,
 ) {
+    private val storage: ByteArray = bytes
+    /** Mutable buffers expose their storage; read-only buffers expose a defensive snapshot. */
+    val bytes: ByteArray get() = if (isReadOnly) storage.copyOf() else storage
     init {
         require(arrayOffset >= 0 && capacity >= 0 && arrayOffset <= bytes.size - capacity) { "Invalid byte-array slice" }
     }
@@ -30,19 +34,30 @@ class BinaryBuffer(
 
     fun getByte(index: Int): Byte {
         if (index !in 0 until limit) throw IndexOutOfBoundsException("Invalid byte index: $index")
-        return bytes[arrayOffset + index]
+        return storage[arrayOffset + index]
     }
     /** Shares the remaining bytes, with an independent cursor and byte order. */
-    fun slice(): BinaryBuffer = BinaryBuffer(bytes, order, arrayOffset + position, remaining)
+    fun slice(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset + position, remaining, isReadOnly)
+
+    /** Shares storage and preserves cursor state without permitting writes through this view. */
+    fun asReadOnlyBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, true).also {
+        it.limit = limit
+        it.position = position
+    }
+    private fun requireWritable() {
+        if (isReadOnly) throw UnsupportedOperationException("Read-only buffer")
+    }
 
     fun requireRemaining(count: Int) {
         if (count < 0 || count > remaining) throw ICUUncheckedIOException("Buffer too short: need $count bytes, have $remaining")
     }
     fun writeByte(value: Int) {
+        requireWritable()
         requireRemaining(1)
-        bytes[arrayOffset + position++] = value.toByte()
+        storage[arrayOffset + position++] = value.toByte()
     }
     fun writeShort(value: Int) {
+        requireWritable()
         requireRemaining(2)
         if (order == ByteOrder.BIG_ENDIAN) {
             writeByte(value ushr 8); writeByte(value)
@@ -51,6 +66,7 @@ class BinaryBuffer(
         }
     }
     fun writeInt(value: Int) {
+        requireWritable()
         requireRemaining(4)
         if (order == ByteOrder.BIG_ENDIAN) {
             writeShort(value ushr 16); writeShort(value)
@@ -60,7 +76,7 @@ class BinaryBuffer(
     }
     fun readByte(): Byte {
         requireRemaining(1)
-        return bytes[arrayOffset + position++]
+        return storage[arrayOffset + position++]
     }
     fun readUnsignedByte(): Int = readByte().toInt() and 255
     fun readUnsignedShort(): Int {
@@ -83,7 +99,7 @@ class BinaryBuffer(
     }
     fun readBytes(count: Int): ByteArray {
         requireRemaining(count)
-        val result = bytes.copyOfRange(arrayOffset + position, arrayOffset + position + count)
+        val result = storage.copyOfRange(arrayOffset + position, arrayOffset + position + count)
         position += count
         return result
     }
