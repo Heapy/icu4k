@@ -3,6 +3,7 @@
 package io.github.heapy.icu4k.util
 
 import kotlin.jvm.JvmField
+import io.github.heapy.icu4k.text.LocaleDisplayNames
 import io.github.heapy.icu4k.impl.LocaleDefaults
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.impl.LocaleIDParser
@@ -10,7 +11,7 @@ import io.github.heapy.icu4k.impl.LocaleIDs
 import io.github.heapy.icu4k.impl.SoftCache
 import io.github.heapy.icu4k.impl.locale.*
 
-/** ICU locale identity and BCP47 conversion. Display names and remaining locale services are still being ported. */
+/** ICU locale identity and BCP47 conversion. Locale services are being ported from ICU4J. */
 class ULocale private constructor(localeID: String, normalize: Boolean) : Comparable<ULocale> {
     private val localeID = if (normalize) getName(localeID) else localeID
     constructor(localeID: String) : this(localeID, true)
@@ -55,6 +56,30 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     fun getKeywordValue(key: String?): String? = getKeywordValue(localeID, key)
     fun setKeywordValue(key: String?, value: String?): ULocale = ULocale(setKeywordValue(localeID, key, value), false)
     fun getFallback(): ULocale? = if (localeID.isEmpty() || localeID[0] == '@') null else ULocale(fallbackString(localeID), false)
+    fun getDisplayLanguage(): String? = getDisplayLanguage(getDefault(Category.DISPLAY))
+    fun getDisplayLanguage(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).languageDisplayName(getLanguage())
+    fun getDisplayLanguageWithDialect(): String? = getDisplayLanguageWithDialect(getDefault(Category.DISPLAY))
+    fun getDisplayLanguageWithDialect(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).languageDisplayName(getBaseName())
+    fun getDisplayScript(): String? = getDisplayScript(getDefault(Category.DISPLAY))
+    fun getDisplayScript(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).scriptDisplayName(getScript())
+    @Deprecated("This API is ICU internal only.")
+    fun getDisplayScriptInContext(): String? = getDisplayScriptInContext(getDefault(Category.DISPLAY))
+    @Deprecated("This API is ICU internal only.")
+    fun getDisplayScriptInContext(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).scriptDisplayNameInContext(getScript())
+    fun getDisplayCountry(): String? = getDisplayCountry(getDefault(Category.DISPLAY))
+    fun getDisplayCountry(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).regionDisplayName(getCountry())
+    fun getDisplayVariant(): String? = getDisplayVariant(getDefault(Category.DISPLAY))
+    fun getDisplayVariant(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).variantDisplayName(getVariant())
+    fun getDisplayName(): String? = getDisplayName(getDefault(Category.DISPLAY))
+    fun getDisplayName(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).localeDisplayName(this)
+    fun getDisplayNameWithDialect(): String? = getDisplayNameWithDialect(getDefault(Category.DISPLAY))
+    fun getDisplayNameWithDialect(displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale, LocaleDisplayNames.DialectHandling.DIALECT_NAMES).localeDisplayName(this)
+    fun getDisplayKeywordValue(keyword: String?): String? = getDisplayKeywordValue(keyword, getDefault(Category.DISPLAY))
+    fun getDisplayKeywordValue(keyword: String?, displayLocale: ULocale?): String? {
+        val key = AsciiUtil.toLowerString(keyword!!.trim { it <= ' ' })
+        val value = getKeywordValue(key)
+        return LocaleDisplayNames.getInstance(displayLocale).keyValueDisplayName(key, value)
+    }
     fun getISO3Language(): String = getISO3Language(localeID)
     fun getISO3Country(): String = getISO3Country(localeID)
     fun getExtension(key: Char): String? {
@@ -173,6 +198,29 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        fun getDisplayLanguage(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayLanguage(ULocale(displayLocaleID!!))
+        fun getDisplayLanguage(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayLanguage(displayLocale)
+        fun getDisplayLanguageWithDialect(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayLanguageWithDialect(ULocale(displayLocaleID!!))
+        fun getDisplayLanguageWithDialect(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayLanguageWithDialect(displayLocale)
+        fun getDisplayScript(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayScript(ULocale(displayLocaleID!!))
+        fun getDisplayScript(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayScript(displayLocale)
+    @Deprecated("This API is ICU internal only.")
+        fun getDisplayScriptInContext(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayScriptInContext(ULocale(displayLocaleID!!))
+    @Deprecated("This API is ICU internal only.")
+        fun getDisplayScriptInContext(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayScriptInContext(displayLocale)
+        fun getDisplayCountry(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayCountry(ULocale(displayLocaleID!!))
+        fun getDisplayCountry(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayCountry(displayLocale)
+        fun getDisplayVariant(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayVariant(ULocale(displayLocaleID!!))
+        fun getDisplayVariant(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayVariant(displayLocale)
+        fun getDisplayName(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayName(ULocale(displayLocaleID!!))
+        fun getDisplayName(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayName(displayLocale)
+        fun getDisplayNameWithDialect(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayNameWithDialect(ULocale(displayLocaleID!!))
+        fun getDisplayNameWithDialect(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayNameWithDialect(displayLocale)
+        fun getDisplayKeyword(keyword: String?): String? = getDisplayKeyword(keyword, getDefault(Category.DISPLAY))
+        fun getDisplayKeyword(keyword: String?, displayLocaleID: String?): String? = getDisplayKeyword(keyword, ULocale(displayLocaleID!!))
+        fun getDisplayKeyword(keyword: String?, displayLocale: ULocale?): String? = LocaleDisplayNames.getInstance(displayLocale).keyDisplayName(keyword)
+        fun getDisplayKeywordValue(localeID: String?, keyword: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayKeywordValue(keyword, ULocale(displayLocaleID!!))
+        fun getDisplayKeywordValue(localeID: String?, keyword: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayKeywordValue(keyword, displayLocale)
         @JvmField var ACTUAL_LOCALE: Type? = Type.create()
         @JvmField var VALID_LOCALE: Type? = Type.create()
         @Deprecated("This API is ICU internal only.")
