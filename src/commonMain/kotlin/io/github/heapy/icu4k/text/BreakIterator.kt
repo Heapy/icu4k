@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.impl.BreakIteratorFactoryCache
+import io.github.heapy.icu4k.impl.BreakIteratorDataFactory
 import io.github.heapy.icu4k.impl.CSCharacterIterator
 import io.github.heapy.icu4k.util.ULocale
 
-/** Boundary iterator contract. Locale factories and concrete iterators are being ported. */
+/** Boundary iterator contract and resource factories. Service registration is still being ported. */
 abstract class BreakIterator protected constructor() {
     private var validLocale: ULocale? = null
     private var actualLocale: ULocale? = null
@@ -41,6 +43,18 @@ abstract class BreakIterator protected constructor() {
     open fun setText(newText: CharSequence) { setText(CSCharacterIterator(newText)) }
     abstract fun setText(newText: CharacterIterator)
     companion object {
+        private val iteratorCache = BreakIteratorFactoryCache { locale, kind -> BreakIteratorDataFactory.create(locale, kind) }
+        fun getWordInstance(): BreakIterator = getWordInstance(ULocale.getDefault())
+        fun getWordInstance(where: ULocale?): BreakIterator = getBreakInstance(where, KIND_WORD)
+        fun getLineInstance(): BreakIterator = getLineInstance(ULocale.getDefault())
+        fun getLineInstance(where: ULocale?): BreakIterator = getBreakInstance(where, KIND_LINE)
+        fun getCharacterInstance(): BreakIterator = getCharacterInstance(ULocale.getDefault())
+        fun getCharacterInstance(where: ULocale?): BreakIterator = getBreakInstance(where, KIND_CHARACTER)
+        fun getSentenceInstance(): BreakIterator = getSentenceInstance(ULocale.getDefault())
+        fun getSentenceInstance(where: ULocale?): BreakIterator = getBreakInstance(where, KIND_SENTENCE)
+        @Deprecated("Use word iteration for titlecasing") fun getTitleInstance(): BreakIterator = getBreakInstance(ULocale.getDefault(), KIND_TITLE)
+        @Deprecated("Use word iteration for titlecasing") fun getTitleInstance(where: ULocale?): BreakIterator = getBreakInstance(where, KIND_TITLE)
+        @Deprecated("This API is ICU internal only.") fun getBreakInstance(where: ULocale?, kind: Int): BreakIterator = iteratorCache.get(where, kind)
         const val DONE = -1
         const val WORD_NONE = 0
         const val WORD_NONE_LIMIT = 100

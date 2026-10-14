@@ -4034,3 +4034,25 @@ filtered output and errors. Full JVM, JS Node and macOS Arm64 suites pass; Linux
 x64 tests compile. General BreakIterator service registration/cache/public factories,
 CaseMap.Title, LocaleDisplayNames, Currency/MeasureUnit and the full ICU4J port
 remain unfinished.
+
+### Public BreakIterator resource factories and prototype cache
+
+BreakIterator now exposes character/word/line/sentence/title factories, default
+locale overloads, explicit ULocale overloads and the internal getBreakInstance
+entry point. JVM adapters accept java.util.Locale. Each kind has one CacheValue
+locale/prototype slot using configured cache strength. On a miss, the factory
+clones the new iterator into the cache before returning the original; on a hit it
+returns a clone of the prototype. Locale changes replace only that kind's slot.
+Null locale validation precedes kind bounds checking. Matching-locale and whole
+cache invalidation hooks are ready for future service registration integration.
+
+Common tests prove snapshot independence, separate kinds, replacement and
+invalidation, clone text/cursor independence and validation. The creation-count
+test enables strong cache values temporarily so eviction cannot affect its
+assertions. JVM oracle tests compare public factory boundaries and metadata on
+repeated requests across eight locales and all five kinds. Full JVM, JS Node and
+macOS Arm64 suites pass; Linux x64 tests compile. After tightening the cache test,
+targeted JVM/JS/Native cache tests and Linux test compilation pass. Public factories
+currently use the resource creation path; user registration, availability/shim
+integration, CaseMap.Title, LocaleDisplayNames, Currency/MeasureUnit and the full
+ICU4J port remain unfinished.
