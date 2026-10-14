@@ -3706,3 +3706,39 @@ compile; generated data checks pass.
 UnitsData's conversion/preferences facade is not claimed complete. MeasureUnitImpl,
 SingleUnitImpl, public MeasureUnit/Currency and downstream conversion/formatting
 remain unfinished, along with the full ICU4J port.
+
+### Shared unit identifier parser and mutable model
+
+MeasureUnitImpl and SingleUnitImpl now provide the shared identifier model,
+longest-token CharsTrie parser, alias substitution, prefix/power/compound/mixed
+syntax, constant denominators, copying, coalescing, simplification, reciprocal and
+dimensionality operations, indexed extraction and serialization. Each parser clones
+the shared trie and uses real UnitIdentifierData tables. Sorting follows category,
+simple-unit index and source SI/binary-prefix comparison; mixed units retain order.
+Virtual list/complexity callbacks and mutable identifier-cache behavior are retained.
+
+The constant parser retains BigDecimal's scale <= 0 requirement and non-negative
+Long range, rather than rounding integer-valued fractions. JVM uses BigDecimal
+for exact host diagnostics; JS/Native use an exact coefficient/scale implementation
+validated against it. Exponents can exceed Int.MAX_VALUE when the resulting scale
+still fits Int (for example 1e2147483648). No floating-point approximation is used.
+Unicode decimal characters and zero at huge valid exponents are supported.
+
+Source quirks remain: zero denominators do not count as an existing constant,
+applyDimensionality and constant setters do not invalidate cached identifiers,
+simplification drops denominator/complexity metadata, and a leading denominator
+with a constant can serialize with a leading '-per-'. Metadata alias spellings and
+replacements that the ICU4J parser rejects retain the same error outcomes.
+
+JVM oracle tests compare all simple units, aliases and prefixes, 500 random unit
+triples across four syntax shapes, malformed input, mutable model operations and
+subclass callbacks. Portable constant validation is compared with BigDecimal on
+2,000 generated inputs plus scale/range boundary vectors. Common tests cover
+canonical output, mixed units, copying, aliases and exact constants. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 test sources compile; 69 generated
+resource files verify.
+
+The public MeasureUnit build/toString bridges and conversion comparators are not
+ported yet; these implementation classes are not claimed complete. Full
+MeasureUnit/Currency, conversion/preferences and the complete ICU4J port remain
+unfinished.
