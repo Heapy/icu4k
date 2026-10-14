@@ -172,7 +172,7 @@ open class ICUResourceBundle : UResourceBundle {
                     if (names.load() == null) {
                         val ids = HashSet<String>()
                         try {
-                            val installed = getBundleInstance(prefix, "res_index", loader, true)[INSTALLED_LOCALES]
+                            val installed = (UResourceBundle.instantiateBundle(prefix, "res_index", loader, true) as ICUResourceBundle)[INSTALLED_LOCALES]
                             val iterator = installed.getIterator()
                             iterator.reset()
                             while (iterator.hasNext()) ids.add(iterator.next().getKey()!!)
@@ -188,7 +188,7 @@ open class ICUResourceBundle : UResourceBundle {
         }
         private fun getAvailEntry(baseName: String, loader: ICUResourceLoader): AvailEntry = availableCache.getInstance(baseName, loader)!!
         private fun createULocaleList(baseName: String, loader: ICUResourceLoader): Map<ULocale.AvailableType, Array<ULocale>> {
-            val bundle = getBundleInstance(baseName, "res_index", loader, true)
+            val bundle = UResourceBundle.instantiateBundle(baseName, "res_index", loader, true) as ICUResourceBundle
             val result = HashMap<ULocale.AvailableType, Array<ULocale>>()
             bundle.getAllItemsWithFallback("", object : UResource.Sink() {
                 override fun put(key: UResource.Key, value: UResource.Value, noFallback: Boolean) {
@@ -244,7 +244,7 @@ open class ICUResourceBundle : UResourceBundle {
             }
             if (names.isEmpty()) {
                 try {
-                    val installed = getBundleInstance(baseName, "res_index", loader, true)[INSTALLED_LOCALES]
+                    val installed = (UResourceBundle.instantiateBundle(baseName, "res_index", loader, true) as ICUResourceBundle)[INSTALLED_LOCALES]
                     val iterator = installed.getIterator()
                     iterator.reset()
                     while (iterator.hasNext()) names.add(iterator.next().getKey()!!)
@@ -267,7 +267,7 @@ open class ICUResourceBundle : UResourceBundle {
             var defaultDepth = 0
             var resourceDepth = 0
             // Upstream uses its default loader for lookup; the argument is used for availability only.
-            var bundle: ICUResourceBundle? = getBundleInstance(baseName, parent.getBaseName())
+            var bundle: ICUResourceBundle? = UResourceBundle.getBundleInstance(baseName, parent) as ICUResourceBundle
             if (isAvailable != null) {
                 if (isAvailable.isEmpty()) throw IndexOutOfBoundsException("Index 0 out of bounds for length 0")
                 isAvailable[0] = false
@@ -285,7 +285,7 @@ open class ICUResourceBundle : UResourceBundle {
                 if (defaultLocale == null) { bundle = current.getParent(); defaultDepth++ }
             } while (bundle != null && defaultLocale == null)
             parent = ULocale(baseLocale)
-            bundle = getBundleInstance(baseName, parent.getBaseName())
+            bundle = UResourceBundle.getBundleInstance(baseName, parent) as ICUResourceBundle
             do {
                 val current = bundle!!
                 try {
@@ -303,7 +303,7 @@ open class ICUResourceBundle : UResourceBundle {
             if (fullBase == null && defaultValue != null && defaultValue != keywordValue) {
                 keywordValue = defaultValue
                 parent = ULocale(baseLocale)
-                bundle = getBundleInstance(baseName, parent.getBaseName())
+                bundle = UResourceBundle.getBundleInstance(baseName, parent) as ICUResourceBundle
                 resourceDepth = 0
                 do {
                     val current = bundle!!
@@ -330,7 +330,7 @@ open class ICUResourceBundle : UResourceBundle {
             val keywords = HashSet<String>()
             val locales = getAvailEntry(baseName, loader).getULocaleList(ULocale.AvailableType.DEFAULT)!!
             for (locale in locales) try {
-                val bundle = getBundleInstance(baseName, locale.getBaseName(), loader, false)
+                val bundle = UResourceBundle.getBundleInstance(baseName, locale.getBaseName(), loader, false) as ICUResourceBundle
                 val table = bundle.getObject(keyword!!) as ICUResourceBundle
                 val keys = table.getKeys()
                 while (keys.hasMoreElements()) {
@@ -363,7 +363,7 @@ open class ICUResourceBundle : UResourceBundle {
             if (!ICUResourceBundleReader.URES_IS_TABLE(ICUResourceBundleReader.RES_GET_TYPE(res))) throw IllegalStateException("Invalid format error")
             val table = ICUResourceBundleImpl.ResourceTable.createRoot(baseName, localeID, reader, loader)
             val alias = table.findString("%%ALIAS")
-            return if (alias == null) table else getBundleInstance(baseName, alias)
+            return if (alias == null) table else UResourceBundle.getBundleInstance(baseName, alias) as ICUResourceBundle
         }
         private fun parentResourceName(bundle: ICUResourceBundle): String? =
             (bundle as ICUResourceBundleImpl.ResourceTable).findString("%%Parent")

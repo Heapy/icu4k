@@ -35,3 +35,5 @@ fun interface ICUResourceLoader {
         if (line.isNotEmpty()) visitor(line.toString())
     }
 }
+
+internal expect fun defaultICUResourceLoader(): ICUResourceLoader

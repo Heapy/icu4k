@@ -296,6 +296,20 @@
       "object": "BreakLocaleIndexData",
       "sha256": "55b1b0b6ed0f7dab68429548fef0e29af2ed1195c159d65efc400de5b890595a",
       "size": 240
+    },
+    {
+      "name": "root.res",
+      "file": "data/icu78/root.res",
+      "object": "RootResourceData",
+      "sha256": "5f47b03364767199b2da3a7917b1c4f1a2634330667f356a3d88f31b5ec3b79c",
+      "size": 121280
+    },
+    {
+      "name": "pool.res",
+      "file": "data/icu78/pool.res",
+      "object": "PoolResourceData",
+      "sha256": "b24b21136532739b7c5981bdd32295107e6917a03a70ca47b3779802ae486d5d",
+      "size": 172384
     }
   ]
 }

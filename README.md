@@ -75,8 +75,8 @@ println(bundle.getWithFallback("dictionaries/Mymr").getString()) // burmesedict.
 Locale availability lists come from the pinned ICU indexes; not all listed locale
 payloads are embedded yet. The embedded subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
-The `UResourceBundle` factory dispatch, Java bundle interoperability and
-remaining resource services are in progress.
+`UResourceBundle.getBundleInstance` selects ICU or Java-style bundles from the
+root bundle type and preserves ICU4J's cache and fallback rules.
 `ICUResourceBundle.getFullLocaleNameSet` supports resource visitation, list-file and
 index fallback; JVM callers can use `ICUClassLoaderResourceLoader` for directories
 and JAR resources.
@@ -100,5 +100,5 @@ Java factories return the ported `URLHandler` type and expose `get(java.net.URL)
 `ResourceBundleWrapper.getBundleInstance(baseName, localeID, loader, disableFallback)`
 loads Java-style bundles through Common object/property providers. On JVM,
 `ICUClassLoaderResourceLoader` also loads actual Java resource-bundle classes and
-classpath `.properties`. The automatic `UResourceBundle` factory dispatch between
-ICU and Java bundle types is still being ported.
+classpath `.properties`. The default ICU loader includes the pinned root and pool
+bundles. Mutable locale defaults/categories and Java Locale overloads remain in progress.

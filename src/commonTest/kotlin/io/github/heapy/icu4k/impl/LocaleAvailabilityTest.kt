@@ -35,7 +35,7 @@ class LocaleAvailabilityTest {
             BinaryBuffer(bytes.copyOf())
         }
         assertEquals(listOf("en"), ICUResourceBundle.getAvailableULocales(base, loader)!!.map { it.getName() })
-        assertEquals(2, loads)
+        assertEquals(3, loads)
     }
     @Test fun keywordValuesExcludeDefaultsAndPrivateTypesAndSkipMalformedTables() {
         val base = "icu4k-test/keyword-values-common"

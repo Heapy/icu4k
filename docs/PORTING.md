@@ -3101,3 +3101,28 @@ Default fallback currently uses the existing host locale-name boundary; mutable
 ULocale defaults/categories remain unfinished. UResourceBundle named factory/root
 type dispatch, ICU-to-Java aliases, Java Locale/ResourceBundle facade integration
 and the rest of ICU4J remain to be ported.
+
+
+### Common root bundle factory dispatch
+
+UResourceBundle now implements named String and ULocale factories, root-type
+probing, ICU/Java selection and promotion after a previously missing root. The
+atomic root-type cache is keyed only by base name, matching ICU4J's omission of
+loader identity. Probes run outside cache publication. String null arguments and
+cold non-ICU null-loader failures preserve the original behavior; a cached Java
+root can use the context loader. ULocale factories strip locale keywords.
+
+Root aliases, locale indexes and functional-equivalent resource loads now use the
+shared factory where upstream does, retaining the ICU casts and loader choices.
+Pinned ICU root.res and pool.res bring the embedded manifest to 43 resources.
+The default JVM ICU loader combines embedded data with classpath lookup; JS and
+Native use embedded data. This does not embed every locale payload.
+
+Common tests exercise root precedence, missing-root promotion, loader-omitting
+caches, null boundaries and pooled root loading. JVM differential tests compare
+140 naming/root-kind/locale/direct-mode combinations, including exact resource
+request traces, plus context-loader and promotion scenarios. Availability tests
+also compare the added root probe with ICU4J. Full JVM, JS Node and macOS Arm64
+suites pass, Linux x64 test sources compile, and the data generator check passes.
+Mutable ULocale defaults/categories, Java Locale overloads and the rest of ICU4J
+remain unfinished.

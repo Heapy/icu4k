@@ -66,7 +66,15 @@ class LocaleAvailabilityOracleTest {
             val jobs = (0 until 8).map { executor.submit<Array<ULocale>> { start.await(); ICUResourceBundle.getAvailableULocales(base, loader)!! } }
             start.countDown()
             val arrays = jobs.map { it.get() }
-            assertEquals(1, calls.get()); arrays.forEach { assertSame(arrays[0], it) }
+            assertEquals(2, calls.get()); arrays.forEach { assertSame(arrays[0], it) }
+            val originalCalls = AtomicInteger()
+            val originalLoader = object : ClassLoader(com.ibm.icu.impl.ICUResourceBundle::class.java.classLoader) {
+                override fun getResourceAsStream(name: String): InputStream? = if (name.startsWith("$base/") && name.endsWith(".res")) {
+                    originalCalls.incrementAndGet(); bytes.inputStream()
+                } else super.getResourceAsStream(name)
+            }
+            com.ibm.icu.impl.ICUResourceBundle.getAvailableULocales(base, originalLoader)
+            assertEquals(originalCalls.get(), calls.get())
         } finally { executor.shutdownNow() }
     }
 }

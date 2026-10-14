@@ -1,12 +1,15 @@
 // © 2016 and later: Unicode, Inc. and others.
 // SPDX-License-Identifier: Unicode-3.0
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.impl.*
+import kotlin.concurrent.atomics.AtomicReference
 import io.github.heapy.icu4k.impl.ICUResourceBundleReader
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.impl.locale.LocaleReadOnlySet
 
-/** Common resource base. Named factories and the concrete ICU bundle are still being ported. */
+/** Common resource base and ICU/Java root-type factory dispatch. */
 abstract class UResourceBundle {
     protected var parentBundle: UResourceBundle? = null
     abstract fun getULocale(): ULocale
@@ -105,6 +108,61 @@ abstract class UResourceBundle {
         return value
     }
     companion object {
+        private enum class RootType { MISSING, ICU, JAVA }
+        private val rootTypes = AtomicReference<Map<String, RootType>>(emptyMap())
+        private fun setRootType(baseName: String, type: RootType) {
+            while (true) {
+                val previous = rootTypes.load()
+                if (rootTypes.compareAndSet(previous, previous + (baseName to type))) return
+            }
+        }
+        private val nullBinaryLoader = ICUResourceLoader { throw NullPointerException("Resource loader is null") }
+        private fun binaryLoader(baseName: String, loader: ICUResourceLoader?): ICUResourceLoader = loader
+            ?: if (baseName.startsWith(ICUData.ICU_BASE_NAME)) defaultICUResourceLoader() else nullBinaryLoader
+        private fun getRootType(baseName: String, loader: ICUResourceLoader?): RootType {
+            rootTypes.load()[baseName]?.let { return it }
+            val rootLocale = if ('.' in baseName) "" else "root"
+            val type = try {
+                ICUResourceBundle.getBundleInstance(baseName, rootLocale, binaryLoader(baseName, loader), true)
+                RootType.ICU
+            } catch (_: MissingResourceException) {
+                try {
+                    ResourceBundleWrapper.getBundleInstance(baseName, rootLocale, loader, true)
+                    RootType.JAVA
+                } catch (_: MissingResourceException) { RootType.MISSING }
+            }
+            setRootType(baseName, type)
+            return type
+        }
+        @kotlin.jvm.JvmStatic
+        @kotlin.jvm.JvmOverloads
+        fun getBundleInstance(baseName: String?, localeName: String?, loader: ICUResourceLoader? = defaultICUResourceLoader(), disableFallback: Boolean = false): UResourceBundle =
+            instantiateBundle(baseName, localeName, loader, disableFallback)
+        @kotlin.jvm.JvmStatic
+        fun getBundleInstance(locale: ULocale?): UResourceBundle = getBundleInstance(ICUData.ICU_BASE_NAME,
+            locale?.getBaseName() ?: ULocale.getBaseName(resourceDefaultLocaleName()))
+        @kotlin.jvm.JvmStatic
+        fun getBundleInstance(baseName: String?): UResourceBundle = getBundleInstance(baseName ?: ICUData.ICU_BASE_NAME,
+            ULocale.getBaseName(resourceDefaultLocaleName()))
+        @kotlin.jvm.JvmStatic
+        @kotlin.jvm.JvmOverloads
+        fun getBundleInstance(baseName: String?, locale: ULocale?, loader: ICUResourceLoader? = defaultICUResourceLoader()): UResourceBundle =
+            getBundleInstance(baseName ?: ICUData.ICU_BASE_NAME, locale?.getBaseName() ?: ULocale.getBaseName(resourceDefaultLocaleName()), loader)
+        internal fun instantiateBundle(baseName: String?, localeName: String?, loader: ICUResourceLoader?, disableFallback: Boolean): UResourceBundle {
+            val base = baseName!! // ConcurrentHashMap rejects a null key before probing in ICU4J.
+            val type = getRootType(base, loader)
+            val locale = localeName!!
+            return when (type) {
+                RootType.ICU -> ICUResourceBundle.getBundleInstance(base, locale, binaryLoader(base, loader), disableFallback)
+                RootType.JAVA -> ResourceBundleWrapper.getBundleInstance(base, locale, loader, disableFallback)
+                RootType.MISSING -> try {
+                    ICUResourceBundle.getBundleInstance(base, locale, binaryLoader(base, loader), disableFallback).also { setRootType(base, RootType.ICU) }
+                } catch (_: MissingResourceException) {
+                    ResourceBundleWrapper.getBundleInstance(base, locale, loader, disableFallback).also { setRootType(base, RootType.JAVA) }
+                }
+            }
+        }
+
         const val NONE = -1
         const val STRING = 0
         const val BINARY = 1
