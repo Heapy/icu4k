@@ -3865,3 +3865,23 @@ reentrant delivery, snapshots and duplicate registration; Native confirms a
 background worker performs callbacks. Full JVM, JS Node and macOS Arm64 suites
 pass; Linux x64 tests compile. ICUService/ICULocaleService, Currency registration
 and the complete ICU4J port remain unfinished.
+
+### Service reader/writer locking
+
+ICURWLock now has common statistics, snapshots/reset/clear and platform lock
+backends. Stats retains mutable public JVM fields. JVM uses the same nonfair
+ReentrantReadWriteLock as ICU4J. Native uses POSIX mutex/condition waits with
+per-worker read ownership, exclusive/reentrant write ownership, reentrant reads,
+write-to-read downgrade and bounded hold counts. Native synchronization resources
+are released by cleaners; failed initialization frees allocated resources.
+JS runs the ownership model on its single event loop. Unsupported read-to-write
+upgrades throw on JS rather than blocking the event loop; JVM/Native block, as
+such an upgrade is unsupported by the source lock contract.
+
+Common tests cover nested holds, downgrade, invalid releases and statistics
+snapshot independence. JVM oracle tests compare statistics and release errors.
+Native worker tests prove simultaneous readers, writers waiting for all readers,
+wrong-thread release rejection and 2,000 protected shared updates from four
+workers. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile.
+ICUService/ICULocaleService, public Currency/MeasureUnit and the complete ICU4J
+port remain unfinished.
