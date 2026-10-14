@@ -3583,3 +3583,17 @@ fallback differ from ICU digit descriptions (for example hanidec and mathbold).
 This needs the numeric-symbol/platform formatting stage rather than substituting
 the first ICU description character. Complete locale payload coverage, number
 formatting and the full ICU4J port remain unfinished.
+
+### Common Grego calendar arithmetic
+
+Grego now implements the complete ICU4J proleptic-Gregorian utility: leap years,
+month lengths, epoch-day/year/field conversion, millisecond fields, floor division,
+weekday ordinals and ISO-style UTC debug strings. Tuple results use Kotlin Pair.
+The port retains Java integer overflow and the source's floorDivide behavior,
+including unusual negative denominators. Formatting uses ASCII digits regardless
+of locale. Checked array access preserves bounds failures on JS as well.
+
+JVM oracle comparisons cover 607 extreme/random millisecond and day values,
+308 extreme/random years across every month, array reuse and negative-denominator
+division. Common currency tests cover epoch/leap-day formatting and month bounds.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
