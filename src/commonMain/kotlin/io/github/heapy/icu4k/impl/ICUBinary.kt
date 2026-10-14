@@ -6,12 +6,19 @@ package io.github.heapy.icu4k.impl
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
 import io.github.heapy.icu4k.util.VersionInfo
+import io.github.heapy.icu4k.util.MissingResourceException
 
-/** Portable ICU data-header authentication and binary array operations. */
+/** Portable ICU binary resources, external file/package lookup and data-header operations. */
 object ICUBinary {
-    fun getData(itemPath: String): BinaryBuffer? = ICUData.getBytes(itemPath)?.let { BinaryBuffer(it) }
+    private val dataFiles = BinaryDataFiles(ICUConfig.get("com.ibm.icu.impl.ICUBinary.dataPath"), binaryFileSystem())
+    fun getData(itemPath: String): BinaryBuffer? = getData(null, null, itemPath)
+    fun getData(loader: ICUResourceLoader?, resourceName: String?, itemPath: String): BinaryBuffer? {
+        dataFiles.getData(itemPath)?.let { return it }
+        return (loader ?: ICUResourceBundleReader.embeddedLoader).getData(resourceName ?: "${ICUData.ICU_BASE_NAME}/$itemPath")
+    }
+    fun addBaseNamesInFileFolder(folder: String, suffix: String, names: MutableSet<String>) = dataFiles.addBaseNamesInFolder(folder, suffix, names)
     fun getRequiredData(itemPath: String): BinaryBuffer = getData(itemPath)
-        ?: throw ICUUncheckedIOException("Missing ICU data resource: $itemPath")
+        ?: throw MissingResourceException("could not locate data", ICUResourceBundleReader.embeddedLoader.toString(), "${ICUData.ICU_BASE_NAME}/$itemPath")
 
     fun interface Authenticate { fun isDataVersionAcceptable(version: ByteArray): Boolean }
 
@@ -19,31 +26,8 @@ object ICUBinary {
         getVersionInfoFromCompactInt(readHeader(bytes, dataFormat, authenticate))
 
     /** Sets byte order from UDataInfo and advances past the complete ICU header. */
-    fun readHeader(bytes: BinaryBuffer, dataFormat: Int, authenticate: Authenticate?): Int {
-        fun byte(index: Int): Int = bytes.getByte(index).toInt() and 255
-        val magic1 = byte(2); val magic2 = byte(3)
-        if (magic1 != 0xda || magic2 != 0x27) throw ICUUncheckedIOException("ICU data file error: Not an ICU data file")
-        val authenticationError = "ICU data file error: Header authentication failed, please check if you have a valid ICU data file"
-        val bigEndian = byte(8)
-        val charsetFamily = byte(9); val ucharSize = byte(10)
-        if (bigEndian !in 0..1 || charsetFamily != 0 || ucharSize != 2) throw ICUUncheckedIOException(authenticationError)
-        bytes.order = if (bigEndian == 1) BinaryBuffer.ByteOrder.BIG_ENDIAN else BinaryBuffer.ByteOrder.LITTLE_ENDIAN
-        fun shortAt(index: Int): Int = if (bigEndian == 1) (byte(index) shl 8) or byte(index + 1)
-            else (byte(index + 1) shl 8) or byte(index)
-        val headerSize = shortAt(0)
-        val infoSize = shortAt(4)
-        if (infoSize < 20 || headerSize < infoSize + 4) throw ICUUncheckedIOException("Internal Error: Header size error")
-        val formatVersion = ByteArray(4) { bytes.getByte(16 + it) }
-        val actualFormat = (byte(12) shl 24) or (byte(13) shl 16) or (byte(14) shl 8) or byte(15)
-        if (actualFormat != dataFormat || (authenticate != null && !authenticate.isDataVersionAcceptable(formatVersion))) {
-            val format = (12..15).joinToString("") { byte(it).toString(16).padStart(2, '0') }
-            val version = formatVersion.joinToString(".") { (it.toInt() and 255).toString() }
-            throw ICUUncheckedIOException("$authenticationError; data format $format, format version $version")
-        }
-        if (headerSize > bytes.limit) throw IllegalArgumentException("newPosition > limit: ($headerSize > ${bytes.limit})")
-        bytes.position = headerSize
-        return (byte(20) shl 24) or (byte(21) shl 16) or (byte(22) shl 8) or byte(23)
-    }
+    fun readHeader(bytes: BinaryBuffer, dataFormat: Int, authenticate: Authenticate?): Int =
+        readICUBinaryHeader(bytes, dataFormat, authenticate)
 
     /** Common equivalent of writing an ICU header to a DataOutputStream. */
     fun writeHeader(dataFormat: Int, formatVersion: Int, dataVersion: Int): ByteArray {
@@ -111,4 +95,31 @@ object ICUBinary {
         }
     }
 
+}
+
+// Kept independent of ICUBinary initialization while external packages are authenticated.
+internal fun readICUBinaryHeader(bytes: BinaryBuffer, dataFormat: Int, authenticate: ICUBinary.Authenticate?): Int {
+    fun byte(index: Int): Int = bytes.getByte(index).toInt() and 255
+    val magic1 = byte(2); val magic2 = byte(3)
+    if (magic1 != 0xda || magic2 != 0x27) throw ICUUncheckedIOException("ICU data file error: Not an ICU data file")
+    val authenticationError = "ICU data file error: Header authentication failed, please check if you have a valid ICU data file"
+    val bigEndian = byte(8)
+    val charsetFamily = byte(9); val ucharSize = byte(10)
+    if (bigEndian !in 0..1 || charsetFamily != 0 || ucharSize != 2) throw ICUUncheckedIOException(authenticationError)
+    bytes.order = if (bigEndian == 1) BinaryBuffer.ByteOrder.BIG_ENDIAN else BinaryBuffer.ByteOrder.LITTLE_ENDIAN
+    fun shortAt(index: Int): Int = if (bigEndian == 1) (byte(index) shl 8) or byte(index + 1)
+        else (byte(index + 1) shl 8) or byte(index)
+    val headerSize = shortAt(0)
+    val infoSize = shortAt(4)
+    if (infoSize < 20 || headerSize < infoSize + 4) throw ICUUncheckedIOException("Internal Error: Header size error")
+    val formatVersion = ByteArray(4) { bytes.getByte(16 + it) }
+    val actualFormat = (byte(12) shl 24) or (byte(13) shl 16) or (byte(14) shl 8) or byte(15)
+    if (actualFormat != dataFormat || (authenticate != null && !authenticate.isDataVersionAcceptable(formatVersion))) {
+        val format = (12..15).joinToString("") { byte(it).toString(16).padStart(2, '0') }
+        val version = formatVersion.joinToString(".") { (it.toInt() and 255).toString() }
+        throw ICUUncheckedIOException("$authenticationError; data format $format, format version $version")
+    }
+    if (headerSize > bytes.limit) throw IllegalArgumentException("newPosition > limit: ($headerSize > ${bytes.limit})")
+    bytes.position = headerSize
+    return (byte(20) shl 24) or (byte(21) shl 16) or (byte(22) shl 8) or byte(23)
 }

@@ -224,6 +224,14 @@ open class ICUResourceBundle : UResourceBundle {
             val skip = ICUConfig.get("com.ibm.icu.impl.ICUResourceBundle.skipRuntimeLocaleResourceScan", "false")
             if (!"true".equals(skip, ignoreCase = true)) {
                 loader.visitResources(directory) { name -> if (name.endsWith(".res")) names.add(name.dropLast(4)) }
+                if (baseName.startsWith(ICUData.ICU_BASE_NAME)) {
+                    val folder = when {
+                        baseName.length == ICUData.ICU_BASE_NAME.length -> ""
+                        baseName[ICUData.ICU_BASE_NAME.length] == '/' -> baseName.substring(ICUData.ICU_BASE_NAME.length + 1)
+                        else -> null
+                    }
+                    if (folder != null) ICUBinary.addBaseNamesInFileFolder(folder, ".res", names)
+                }
                 names.remove("res_index")
                 val iterator = names.iterator()
                 while (iterator.hasNext()) {

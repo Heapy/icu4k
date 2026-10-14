@@ -1,6 +1,6 @@
 package io.github.heapy.icu4k.impl
 
-import io.github.heapy.icu4k.util.ICUUncheckedIOException
+import io.github.heapy.icu4k.util.MissingResourceException
 import kotlin.test.*
 
 class LayoutPropsTest {
@@ -24,7 +24,9 @@ class LayoutPropsTest {
         val second = ICUBinary.getRequiredData("ulayout.icu")
         assertEquals(0xda.toByte(), second.getByte(2))
         assertNull(ICUBinary.getData("missing.icu"))
-        assertFailsWith<ICUUncheckedIOException> { ICUBinary.getRequiredData("missing.icu") }
+        val missing = assertFailsWith<MissingResourceException> { ICUBinary.getRequiredData("missing.icu") }
+        assertEquals("could not locate data", missing.message)
+        assertEquals("${ICUData.ICU_BASE_NAME}/missing.icu", missing.getKey())
         assertEquals(7, LayoutProps(second).inpcTrie!![0x093e])
     }
 }

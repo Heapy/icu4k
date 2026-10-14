@@ -12,7 +12,7 @@ internal object DatPackageReader {
     private val acceptable = ICUBinary.Authenticate { it[0].toInt() == 1 }
 
     fun validate(bytes: BinaryBuffer): Boolean {
-        try { ICUBinary.readHeader(bytes, DATA_FORMAT, acceptable) }
+        try { readICUBinaryHeader(bytes, DATA_FORMAT, acceptable) }
         catch (_: ICUUncheckedIOException) { return false }
         val count = intAt(bytes, bytes.position)
         if (count <= 0 || bytes.position + 4 + count * (8 + 16) > bytes.capacity) return false

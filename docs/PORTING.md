@@ -2976,3 +2976,44 @@ expects the original short-header bounds exception. Full JVM, JS Node and macOS
 Arm64 suites pass; Linux x64 production sources compile. Automatic dataPath
 folder/package discovery, external-file ownership, URL protocol extensions and
 the rest of ICU4J remain unfinished.
+
+### External binary dataPath files and mapped storage
+
+BinaryDataFiles now ports the ordered dataPath split and recursive folder scan,
+ASCII trim/one-separator removal, .txt file/directory exclusion, authenticated
+.dat package retention and lazy single-file mapping. Lookup tries each discovered
+file/package in publication order. Folder enumeration preserves upstream's
+single-file leading-slash test, including its exclusion of root-folder single
+files; package root entries still contribute. The scan is a one-time snapshot,
+not a file watcher. Packages retain their mapped bytes; single files map anew on
+successful lookup.
+
+ICUBinary initializes this scan from its original configuration key. Its loader
+lookup overload prioritizes external data and then the requested resource name;
+missing required data now throws MissingResourceException with the resource key.
+ICUResourceBundleReader uses the same external-first path for ICU data namespaces,
+and getFullLocaleNameSet adds external folder/package names before filtering.
+Header authentication is independent of ICUBinary initialization while discovering
+packages, avoiding a recursive initialization dependency.
+
+BinaryBuffer now has an internal storage boundary, preserving existing array
+constructors and shared-array behavior while permitting live host-backed views.
+JVM retains read-only FileChannel mappings. macOS/Linux use POSIX mmap and a
+cleaner attached to the shared storage owner. Slices/duplicates keep that owner
+alive. Node has no built-in mmap; retained descriptors provide live inode-stable
+reads, with bulk reads for copies and finalization-based closing. Browser JS has
+no host filesystem; embedded/caller-supplied resources remain available. Native
+and Node configuration comes from the existing environment-property boundary.
+
+Common tests cover path parsing, scan and lookup order, recursive filtering,
+missing/deleted singles, retained packages and original root enumeration. An
+isolated JVM differential test compares one-time configuration snapshots, file
+and package lookup, name sets, shared file writes, external bundle fallback and
+full locale-name discovery with ICU4J. JVM, Native and Node storage tests observe
+writes through existing views and retain those views after unlink. An old required
+resource test now checks the original missing-resource exception/message/key.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production and test sources
+compile. Linux runtime tests are configured in CI and were not executed in this macOS run. Node's
+retained-descriptor implementation preserves live content but has a different
+resource/per-byte IO cost than mmap. URLHandler custom protocols/diagnostics,
+Java bundle interoperability and the full ICU4J port remain unfinished.

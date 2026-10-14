@@ -1,22 +1,36 @@
 package io.github.heapy.icu4k.util
 
-/**
- * Common byte-array cursor for ICU binary formats, replacing java.nio.ByteBuffer.
- * The underlying bytes are shared. Typed reads advance [position] only after
- * checking capacity. Trie decoders copy the data they retain.
- */
-class BinaryBuffer(
-    bytes: ByteArray,
-    var order: ByteOrder = ByteOrder.BIG_ENDIAN,
-    val arrayOffset: Int = 0,
-    val capacity: Int = bytes.size - arrayOffset,
-    val isReadOnly: Boolean = false,
+internal interface BinaryBufferStorage {
+    val size: Int
+    operator fun get(index: Int): Byte
+    operator fun set(index: Int, value: Byte)
+    fun array(): ByteArray = copyOfRange(0, size)
+    fun copyOfRange(start: Int, end: Int): ByteArray = ByteArray(end - start) { get(start + it) }
+}
+private class ArrayBufferStorage(private val data: ByteArray) : BinaryBufferStorage {
+    override val size: Int get() = data.size
+    override fun get(index: Int): Byte = data[index]
+    override fun set(index: Int, value: Byte) { data[index] = value }
+    override fun array(): ByteArray = data
+    override fun copyOfRange(start: Int, end: Int): ByteArray = data.copyOfRange(start, end)
+}
+
+/** Shared byte cursor for ICU binary formats, over array or host-backed storage. */
+class BinaryBuffer private constructor(
+    private val storage: BinaryBufferStorage,
+    var order: ByteOrder,
+    val arrayOffset: Int,
+    val capacity: Int,
+    val isReadOnly: Boolean,
 ) {
-    private val storage: ByteArray = bytes
-    /** Mutable buffers expose their storage; read-only buffers expose a defensive snapshot. */
-    val bytes: ByteArray get() = if (isReadOnly) storage.copyOf() else storage
+    constructor(bytes: ByteArray, order: ByteOrder = ByteOrder.BIG_ENDIAN, arrayOffset: Int = 0,
+                capacity: Int = bytes.size - arrayOffset, isReadOnly: Boolean = false) :
+        this(ArrayBufferStorage(bytes), order, arrayOffset, capacity, isReadOnly)
+    internal constructor(storage: BinaryBufferStorage) : this(storage, ByteOrder.BIG_ENDIAN, 0, storage.size, true)
+    /** Mutable array buffers expose their storage; read-only buffers expose a defensive snapshot. */
+    val bytes: ByteArray get() = if (isReadOnly) storage.copyOfRange(0, storage.size) else storage.array()
     init {
-        require(arrayOffset >= 0 && capacity >= 0 && arrayOffset <= bytes.size - capacity) { "Invalid byte-array slice" }
+        require(arrayOffset >= 0 && capacity >= 0 && arrayOffset <= storage.size - capacity) { "Invalid byte-array slice" }
     }
     enum class ByteOrder { BIG_ENDIAN, LITTLE_ENDIAN }
     var position: Int = 0

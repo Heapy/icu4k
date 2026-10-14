@@ -333,7 +333,11 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             override fun createInstance(key: ReaderCacheKey, data: ICUResourceLoader): ICUResourceBundleReader? {
                 val fullName = getFullName(key.baseName, key.localeID)
                 try {
-                    val input = data.getData(fullName) ?: return null
+                    val input = if (key.baseName.startsWith(ICUData.ICU_BASE_NAME)) {
+                        val itemPath = fullName.substring(ICUData.ICU_BASE_NAME.length + 1)
+                        ICUBinary.getData(data, fullName, itemPath)
+                    } else data.getData(fullName)
+                    if (input == null) return null
                     return ICUResourceBundleReader(input, loadPool = { getReader(key.baseName, "pool", data) })
                 } catch (ex: ICUUncheckedIOException) {
                     throw ICUUncheckedIOException("Data file $fullName is corrupt - ${ex.message}", ex)

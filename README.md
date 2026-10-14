@@ -76,7 +76,7 @@ Locale availability lists come from the pinned ICU indexes; not all listed local
 payloads are embedded yet. The embedded subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
 The `UResourceBundle` factory dispatch, Java bundle interoperability and
-external binary-data scanning, custom URL protocols and remaining resource services are in progress.
+custom URL protocols and remaining resource services are in progress.
 `ICUResourceBundle.getFullLocaleNameSet` supports resource visitation, list-file and
 index fallback; JVM callers can use `ICUClassLoaderResourceLoader` for directories
 and JAR resources.
@@ -84,5 +84,8 @@ and JAR resources.
 ICU CmnD `.dat` packages can be opened in Common code with
 `ICUDataPackage.open(BinaryBuffer(datBytes))`. The package exposes item lookup and
 `asResourceLoader()` for binary bundles. It borrows the supplied storage; keep the
-validated package buffer's position and bounds unchanged. Automatic external
-`ICUBinary.dataPath` discovery is still being ported.
+validated package buffer's position and bounds unchanged. `ICUBinary.dataPath` is scanned once during ICUBinary initialization; external
+files and packages precede embedded resources. JVM uses a system property; Native
+and Node use the environment variable `com.ibm.icu.impl.ICUBinary.dataPath`. JVM
+and Native retain mmap storage; Node retains file descriptors for live reads.
+Browser JS uses embedded or caller-supplied resources.
