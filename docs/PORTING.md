@@ -3348,3 +3348,35 @@ three-load trace is compared against ICU4J.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 The data generator check passes for all 56 resources. Locale display-name services,
 remaining locale payloads and the complete ICU4J port remain unfinished.
+
+
+### Common SimpleFormatter and standalone pattern engine
+
+SimpleFormatter now implements its complete public compiler/format/append/replace/
+text/debug API in Common code. The standalone SimpleFormatterImpl engine preserves
+compiled UTF-16 tape layout, interned common patterns, apostrophe quoting, argument
+syntax and min/max diagnostics, 255 maximum argument index and 65,279-unit literal
+segments. Formatting retains null values, last-occurrence offsets, partial writes,
+result-alias rejection on append and result-copy/initial-alias handling on replace.
+Nullable-array Values adapters express Java null-vararg-array behavior in Common.
+
+The engine also ports raw pattern formatting, argument limits, literal text/code-unit/
+code-point/prefix lengths and IterInternal state/argument traversal. JVM iterator
+Appendable IOExceptions are wrapped in ICUUncheckedIOException. Segment-local code
+point counting preserves surrogate-pair splits at long-literal boundaries. Sparse
+patterns retain the source text getter's negative-capacity failure; JS explicitly
+rejects that capacity. Wrapper/engine calls pass argument arrays directly without
+extra spread copies, preserving callbacks that mutate later argument values.
+
+Common tests cover quoting, nulls, malformed syntax, offsets/aliases, long segments
+and iteration. JVM differential tests compare 2,000 generated patterns plus explicit
+edge/long patterns under four argument limits, including exact tape/builder state,
+error messages and all getters. Append/replace tests compare alias/count/offset-length
+matrices with partial writes; iterator/IO and live Java argument-array callback tests
+also match ICU4J. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources
+compile.
+
+SimpleFormatterImpl.formatPrefixSuffix is still pending because its
+FormattedStringBuilder and formatting-field dependencies are not yet ported.
+This stage supplies the standalone formatting dependency for locale display names;
+those services and the complete ICU4J port remain unfinished.

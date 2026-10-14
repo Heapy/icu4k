@@ -125,3 +125,8 @@ preferred values, and geographic/grouping containment in Common code. For exampl
 measurement systems, paper sizes and the CLDR version. Core and language bundles
 for English, French, Arabic and Japanese are embedded with their root/pool data.
 The complete locale payload set is still being ported.
+
+
+`SimpleFormatter` compiles ICU numbered patterns and supports apostrophe quoting,
+argument offsets and append/replace formatting, including use of the result builder
+as an argument during replacement. Example: `SimpleFormatter.compile("{1} in {0}")`.
