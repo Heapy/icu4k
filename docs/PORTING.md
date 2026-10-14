@@ -3597,3 +3597,31 @@ JVM oracle comparisons cover 607 extreme/random millisecond and day values,
 308 extreme/random years across every month, array reuse and negative-denominator
 division. Common currency tests cover epoch/leap-day formatting and month bounds.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+### CurrencyMetaInfo and ICUCurrencyMetaInfo
+
+CurrencyMetaInfo now exposes immutable filters, currency records/digits and the
+singleton data provider in Common Kotlin. Filters preserve nullable region/code,
+raw date ranges, inclusive overlap, legal-tender constraints, source equality/hash
+and debug strings. JVM Date adapters preserve null range endpoints and repeated
+getTime callbacks. now() uses the platform clock. CurrencyUsage is extracted as a
+Common enum until the complete Currency class is ported.
+
+ICUCurrencyMetaInfo reads the complete pinned curr/supplementalData.res bundle,
+retains resource/priority order, unique first-seen currency/region lists and the
+region-only fast path, and returns unmodifiable lists. Date words are combined as
+signed-high/unsigned-low 64-bit values without extra end-of-day adjustment.
+STANDARD/CASH fraction and rounding data preserve unknown-code and null-usage
+fallback. Provider construction failures retain the source substitute behavior,
+including its ignored noSubstitute argument. The checked manifest has 60 resources.
+
+JVM oracle tests compare the whole record table, all regions/currencies, tender
+filters, every record's endpoint/neighbor/reversed date queries, both usage modes,
+filter hashes/debug output and mutable Date callbacks. Common tests exercise data
+availability, historical currencies, cash rounding and collection immutability.
+The old source comment about empty AQ records is not treated as current data;
+queries match the pinned resource and ICU4J oracle. Full JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 test sources compile; data generation checks pass.
+
+Currency display names/provider, full Currency/MeasureUnit, DecimalFormatSymbols,
+number formatting and the complete ICU4J port remain unfinished.
