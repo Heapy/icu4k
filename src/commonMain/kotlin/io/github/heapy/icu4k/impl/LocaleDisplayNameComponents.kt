@@ -8,6 +8,7 @@ import io.github.heapy.icu4k.lang.UScript
 import io.github.heapy.icu4k.text.BreakIterator
 import io.github.heapy.icu4k.text.CaseMap
 import io.github.heapy.icu4k.text.DisplayContext
+import io.github.heapy.icu4k.text.LocaleDisplayNames
 import io.github.heapy.icu4k.text.UTF16
 import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.ULocale
@@ -45,8 +46,8 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
             }
         }
         val noSubstitute = substitute == DisplayContext.NO_SUBSTITUTE
-        langData = ResourceLocaleDisplayNameDataTable(ICUData.ICU_LANG_BASE_NAME, requested, noSubstitute)
-        regionData = ResourceLocaleDisplayNameDataTable(ICUData.ICU_REGION_BASE_NAME, requested, noSubstitute)
+        langData = LocaleDisplayNamesImpl.languageData(requested, noSubstitute)
+        regionData = LocaleDisplayNamesImpl.regionData(requested, noSubstitute)
         locale = if (langData.getLocale() == ULocale.ROOT) regionData.getLocale() else langData.getLocale()
         val buffer = StringBuilder()
         val separator = langData.get("localeDisplayPattern", "separator").let { if (it == null || it == "separator") "{0}, {1}" else it }
@@ -99,7 +100,7 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
         }
         return name
     }
-    fun getUiListCompareWholeItems(localeSet: Set<ULocale?>?, comparator: Comparator<LocaleUiListItem>?): MutableList<LocaleUiListItem> {
+    fun getUiListCompareWholeItems(localeSet: Set<ULocale?>?, comparator: Comparator<LocaleUiListItem>?, capContext: DisplayContext? = getContext(DisplayContext.Type.CAPITALIZATION)): MutableList<LocaleUiListItem> {
         val result = ArrayList<LocaleUiListItem>()
         val groups = HashMap<ULocale, MutableSet<ULocale>>()
         val builder = ULocale.Builder()
@@ -110,7 +111,7 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
             groups.getOrPut(base) { HashSet() }.add(maximized)
         }
         for ((base, values) in groups) {
-            if (values.size == 1) result.add(newUiRow(ULocale.minimizeSubtags(values.first(), ULocale.Minimize.FAVOR_SCRIPT)))
+            if (values.size == 1) result.add(newUiRow(ULocale.minimizeSubtags(values.first(), ULocale.Minimize.FAVOR_SCRIPT), capContext))
             else {
                 val scripts = HashSet<String>(); val regions = HashSet<String>()
                 val maximumBase = ULocale.addLikelySubtags(base)
@@ -121,18 +122,18 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
                     val modified = builder.setLocale(value)
                     if (!hasScripts) modified.setScript("")
                     if (!hasRegions) modified.setRegion("")
-                    result.add(newUiRow(modified.build()))
+                    result.add(newUiRow(modified.build(), capContext))
                 }
             }
         }
         sortLocaleUiItems(result, comparator)
         return result
     }
-    private fun newUiRow(modified: ULocale): LocaleUiListItem {
+    private fun newUiRow(modified: ULocale, capContext: DisplayContext?): LocaleUiListItem {
         val minimized = ULocale.minimizeSubtags(modified, ULocale.Minimize.FAVOR_SCRIPT)
-        val inDisplay = LocaleDisplayNameComponents(locale).localeDisplayName(modified)!!
-        val inSelf = LocaleDisplayNameComponents(modified).localeDisplayName(modified)!!
-        val title = capitalization == DisplayContext.CAPITALIZATION_FOR_UI_LIST_OR_MENU
+        val inDisplay = LocaleDisplayNames.getInstance(locale).localeDisplayName(modified)
+        val inSelf = LocaleDisplayNames.getInstance(modified).localeDisplayName(modified)
+        val title = capContext == DisplayContext.CAPITALIZATION_FOR_UI_LIST_OR_MENU
         val casing = CaseMap.toTitle().wholeString().noLowercase()
         return LocaleUiListItem(minimized, modified,
             if (title) casing.apply(locale, null, inDisplay) else inDisplay,
