@@ -3759,3 +3759,20 @@ iterator removal, array conversion and immutable collections against ICU4J 78.3.
 Common tests exercise compressed branches, supplementary folding and reentrant
 callbacks. JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile.
 These dependencies do not complete Currency, MeasureUnit or the full ICU4J port.
+
+### Currency parsing implementation
+
+CurrencyParsing extracts Currency's localized-name and symbol parsing into common
+code, ready for the future public Currency facade. Names use simple case folding;
+symbols are case sensitive and include StaticUnicodeSets equivalent forms. The
+longest match wins, with names winning equal lengths. ParsePosition advances only
+by the matched length and its errorIndex remains unchanged. The original mutable
+cached parsing tries and first-value selection are preserved.
+
+JVM oracle coverage compares loaded names/symbols in 11 locales across parsing
+modes, uppercase inputs, trailing text and offsets. Injected cached trie entries
+verify tie handling, longer symbols and invalid-offset exceptions/position state.
+Common tests cover names, equivalent yen symbols, failures and offsets. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 tests compile. An additional JVM
+suite run passes after the mutable-cache boundary tests were added. Public
+Currency and MeasureUnit are still unfinished; no facade completeness is claimed.
