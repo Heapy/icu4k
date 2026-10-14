@@ -12,6 +12,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
     private val bytes: BinaryBuffer
     private val keys: ByteArray
     private val units: CharArray
+    private val resourceCache: ResourceCache?
     private val localKeyLimit: Int
     private val poolStringIndexLimit: Int
     private val poolStringIndex16Limit: Int
@@ -49,6 +50,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         val unitsTop = if (count > 6) intAt(28) * 4 else keysTop
         units = if (unitsTop > keysTop) CharArray((unitsTop - keysTop) / 2) { charAt(keysTop + 2 * it).toChar() }
             else charArrayOf('\u0000')
+        resourceCache = if (!isPoolBundle || units.size > 1) ResourceCache((intAt(16) - 1) or (units.size - 1)) else null
         poolChecksum = if (count > 7) intAt(32) else 0
         if (usesPoolBundle) {
             if (pool == null) pool = loadPool?.invoke()
@@ -85,19 +87,31 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         if (length < 0 || offset > units.size - length) throw IndexOutOfBoundsException()
         return units.concatToString(offset, offset + length)
     }
+    private fun getStringV2(res: Int): String {
+        val offset = RES_GET_UINT(res)
+        (resourceCache!!.get(res) as String?)?.let { return it }
+        if (unitAt(offset) == 0) return ""
+        val value = stringV2(offset)
+        return resourceCache.putIfAbsent(res, value, value.length * 2) as String
+    }
     fun getString(res: Int): String? {
         val offset = RES_GET_UINT(res)
         val type = RES_GET_TYPE(res)
         if (type != 0 && type != 6) return null
         if (offset == 0) return ""
-        if (type == 6) return if (offset < poolStringIndexLimit) pool!!.stringV2(offset)
-            else stringV2(offset - poolStringIndexLimit)
-        return stringAt(offset * 4 + 4, intAt(offset * 4))
+        if (type == 6) return if (offset < poolStringIndexLimit) pool!!.getStringV2(res)
+            else getStringV2(res - poolStringIndexLimit)
+        (resourceCache!!.get(res) as String?)?.let { return it }
+        val value = stringAt(offset * 4 + 4, intAt(offset * 4))
+        return resourceCache.putIfAbsent(res, value, value.length * 2) as String
     }
     fun getAlias(res: Int): String? {
         if (RES_GET_TYPE(res) != 3) return null
         val offset = RES_GET_UINT(res) * 4
-        return if (offset == 0) "" else stringAt(offset + 4, intAt(offset))
+        if (offset == 0) return ""
+        (resourceCache!!.get(res) as String?)?.let { return it }
+        val value = stringAt(offset + 4, intAt(offset))
+        return resourceCache.putIfAbsent(res, value, value.length * 2) as String
     }
     fun getBinary(res: Int): ByteArray? {
         if (RES_GET_TYPE(res) != 1) return null
@@ -111,6 +125,23 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         val offset = RES_GET_UINT(res) * 4
         if (offset == 0) return intArrayOf()
         return bytes.sliceAt(offset + 4).readInts(intAt(offset))
+    }
+    private fun isNoInheritanceMarker(res: Int): Boolean {
+        val offset = RES_GET_UINT(res)
+        if (offset == 0) return false
+        if (RES_GET_TYPE(res) == 0) {
+            val byteOffset = offset * 4
+            return intAt(byteOffset) == 3 && charAt(byteOffset + 4) == 0x2205 &&
+                charAt(byteOffset + 6) == 0x2205 && charAt(byteOffset + 8) == 0x2205
+        }
+        if (RES_GET_TYPE(res) != 6) return false
+        return if (offset < poolStringIndexLimit) pool!!.stringV2Marker(offset)
+            else stringV2Marker(offset - poolStringIndexLimit)
+    }
+    private fun stringV2Marker(offset: Int): Boolean = when (unitAt(offset)) {
+        0x2205 -> unitAt(offset + 1) == 0x2205 && unitAt(offset + 2) == 0x2205 && unitAt(offset + 3) == 0
+        0xdc03 -> unitAt(offset + 1) == 0x2205 && unitAt(offset + 2) == 0x2205 && unitAt(offset + 3) == 0x2205
+        else -> false
     }
     /** Shares binary storage while keeping an independent cursor. */
     private fun binaryBuffer(res: Int): BinaryBuffer? {
@@ -132,7 +163,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         override fun getBinary(): BinaryBuffer = reader.binaryBuffer(res) ?: mismatch()
         override fun getArray(): UResource.Array = reader.getArray(res)?.asArray() ?: mismatch()
         override fun getTable(): UResource.Table = reader.getTable(res)?.asTable() ?: mismatch()
-        override fun isNoInheritanceMarker(): Boolean = reader.getString(res) == "∅∅∅"
+        override fun isNoInheritanceMarker(): Boolean = reader.isNoInheritanceMarker(res)
         private fun strings(array: Container): Array<String> = Array(array.size) {
             reader.getString(array.getContainerResource(it)) ?: mismatch()
         }
@@ -189,7 +220,11 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             }
             return -1
         }
-        fun asArray(): UResource.Array = object : UResource.Array {
+        private val arrayView: UResource.Array by lazy { createArrayView() }
+        private val tableView: UResource.Table by lazy { createTableView() }
+        fun asArray(): UResource.Array = arrayView
+        fun asTable(): UResource.Table = tableView
+        private fun createArrayView(): UResource.Array = object : UResource.Array {
             override fun getSize(): Int = size
             override fun getValue(i: Int, value: UResource.Value): Boolean {
                 if (i !in 0 until size) return false
@@ -198,7 +233,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
                 return true
             }
         }
-        fun asTable(): UResource.Table = object : UResource.Table {
+        private fun createTableView(): UResource.Table = object : UResource.Table {
             override fun getSize(): Int = size
             override fun getKeyAndValue(i: Int, key: UResource.Key, value: UResource.Value): Boolean {
                 if (i !in 0 until size) return false
@@ -226,6 +261,12 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         fun getResource(key: String): Int = getContainerResource(if (keyOffsets == null) key.toInt() else findTableItem(key))
     }
     fun getArray(res: Int): Container? {
+        if (!URES_IS_ARRAY(RES_GET_TYPE(res))) return null
+        if (RES_GET_UINT(res) == 0) return readArray(res)
+        (resourceCache!!.get(res) as Container?)?.let { return it }
+        return resourceCache.putIfAbsent(res, readArray(res)!!, 0) as Container
+    }
+    private fun readArray(res: Int): Container? {
         val type = RES_GET_TYPE(res)
         if (!URES_IS_ARRAY(type)) return null
         val offset = RES_GET_UINT(res)
@@ -234,6 +275,14 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             else Container(intAt(offset * 4), offset * 4 + 4, false)
     }
     fun getTable(res: Int): Container? {
+        val type = RES_GET_TYPE(res)
+        if (!URES_IS_TABLE(type)) return null
+        if (RES_GET_UINT(res) == 0) return readTable(res)
+        (resourceCache!!.get(res) as Container?)?.let { return it }
+        val table = readTable(res)!!
+        return resourceCache.putIfAbsent(res, table, table.size * (if (type == 4) 4 else 2)) as Container
+    }
+    private fun readTable(res: Int): Container? {
         val type = RES_GET_TYPE(res)
         if (!URES_IS_TABLE(type)) return null
         val offset = RES_GET_UINT(res)

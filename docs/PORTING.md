@@ -2605,3 +2605,25 @@ The reader no longer accesses the defensive bytes snapshot on every scalar read.
 Regression tests prove binary resource views still observe changes through the
 original writable owner, including when reader input is read-only. JVM, JS Node
 and macOS Arm64 suites pass.
+
+### Per-reader resource cache
+
+ResourceCache ports ICU4J's sorted 32-entry table, transition to radix levels,
+precomputed level widths, offset/mini-type keys and collision splitting. Small
+values and array containers remain strongly held; large values use the existing
+platform reclaimable-reference primitive (JVM soft, JS/Native weak). Cleared
+entries are republished with the current CacheValue strength. JVM monitor and
+Native POSIX mutex adapters serialize complete lookup/insertion operations; JS
+operations remain synchronous.
+
+The reader caches strings, aliases and containers, including pool strings in
+the pool reader's cache with local offsets. Repeated Value array/table getters
+retain their adapter identity. Marker detection reads original resource data
+rather than the cached string, matching ICU4J's independent marker check.
+
+Common tests cover sorted insertion, type/offset distinctions and radix levels
+across offset bit widths. JVM differential tests cover 1/32/33/400 entries,
+forced reference clearing before and after migration, replacement strength and
+concurrent publication. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
+production sources compile. Resource-bundle fallback and the public facade are
+still unfinished.
