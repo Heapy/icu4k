@@ -13,7 +13,7 @@ interface ICUCache<K, V> {
 }
 
 /** Reclaimable reference to the entire synchronized map, as in ICU4J. */
-class SimpleCache<K, V>(cacheType: Int = ICUCache.SOFT, initialCapacity: Int = 16) : ICUCache<K, V> {
+open class SimpleCache<K, V>(cacheType: Int = ICUCache.SOFT, initialCapacity: Int = 16) : ICUCache<K, V> {
     private val type = if (cacheType == ICUCache.WEAK) ICUCache.WEAK else ICUCache.SOFT
     private val capacity = if (initialCapacity > 0) initialCapacity else 16
     private val reference = AtomicReference<CacheReference<Store<K, V>>?>(null)

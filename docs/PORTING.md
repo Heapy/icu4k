@@ -3526,3 +3526,29 @@ fallback because those runtimes have no Java soft-reference primitive.
 Utility.appendTo preserves a single Appendable.append call, returns the input
 appendable and wraps JVM IOException in ICUUncheckedIOException. Common cache
 checks and the ListFormatter append-failure oracle pass in the full platform run.
+
+### ListFormatter and FormattedList
+
+ListFormatter now provides AND/OR/UNITS and WIDE/SHORT/NARROW styles, resource
+fallback, default FORMAT locale factories, supplied patterns, collection/vararg
+formatting, pattern generation and immutable FormattedList results. Its builder
+preserves reversed/repeated/missing argument behavior, element callback order,
+empty-element offsets, span values and literal/element fields. Nested Field and
+SpanField aliases expose the already-portable field identities. Java Locale
+factories are JVM extensions. Spanish and Hebrew core bundles are embedded,
+bringing the checked resource manifest to 58 entries.
+
+Contextual handling follows the source's ASCII-only case-insensitive Spanish
+regexes and Hebrew-block rule, including line terminator boundaries. Formatted
+results expose Common constrained iteration, attributed export, UTF-16 access,
+substrings and append-to behavior. JVM oracle tests cover ten locale identifiers,
+all nine type/width combinations, contextual tails, malformed-but-compilable
+patterns, callback traces and append failures. Common tests exercise language
+contexts and reversed supplementary-text spans. Full JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 test sources compile; data generation checks pass.
+
+The JS/Native getPatternForNumItems helper currently generates ASCII indices;
+JVM retains String.format's FORMAT-locale digit localization. Portable localized
+pattern indices still require the numbering-system/number-formatting stage.
+Only selected locale payloads are embedded; the full data and ICU4J ports remain
+unfinished. SimpleCache remains subclassable as in the source.

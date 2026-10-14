@@ -411,6 +411,22 @@
       "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/ja.res",
       "sha256": "b989d43ccca5fe2ee1464aeadfb444738171811affd3a8fe8435e5fdf8531dce",
       "size": 21872
+    },
+    {
+      "name": "es.res",
+      "file": "data/icu78/es.res",
+      "object": "CoreEsResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/es.res",
+      "sha256": "688ccf6b3dbf12363fe095b475c716d1366c9cfd4482d5b9a3ad52f70e418140",
+      "size": 16160
+    },
+    {
+      "name": "he.res",
+      "file": "data/icu78/he.res",
+      "object": "CoreHeResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/he.res",
+      "sha256": "24e1197b0b787dea89f6d2e4d3d4d953d6603db6d42be538aab4bf5ee708b65d",
+      "size": 22128
     }
   ]
 }
