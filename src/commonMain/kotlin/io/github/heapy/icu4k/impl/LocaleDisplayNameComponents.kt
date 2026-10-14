@@ -99,6 +99,57 @@ internal class LocaleDisplayNameComponents(requested: ULocale?, vararg contexts:
         }
         return name
     }
+    fun localeDisplayName(localeId: String?): String? = localeDisplayName(ULocale(localeId!!))
+    fun localeDisplayName(input: ULocale?): String? {
+        val target = input!!
+        val language = target.getLanguage().ifEmpty { "und" }
+        val script = target.getScript()
+        val country = target.getCountry()
+        val variant = target.getVariant()
+        var hasScript = script.isNotEmpty()
+        var hasCountry = country.isNotEmpty()
+        var resultName: String? = null
+        if (dialectNames) {
+            if (hasScript && hasCountry) {
+                val id = "${language}_${script}_$country"
+                val result = localeIdName(id)
+                if (result != null && result != id) { resultName = result; hasScript = false; hasCountry = false }
+            }
+            if (resultName == null && hasScript) {
+                val id = "${language}_$script"
+                val result = localeIdName(id)
+                if (result != null && result != id) { resultName = result; hasScript = false }
+            }
+            if (resultName == null && hasCountry) {
+                val id = "${language}_$country"
+                val result = localeIdName(id)
+                if (result != null && result != id) { resultName = result; hasCountry = false }
+            }
+        }
+        if (resultName == null) resultName = escapeParens(localeIdName(language) ?: return null)
+        val remainder = StringBuilder()
+        if (hasScript) remainder.append(escapeParens(scriptDisplayNameInContext(script, true) ?: return null))
+        if (hasCountry) appendWithSep(escapeParens(regionDisplayName(country, true) ?: return null), remainder)
+        if (variant.isNotEmpty()) appendWithSep(escapeParens(variantDisplayName(variant, true) ?: return null), remainder)
+        val keys = target.getKeywords()
+        if (keys != null) while (keys.hasNext()) {
+            val key = keys.next()
+            val value = target.getKeywordValue(key)
+            val keyName = escapeParens(keyDisplayName(key, true) ?: return null)
+            val valueName = escapeParens(keyValueDisplayName(key, value, true) ?: return null)
+            if (valueName != value) appendWithSep(valueName, remainder)
+            else if (key != keyName) appendWithSep(SimpleFormatterImpl.formatCompiledPattern(keyTypeFormat, keyName, valueName), remainder)
+            else appendWithSep(keyName, remainder).append('=').append(valueName)
+        }
+        if (remainder.isNotEmpty()) resultName = SimpleFormatterImpl.formatCompiledPattern(format, resultName, remainder.toString())
+        return adjust(Usage.LANGUAGE, resultName)
+    }
+    private fun escapeParens(value: String): String = value.replace(openParen, replaceOpenParen).replace(closeParen, replaceCloseParen)
+    private fun appendWithSep(value: String, buffer: StringBuilder): StringBuilder {
+        if (buffer.isEmpty()) buffer.append(value)
+        else SimpleFormatterImpl.formatAndReplace(separatorFormat, buffer, null, buffer, value)
+        return buffer
+    }
     fun localeIdName(id: String?): String? {
         if (nameLength == DisplayContext.LENGTH_SHORT) langData.get("Languages%short", id)?.let { if (it != id) return it }
         var name = langData.get("Languages", id)

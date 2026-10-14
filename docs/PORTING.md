@@ -4104,3 +4104,23 @@ Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile. The engi
 is internal pending LocaleDisplayNames' full locale composition, UI lists and
 public/cache/provider facade. Locale service factories, BreakIterator registration,
 Currency/MeasureUnit and the complete ICU4J port remain unfinished.
+
+### Composite locale display names
+
+The display-name engine now composes full locale names from language, script,
+region, combined variant and ordered keywords. Dialect lookup follows the source
+language-script-region / language-script / language-region priority and removes
+only components covered by a found dialect name. Root/empty language uses und;
+no-substitute failures propagate null. Non-dialect components escape parentheses
+according to the locale's pattern, keyword labels/values retain source comparison
+and keyTypePattern decisions, and capitalization is applied to the final result.
+String and ULocale entry points share the same renderer.
+
+Oracle tests compare seven display locales across dialect/length/substitution/
+capitalization combinations, fixed edge cases and 80 generated locale IDs with
+scripts, regions and keywords (including parenthesized values). Both entry points
+match ICU4J 78.3. Common tests cover standard/dialect names, short regions, root,
+unknown keywords, no-substitute and final French capitalization. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 tests compile. UI list generation
+and the public LocaleDisplayNames cache/provider facade remain unfinished, as do
+locale service factories, Currency/MeasureUnit and the complete ICU4J port.
