@@ -19,6 +19,10 @@ import io.github.heapy.icu4k.impl.data.UnitLocaleIndexResourceData
 import io.github.heapy.icu4k.impl.data.RegionRootResourceData
 import io.github.heapy.icu4k.impl.data.RegionPoolResourceData
 import io.github.heapy.icu4k.impl.data.RegionEnResourceData
+import io.github.heapy.icu4k.impl.data.BreakEnResourceData
+import io.github.heapy.icu4k.impl.data.BreakFrResourceData
+import io.github.heapy.icu4k.impl.data.BreakDeResourceData
+import io.github.heapy.icu4k.impl.data.BreakEsResourceData
 import io.github.heapy.icu4k.impl.data.UnitsResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyRootResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyPoolResourceData
@@ -114,7 +118,7 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("region/root.res", "region/pool.res", "region/en.res", "unit/root.res", "unit/pool.res", "unit/en.res", "unit/res_index.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
+    private val resourceNames = setOf("brkitr/en.res", "brkitr/fr.res", "brkitr/de.res", "brkitr/es.res", "region/root.res", "region/pool.res", "region/en.res", "unit/root.res", "unit/pool.res", "unit/en.res", "unit/res_index.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
     internal fun visitResources(directory: String, visitor: (String) -> Unit) {
         val prefix = directory.removePrefix("/")
         if (!prefix.startsWith("$ICU_BASE_NAME/")) return
@@ -145,6 +149,10 @@ object ICUData {
         "region/root.res" -> RegionRootResourceData.copy()
         "region/pool.res" -> RegionPoolResourceData.copy()
         "region/en.res" -> RegionEnResourceData.copy()
+        "brkitr/en.res" -> BreakEnResourceData.copy()
+        "brkitr/fr.res" -> BreakFrResourceData.copy()
+        "brkitr/de.res" -> BreakDeResourceData.copy()
+        "brkitr/es.res" -> BreakEsResourceData.copy()
         "units.res" -> UnitsResourceData.copy()
         "curr/root.res" -> CurrencyRootResourceData.copy()
         "curr/pool.res" -> CurrencyPoolResourceData.copy()

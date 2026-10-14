@@ -8,6 +8,7 @@ import io.github.heapy.icu4k.text.CharacterIterator
 import io.github.heapy.icu4k.text.FilteredBreakIteratorBuilder
 import io.github.heapy.icu4k.text.UCharacterIterator
 import io.github.heapy.icu4k.text.UTF16
+import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.util.BytesTrie
 import io.github.heapy.icu4k.util.CharsTrie
 import io.github.heapy.icu4k.util.CharsTrieBuilder
@@ -103,8 +104,13 @@ class SimpleFilteredSentenceBreakIterator(
     override fun getText(): CharacterIterator = delegate.getText()
     override fun setText(newText: CharacterIterator) { delegate.setText(newText) }
 
-    class Builder : FilteredBreakIteratorBuilder() {
+    open class Builder() : FilteredBreakIteratorBuilder() {
         private val filterSet = HashSet<CharSequence>()
+        constructor(locale: ULocale?) : this() {
+            val bundle = ICUResourceBundle.getBundleInstance(ICUData.ICU_BRKITR_BASE_NAME, locale, ICUResourceBundle.OpenType.LOCALE_ROOT)
+            val exceptions = bundle.findWithFallback("exceptions/SentenceBreak")
+            if (exceptions != null) for (index in 0 until exceptions.getSize()) filterSet.add(exceptions.get(index).getString())
+        }
         override fun suppressBreakAfter(str: CharSequence): Boolean = filterSet.add(str)
         override fun unsuppressBreakAfter(str: CharSequence): Boolean = filterSet.remove(str)
         override fun wrapIteratorWithFilter(wrappedBreakIterator: BreakIterator): BreakIterator {

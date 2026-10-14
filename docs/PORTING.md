@@ -3990,3 +3990,23 @@ JS Node and macOS Arm64 suites pass; Linux x64 tests compile. An additional JVM
 suite passes after adding the default-locale test. CaseMap.Title adapters, locale
 BreakIterator factories, LocaleDisplayNames, service display-name enumeration,
 public Currency/MeasureUnit and the complete ICU4J port remain unfinished.
+
+### Locale-loaded sentence suppression
+
+FilteredBreakIteratorBuilder.getInstance(ULocale) now loads the locale's
+exceptions/SentenceBreak resource through LOCALE_ROOT fallback, matching the
+SimpleFilteredSentenceBreakIterator.Builder locale constructor. A JVM adapter
+accepts java.util.Locale. Builders retain mutable suppression sets and wrapped
+iterator snapshots; existing suppressions can be removed/re-added. Break data
+for en, fr, de and es is embedded and included in full-name scanning; 89 pinned
+resources verify.
+
+Oracle tests enumerate every source suppression for loaded locales and fallback
+variants, compare filtered forward boundaries plus following/preceding at all
+positions, and compare mutation results. A Java Locale adapter test verifies
+same initial suppressions. Common tests cover English abbreviation loading,
+removal/re-addition, actual sentence boundaries and resource discovery. The
+embedded break-locale inventory expectation was updated for the added resources.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile. General
+BreakIterator factories/service registration, CaseMap.Title, LocaleDisplayNames,
+public Currency/MeasureUnit and the full ICU4J port remain unfinished.

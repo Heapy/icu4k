@@ -627,6 +627,34 @@
       "object": "RegionEnResourceData",
       "sha256": "c49018c1dcb939c9b7445f38a58b62a0193e79558762f30efa117b221b4efecb",
       "size": 1456
+    },
+    {
+      "name": "brkitr/en.res",
+      "file": "data/icu78/brkitr/en.res",
+      "object": "BreakEnResourceData",
+      "sha256": "52cabf46306c92047c7d6e80ffb2676238301e7a3089d39a6d06f3b6ec3aeb8c",
+      "size": 1776
+    },
+    {
+      "name": "brkitr/fr.res",
+      "file": "data/icu78/brkitr/fr.res",
+      "object": "BreakFrResourceData",
+      "sha256": "7f7df4a408588df144c6d45a11e0148980371c473ed6637f8f8a4345b80eb111",
+      "size": 1200
+    },
+    {
+      "name": "brkitr/de.res",
+      "file": "data/icu78/brkitr/de.res",
+      "object": "BreakDeResourceData",
+      "sha256": "eb6add8e03306267220a7448862a9e6a619ef677c4a924f9bfb7838c8c98c4eb",
+      "size": 2992
+    },
+    {
+      "name": "brkitr/es.res",
+      "file": "data/icu78/brkitr/es.res",
+      "object": "BreakEsResourceData",
+      "sha256": "4f8af99a7e2296b41e3f68a5647a4175fdc68e72dfd3efd53b9fdd9d487d7d7f",
+      "size": 2176
     }
   ]
 }
