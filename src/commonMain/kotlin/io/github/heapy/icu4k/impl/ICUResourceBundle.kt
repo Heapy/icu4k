@@ -4,6 +4,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.*
+import io.github.heapy.icu4k.impl.locale.LocaleReadOnlySet
 import kotlin.concurrent.atomics.AtomicReference
 
 /** ICU binary bundle loading, resource lookup, locale fallback and aliases. Service/enumeration APIs are being ported. */
@@ -149,6 +150,79 @@ open class ICUResourceBundle : UResourceBundle {
     }
     enum class OpenType { LOCALE_DEFAULT_ROOT, LOCALE_ROOT, LOCALE_ONLY, DIRECT }
     companion object {
+        private class AvailEntry(private val prefix: String, private val loader: ICUResourceLoader) {
+            private val lock = createAvailabilityLock()
+            private val ulocales = AtomicReference<Map<ULocale.AvailableType, Array<ULocale>>?>(null)
+            private val names = AtomicReference<Set<String>?>(null)
+            fun getULocaleList(type: ULocale.AvailableType): Array<ULocale>? {
+                if (ulocales.load() == null) lock.withLock {
+                    if (ulocales.load() == null) ulocales.store(createULocaleList(prefix, loader))
+                }
+                return ulocales.load()!![type]
+            }
+            fun getLocaleNameSet(): Set<String> {
+                if (names.load() == null) lock.withLock {
+                    if (names.load() == null) {
+                        val ids = HashSet<String>()
+                        try {
+                            val installed = getBundleInstance(prefix, "res_index", loader, true)[INSTALLED_LOCALES]
+                            val iterator = installed.getIterator()
+                            iterator.reset()
+                            while (iterator.hasNext()) ids.add(iterator.next().getKey()!!)
+                        } catch (_: MissingResourceException) { }
+                        names.store(LocaleReadOnlySet({ ids }, null))
+                    }
+                }
+                return names.load()!!
+            }
+        }
+        private val availableCache = object : SoftCache<String, AvailEntry, ICUResourceLoader>() {
+            override fun createInstance(key: String, data: ICUResourceLoader): AvailEntry = AvailEntry(key, data)
+        }
+        private fun getAvailEntry(baseName: String, loader: ICUResourceLoader): AvailEntry = availableCache.getInstance(baseName, loader)!!
+        private fun createULocaleList(baseName: String, loader: ICUResourceLoader): Map<ULocale.AvailableType, Array<ULocale>> {
+            val bundle = getBundleInstance(baseName, "res_index", loader, true)
+            val result = HashMap<ULocale.AvailableType, Array<ULocale>>()
+            bundle.getAllItemsWithFallback("", object : UResource.Sink() {
+                override fun put(key: UResource.Key, value: UResource.Value, noFallback: Boolean) {
+                    val index = value.getTable()
+                    var i = 0
+                    while (index.getKeyAndValue(i++, key, value)) {
+                        val type = when {
+                            key.contentEquals("InstalledLocales") -> ULocale.AvailableType.DEFAULT
+                            key.contentEquals("AliasLocales") -> ULocale.AvailableType.ONLY_LEGACY_ALIASES
+                            else -> continue
+                        }
+                        val locales = value.getTable()
+                        result[type] = Array(locales.getSize()) { j ->
+                            locales.getKeyAndValue(j, key, value)
+                            ULocale(key.toString())
+                        }
+                    }
+                }
+            })
+            return result
+        }
+        fun getAvailableULocales(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader,
+                                type: ULocale.AvailableType = ULocale.AvailableType.DEFAULT): Array<ULocale>? = getAvailEntry(baseName, loader).getULocaleList(type)
+        fun getAvailableULocales(type: ULocale.AvailableType): Array<ULocale>? =
+            getAvailableULocales(ICUData.ICU_BASE_NAME, ICUResourceBundleReader.embeddedLoader, type)
+        fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
+            getAvailEntry(baseName, loader).getLocaleNameSet()
+        fun getKeywordValues(baseName: String, keyword: String, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Array<String> {
+            val keywords = HashSet<String>()
+            val locales = getAvailEntry(baseName, loader).getULocaleList(ULocale.AvailableType.DEFAULT)!!
+            for (locale in locales) try {
+                val bundle = getBundleInstance(baseName, locale.getBaseName(), loader, false)
+                val table = bundle.getObject(keyword) as ICUResourceBundle
+                val keys = table.getKeys()
+                while (keys.hasMoreElements()) {
+                    val key = keys.nextElement()
+                    if (key != "default" && !key.startsWith("private-")) keywords.add(key)
+                }
+            } catch (_: Throwable) { }
+            return keywords.toTypedArray()
+        }
         private fun interface BundleLoader { fun load(): ICUResourceBundle? }
         private val bundleCache = object : SoftCache<String, ICUResourceBundle, BundleLoader>() {
             override fun createInstance(key: String, data: BundleLoader): ICUResourceBundle? = data.load()

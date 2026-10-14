@@ -282,6 +282,20 @@
       "object": "TimezoneTypeResourceData",
       "sha256": "c949c2ae617c4adfa84c71bdeb2f010340d40c38ad32ec33bcc70e674ff8dd32",
       "size": 21248
+    },
+    {
+      "name": "res_index.res",
+      "file": "data/icu78/res_index.res",
+      "object": "RootLocaleIndexData",
+      "sha256": "2643a091acbd0bd72781299c86fcd78bf9e133ccceb58f41fe00e6b6e20e948e",
+      "size": 9648
+    },
+    {
+      "name": "brkitr/res_index.res",
+      "file": "data/icu78/brkitr/res_index.res",
+      "object": "BreakLocaleIndexData",
+      "sha256": "55b1b0b6ed0f7dab68429548fef0e29af2ed1195c159d65efc400de5b890595a",
+      "size": 240
     }
   ]
 }

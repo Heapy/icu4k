@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.impl.data.RootLocaleIndexData
+import io.github.heapy.icu4k.impl.data.BreakLocaleIndexData
 import io.github.heapy.icu4k.impl.data.TimezoneTypeResourceData
 import io.github.heapy.icu4k.impl.data.KeyTypeResourceData
 import io.github.heapy.icu4k.impl.data.BurmeseLstmModelData
@@ -67,12 +69,14 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
+    private val resourceNames = setOf("res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
     private fun itemPath(name: String): String = name.removePrefix("/").removePrefix("$ICU_BASE_NAME/")
     fun exists(resourceName: String): Boolean = itemPath(resourceName) in resourceNames
 
     /** Returns a private copy, so callers cannot mutate cached resource data. */
     fun getBytes(resourceName: String): ByteArray? = when (itemPath(resourceName)) {
+        "res_index.res" -> RootLocaleIndexData.copy()
+        "brkitr/res_index.res" -> BreakLocaleIndexData.copy()
         "timezoneTypes.res" -> TimezoneTypeResourceData.copy()
         "keyTypeData.res" -> KeyTypeResourceData.copy()
         "brkitr/ja.res" -> BreakJapaneseResourceData.copy()

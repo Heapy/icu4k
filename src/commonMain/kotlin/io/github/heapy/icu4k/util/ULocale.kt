@@ -131,6 +131,7 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
         fun clearExtensions(): Builder { builder.clearExtensions(); return this }
         fun build(): ULocale = getInstance(builder.getBaseLocale(), builder.getLocaleExtensions())
     }
+    enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
         const val PRIVATE_USE_EXTENSION = 'x'
         const val UNICODE_LOCALE_EXTENSION = 'u'

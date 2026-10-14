@@ -2803,3 +2803,27 @@ callback and error outcome for all opening modes, including direct bundles whose
 missing alias targets follow the original failure path. Full JVM, JS Node and
 macOS Arm64 suites pass; Linux x64 production sources compile. Locale availability,
 remaining resource services and UResourceBundle/Java dispatch are still pending.
+
+### Installed locales and keyword values
+
+ULocale.AvailableType and ICUResourceBundle's installed-locale APIs now read the
+original res_index tables. AvailEntry preserves prefix-only SoftCache identity,
+lazy serialized initialization, shared array results, separate default/legacy
+lists and unmodifiable raw locale-name sets. The internal WITH_LEGACY_ALIASES
+selection retains upstream's release null result; ULocale's public combined-list
+API is the separate layer that handles that selection.
+
+getKeywordValues unions keyword table keys over installed locales, excludes
+exactly default/private- names and preserves the original per-locale Throwable
+skip policy. It currently uses the implemented ICU binary factory, with Java
+resource dispatch still pending. Core and break res_index binaries are embedded
+from ICU 78.3 and checksum-pinned; the manifest now has 41 resources.
+
+Availability locks preserve reentrant initialization callbacks. JVM uses its
+monitor, JS synchronous calls and Native a recursive POSIX mutex with cleanup.
+Common tests cover array/name-set contracts, reentrant loading, malformed keyword
+tables and exclusions. JVM compares full core/break lists and names with ICU4J,
+checks release-only null behavior in an assertion-disabled loader, and verifies
+one initialization under eight concurrent callers. Full JVM, JS Node and macOS
+Arm64 suites pass; Linux x64 production sources compile. Full resource scanning,
+Java Locale conversion and remaining availability/services are not complete.
