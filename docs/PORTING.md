@@ -3845,3 +3845,23 @@ source public available-unit set. Common tests cover units, currencies, excluded
 pattern groups, resource discovery and callback failures/retries. Full JVM,
 JS Node and macOS Arm64 suites pass; Linux x64 tests compile. Public MeasureUnit,
 Currency service registration and the complete ICU4J port remain unfinished.
+
+### Service notification infrastructure
+
+ICUNotifier now provides common identity-based registration/removal, listener
+validation, locked snapshot capture and serial asynchronous notifications. JVM
+EventListener aliases java.util.EventListener; delivery uses a dedicated daemon
+thread with the source wait/queue and InterruptedException behavior. Native uses
+an individual Worker; JS uses a microtask event pump. Their common FIFO pump
+stops permanently after a callback failure, retaining queued/future batches;
+Native worker reporting and JS console reporting are host error-reporting paths.
+
+JVM oracle tests compare ordered snapshots under a blocked first callback,
+duplicate/equal-but-distinct registrations, removals and additions. They verify
+that unchecked callback failures terminate the daemon thread and that later
+notifications do not restart it. Common tests cover registration validation,
+FIFO batching and stopped queues. JS/Native tests exercise real asynchronous
+reentrant delivery, snapshots and duplicate registration; Native confirms a
+background worker performs callbacks. Full JVM, JS Node and macOS Arm64 suites
+pass; Linux x64 tests compile. ICUService/ICULocaleService, Currency registration
+and the complete ICU4J port remain unfinished.
