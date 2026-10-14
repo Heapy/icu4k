@@ -3794,3 +3794,22 @@ tests cover normalization, ISO numbers, region selection, cash rounding and date
 queries. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile;
 all generated resources verify. This is internal implementation work; public
 Currency, MeasureUnit and the complete ICU4J port remain unfinished.
+
+### Currency display dispatch and further locale data
+
+CurrencyNames extracts Currency's symbol/name/plural dispatch with ordinary,
+narrow, formal and variant symbols, long names, plural fallback and default-locale
+convenience paths. Choice-format output arrays are updated before lookup/style
+validation, retaining source empty-array failures. The plural overload delegates
+to ordinary dispatch for every style other than PLURAL_LONG_NAME.
+
+Currency data for de, zh, ru, hi, it, pt, ko and nl is embedded from ICU 78.3.
+All eight resources participate in byte loading, exists checks and directory
+visitation. There are now 78 pinned generated resources. Oracle tests compare
+all metadata currency codes across 15 locales, all styles, valid/unknown/null
+plural keys, choice arrays and failures against ICU4J. NullPointerException types
+are compared without JVM-generated null-dereference diagnostic text. Common tests
+cover dispatch, output mutation, resource discovery and localized names. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 test sources compile; all resources
+verify. CurrencyNames remains internal pending the complete Currency facade;
+MeasureUnit, service registration and the full ICU4J port remain unfinished.

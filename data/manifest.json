@@ -522,6 +522,62 @@
       "object": "CurrencyNumericCodesResourceData",
       "sha256": "d0e8565d2c93183963ddfdab830131b80aea7f7133eeb8d3802cd593a3d61b20",
       "size": 3136
+    },
+    {
+      "name": "curr/de.res",
+      "file": "data/icu78/curr/de.res",
+      "object": "CurrencyDeResourceData",
+      "sha256": "7c0ced1333293a855a35bf22a17a3f657dbc25b784ce3f96c88886ec055372be",
+      "size": 25920
+    },
+    {
+      "name": "curr/zh.res",
+      "file": "data/icu78/curr/zh.res",
+      "object": "CurrencyZhResourceData",
+      "sha256": "3de0513538c6884bd6d97e34eecfb92e7ab40b082d1030bb349f8ff428df4bcb",
+      "size": 8688
+    },
+    {
+      "name": "curr/ru.res",
+      "file": "data/icu78/curr/ru.res",
+      "object": "CurrencyRuResourceData",
+      "sha256": "de6480b5d3181caa757de667691ad57d12c1c24d7d76e0e88c73693f7850f58d",
+      "size": 37648
+    },
+    {
+      "name": "curr/hi.res",
+      "file": "data/icu78/curr/hi.res",
+      "object": "CurrencyHiResourceData",
+      "sha256": "003d43689764377b66157c6bcc469217b614c5ae8d644c87291ec302430d1442",
+      "size": 7616
+    },
+    {
+      "name": "curr/it.res",
+      "file": "data/icu78/curr/it.res",
+      "object": "CurrencyItResourceData",
+      "sha256": "2fe2b6871762411901eede94db9a09044df38093885b4ced2d0227043c438182",
+      "size": 21072
+    },
+    {
+      "name": "curr/pt.res",
+      "file": "data/icu78/curr/pt.res",
+      "object": "CurrencyPtResourceData",
+      "sha256": "398374376a0680b675c1260afa21032da67a57733c08b99d2df16b039b65e548",
+      "size": 34640
+    },
+    {
+      "name": "curr/ko.res",
+      "file": "data/icu78/curr/ko.res",
+      "object": "CurrencyKoResourceData",
+      "sha256": "2aae716aa528546e092281be5d7fa34d2fed43794b4bb7bb06a68f95c0977ec7",
+      "size": 10144
+    },
+    {
+      "name": "curr/nl.res",
+      "file": "data/icu78/curr/nl.res",
+      "object": "CurrencyNlResourceData",
+      "sha256": "f5983749aa3b0e4c30f781beca6d871aae3b3996f6cecbb682f315456fd7df55",
+      "size": 13680
     }
   ]
 }
