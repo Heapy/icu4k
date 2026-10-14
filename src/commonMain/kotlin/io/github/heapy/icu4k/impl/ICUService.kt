@@ -5,11 +5,12 @@ package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.impl.locale.localeReadOnlyMap
 import io.github.heapy.icu4k.util.ULocale
+import io.github.heapy.icu4k.util.SortedMap
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmOverloads
 
-/** Service registry and lookup; sorted display-name enumeration is not yet ported. */
+/** Service registry, fallback lookup and localized display-name enumeration. */
 open class ICUService(@JvmField protected val name: String? = "") : ICUNotifier() {
     open class Key(private val identifier: String?) {
         fun id(): String? = identifier
@@ -50,6 +51,11 @@ open class ICUService(@JvmField protected val name: String? = "") : ICUNotifier(
         fun put(key: String, value: CacheEntry) = lock.withLock { entries[key] = value }
     }
     private val cache = AtomicReference<ServiceCache?>(null)
+    private class LocaleRef(val map: SortedMap<String?, String>, val locale: ULocale?, val comparator: Comparator<Any?>?) {
+        fun get(locale: ULocale?, comparator: Comparator<Any?>?): SortedMap<String?, String>? =
+            if (this.locale!!.equals(locale) && (this.comparator === comparator || this.comparator != null && this.comparator.equals(comparator))) map else null
+    }
+    private val displayNames = AtomicReference<LocaleRef?>(null)
     private var idcache: Map<String, Factory>? = null
     open fun get(descriptor: String?): Any? = getKey(createKey(descriptor), null)
     open fun get(descriptor: String?, actualReturn: Array<String?>?): Any? {
@@ -126,6 +132,33 @@ open class ICUService(@JvmField protected val name: String? = "") : ICUNotifier(
         while (key.fallback()) map[key.currentID()]?.let { return it.getDisplayName(id, locale) }
         return null
     }
+    open fun getDisplayNames(): SortedMap<String?, String> = getDisplayNames(ULocale.getDefault(ULocale.Category.DISPLAY), null, null)
+    open fun getDisplayNames(locale: ULocale?): SortedMap<String?, String> = getDisplayNames(locale, null, null)
+    open fun getDisplayNames(locale: ULocale?, comparator: Comparator<Any?>?): SortedMap<String?, String> = getDisplayNames(locale, comparator, null)
+    open fun getDisplayNames(locale: ULocale?, matchID: String?): SortedMap<String?, String> = getDisplayNames(locale, null, matchID)
+    open fun getDisplayNames(locale: ULocale?, comparator: Comparator<Any?>?, matchID: String?): SortedMap<String?, String> {
+        var ref = displayNames.load()
+        var names = ref?.get(locale, comparator)
+        while (names == null) monitor.withLock {
+            val current = displayNames.load()
+            if (ref === current || current == null) {
+                val map = createServiceDisplayNamesMap(comparator)
+                for ((id, factory) in getVisibleIDMap()) map[factory.getDisplayName(id, locale)] = id
+                names = readOnlyServiceDisplayNamesMap(map)
+                displayNames.store(LocaleRef(names!!, locale, comparator))
+            } else {
+                ref = current
+                names = current.get(locale, comparator)
+            }
+        }
+        val key = createKey(matchID) ?: return names!!
+        @Suppress("UNCHECKED_CAST")
+        val result = createServiceDisplayNamesMap(names!!.comparator() as Comparator<Any?>?)
+        result.putAll(names!!)
+        val iterator = result.entries.iterator()
+        while (iterator.hasNext()) if (!key.isFallbackOf(iterator.next().value)) iterator.remove()
+        return result
+    }
     fun factories(): MutableList<Factory> {
         factoryLock.acquireRead()
         try { return ArrayList(factories) } finally { factoryLock.releaseRead() }
@@ -155,7 +188,7 @@ open class ICUService(@JvmField protected val name: String? = "") : ICUNotifier(
     open fun isDefault(): Boolean = factories.size == defaultSize
     protected open fun markDefault() { defaultSize = factories.size }
     open fun createKey(id: String?): Key? = id?.let(::Key)
-    protected open fun clearCaches() { cache.store(null); idcache = null }
+    protected open fun clearCaches() { cache.store(null); idcache = null; displayNames.store(null) }
     protected open fun clearServiceCache() { cache.store(null) }
     interface ServiceListener : EventListener { fun serviceChanged(service: ICUService?) }
     override fun acceptsListener(listener: EventListener): Boolean = listener is ServiceListener
