@@ -3678,3 +3678,31 @@ the receiving exception to rejection errors. JVM oracle tests compare constructo
 messages/causes, repeated initCause calls and serialization UID; Common tests
 exercise null initialization, overwrite and self-causation on all targets.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+
+### Unit aliases, identifier data and measure prefixes
+
+UnitAliases now loads every metadata alias/unit replacement, retains missing-
+replacement diagnostics, nullable lookup and fresh unmodifiable alias lists.
+MeasurePrefix and UnitComplexity extract all source enums for the shared parser;
+prefix order, identifiers, bases and powers match ICU4J, including the newest SI
+prefixes and binary prefixes. The future MeasureUnit facade can expose nested
+aliases for these shared types.
+
+UnitIdentifierData extracts the resource-backed static identifier/category portion
+of UnitsData, separating it from downstream conversion objects. It reads actual
+unitQuantities ordering and convertUnits targets, excludes kilogram in favor of
+prefixless gram, preserves source parser offsets, exposes the original mutable
+simple-unit array and retains alias replacement indexing. Missing targets are
+skipped as in assertion-disabled production; unknown category mappings fail during
+category-array construction. Category lookup uses checked array access on JS.
+The complete pinned units.res bundle is embedded; 69 manifest resources verify.
+
+JVM oracle tests compare every simple identifier/category index, complete category
+arrays/base-unit mapping, alias ordering/replacements and every enum field with
+ICU4J. Common tests verify category linkage, gram handling, immutable alias lists
+and prefixes. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources
+compile; generated data checks pass.
+
+UnitsData's conversion/preferences facade is not claimed complete. MeasureUnitImpl,
+SingleUnitImpl, public MeasureUnit/Currency and downstream conversion/formatting
+remain unfinished, along with the full ICU4J port.

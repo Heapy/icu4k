@@ -507,6 +507,14 @@
       "source_path": "icu4j/main/currdata/src/main/resources/com/ibm/icu/impl/data/icudata/curr/he.res",
       "sha256": "e9fbf7efee245a155fc50119b8a7a5d81615f22c45f276bdb285b8ddcc32520c",
       "size": 10512
+    },
+    {
+      "name": "units.res",
+      "file": "data/icu78/units.res",
+      "object": "UnitsResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/units.res",
+      "sha256": "df7bbbe068d99fff713ebc965f799c385d958fef83983cf5f9e0e9ffb2bb87d4",
+      "size": 22976
     }
   ]
 }
