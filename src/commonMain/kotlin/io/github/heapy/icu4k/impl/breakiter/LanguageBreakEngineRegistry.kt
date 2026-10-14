@@ -12,7 +12,7 @@ import io.github.heapy.icu4k.util.MissingResourceException
 import kotlin.concurrent.atomics.AtomicReference
 
 /** Rule iterator engine selection, published as one immutable Common snapshot. */
-internal class LanguageBreakEngineRegistry(private val useMlPhraseBreaking: Boolean = false) {
+internal class LanguageBreakEngineRegistry(private val useMlPhraseBreaking: Boolean? = null) {
     private class State(val engines: List<LanguageBreakEngine>, val unhandled: UnicodeSet)
     private val state = AtomicReference(State(emptyList(), UnicodeSet()))
     private val fallback = UnhandledBreakEngine { state.load().unhandled }

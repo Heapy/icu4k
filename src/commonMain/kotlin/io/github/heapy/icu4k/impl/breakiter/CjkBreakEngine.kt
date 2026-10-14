@@ -5,6 +5,7 @@ package io.github.heapy.icu4k.impl.breakiter
 
 import io.github.heapy.icu4k.impl.CharacterIteration
 import io.github.heapy.icu4k.impl.ICUBinary
+import io.github.heapy.icu4k.impl.ICUConfig
 import io.github.heapy.icu4k.impl.ICUResourceBundleReader
 import io.github.heapy.icu4k.text.CharacterIterator
 import io.github.heapy.icu4k.text.Normalizer
@@ -14,7 +15,7 @@ import io.github.heapy.icu4k.text.UnicodeSetIterator
 import io.github.heapy.icu4k.text.UTF16
 
 /** ICU dictionary-based CJK segmentation with optional Japanese ML phrase breaking. */
-internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhraseBreaking: Boolean = false) : DictionaryBreakEngine() {
+internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhraseBreaking: Boolean? = null) : DictionaryBreakEngine() {
     private val hangulWordSet = UnicodeSet(0xac00, 0xd7a3).freeze()
     private val digitOrOpenPunctuationOrAlphabetSet = propertyUnion("Nd", "Pi", "Ps")
         .addAll(UnicodeSet().applyPropertyAlias("Alphabetic", "")).freeze()
@@ -30,7 +31,7 @@ internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhra
                 .addAll(UnicodeSet().applyPropertyAlias("sc", "Katakana"))
                 .add(0x30fc).add(0xff70).add(0xff9e).add(0xff9f)
             setCharacters(cj)
-            if (useMlPhraseBreaking) {
+            if (useMl()) {
                 mlBreakEngine = MlBreakEngine(digitOrOpenPunctuationOrAlphabetSet, closePunctuationSet)
             } else {
                 val ja = ICUResourceBundleReader(ICUBinary.getRequiredData("brkitr/ja.res"))
@@ -41,6 +42,8 @@ internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhra
             }
         }
     }
+    private fun useMl(): Boolean = useMlPhraseBreaking ?: "true".equals(
+        ICUConfig.get("com.ibm.icu.impl.breakiter.useMLPhraseBreaking", "false"), ignoreCase = true)
     override fun equals(other: Any?): Boolean = other is CjkBreakEngine && korean == other.korean
     override fun hashCode(): Int = CjkBreakEngine::class.hashCode()
 
@@ -75,7 +78,7 @@ internal class CjkBreakEngine(private val korean: Boolean, private val useMlPhra
                 index = normalizer.getIndex()
             }
         }
-        if (useMlPhraseBreaking && isPhraseBreaking && !korean) {
+        if (useMl() && isPhraseBreaking && !korean) {
             return mlBreakEngine!!.divideUpRange(text, rangeStart, rangeEnd, cursor, numCodePoints, positions, foundBreaks)
         }
         val best = IntArray(numCodePoints + 1) { Int.MAX_VALUE }

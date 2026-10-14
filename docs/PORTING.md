@@ -2889,3 +2889,20 @@ close-failure precedence and reentrant initialization traces with ICU4J in isola
 loaders. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources
 compile. Runtime resource scanning and other ICUConfig consumers remain part of
 the unfinished full ICU4J port.
+
+### Configured CJK phrase-engine selection
+
+Default CjkBreakEngine and LanguageBreakEngineRegistry instances now consume
+ICUConfig's useMLPhraseBreaking setting. The engine reads it independently at
+construction and during nonempty range division, matching ICU4J; explicit Common
+ML overrides remain available. Korean construction still avoids Japanese model
+setup. Constructor skip-set/model state is retained when the property changes,
+including upstream's failure when ML is enabled after a non-ML construction.
+
+JVM differential tests cover 500 combinations of initial/current property values,
+case/whitespace parsing, Japanese/Korean engines, phrase modes and text, comparing
+outcomes, cursor positions and boundaries. A fresh registry is compared with the
+original configured engine. Node tests verify environment-driven registry setup
+and runtime switching. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
+production sources compile. Other configuration consumers and the full ICU4J
+port remain unfinished.
