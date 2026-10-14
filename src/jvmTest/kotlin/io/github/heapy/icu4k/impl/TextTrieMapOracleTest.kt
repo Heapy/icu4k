@@ -59,4 +59,29 @@ class TextTrieMapOracleTest {
         val readonly = java.util.Collections.unmodifiableList(listOf("a"))
         assertEquals(outcome { com.ibm.icu.impl.CollectionSet(readonly).add("b") }, outcome { CollectionSet(readonly).add("b") })
     }
+    @Test fun interleavedLiveValueIteratorsMatchLinkedList() {
+        val random = kotlin.random.Random(7803)
+        repeat(200) {
+            val j = Original<Int?>(false).put("a", 1).put("a", null).put("a", 2)
+            val k = TextTrieMap<Int?>(false).put("a", 1).put("a", null).put("a", 2)
+            val ji = mutableListOf(j.get("a"))
+            val ki = mutableListOf(k.get("a")!!)
+            repeat(60) {
+                val index = random.nextInt(ji.size)
+                when (random.nextInt(6)) {
+                    0 -> assertEquals(outcome { ji[index].hasNext() }, outcome { ki[index].hasNext() })
+                    1 -> assertEquals(outcome { ji[index].next() }, outcome { ki[index].next() })
+                    2 -> assertEquals(outcome { ji[index].remove() }, outcome { ki[index].remove() })
+                    3 -> { val value = random.nextInt(10); j.put("a", value); k.put("a", value) }
+                    4 -> { ji.add(j.get("a")); ki.add(k.get("a")!!) }
+                    5 -> {
+                        val a = j.get("a"); val b = k.get("a")!!
+                        while (a.hasNext()) { assertEquals(a.next(), b.next()); a.remove(); b.remove() }
+                    }
+                }
+                assertEquals(values(j.get("a")), values(k.get("a")))
+            }
+        }
+    }
+
 }

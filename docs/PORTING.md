@@ -3813,3 +3813,18 @@ cover dispatch, output mutation, resource discovery and localized names. Full JV
 JS Node and macOS Arm64 suites pass; Linux x64 test sources compile; all resources
 verify. CurrencyNames remains internal pending the complete Currency facade;
 MeasureUnit, service registration and the full ICU4J port remain unfinished.
+
+### TextTrieMap live value iterator fidelity
+
+Trie values now use a shared linked list instead of ArrayList, matching ICU4J's
+LinkedList iterator behavior. hasNext compares the cursor against the live size,
+including when another iterator removes all entries; next and remove check for
+structural modification before exhaustion/state checks. Removed nodes release
+value and link references so stale iterators do not retain deleted payloads.
+Null values and empty but previously populated lists remain supported.
+
+Oracle tests compare 200 generated schedules of 60 operations involving multiple
+iterators, insertions, removals and full deletion against ICU4J. Common tests
+cover stale iterators after deletion, empty iterators, subsequent insertion and
+fail-fast exception ordering. Full JVM, JS Node and macOS Arm64 suites pass;
+Linux x64 tests compile. The full ICU4J port remains unfinished.

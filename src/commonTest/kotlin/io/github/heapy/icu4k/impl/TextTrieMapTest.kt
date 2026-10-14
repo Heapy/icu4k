@@ -40,4 +40,19 @@ class TextTrieMapTest {
         val array = arrayOf<String?>("x", "x", "x", "x")
         assertSame(array, view.toArray(array)); assertContentEquals(arrayOf("a", "b", null, "x"), array)
     }
+    @Test fun staleIteratorsObserveLiveSizeAndFailFastOnAccess() {
+        val trie = TextTrieMap<Int>(false).put("a", 1).put("a", 2)
+        val stale = trie.get("a")!!
+        stale.next(); stale.next()
+        val other = trie.get("a")!!
+        other.next(); other.remove(); other.next(); other.remove()
+        assertFalse(stale.hasNext())
+        assertFailsWith<ConcurrentModificationException> { stale.next() }
+        assertFailsWith<ConcurrentModificationException> { stale.remove() }
+        val empty = trie.get("a")!!
+        assertFalse(empty.hasNext()); assertFailsWith<NoSuchElementException> { empty.next() }
+        trie.put("a", 3)
+        assertTrue(empty.hasNext()); assertFailsWith<ConcurrentModificationException> { empty.next() }
+    }
+
 }

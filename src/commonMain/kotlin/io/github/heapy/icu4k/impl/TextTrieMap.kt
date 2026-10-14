@@ -79,10 +79,10 @@ open class TextTrieMap<V>(internal var ignoreCase: Boolean) {
             return true
         }
     }
-    private inner class Node(var text: CharArray? = null, var values: MutableList<V>? = null, var children: MutableList<Node>? = null) {
+    private inner class Node(var text: CharArray? = null, var values: ValueList<V>? = null, var children: MutableList<Node>? = null) {
         fun add(input: CharArray, offset: Int, value: V) {
-            if (input.size == offset) { if (values == null) values = ArrayList(); values!!.add(value); return }
-            if (children == null) { children = arrayListOf(Node(subArray(input, offset), arrayListOf(value))); return }
+            if (input.size == offset) { if (values == null) values = ValueList(); values!!.add(value); return }
+            if (children == null) { children = arrayListOf(Node(subArray(input, offset), ValueList<V>().also { it.add(value) })); return }
             val iterator = children!!.listIterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
@@ -96,7 +96,7 @@ open class TextTrieMap<V>(internal var ignoreCase: Boolean) {
                     return
                 }
             }
-            iterator.add(Node(subArray(input, offset), arrayListOf(value)))
+            iterator.add(Node(subArray(input, offset), ValueList<V>().also { it.add(value) }))
         }
         private fun split(offset: Int) {
             val child = Node(subArray(text!!, offset), values, children)
@@ -130,6 +130,50 @@ open class TextTrieMap<V>(internal var ignoreCase: Boolean) {
                     val cp = if (second in '\udc00'..'\udfff') ((first.code - 0xd800) shl 10) + second.code - 0xdc00 + 0x10000 else first.code
                     output!!.add(cp)
                 } else child.children?.let { grandchildren -> for (grandchild in grandchildren) output!!.add(((first.code - 0xd800) shl 10) + grandchild.text!![0].code - 0xdc00 + 0x10000) }
+            }
+        }
+    }
+    // ICU4J uses LinkedList: hasNext compares the cursor with the live size;
+    // next/remove check modification state, even after exhaustion.
+    private class ValueList<V> {
+        private class Entry<V>(var value: V?, var previous: Entry<V>? = null, var next: Entry<V>? = null)
+        private var first: Entry<V>? = null
+        private var last: Entry<V>? = null
+        private var size = 0
+        private var modifications = 0
+        fun add(value: V) {
+            val entry = Entry(value, last)
+            if (last == null) first = entry else last!!.next = entry
+            last = entry
+            size++; modifications++
+        }
+        fun iterator(): MutableIterator<V> = object : MutableIterator<V> {
+            private var next = first
+            private var returned: Entry<V>? = null
+            private var index = 0
+            private var expected = modifications
+            override fun hasNext(): Boolean = index < size
+            private fun checkModification() {
+                if (modifications != expected) throw ConcurrentModificationException()
+            }
+            @Suppress("UNCHECKED_CAST")
+            override fun next(): V {
+                checkModification()
+                if (!hasNext()) throw NoSuchElementException()
+                val entry = next!!
+                returned = entry; next = entry.next; index++
+                return entry.value as V
+            }
+            override fun remove() {
+                checkModification()
+                val entry = returned ?: throw IllegalStateException()
+                val previous = entry.previous
+                val following = entry.next
+                if (previous == null) first = following else previous.next = following
+                if (following == null) last = previous else following.previous = previous
+                entry.value = null; entry.previous = null; entry.next = null
+                index--; size--; modifications++; expected++
+                returned = null
             }
         }
     }
