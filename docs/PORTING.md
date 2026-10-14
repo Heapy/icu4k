@@ -3157,3 +3157,31 @@ retention and actual resource fallback after default changes. JVM tests compare
 conversion and external host changes with ICU4J, including cold isolated class
 initialization with Unicode extensions. Full JVM, JS Node and macOS Arm64 suites
 pass; Linux x64 test sources compile. The complete ICU4J port remains unfinished.
+
+
+### JVM resource factories and Java locale availability
+
+JVM extensions now provide UResourceBundle factories accepting java.util.Locale
+and ClassLoader, the ULocale/ClassLoader and String/ClassLoader families (including
+direct mode), and getLocale for every Common bundle subtype. Locale factories
+normalize null bases, resolve null locales from the general ULocale default and
+strip keywords before dispatch, using the existing shared bundle factories.
+Nullable loaders retain the original cold/warm cache behavior.
+
+ICUResourceBundle JVM extensions provide getLocaleList and getAvailableLocales
+for the default or supplied base/loader/category. Conversion retains scripts and
+deduplicates by Java Locale equality in input order. Availability entries now hold
+a shared atomic host-array slot under their reentrant lock. Like ICU4J, the first
+successful category request determines the one cached Java array for a base;
+later requests return that same mutable array even with other/null categories or
+loaders. Missing-category conversion failures leave the array cache unpopulated.
+The availability loader boundary accepts null for these JVM calls.
+
+JVM differential tests cover 42 binary/Java locale/ClassLoader factory combinations
+and exact load traces, keyword stripping, null base/default-loader root selection,
+Java bundle locale identity and null-loader cold failures. Java availability tests
+cover scripts, duplicate conversion, first-category selection, shared mutations,
+null categories/loaders and missing-category recovery against ICU4J. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 test sources compile. These JVM APIs
+are Kotlin extensions; direct Java member/static facade compatibility and the
+complete ICU4J port remain unfinished.

@@ -103,5 +103,7 @@ loads Java-style bundles through Common object/property providers. On JVM,
 classpath `.properties`. The default ICU loader includes the pinned root and pool
 bundles. ULocale defaults and DISPLAY/FORMAT categories are mutable on every target; JVM
 defaults synchronize with java.util.Locale. JVM extensions `forLocale` and
-`toLocale` bridge Java locale identities. Java Locale resource-factory overloads
-and remaining locale services are still being ported.
+`toLocale` bridge Java locale identities. JVM resource extensions accept Java
+`Locale` and `ClassLoader`, expose `getLocale()`, and provide ICUResourceBundle's
+Java locale availability lists. Import the corresponding `util`/`impl` extensions.
+Remaining locale services and Java callable facade compatibility are still being ported.

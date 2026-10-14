@@ -150,14 +150,15 @@ open class ICUResourceBundle : UResourceBundle {
     }
     enum class OpenType { LOCALE_DEFAULT_ROOT, LOCALE_ROOT, LOCALE_ONLY, DIRECT }
     companion object {
-        private class AvailEntry(private val prefix: String, private val loader: ICUResourceLoader) {
+        private class AvailEntry(private val prefix: String, private val loader: ICUResourceLoader?) {
             private val lock = createAvailabilityLock()
             private val ulocales = AtomicReference<Map<ULocale.AvailableType, Array<ULocale>>?>(null)
+            private val javaLocales = AtomicReference<Any?>(null)
             private val names = AtomicReference<Set<String>?>(null)
             private val fullNames = AtomicReference<Set<String>?>(null)
             fun getFullLocaleNameSet(): Set<String> {
                 if (fullNames.load() == null) lock.withLock {
-                    if (fullNames.load() == null) fullNames.store(createFullLocaleNameSet(prefix, loader))
+                    if (fullNames.load() == null) fullNames.store(createFullLocaleNameSet(prefix, loader!!))
                 }
                 return fullNames.load()!!
             }
@@ -166,6 +167,15 @@ open class ICUResourceBundle : UResourceBundle {
                     if (ulocales.load() == null) ulocales.store(createULocaleList(prefix, loader))
                 }
                 return ulocales.load()!![type]
+            }
+            fun getJavaLocaleList(type: ULocale.AvailableType?, convert: (Array<ULocale>?) -> Any): Any {
+                if (javaLocales.load() == null) {
+                    getULocaleList(type ?: ULocale.AvailableType.DEFAULT)
+                    lock.withLock {
+                        if (javaLocales.load() == null) javaLocales.store(convert(ulocales.load()!![type]))
+                    }
+                }
+                return javaLocales.load()!!
             }
             fun getLocaleNameSet(): Set<String> {
                 if (names.load() == null) lock.withLock {
@@ -183,11 +193,11 @@ open class ICUResourceBundle : UResourceBundle {
                 return names.load()!!
             }
         }
-        private val availableCache = object : SoftCache<String, AvailEntry, ICUResourceLoader>() {
-            override fun createInstance(key: String, data: ICUResourceLoader): AvailEntry = AvailEntry(key, data)
+        private val availableCache = object : SoftCache<String, AvailEntry, ICUResourceLoader?>() {
+            override fun createInstance(key: String, data: ICUResourceLoader?): AvailEntry = AvailEntry(key, data)
         }
-        private fun getAvailEntry(baseName: String, loader: ICUResourceLoader): AvailEntry = availableCache.getInstance(baseName, loader)!!
-        private fun createULocaleList(baseName: String, loader: ICUResourceLoader): Map<ULocale.AvailableType, Array<ULocale>> {
+        private fun getAvailEntry(baseName: String, loader: ICUResourceLoader?): AvailEntry = availableCache.getInstance(baseName, loader)!!
+        private fun createULocaleList(baseName: String, loader: ICUResourceLoader?): Map<ULocale.AvailableType, Array<ULocale>> {
             val bundle = UResourceBundle.instantiateBundle(baseName, "res_index", loader, true) as ICUResourceBundle
             val result = HashMap<ULocale.AvailableType, Array<ULocale>>()
             bundle.getAllItemsWithFallback("", object : UResource.Sink() {
@@ -210,6 +220,9 @@ open class ICUResourceBundle : UResourceBundle {
             })
             return result
         }
+        internal fun getAvailableJavaLocaleList(baseName: String, loader: ICUResourceLoader?,
+            type: ULocale.AvailableType?, convert: (Array<ULocale>?) -> Any): Any =
+            getAvailEntry(baseName, loader).getJavaLocaleList(type, convert)
         fun getAvailableULocales(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader,
                                 type: ULocale.AvailableType = ULocale.AvailableType.DEFAULT): Array<ULocale>? = getAvailEntry(baseName, loader).getULocaleList(type)
         fun getAvailableULocales(type: ULocale.AvailableType): Array<ULocale>? =
