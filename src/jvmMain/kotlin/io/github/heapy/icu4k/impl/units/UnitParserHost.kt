@@ -12,3 +12,7 @@ internal actual fun parseUnitConstant(value: String): Long {
 internal actual fun assertUnitIdentifierPower(power: Int) {
     if (SingleUnitImpl::class.java.desiredAssertionStatus() && power <= 0) throw AssertionError("this function does not support the dimensionless single units")
 }
+
+internal actual fun assertUnitFactor(condition: Boolean) {
+    if (UnitConversionFactor::class.java.desiredAssertionStatus() && !condition) throw AssertionError()
+}

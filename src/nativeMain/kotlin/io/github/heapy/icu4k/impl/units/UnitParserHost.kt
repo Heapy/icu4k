@@ -8,3 +8,5 @@ internal actual fun parseUnitConstant(value: String): Long {
 }
 
 internal actual fun assertUnitIdentifierPower(power: Int) {}
+
+internal actual fun assertUnitFactor(condition: Boolean) {}

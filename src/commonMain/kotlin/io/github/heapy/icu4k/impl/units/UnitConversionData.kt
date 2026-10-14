@@ -10,7 +10,7 @@ import io.github.heapy.icu4k.util.MeasurePrefix
 import io.github.heapy.icu4k.util.UnitComplexity
 import io.github.heapy.icu4k.util.UResourceBundle
 
-/** Resource and dimensional portions of ConversionRates/UnitsData; decimal factors use these expressions unchanged. */
+/** Resource lookup, base dimensions, decimal factors and offsets shared by the unit conversion port. */
 internal class UnitConversionData {
     class Rate(val target: String?, private val factor: String?, val offsetExpression: String, val special: String?, val systems: String?) {
         fun conversionRate(): String = factor ?: throw IllegalIcuArgumentException("trying to use a null conversion rate (for special?)")
@@ -63,11 +63,32 @@ internal class UnitConversionData {
         return result
     }
     fun extractSystems(unit: SingleUnitImpl): String? = rates[unit.getSimpleUnitID()]!!.systems
-    fun getSpecialMappingName(unit: MeasureUnitImpl): String? {
-        if (unit.getComplexity() != UnitComplexity.SINGLE) return null
+    fun getFactorToBase(unit: MeasureUnitImpl): UnitConversionFactor {
+        var result = UnitConversionFactor()
+        for (single in unit.getSingleUnits()) {
+            val factor = UnitConversionFactor.processFactor(rates[single.getSimpleUnitID()]!!.conversionRate())
+                .applyPrefix(single.getPrefix()).power(single.getDimensionality())
+            result = result.multiply(factor)
+        }
+        if (unit.getConstantDenominator() != 0L) result = result.divide(UnitDecimal.valueOf(unit.getConstantDenominator()))
+        return result
+    }
+    fun getOffset(source: MeasureUnitImpl, target: MeasureUnitImpl, targetToBase: UnitConversionFactor, convertible: Boolean): UnitDecimal {
+        if (!convertible || !isSimpleUnprefixed(source) || !isSimpleUnprefixed(target)) return UnitDecimal.ZERO
+        fun offset(unit: MeasureUnitImpl): UnitDecimal {
+            val parts = rates[unit.getSingleUnits()[0].getSimpleUnitID()]!!.offsetExpression.split('/')
+            return if (parts.size == 1) UnitDecimal(parts[0]) else UnitDecimal(parts[0]).divide(UnitDecimal(parts[1]))
+        }
+        return offset(source).subtract(offset(target)).divide(targetToBase.getConversionRate())
+    }
+    private fun isSimpleUnprefixed(unit: MeasureUnitImpl): Boolean {
+        if (unit.getComplexity() != UnitComplexity.SINGLE) return false
         val single = unit.getSingleUnits()[0]
-        if (single.getPrefix() != MeasurePrefix.ONE || single.getDimensionality() != 1) return null
-        return rates[single.getSimpleUnitID()]!!.special
+        return single.getPrefix() == MeasurePrefix.ONE && single.getDimensionality() == 1
+    }
+    fun getSpecialMappingName(unit: MeasureUnitImpl): String? {
+        if (!isSimpleUnprefixed(unit)) return null
+        return rates[unit.getSingleUnits()[0].getSimpleUnitID()]!!.special
     }
     fun getCategory(unit: MeasureUnitImpl): String {
         val base = extractCompoundBaseUnit(unit)
