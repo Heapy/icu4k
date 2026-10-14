@@ -2540,3 +2540,14 @@ winner. Common tests cover cache/value/reference contracts; Native tests force
 GC and concurrent first misses. Full JVM, JS Node and macOS Arm64 suites pass;
 production sources compile for Linux x64. ULocale default, display, canonical
 alias/likely-subtag and resource/service APIs remain pending.
+
+### Reusable resource keys and value interfaces
+
+UResource now supplies Common Key, Array, Table, Value and Sink contracts.
+Key retains shared byte storage, shallow cloning, independent cached strings,
+ASCII validation and mutation ordering, exact comparison differences, and the
+upstream hash algorithm (which repeats the first byte). Signed non-ASCII bytes
+also retain upstream conversion and comparison behavior. Value uses BinaryBuffer
+in place of java.nio.ByteBuffer and preserves the upstream debug rendering.
+Common regression tests pass on JVM, JS Node and macOS Arm64. ReaderValue and
+container adapters, bundle fallback and public resource enumeration remain pending.
