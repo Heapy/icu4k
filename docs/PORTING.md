@@ -2627,3 +2627,29 @@ forced reference clearing before and after migration, replacement strength and
 concurrent publication. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
 production sources compile. Resource-bundle fallback and the public facade are
 still unfinished.
+
+### Common resource bundle base and iterator
+
+UResourceBundle now has the original type constants, default typed-getter
+failures, identity/subclass hooks, key/index parent traversal, object resolution,
+key union/enumeration and resource iterator. The Common class supplies the
+ResourceBundle operations explicitly instead of extending java.util.ResourceBundle.
+Enumeration retains the hasMoreElements/nextElement protocol. Runtime class names
+in lookup errors use the platform's available class identity.
+
+ICUResourceBundle's shared identity/containment core is present: WholeBundle,
+locale/base identity, inherited parent, top-level key cache, root detection,
+resource keys and original equals/hashCode release behavior. Indexed string
+lookup retains the upstream ICUResourceBundle cast before checking STRING type.
+The iterator captures the initial size, increments before lookup, and resets its
+index without resampling size. UResource debug rendering now uses real bundle
+constants rather than literal type numbers.
+
+Common tests cover parent lookup, requested-bundle propagation, immutable sorted
+keys and top-level caching, object string/array conversion, mismatch behavior,
+shared identity and iterator failure progression. JVM differential tests exercise
+the original base through custom subclasses, including the indexed-string cast.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+Named UResourceBundle factories, concrete ICU resource subclasses, alias/path
+fallback, sink enumeration and Java ResourceBundleWrapper interoperability are
+not implemented yet; the new classes are the base for those implementations.

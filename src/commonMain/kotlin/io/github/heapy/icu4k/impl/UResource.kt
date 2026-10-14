@@ -3,6 +3,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.BinaryBuffer
+import io.github.heapy.icu4k.util.UResourceBundle
 
 /** Reusable resource keys, values and enumeration sinks. */
 class UResource private constructor() {
@@ -102,12 +103,12 @@ class UResource private constructor() {
         abstract fun getStringArrayOrStringAsArray(): kotlin.Array<String>
         abstract fun getStringOrFirstOfArray(): String
         override fun toString(): String = when (getType()) {
-            0 -> getString()
-            7 -> getInt().toString()
-            14 -> getIntVector().let { "[${it.size}]{${it.joinToString(", ")}}" }
-            1 -> "(binary blob)"
-            8 -> "(array)"
-            2 -> "(table)"
+            UResourceBundle.STRING -> getString()
+            UResourceBundle.INT -> getInt().toString()
+            UResourceBundle.INT_VECTOR -> getIntVector().let { "[${it.size}]{${it.joinToString(", ")}}" }
+            UResourceBundle.BINARY -> "(binary blob)"
+            UResourceBundle.ARRAY -> "(array)"
+            UResourceBundle.TABLE -> "(table)"
             else -> "???"
         }
     }
