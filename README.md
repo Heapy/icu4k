@@ -96,3 +96,9 @@ iterator. On JVM, the `URLHandler.get(URL)` extension resolves file/JAR/wsjar UR
 and custom static factories from `urlhandler.props`;
 `ICUClassLoaderResourceLoader` uses that registry when enumerating resources.
 Java factories return the ported `URLHandler` type and expose `get(java.net.URL)`.
+
+`ResourceBundleWrapper.getBundleInstance(baseName, localeID, loader, disableFallback)`
+loads Java-style bundles through Common object/property providers. On JVM,
+`ICUClassLoaderResourceLoader` also loads actual Java resource-bundle classes and
+classpath `.properties`. The automatic `UResourceBundle` factory dispatch between
+ICU and Java bundle types is still being ported.

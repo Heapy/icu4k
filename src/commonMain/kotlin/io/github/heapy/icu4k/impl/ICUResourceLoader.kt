@@ -8,6 +8,14 @@ import io.github.heapy.icu4k.util.BinaryBuffer
 fun interface ICUResourceLoader {
     fun getData(fullName: String): BinaryBuffer?
 
+    /** Class misses permit properties; a rejected class load does not. */
+    fun loadJavaBundleClass(name: String): JavaBundleClassResult = JavaBundleClassResult.LoadProperties
+
+    fun loadJavaProperties(fullName: String): JavaResourceBundle? {
+        val data = try { getData(fullName) } catch (_: io.github.heapy.icu4k.util.ICUUncheckedIOException) { return null } ?: return null
+        return try { JavaPropertiesBundle.read(data.slice().readBytes(data.remaining)) } catch (_: Exception) { null }
+    }
+
     /** Visits immediate resource file names, without directory prefixes. */
     fun visitResources(directory: String, visitor: (String) -> Unit) {}
 

@@ -3055,3 +3055,49 @@ JVM URL parsing and reflective factory discovery stay on the JVM boundary.
 Common archive traversal uses supplied iterators; automatic non-JVM archive URL
 resolution is not supplied here. Java bundle interoperability, remaining resource
 services/diagnostics and the full ICU4J port remain unfinished.
+
+### Common Java class/property bundle wrappers
+
+ResourceBundleWrapper now ports recursive class/property loading, the original
+name/default-ID cache key (omitting loader identity), parent/default-language
+fallback, object lookup and deduplicated key enumeration in Common code.
+It preserves partial direct-mode parent inheritance, class rejection without
+properties/parent fallback, properties fallback only after class misses, and
+separate stream-open versus parse/read failure behavior. Wrapper keySet and
+containsKey retain the inherited empty-key behavior despite nonempty getKeys;
+typed UResourceBundle children remain unsupported, as in ICU4J.
+
+JavaResourceBundle/JavaBundleClassResult provide the portable object/class lookup
+boundary. MapJavaResourceBundle supports Common object providers, including
+underlying parents and object/array values. ICUResourceLoader stays a SAM while
+offering class and properties hooks. JVM ICUClassLoaderResourceLoader uses actual
+ResourceBundle subclasses, Class.newInstance error categories, privileged stream
+opening and buffered PropertyResourceBundle parsing/closing. Native/Node class
+providers can supply Common bundles; binary-only providers load .properties
+through the shared parser. The default non-JVM provider is the embedded loader.
+
+JavaPropertiesBundle implements property keys/separators, continuations, comments,
+escapes, Unicode escapes, duplicate replacement, UTF-8 with Latin-1 fallback and
+forced UTF-8/ISO-8859-1 decoding. JVM classpath properties use the JDK parser;
+Common byte providers use this parser. Its encoding setting is snapshotted from
+the host property/environment boundary. End-of-file continuation and empty-key
+corner cases are compared against the current JDK rather than approximated with
+simple line splitting.
+
+Common tests cover object/property providers, parent lookup, key boundaries,
+cache reuse and rejected provider exceptions. JVM differential tests compare
+480 default-locale/requested-locale/direct-mode/failure combinations with ICU4J:
+class/property precedence, wrong classes, constructor/security/linkage errors,
+open/read/close errors, malformed properties, object/typed lookups, key iteration,
+parent chains and load/close traces. Context-loader and loader-omitting cache tests
+also pass. Properties syntax is compared with JDK on 3,000 generated strings plus
+explicit EOF/escape cases and decoding fixtures. Isolated wrapper diagnostic tests
+compare exact stdout. The JVM loader adapter now initializes its URL scan debug
+flag when scanning, avoiding unrelated diagnostic output during Java bundle loads.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production/test sources
+compile. A final JVM run passes after the JVM-only diagnostic initialization fix.
+Default fallback currently uses the existing host locale-name boundary; mutable
+ULocale defaults/categories remain unfinished. UResourceBundle named factory/root
+type dispatch, ICU-to-Java aliases, Java Locale/ResourceBundle facade integration
+and the rest of ICU4J remain to be ported.
