@@ -73,6 +73,18 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         if (exponent < 0) result = ONE.divide(result, working)
         return result.round(precision)
     }
+    /** Truncate toward zero and retain the low 32 bits, as required by BigDecimal.intValue(). */
+    fun intValue(): Int {
+        var result = 0
+        val end = if (scale >= 0) (magnitude.length.toLong() - scale).coerceAtLeast(0).toInt() else magnitude.length
+        for (i in 0 until end) result = result * 10 + (magnitude[i] - '0')
+        if (scale < 0) {
+            var exponent = -scale.toLong(); var base = 10; var power = 1
+            while (exponent != 0L) { if ((exponent and 1L) != 0L) power *= base; exponent = exponent ushr 1; if (exponent != 0L) base *= base }
+            result *= power
+        }
+        return result * sign
+    }
     override fun compareTo(other: UnitDecimal): Int {
         if (sign != other.sign) return sign.compareTo(other.sign)
         if (sign == 0) return 0
