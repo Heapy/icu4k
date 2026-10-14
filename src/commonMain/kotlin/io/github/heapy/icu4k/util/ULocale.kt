@@ -139,6 +139,63 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        fun createCanonical(localeID: String?): ULocale = ULocale(canonicalize(localeID), false)
+        fun createCanonical(locale: ULocale?): ULocale = createCanonical(locale!!.getName())
+        fun canonicalize(localeID: String?): String {
+            var parser = LocaleIDParser(localeID!!, true)
+            val baseName = parser.getBaseName()
+            if (localeID.isEmpty()) return ""
+            val replacement = canonicalizeMap[baseName]
+            if (replacement != null) parser.setBaseName(replacement)
+            else if (parser.getLanguage() == "nb" && parser.getVariant() == "NY")
+                parser.setBaseName(lscvToID("nn", parser.getScript(), parser.getCountry(), null))
+            val name = parser.getName()
+            if (name != "c" && name != "en" && name != "en_US" && name !in knownCanonicalized) {
+                val alias = LocaleAliasReplacer(parser.getLanguage(), parser.getScript(), parser.getCountry(),
+                    AsciiUtil.toLowerString(parser.getVariant()), name.substring(parser.getBaseName().length)).replace()
+                if (alias != null) parser = LocaleIDParser(alias)
+            }
+            return parser.getName()
+        }
+        private val canonicalizeMap = mapOf(
+            "art__LOJBAN" to "jbo",
+            "cel__GAULISH" to "cel__GAULISH",
+            "de__1901" to "de__1901",
+            "de__1906" to "de__1906",
+            "en__BOONT" to "en__BOONT",
+            "en__SCOUSE" to "en__SCOUSE",
+            "hy__AREVELA" to "hy",
+            "hy__AREVMDA" to "hyw",
+            "sl__ROZAJ" to "sl__ROZAJ",
+            "zh__GUOYU" to "zh",
+            "zh__HAKKA" to "hak",
+            "zh__XIANG" to "hsn",
+            "zh_GAN" to "gan",
+            "zh_MIN" to "zh__MIN",
+            "zh_MIN_NAN" to "nan",
+            "zh_WUU" to "wuu",
+            "zh_YUE" to "yue"
+        )
+        private val knownCanonicalized by lazy { setOf(
+            "af", "af_ZA", "am", "am_ET", "ar", "ar_001", "as", "as_IN", "az", "az_AZ",
+            "be", "be_BY", "bg", "bg_BG", "bn", "bn_IN", "bs", "bs_BA", "ca", "ca_ES",
+            "cs", "cs_CZ", "cy", "cy_GB", "da", "da_DK", "de", "de_DE", "el", "el_GR",
+            "en", "en_GB", "en_US", "es", "es_419", "es_ES", "et", "et_EE", "eu", "eu_ES",
+            "fa", "fa_IR", "fi", "fi_FI", "fil", "fil_PH", "fr", "fr_FR", "ga", "ga_IE",
+            "gl", "gl_ES", "gu", "gu_IN", "he", "he_IL", "hi", "hi_IN", "hr", "hr_HR",
+            "hu", "hu_HU", "hy", "hy_AM", "id", "id_ID", "is", "is_IS", "it", "it_IT",
+            "ja", "ja_JP", "jv", "jv_ID", "ka", "ka_GE", "kk", "kk_KZ", "km", "km_KH",
+            "kn", "kn_IN", "ko", "ko_KR", "ky", "ky_KG", "lo", "lo_LA", "lt", "lt_LT",
+            "lv", "lv_LV", "mk", "mk_MK", "ml", "ml_IN", "mn", "mn_MN", "mr", "mr_IN",
+            "ms", "ms_MY", "my", "my_MM", "nb", "nb_NO", "ne", "ne_NP", "nl", "nl_NL",
+            "no", "or", "or_IN", "pa", "pa_IN", "pl", "pl_PL", "ps", "ps_AF", "pt",
+            "pt_BR", "pt_PT", "ro", "ro_RO", "ru", "ru_RU", "sd", "sd_IN", "si", "si_LK",
+            "sk", "sk_SK", "sl", "sl_SI", "so", "so_SO", "sq", "sq_AL", "sr", "sr_Cyrl_RS",
+            "sr_Latn", "sr_RS", "sv", "sv_SE", "sw", "sw_TZ", "ta", "ta_IN", "te", "te_IN",
+            "th", "th_TH", "tk", "tk_TM", "tr", "tr_TR", "uk", "uk_UA", "ur", "ur_PK",
+            "uz", "uz_UZ", "vi", "vi_VN", "yue", "yue_Hant", "yue_Hant_HK", "yue_HK", "zh", "zh_CN",
+            "zh_Hans", "zh_Hans_CN", "zh_Hant", "zh_Hant_TW", "zh_TW", "zu", "zu_ZA"
+        ) }
         fun addLikelySubtags(locale: ULocale?): ULocale {
             val loc = locale!!
             val trailing = likelyTrailing(loc.localeID)

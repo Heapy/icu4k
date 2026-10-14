@@ -57,8 +57,7 @@ println(locale.toLanguageTag()) // en-US-u-ca-japanese
 val available = ULocale.getAvailableLocalesByType(ULocale.AvailableType.WITH_LEGACY_ALIASES)
 ```
 
-ULocale display names, defaults, likely subtags and resource factories are still
-being ported.
+ULocale display names and remaining locale services are still being ported.
 
 ICU binary bundles support typed lookup, aliases and locale/path fallback:
 
@@ -112,7 +111,9 @@ Remaining locale services and Java callable facade compatibility are still being
 `ULocale.addLikelySubtags` and `ULocale.minimizeSubtags` use the Common CLDR trie
 engine and pinned `langInfo.res`. For example, `ULocale.addLikelySubtags(ULocale("en"))`
 is `en_Latn_US`. Both minimization strategies preserve variants and keywords.
-Full CLDR alias canonicalization remains in progress.
+`ULocale.canonicalize` and `ULocale.createCanonical` apply CLDR language, script,
+territory, variant, subdivision and transformed-extension aliases from metadata.
+For example, `ULocale.createCanonical("sh_RS")` is `sr_Latn_RS`.
 
 
 `Region` provides pinned territory IDs, numeric/three-letter aliases, deprecated

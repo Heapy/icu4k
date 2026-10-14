@@ -3275,3 +3275,38 @@ locale inputs, variants/keywords/private use and compareLikely's updated cache b
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 ULocale's full CLDR canonicalize/AliasReplacer and the remainder of ICU4J are still
 unfinished. No new binary resources are needed for this stage.
+
+
+### Common ULocale CLDR canonicalization
+
+ULocale.canonicalize and both createCanonical factories now port legacy mappings,
+the Norwegian NY rule, the upstream known-canonicalized shortcut and the complete
+metadata-backed AliasReplacer. Replacement follows language/region/variant search
+precedence, then territory, script and variant rules, restarting after each change
+with the original loop bound. Multi-replacement territories select the likely
+region when available; existing explicit fields and keywords retain source rules.
+The hepburn/heploc special case and intentionally ignored replacement extensions
+match ICU4J.
+
+Shared code loads and validates all five metadata tables lazily, retrying after
+failed initialization. Language-key validation retains the actual behavior of
+upstream's single-argument Java Locale guard, which has no script/country fields.
+Subdivision/region-override keywords apply first replacement and zzzz suffix rules.
+Transformed extensions canonicalize their language, map types and sort tfields,
+including the source's handling of malformed values and duplicate keys. The
+implementation preserves Java split's trailing-empty behavior and region deletion
+rather than imposing additional validation.
+
+Common tests cover legacy/CLDR aliases, explicit fields, multi-region resolution,
+keywords, all subdivision entries, transformed extensions and null boundaries.
+JVM differential tests compare every entry in language/script/territory/variant/
+subdivision tables in multiple contexts, both factories and static canonicalize,
+legacy/POSIX/undefined forms and malformed/transformed keyword values. Cold
+concurrent initialization verifies complete metadata publication. Isolated JVM
+fixtures replace metadata through ICUBinary.dataPath to verify alias-cycle loop
+diagnostics, language guard behavior and script/territory/variant/subdivision
+validation errors against ICU4J.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+A subsequent full JVM suite also passes with malformed-data fixtures. Display
+names and other locale services, and the complete ICU4J port, remain unfinished.
