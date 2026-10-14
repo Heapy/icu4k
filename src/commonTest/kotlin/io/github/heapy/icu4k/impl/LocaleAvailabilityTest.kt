@@ -43,6 +43,7 @@ class LocaleAvailabilityTest {
         val values = ICUResourceBundle.getKeywordValues(base, "collations", BundleFixture.loader(data))
         assertEquals(setOf("standard", "phonebook", "DEFAULT"), values.toSet())
         assertTrue(ICUResourceBundle.getKeywordValues(base, "unknown", BundleFixture.loader(data)).isEmpty())
+        assertTrue(ICUResourceBundle.getKeywordValues(base, null, BundleFixture.loader(data)).isEmpty())
         assertTrue(ICUResourceBundle.getAvailableULocales()!!.isNotEmpty())
         assertTrue(ICUResourceBundle.getAvailableULocales(ICUData.ICU_BRKITR_BASE_NAME)!!.isNotEmpty())
     }

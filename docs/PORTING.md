@@ -2827,3 +2827,24 @@ checks release-only null behavior in an assertion-disabled loader, and verifies
 one initialization under eight concurrent callers. Full JVM, JS Node and macOS
 Arm64 suites pass; Linux x64 production sources compile. Full resource scanning,
 Java Locale conversion and remaining availability/services are not complete.
+
+### Public ULocale availability collections
+
+ULocale.getAvailableLocales returns a shallow array copy. getAvailableLocalesByType
+returns an unmodifiable backed list for DEFAULT/ONLY_LEGACY_ALIASES, and an
+independent concatenated snapshot for WITH_LEGACY_ALIASES. Null type throws
+IllegalArgumentException, and the combined list retains source ordering without
+deduplication. Common list views seal mutations, iterators and sublists; JVM
+list/set boundaries additionally use Collections wrappers to reject Java default
+mutators before invoking callbacks. Availability name sets use the same sealed
+set boundary. getKeywordValues also preserves null-keyword skip behavior inside
+the per-locale Throwable policy.
+
+Common tests cover copying, concatenation, list/sublist backing and mutation
+rejection. JVM tests compare all public lists with ICU4J, distinguish live category
+views from combined snapshots under cached-array mutation, and check replaceAll
+and removeIf callback suppression. Full JVM, JS Node and macOS Arm64 suites pass;
+Linux x64 production sources compile. Availability metadata comes from upstream
+indexes; it does not imply that every listed locale payload is embedded. Full
+resource scanning, Java locale/resource interoperability and the rest of ICU4J
+remain unfinished.

@@ -22,3 +22,5 @@ internal class LocaleReadOnlySet<T : Comparable<T>>(private val values: () -> Se
     override fun retainAll(elements: Collection<T>): Nothing = throw UnsupportedOperationException()
     override fun clear(): Nothing = throw UnsupportedOperationException()
 }
+
+internal expect fun <E : Comparable<E>> localeReadOnlySet(source: Set<E>): Set<E>

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.impl.ICUResourceBundle
 import io.github.heapy.icu4k.impl.LocaleIDParser
 import io.github.heapy.icu4k.impl.LocaleIDs
 import io.github.heapy.icu4k.impl.SoftCache
@@ -133,6 +134,18 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        fun getAvailableLocales(): Array<ULocale> = ICUResourceBundle.getAvailableULocales()!!.copyOf()
+        fun getAvailableLocalesByType(type: AvailableType?): Collection<ULocale> {
+            if (type == null) throw IllegalArgumentException()
+            val locales = if (type == AvailableType.WITH_LEGACY_ALIASES) {
+                val result = ArrayList<ULocale>()
+                result.addAll(ICUResourceBundle.getAvailableULocales(AvailableType.DEFAULT)!!)
+                result.addAll(ICUResourceBundle.getAvailableULocales(AvailableType.ONLY_LEGACY_ALIASES)!!)
+                result
+            } else ICUResourceBundle.getAvailableULocales(type)!!.asList()
+            return localeReadOnlyList(locales)
+        }
+
         const val PRIVATE_USE_EXTENSION = 'x'
         const val UNICODE_LOCALE_EXTENSION = 'u'
         private val nameCache = object : SoftCache<String, String, Unit?>() { override fun createInstance(key: String, data: Unit?): String = LocaleIDParser(key).getName() }

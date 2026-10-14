@@ -22,6 +22,8 @@ class LocaleAvailabilityOracleTest {
             }
             assertEquals(com.ibm.icu.impl.ICUResourceBundle.getAvailableLocaleNameSet(base, com.ibm.icu.impl.ICUResourceBundle.ICU_DATA_CLASS_LOADER),
                 ICUResourceBundle.getAvailableLocaleNameSet(base))
+            val names = ICUResourceBundle.getAvailableLocaleNameSet(base) as MutableSet<String>
+            assertFailsWith<UnsupportedOperationException> { names.removeIf { error("must not run") } }
         }
         val base = "icu4k-test/availability-oracle"
         val files = LocaleAvailabilityTest.keywordFiles()
@@ -33,6 +35,8 @@ class LocaleAvailabilityOracleTest {
             com.ibm.icu.impl.ICUResourceBundle.getAvailableULocales(base, jLoader)
             assertEquals(com.ibm.icu.impl.ICUResourceBundle.getKeywordValues(base, "collations").toSet(),
                 ICUResourceBundle.getKeywordValues(base, "collations", kLoader).toSet())
+            assertEquals(com.ibm.icu.impl.ICUResourceBundle.getKeywordValues(base, null).toSet(),
+                ICUResourceBundle.getKeywordValues(base, null, kLoader).toSet())
             assertEquals(com.ibm.icu.impl.ICUResourceBundle.getKeywordValues(base, "missing").toSet(),
                 ICUResourceBundle.getKeywordValues(base, "missing", kLoader).toSet())
         } finally { Locale.setDefault(saved) }

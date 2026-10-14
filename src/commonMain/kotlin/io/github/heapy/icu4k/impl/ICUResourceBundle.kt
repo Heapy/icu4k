@@ -4,7 +4,7 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.*
-import io.github.heapy.icu4k.impl.locale.LocaleReadOnlySet
+import io.github.heapy.icu4k.impl.locale.localeReadOnlySet
 import kotlin.concurrent.atomics.AtomicReference
 
 /** ICU binary bundle loading, resource lookup, locale fallback and aliases. Service/enumeration APIs are being ported. */
@@ -170,7 +170,7 @@ open class ICUResourceBundle : UResourceBundle {
                             iterator.reset()
                             while (iterator.hasNext()) ids.add(iterator.next().getKey()!!)
                         } catch (_: MissingResourceException) { }
-                        names.store(LocaleReadOnlySet({ ids }, null))
+                        names.store(localeReadOnlySet(ids))
                     }
                 }
                 return names.load()!!
@@ -209,12 +209,12 @@ open class ICUResourceBundle : UResourceBundle {
             getAvailableULocales(ICUData.ICU_BASE_NAME, ICUResourceBundleReader.embeddedLoader, type)
         fun getAvailableLocaleNameSet(baseName: String = ICUData.ICU_BASE_NAME, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Set<String> =
             getAvailEntry(baseName, loader).getLocaleNameSet()
-        fun getKeywordValues(baseName: String, keyword: String, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Array<String> {
+        fun getKeywordValues(baseName: String, keyword: String?, loader: ICUResourceLoader = ICUResourceBundleReader.embeddedLoader): Array<String> {
             val keywords = HashSet<String>()
             val locales = getAvailEntry(baseName, loader).getULocaleList(ULocale.AvailableType.DEFAULT)!!
             for (locale in locales) try {
                 val bundle = getBundleInstance(baseName, locale.getBaseName(), loader, false)
-                val table = bundle.getObject(keyword) as ICUResourceBundle
+                val table = bundle.getObject(keyword!!) as ICUResourceBundle
                 val keys = table.getKeys()
                 while (keys.hasMoreElements()) {
                     val key = keys.nextElement()

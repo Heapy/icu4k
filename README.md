@@ -54,6 +54,7 @@ import io.github.heapy.icu4k.util.ULocale
 val locale = ULocale.forLanguageTag("en-US-u-ca-japanese")
 println(locale.getName()) // en_US@calendar=japanese
 println(locale.toLanguageTag()) // en-US-u-ca-japanese
+val available = ULocale.getAvailableLocalesByType(ULocale.AvailableType.WITH_LEGACY_ALIASES)
 ```
 
 ULocale display names, defaults, likely subtags and resource factories are still
@@ -71,7 +72,8 @@ val bundle = ICUResourceBundle.getBundleInstance(
 println(bundle.getWithFallback("dictionaries/Mymr").getString()) // burmesedict.dict
 ```
 
-The embedded resource subset is listed in `data/manifest.json`.
+Locale availability lists come from the pinned ICU indexes; not all listed locale
+payloads are embedded yet. The embedded subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
 The `UResourceBundle` factory dispatch, Java bundle interoperability and
-locale-availability/resource services remain in progress.
+full runtime locale-resource scanning and remaining resource services are in progress.
