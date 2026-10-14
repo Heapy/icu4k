@@ -578,6 +578,34 @@
       "object": "CurrencyNlResourceData",
       "sha256": "f5983749aa3b0e4c30f781beca6d871aae3b3996f6cecbb682f315456fd7df55",
       "size": 13680
+    },
+    {
+      "name": "unit/root.res",
+      "file": "data/icu78/unit/root.res",
+      "object": "UnitRootResourceData",
+      "sha256": "130654f77d242afdb821b03d98f3503e992f61eb584c7089bfe80fe62db6298e",
+      "size": 5440
+    },
+    {
+      "name": "unit/pool.res",
+      "file": "data/icu78/unit/pool.res",
+      "object": "UnitPoolResourceData",
+      "sha256": "b62ca9b77ba5432293fbec60f5c54e8a737a064c71e08ef933baeea2d92ba8c5",
+      "size": 158016
+    },
+    {
+      "name": "unit/en.res",
+      "file": "data/icu78/unit/en.res",
+      "object": "UnitEnResourceData",
+      "sha256": "247b95effcc7b65a138006485deb615625c3ec2fdbf3fbae075c75ba4474ce60",
+      "size": 20256
+    },
+    {
+      "name": "unit/res_index.res",
+      "file": "data/icu78/unit/res_index.res",
+      "object": "UnitLocaleIndexResourceData",
+      "sha256": "0dbddba1c4950ab51595b7535dca218e9696be0ad016c49ec41689543488c56d",
+      "size": 5008
     }
   ]
 }

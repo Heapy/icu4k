@@ -3828,3 +3828,20 @@ iterators, insertions, removals and full deletion against ICU4J. Common tests
 cover stale iterators after deletion, empty iterators, subsequent insertion and
 fail-fast exception ordering. Full JVM, JS Node and macOS Arm64 suites pass;
 Linux x64 tests compile. The full ICU4J port remains unfinished.
+
+### MeasureUnit resource enumeration
+
+MeasureUnitResourceCatalog extracts the resource sinks used to populate the
+future MeasureUnit instance cache. It enumerates English unit types/names with
+fallback, skips compound and coordinate pattern groups, then enumerates ISO
+currency codes. Every callback is preserved in source order, including fallback
+visits; deduplication and one-time population belong to the future public cache.
+Caller exceptions propagate and a later enumeration can run normally.
+
+The pinned unit/en, unit/root, unit/pool and unit/res_index bundles are embedded;
+82 generated resources now verify. JVM oracle tests compare the full ordered
+callback sequence with the ICU4J sinks and check catalog entries against the
+source public available-unit set. Common tests cover units, currencies, excluded
+pattern groups, resource discovery and callback failures/retries. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 tests compile. Public MeasureUnit,
+Currency service registration and the complete ICU4J port remain unfinished.
