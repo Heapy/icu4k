@@ -3909,3 +3909,23 @@ JVM-only constructor overload and Java API checks.
 Sorted display-name enumeration/cache and debug tracing are not ported yet;
 ICUService is not claimed complete. ICULocaleService, public Currency/MeasureUnit
 and the complete ICU4J port remain unfinished.
+
+### Locale service keys
+
+LocaleServiceKey extracts the complete ICULocaleService.LocaleKey implementation
+pending the locale-service facade. It retains canonical factories, original IDs,
+kind prefixes, descriptors with keyword suffixes, underscore-group fallback,
+canonical fallback locale, terminal root and strict parent matching. Constructor
+state and virtual kind/currentID callbacks preserve source behavior. Exhausted
+currentLocale distinguishes keyword-bearing/literal-root keys (string 'null')
+from ordinary keys (null constructor argument failure), as ICU4J does.
+
+Source quirks remain: canonical factories normalize root to an empty ID and can
+then visit the supplied fallback locale; the protected literal-root constructor
+has no fallback. Canonical fallback strings are not re-normalized by the key.
+Common tests cover keywords, kinds, factory/literal root and exhaustion. JVM
+oracle tests compare a locale/fallback/kind matrix using both factories, direct
+protected construction and subclass callbacks, including all fallback states
+and terminal exceptions. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64
+tests compile. ICULocaleService factories/facade, sorted ICUService display names,
+public Currency/MeasureUnit and the complete ICU4J port remain unfinished.
