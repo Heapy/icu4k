@@ -3625,3 +3625,13 @@ Arm64 suites pass; Linux x64 test sources compile; data generation checks pass.
 
 Currency display names/provider, full Currency/MeasureUnit, DecimalFormatSymbols,
 number formatting and the complete ICU4J port remain unfinished.
+
+### StandardPlural
+
+StandardPlural now exposes all eight constants, immutable VALUES, keyword/index
+lookup, OTHER defaults and invalid-key exceptions. The numeric aliases 0/1 and
+=0/=1 retain the original EQ_0/EQ_1 ordinals. Generic CharSequence lookup preserves
+the source's repeated character reads and invalid-key toString callback rather
+than converting the input up front. Currency display oracle tests compare keyword
+lookups and callback traces; Common tests cover aliases, defaults and null inputs.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
