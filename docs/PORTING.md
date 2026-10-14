@@ -3667,3 +3667,14 @@ generated data checks pass.
 
 Full Currency/MeasureUnit, DecimalFormatSymbols, remaining locale payloads and the
 complete ICU4J port remain unfinished.
+
+### IllegalIcuArgumentException
+
+IllegalIcuArgumentException now provides all three source constructors and a
+covariant initCause API. JVM retains Throwable's synchronized state transitions
+and the original serialVersionUID. JS/Native atomically retain initialized versus
+uninitialized null causes, reject self-causation and cause overwrites, and attach
+the receiving exception to rejection errors. JVM oracle tests compare constructor
+messages/causes, repeated initCause calls and serialization UID; Common tests
+exercise null initialization, overwrite and self-causation on all targets.
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
