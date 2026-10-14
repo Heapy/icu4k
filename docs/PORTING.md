@@ -3017,3 +3017,41 @@ compile. Linux runtime tests are configured in CI and were not executed in this 
 retained-descriptor implementation preserves live content but has a different
 resource/per-byte IO cost than mmap. URLHandler custom protocols/diagnostics,
 Java bundle interoperability and the full ICU4J port remain unfinished.
+
+### URL visitors, protocol factories and class-loader selection
+
+URLHandler now shares the original guide overload, visitor interface, recursive
+file traversal and archive prefix/filter/strip loop in Common code. File visits
+preserve filesystem order, the leading slash with strip=false, null child lists
+and propagation of visitor failures. Archive visits skip directory records,
+preserve the slash-at-index-zero rule, stop after catching Exception and allow
+Error to propagate. Common callers can use forFile(path) or forArchive(prefix,
+entries); the latter receives a fresh archive iterator for each guide call.
+
+The JVM URL overload retains file URI handling, JarURLConnection ownership,
+jar/wsjar normalization and custom protocol lookup through urlhandler.props.
+The registry snapshots that file once, uses default-charset BufferedReader and
+ASCII trim, stops at a malformed line, keeps partial registrations and replaces
+duplicate protocol mappings. It uses Class.forName/getDeclaredMethod, preserves
+original access/invocation exception handling and does not suppress wrong-result
+ClassCastException or nonstatic-factory NullPointerException. DEBUG snapshots,
+property/URL/visitor diagnostics and reader closing retain the original behavior.
+ICUClassLoaderResourceLoader now delegates to these handlers rather than its
+previous private file/JAR loop; custom protocols participate in full locale-name
+scanning. ClassLoaderUtil is ported as a JVM boundary, with class/context/system
+selection and synchronized volatile bootstrap fallback.
+
+Common tests cover file and archive guide modes, order, prefix rules and failure
+policies. JVM differential tests compare file/JAR/wsjar URLs, invalid/default
+URLs, visitor failures and class-loader selection with ICU4J. Isolated loaders
+compare property parsing, declared/static/private/missing factories, null/throwing/
+wrong-type results, class initialization failures, partial read/close IO failures
+and exact debug stdout/stderr. An integration test feeds custom-protocol resource
+names into full locale scanning. Node/Native tests exercise the Common host file
+factory and retained file names after unlink. JVM, JS Node and macOS Arm64 suites
+pass; Linux x64 production and test sources compile.
+
+JVM URL parsing and reflective factory discovery stay on the JVM boundary.
+Common archive traversal uses supplied iterators; automatic non-JVM archive URL
+resolution is not supplied here. Java bundle interoperability, remaining resource
+services/diagnostics and the full ICU4J port remain unfinished.

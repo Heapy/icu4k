@@ -13,6 +13,14 @@ internal actual fun binaryFileSystem(): BinaryFileSystem? = PosixBinaryFileSyste
 private object PosixBinaryFileSystem : BinaryFileSystem {
     override val pathSeparator: Char = ':'
     override val fileSeparator: String = "/"
+    override fun getFileEntry(path: String): BinaryFileEntry? {
+        if ('\u0000' in path) return null
+        return memScoped {
+            val info = alloc<stat>()
+            if (stat(path, info.ptr) != 0) null else BinaryFileEntry(path.trimEnd('/').substringAfterLast('/'), path,
+                (info.st_mode.toInt() and S_IFMT.toInt()) == S_IFDIR.toInt())
+        }
+    }
     override fun listFiles(path: String): List<BinaryFileEntry>? {
         if ('\u0000' in path) return null
         val directory = opendir(path) ?: return null

@@ -14,6 +14,7 @@ internal actual fun binaryFileSystem(): BinaryFileSystem? = JvmBinaryFileSystem
 private object JvmBinaryFileSystem : BinaryFileSystem {
     override val pathSeparator: Char = File.pathSeparatorChar
     override val fileSeparator: String = File.separator
+    override fun getFileEntry(path: String): BinaryFileEntry? = File(path).takeIf { it.exists() }?.let { BinaryFileEntry(it.name, it.path, it.isDirectory) }
     override fun listFiles(path: String): List<BinaryFileEntry>? = File(path).listFiles()?.map { BinaryFileEntry(it.name, it.path, it.isDirectory) }
     override fun mapFile(path: String): BinaryBuffer? = try {
         val file = FileInputStream(path)

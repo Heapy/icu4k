@@ -8,6 +8,7 @@ internal data class BinaryFileEntry(val name: String, val path: String, val isDi
 internal interface BinaryFileSystem {
     val pathSeparator: Char
     val fileSeparator: String
+    fun getFileEntry(path: String): BinaryFileEntry?
     fun listFiles(path: String): List<BinaryFileEntry>?
     fun mapFile(path: String): BinaryBuffer?
 }

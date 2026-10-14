@@ -10,6 +10,9 @@ internal actual fun binaryFileSystem(): BinaryFileSystem? = NodeBinaryFileSystem
 private class NodeBinaryFileSystem(private val fs: dynamic, private val path: dynamic) : BinaryFileSystem {
     override val pathSeparator: Char = (path.delimiter as String)[0]
     override val fileSeparator: String = path.sep as String
+    override fun getFileEntry(path: String): BinaryFileEntry? = try {
+        BinaryFileEntry(this.path.basename(path) as String, path, fs.statSync(path).isDirectory() as Boolean)
+    } catch (_: Throwable) { null }
     override fun listFiles(path: String): List<BinaryFileEntry>? = try {
         val entries: dynamic = fs.readdirSync(path)
         List(entries.length as Int) { index ->

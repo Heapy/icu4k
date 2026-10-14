@@ -4,9 +4,7 @@ package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.BinaryBuffer
 import io.github.heapy.icu4k.util.ICUUncheckedIOException
-import java.io.File
 import java.io.IOException
-import java.net.JarURLConnection
 import java.net.URL
 import java.security.AccessController
 import java.security.PrivilegedAction
@@ -33,39 +31,15 @@ class ICUClassLoaderResourceLoader(private val loader: ClassLoader) : ICUResourc
             try {
                 val urls = loader.getResources(directory)
                 if (urls != null) while (urls.hasMoreElements()) visit(urls.nextElement(), visitor)
-            } catch (_: IOException) { }
+            } catch (failure: IOException) { if (debug) println("ouch: ${failure.message}") }
             null
         })
     }
 
     private fun visit(url: URL, visitor: (String) -> Unit) {
-        when (url.protocol) {
-            "file" -> {
-                val file = try { File(url.toURI()).takeIf { it.exists() } } catch (_: Exception) { null } ?: return
-                if (file.isDirectory) file.listFiles()?.forEach { if (!it.isDirectory) visitor(it.name) }
-                else visitor(file.name)
-            }
-            "jar", "wsjar" -> {
-                val path = url.path
-                val delimiter = path.lastIndexOf("!/")
-                val prefix = if (delimiter >= 0) path.substring(delimiter + 2) else path
-                val jar = try {
-                    val normalized = if (url.protocol == "jar") url else URL("jar" + url.toString().substring(url.toString().indexOf(':')))
-                    (normalized.openConnection() as JarURLConnection).jarFile
-                } catch (_: Exception) { return }
-                // JarURLConnection owns/caches the JarFile; ICU4J leaves it open.
-                try {
-                    val entries = jar.entries()
-                    while (entries.hasMoreElements()) {
-                        val entry = entries.nextElement()
-                        if (entry.isDirectory || !entry.name.startsWith(prefix)) continue
-                        val relative = entry.name.substring(prefix.length)
-                        val slash = relative.lastIndexOf('/')
-                        if (slash > 0) continue
-                        visitor(if (slash != -1) relative.substring(slash + 1) else relative)
-                    }
-                } catch (_: Exception) { }
-            }
-        }
+        val handler = URLHandler.get(url)
+        if (handler != null) handler.guide(URLHandler.URLVisitor(visitor), false)
+        else if (debug) println("handler for $url is null")
     }
+    companion object { private val debug = ICUDebug.enabled("localedata") }
 }

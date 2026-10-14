@@ -14,6 +14,11 @@ class BinaryFileSystemNodeTest {
             val host = binaryFileSystem()!!
             val buffer = assertNotNull(host.mapFile(file))
             val slice = buffer.slice(1, 2)
+            val fileHandler = assertNotNull(URLHandler.forFile(file))
+            val names = mutableListOf<String>()
+            assertNotNull(URLHandler.forFile(directory)).guide(URLHandler.URLVisitor(names::add), false, false)
+            assertEquals(listOf("/data.bin"), names)
+            assertNull(URLHandler.forFile("$directory/missing"))
             assertTrue(slice.isReadOnly)
             assertFailsWith<UnsupportedOperationException> { slice.writeByte(0) }
             val descriptor = fs.openSync(file, "r+")
@@ -24,6 +29,9 @@ class BinaryFileSystemNodeTest {
             assertEquals(1, BinaryDataFiles(directory, host).getData("data.bin")!!.readUnsignedByte())
             fs.unlinkSync(file)
             assertEquals(3, slice.readUnsignedByte())
+            names.clear()
+            fileHandler.guide(URLHandler.URLVisitor(names::add), true, false)
+            assertEquals(listOf("data.bin"), names)
             assertNull(host.listFiles(path.join(directory, "missing") as String))
         } finally { fs.rmSync(directory, js("({ recursive: true, force: true })")) }
     }

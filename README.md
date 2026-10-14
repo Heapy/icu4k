@@ -76,7 +76,7 @@ Locale availability lists come from the pinned ICU indexes; not all listed local
 payloads are embedded yet. The embedded subset is listed in `data/manifest.json`.
 `ICUResourceLoader` can supply additional binary bundles on every target.
 The `UResourceBundle` factory dispatch, Java bundle interoperability and
-custom URL protocols and remaining resource services are in progress.
+remaining resource services are in progress.
 `ICUResourceBundle.getFullLocaleNameSet` supports resource visitation, list-file and
 index fallback; JVM callers can use `ICUClassLoaderResourceLoader` for directories
 and JAR resources.
@@ -89,3 +89,10 @@ files and packages precede embedded resources. JVM uses a system property; Nativ
 and Node use the environment variable `com.ibm.icu.impl.ICUBinary.dataPath`. JVM
 and Native retain mmap storage; Node retains file descriptors for live reads.
 Browser JS uses embedded or caller-supplied resources.
+
+`URLHandler` shares file/archive guide rules in Common code. `forFile(path)` uses
+the host filesystem; `forArchive(prefix, entries)` uses a caller-supplied archive
+iterator. On JVM, the `URLHandler.get(URL)` extension resolves file/JAR/wsjar URLs
+and custom static factories from `urlhandler.props`;
+`ICUClassLoaderResourceLoader` uses that registry when enumerating resources.
+Java factories return the ported `URLHandler` type and expose `get(java.net.URL)`.

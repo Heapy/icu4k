@@ -11,6 +11,7 @@ class BinaryDataFilesTest {
         val contents = linkedMapOf<String, ByteArray>()
         val scans = mutableListOf<String>()
         val maps = mutableListOf<String>()
+        override fun getFileEntry(path: String): BinaryFileEntry? = error("not used")
         override fun listFiles(path: String): List<BinaryFileEntry>? { scans.add(path); return directories[path] }
         override fun mapFile(path: String): BinaryBuffer? { maps.add(path); return contents[path]?.let { BinaryBuffer(it, isReadOnly = true) } }
         fun folder(path: String, vararg names: String) {

@@ -17,6 +17,11 @@ class BinaryFileSystemNativeTest {
             val fs = binaryFileSystem()!!
             val buffer = assertNotNull(fs.mapFile(path))
             val slice = buffer.slice(1, 2)
+            val fileHandler = assertNotNull(URLHandler.forFile(path))
+            val names = mutableListOf<String>()
+            assertNotNull(URLHandler.forFile(directory)).guide(URLHandler.URLVisitor(names::add), false, false)
+            assertEquals(listOf("/data.bin"), names)
+            assertNull(URLHandler.forFile("$directory/missing"))
             assertTrue(slice.isReadOnly)
             assertFailsWith<UnsupportedOperationException> { slice.writeByte(0) }
             val file = fopen(path, "r+b")!!
@@ -27,6 +32,9 @@ class BinaryFileSystemNativeTest {
             assertEquals(1, BinaryDataFiles(directory, fs).getData("data.bin")!!.readUnsignedByte())
             assertEquals(0, unlink(path))
             assertEquals(3, slice.readUnsignedByte())
+            names.clear()
+            fileHandler.guide(URLHandler.URLVisitor(names::add), true, false)
+            assertEquals(listOf("data.bin"), names)
             assertNull(fs.listFiles("$directory/missing"))
         } finally { unlink(path); rmdir(directory) }
     }
