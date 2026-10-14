@@ -331,6 +331,86 @@
       "object": "SupplementalResourceData",
       "sha256": "f5b3db170dbf9534a9172fa54963efebb2d157031fa16430678c95343524487d",
       "size": 241440
+    },
+    {
+      "name": "en.res",
+      "file": "data/icu78/en.res",
+      "object": "CoreEnResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/en.res",
+      "sha256": "fa241c447fb88cd95130d04558b5d4a2c7bf32969f69136d7a2ede15ee4b298d",
+      "size": 17136
+    },
+    {
+      "name": "fr.res",
+      "file": "data/icu78/fr.res",
+      "object": "CoreFrResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/fr.res",
+      "sha256": "1fe10402a2179ac686d992b1d7096dfaba4da21a9fe903fc6cc6cade68467600",
+      "size": 20768
+    },
+    {
+      "name": "ar.res",
+      "file": "data/icu78/ar.res",
+      "object": "CoreArResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/ar.res",
+      "sha256": "786647aabb77f3b0c7f2481c01289ce41afd3b90847e8a44e075d1e350c7532c",
+      "size": 24496
+    },
+    {
+      "name": "ja.res",
+      "file": "data/icu78/ja.res",
+      "object": "CoreJaResourceData",
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/ja.res",
+      "sha256": "52f0c4187ebd7988023a1e0bea53096f96e2fcae022b8a85d998d51a10b1379e",
+      "size": 28640
+    },
+    {
+      "name": "lang/root.res",
+      "file": "data/icu78/lang/root.res",
+      "object": "LanguageRootResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/root.res",
+      "sha256": "b0c257994c607fcbf3023829244c5256ef635e6c3a99dba7ceae573a22bbac4c",
+      "size": 336
+    },
+    {
+      "name": "lang/pool.res",
+      "file": "data/icu78/lang/pool.res",
+      "object": "LanguagePoolResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/pool.res",
+      "sha256": "dcfd1db25f40486073157ee297cd6cc5d4b3690802207182b4cd39db38c2636b",
+      "size": 151680
+    },
+    {
+      "name": "lang/en.res",
+      "file": "data/icu78/lang/en.res",
+      "object": "LanguageEnResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/en.res",
+      "sha256": "1492a99c865ce3a5f1c4a0b8799cc795ec72e40120123661fc8cc69bb8297609",
+      "size": 29136
+    },
+    {
+      "name": "lang/fr.res",
+      "file": "data/icu78/lang/fr.res",
+      "object": "LanguageFrResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/fr.res",
+      "sha256": "20638c14df1a37881e75da2d9e795214bb329d590128c225fc5f21d9f66ad549",
+      "size": 24544
+    },
+    {
+      "name": "lang/ar.res",
+      "file": "data/icu78/lang/ar.res",
+      "object": "LanguageArResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/ar.res",
+      "sha256": "5017f1ba5297360e572920597e141a66ebed5865fe79e72612330c6131a8c2d4",
+      "size": 26256
+    },
+    {
+      "name": "lang/ja.res",
+      "file": "data/icu78/lang/ja.res",
+      "object": "LanguageJaResourceData",
+      "source_path": "icu4j/main/langdata/src/main/resources/com/ibm/icu/impl/data/icudata/lang/ja.res",
+      "sha256": "b989d43ccca5fe2ee1464aeadfb444738171811affd3a8fe8435e5fdf8531dce",
+      "size": 21872
     }
   ]
 }

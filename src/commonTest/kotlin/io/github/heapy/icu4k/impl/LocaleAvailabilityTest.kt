@@ -26,16 +26,19 @@ class LocaleAvailabilityTest {
         } finally { CacheValue.setStrength(CacheValue.Strength.SOFT) }
     }
     @Test fun availabilityInitializationAllowsReentrantLoaderCallbacks() {
-        val base = "icu4k-test/availability-reentry"
-        val bytes = BundleFixture.write(mapOf("InstalledLocales" to mapOf("en" to "")))
-        var loads = 0
-        lateinit var loader: ICUResourceLoader
-        loader = ICUResourceLoader {
-            if (++loads == 1) assertEquals(setOf("en"), ICUResourceBundle.getAvailableLocaleNameSet(base, loader))
-            BinaryBuffer(bytes.copyOf())
-        }
-        assertEquals(listOf("en"), ICUResourceBundle.getAvailableULocales(base, loader)!!.map { it.getName() })
-        assertEquals(3, loads)
+        CacheValue.setStrength(CacheValue.Strength.STRONG)
+        try {
+            val base = "icu4k-test/availability-reentry"
+            val bytes = BundleFixture.write(mapOf("InstalledLocales" to mapOf("en" to "")))
+            var loads = 0
+            lateinit var loader: ICUResourceLoader
+            loader = ICUResourceLoader {
+                if (++loads == 1) assertEquals(setOf("en"), ICUResourceBundle.getAvailableLocaleNameSet(base, loader))
+                BinaryBuffer(bytes.copyOf())
+            }
+            assertEquals(listOf("en"), ICUResourceBundle.getAvailableULocales(base, loader)!!.map { it.getName() })
+            assertEquals(3, loads)
+        } finally { CacheValue.setStrength(CacheValue.Strength.SOFT) }
     }
     @Test fun keywordValuesExcludeDefaultsAndPrivateTypesAndSkipMalformedTables() {
         val base = "icu4k-test/keyword-values-common"

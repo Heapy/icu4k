@@ -56,6 +56,37 @@ class LocaleAvailabilityOracleTest {
             assertNull(ICUResourceBundle.getAvailableULocales(base, BundleFixture.loader(files), ULocale.AvailableType.WITH_LEGACY_ALIASES))
         }
     }
+    @Test fun strongCacheReentrantLoadTraceMatchesOriginal() {
+        val base = "icu4k-test/availability-reentry-oracle-locale-data"
+        val bytes = BundleFixture.write(mapOf("InstalledLocales" to mapOf("en" to "")))
+        val originalNames = mutableListOf<String>()
+        val commonNames = mutableListOf<String>()
+        lateinit var originalLoader: ClassLoader
+        originalLoader = object : ClassLoader(com.ibm.icu.impl.ICUResourceBundle::class.java.classLoader) {
+            override fun getResourceAsStream(name: String): InputStream? {
+                originalNames.add(name)
+                if (originalNames.size == 1) assertEquals(setOf("en"), com.ibm.icu.impl.ICUResourceBundle.getAvailableLocaleNameSet(base, originalLoader))
+                return bytes.inputStream()
+            }
+        }
+        lateinit var commonLoader: ICUResourceLoader
+        commonLoader = ICUResourceLoader { name ->
+            commonNames.add(name)
+            if (commonNames.size == 1) assertEquals(setOf("en"), ICUResourceBundle.getAvailableLocaleNameSet(base, commonLoader))
+            BinaryBuffer(bytes.copyOf())
+        }
+        CacheValue.setStrength(CacheValue.Strength.STRONG)
+        com.ibm.icu.impl.CacheValue.setStrength(com.ibm.icu.impl.CacheValue.Strength.STRONG)
+        try {
+            assertEquals(listOf("en"), com.ibm.icu.impl.ICUResourceBundle.getAvailableULocales(base, originalLoader).map { it.name })
+            assertEquals(listOf("en"), ICUResourceBundle.getAvailableULocales(base, commonLoader)!!.map { it.getName() })
+            assertEquals(originalNames, commonNames)
+            assertEquals(3, commonNames.size)
+        } finally {
+            CacheValue.setStrength(CacheValue.Strength.SOFT)
+            com.ibm.icu.impl.CacheValue.setStrength(com.ibm.icu.impl.CacheValue.Strength.SOFT)
+        }
+    }
     @Test fun concurrentIndexInitializationRunsOnceAndPublishesOneArray() {
         val base = "icu4k-test/availability-concurrent"
         val bytes = BundleFixture.write(mapOf("InstalledLocales" to mapOf("en" to "", "root" to "")))

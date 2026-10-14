@@ -135,10 +135,59 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
         fun build(): ULocale = getInstance(builder.getBaseLocale(), builder.getLocaleExtensions())
     }
     @Deprecated("This API is ICU internal only.")
+    open class RegionValidateMap {
+        protected var map: IntArray? = validRegions.copyOf()
+        fun isSet(region: String?): Boolean {
+            val index = value(region)
+            return index >= 0 && (io.github.heapy.icu4k.impl.checkedArrayElement(map!!, index / 32) and (1 shl (index % 32))) != 0
+        }
+        fun equals(that: RegionValidateMap?): Boolean {
+            val other = that!!
+            return map?.contentEquals(other.map) ?: (other.map == null)
+        }
+        protected open fun value(region: String?): Int {
+            val input = region!!
+            if (input.length != 2 || input.any { it !in 'a'..'z' && it !in 'A'..'Z' }) return -1
+            val lower = io.github.heapy.icu4k.impl.supplementalRegionCase(input, false)
+            return (lower[0].code - 'a'.code) * 26 + lower[1].code - 'a'.code
+        }
+        companion object {
+            private val validRegions = intArrayOf(
+                0xeedf597c.toInt(), 0xdeddbdef.toInt(), 0x15943f3f.toInt(), 0x0e00d580.toInt(),
+                0xb0095c00.toInt(), 0x0015fb9f.toInt(), 0x781c068d.toInt(), 0x0340400f.toInt(),
+                0xf42b1d00.toInt(), 0xfd4f8141.toInt(), 0x25d7fffc.toInt(), 0x0100084b.toInt(),
+                0x538f3c40.toInt(), 0x40000001.toInt(), 0xfdf15100.toInt(), 0x9fbb7ae7.toInt(),
+                0x0410419a.toInt(), 0x00408557.toInt(), 0x00004002.toInt(), 0x00100001.toInt(),
+                0x00400408.toInt(), 0x00000001.toInt()
+            )
+            @Suppress("DEPRECATION")
+            var BUILTIN: RegionValidateMap? = RegionValidateMap()
+        }
+    }
+    @Deprecated("This API is ICU internal only.")
     enum class Minimize { FAVOR_SCRIPT, FAVOR_REGION }
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        @Deprecated("This API is ICU internal only.")
+        @Suppress("DEPRECATION")
+        fun getRegionForSupplementalData(locale: ULocale?, inferRegion: Boolean): String {
+            val loc = locale!!
+            getRegionFromKey(loc, "rg")?.let { return it }
+            var region = loc.getCountry()
+            if (region.isEmpty() && inferRegion) {
+                getRegionFromKey(loc, "sd")?.let { return it }
+                region = addLikelySubtags(loc).getCountry()
+            }
+            return region
+        }
+        @Suppress("DEPRECATION")
+        private fun getRegionFromKey(locale: ULocale, key: String): String? {
+            val subdivision = locale.getKeywordValue(key) ?: return null
+            if (subdivision.length !in 3..6) return null
+            val region = io.github.heapy.icu4k.impl.supplementalRegionCase(subdivision.substring(0, 2), true)
+            return if (RegionValidateMap.BUILTIN!!.isSet(region)) region else null
+        }
         fun createCanonical(localeID: String?): ULocale = ULocale(canonicalize(localeID), false)
         fun createCanonical(locale: ULocale?): ULocale = createCanonical(locale!!.getName())
         fun canonicalize(localeID: String?): String {

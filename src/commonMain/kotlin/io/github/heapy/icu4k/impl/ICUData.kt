@@ -3,6 +3,16 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
+import io.github.heapy.icu4k.impl.data.CoreEnResourceData
+import io.github.heapy.icu4k.impl.data.CoreFrResourceData
+import io.github.heapy.icu4k.impl.data.CoreArResourceData
+import io.github.heapy.icu4k.impl.data.CoreJaResourceData
+import io.github.heapy.icu4k.impl.data.LanguageRootResourceData
+import io.github.heapy.icu4k.impl.data.LanguagePoolResourceData
+import io.github.heapy.icu4k.impl.data.LanguageEnResourceData
+import io.github.heapy.icu4k.impl.data.LanguageFrResourceData
+import io.github.heapy.icu4k.impl.data.LanguageArResourceData
+import io.github.heapy.icu4k.impl.data.LanguageJaResourceData
 import io.github.heapy.icu4k.impl.data.SupplementalResourceData
 import io.github.heapy.icu4k.impl.data.LanguageInfoResourceData
 import io.github.heapy.icu4k.impl.data.LocaleMetadataResourceData
@@ -75,7 +85,7 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
+    private val resourceNames = setOf("lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict")
     internal fun visitResources(directory: String, visitor: (String) -> Unit) {
         val prefix = directory.removePrefix("/")
         if (!prefix.startsWith("$ICU_BASE_NAME/")) return
@@ -90,6 +100,16 @@ object ICUData {
 
     /** Returns a private copy, so callers cannot mutate cached resource data. */
     fun getBytes(resourceName: String): ByteArray? = when (itemPath(resourceName)) {
+        "en.res" -> CoreEnResourceData.copy()
+        "fr.res" -> CoreFrResourceData.copy()
+        "ar.res" -> CoreArResourceData.copy()
+        "ja.res" -> CoreJaResourceData.copy()
+        "lang/root.res" -> LanguageRootResourceData.copy()
+        "lang/pool.res" -> LanguagePoolResourceData.copy()
+        "lang/en.res" -> LanguageEnResourceData.copy()
+        "lang/fr.res" -> LanguageFrResourceData.copy()
+        "lang/ar.res" -> LanguageArResourceData.copy()
+        "lang/ja.res" -> LanguageJaResourceData.copy()
         "supplementalData.res" -> SupplementalResourceData.copy()
         "langInfo.res" -> LanguageInfoResourceData.copy()
         "metadata.res" -> LocaleMetadataResourceData.copy()

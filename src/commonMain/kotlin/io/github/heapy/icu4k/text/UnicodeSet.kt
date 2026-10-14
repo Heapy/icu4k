@@ -1318,6 +1318,9 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         return result
     }
     companion object {
+        val EMPTY: UnicodeSet = UnicodeSet().freeze()
+        val ALL_CODE_POINTS: UnicodeSet = UnicodeSet(0, 0x10ffff).freeze()
+
         internal fun scfString(s: CharSequence, scf: StringBuilder): Boolean {
             var i = 0
             while (i < s.length) {

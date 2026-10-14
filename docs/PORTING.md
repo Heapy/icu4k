@@ -3310,3 +3310,41 @@ validation errors against ICU4J.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 A subsequent full JVM suite also passes with malformed-data fixtures. Display
 names and other locale services, and the complete ICU4J port, remain unfinished.
+
+
+### Common LocaleData and supplemental region selection
+
+LocaleData now ports exemplar/static-instance factories, no-substitute behavior,
+quotation delimiters, language display pattern/separator, measurement-system
+singletons, paper dimensions and cached CLDR version. The no-argument factory uses
+FORMAT default; an explicit null locale uses the general default. Currency exemplars
+retain the frozen UnicodeSet.EMPTY singleton, and root fallback suppression follows
+bundle identity rather than the requested locale. Language bundle lookup failures
+are retained for later display-pattern calls, as upstream does.
+
+ULocale.getRegionForSupplementalData implements rg override, explicit country,
+optional sd override and likely-region inference. RegionValidateMap ports the
+pinned validation bits, typed equality, overridable value function, mutable builtin
+and protected nullable map behavior. JVM case conversion uses the Java default
+locale, including Turkish/Azeri quirks and resulting bounds errors. JS/Native use
+portable casing with the current ICU default's Turkic rules. Explicit checked array
+access on JS preserves bounds failures for exemplar/delimiter keys, dimensions and
+region mask access instead of allowing undefined values. UnicodeSet.EMPTY and
+ALL_CODE_POINTS are added as frozen constants.
+
+Ten pinned resources add core en/fr/ar/ja and language root/pool/en/fr/ar/ja;
+the manifest now contains 56 resources. Language resources record their upstream
+langdata source paths. This stage does not embed every locale payload.
+
+Common tests cover pinned exemplar data, delimiters/patterns, measurement/paper,
+region selection, nullable/override bounds and frozen constants. JVM differential
+tests compare exemplar options/types, no-substitute fallback and display strings
+across locales; all region measurement/paper results; every alphabetic validation
+code under ROOT/Turkish/Azeri Java defaults; and FORMAT versus general factory
+selection. A reentrant availability load-count test now selects strong cache
+strength so Native weak-reference reclamation does not alter its count; its exact
+three-load trace is compared against ICU4J.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+The data generator check passes for all 56 resources. Locale display-name services,
+remaining locale payloads and the complete ICU4J port remain unfinished.

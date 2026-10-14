@@ -119,3 +119,9 @@ For example, `ULocale.createCanonical("sh_RS")` is `sr_Latn_RS`.
 `Region` provides pinned territory IDs, numeric/three-letter aliases, deprecated
 preferred values, and geographic/grouping containment in Common code. For example,
 `Region.getInstance("IT").getContainingRegion(Region.RegionType.CONTINENT)` is `150`.
+
+
+`LocaleData` exposes exemplar sets, quotation delimiters, display patterns,
+measurement systems, paper sizes and the CLDR version. Core and language bundles
+for English, French, Arabic and Japanese are embedded with their root/pool data.
+The complete locale payload set is still being ported.
