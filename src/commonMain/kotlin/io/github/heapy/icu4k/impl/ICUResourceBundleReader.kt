@@ -120,6 +120,14 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         val length = intAt(offset)
         return bytes.sliceAt(offset + 4).readBytes(length)
     }
+    fun getBinary(res: Int, destination: ByteArray?): ByteArray? {
+        val input = binaryBuffer(res) ?: return null
+        val length = input.remaining
+        if (length == 0) return EMPTY_BYTES
+        val result = if (destination != null && destination.size == length) destination else ByteArray(length)
+        for (i in result.indices) result[i] = input.readByte()
+        return result
+    }
     fun getIntVector(res: Int): IntArray? {
         if (RES_GET_TYPE(res) != 14) return null
         val offset = RES_GET_UINT(res) * 4
@@ -144,7 +152,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         else -> false
     }
     /** Shares binary storage while keeping an independent cursor. */
-    private fun binaryBuffer(res: Int): BinaryBuffer? {
+    internal fun binaryBuffer(res: Int): BinaryBuffer? {
         if (RES_GET_TYPE(res) != 1) return null
         val offset = RES_GET_UINT(res) * 4
         if (offset == 0) return BinaryBuffer(byteArrayOf()).asReadOnlyBuffer()
@@ -333,6 +341,7 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             val path = baseName.replace('.', '/')
             return path + (if (localeName.isEmpty()) "" else "_$localeName") + ".res"
         }
+        private val EMPTY_BYTES = byteArrayOf()
         private val PUBLIC_TYPES = intArrayOf(0, 1, 2, 3, 2, 2, 0, 7, 8, 8, -1, -1, -1, -1, 14, -1)
         const val RES_BOGUS = -1
         fun RES_GET_TYPE(res: Int): Int = res ushr 28

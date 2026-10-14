@@ -2653,3 +2653,23 @@ Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources comp
 Named UResourceBundle factories, concrete ICU resource subclasses, alias/path
 fallback, sink enumeration and Java ResourceBundleWrapper interoperability are
 not implemented yet; the new classes are the base for those implementations.
+
+### Concrete scalar resource objects
+
+ICUResourceBundleImpl now supplies ResourceString, ResourceBinary, ResourceInt,
+ResourceIntVector and the shared abstract ResourceContainer. Scalar objects
+retain bundle identity, keys, parent inheritance and raw resource handles.
+Short strings (under 12 UTF-16 units) and strings created under STRONG retention
+are kept directly; longer strings otherwise use the reader cache. Integer
+getters preserve signed/unsigned 28-bit decoding. Vectors return fresh arrays.
+Binary getters return read-only views or fill a caller array of exactly matching
+length; empty blobs return the shared empty array independently of destination.
+Container string lookup checks bounds before taking its direct string fast path.
+
+Common fixtures cover scalar types, default mismatch failures, identity, binary
+cursor independence, destination reuse/replacement and vector copies. JVM tests
+instantiate the original private scalar classes against root, ML and LSTM
+resource bundles and compare values, metadata and string-retention fields.
+JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+Concrete array/table child construction depends on alias resolution and remains
+unfinished, together with named bundle factories and locale/path fallback.
