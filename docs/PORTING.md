@@ -3967,3 +3967,26 @@ resources and region resource discovery. Full JVM, JS Node and macOS Arm64 suite
 pass; Linux x64 tests compile. LocaleDisplayNames/LocaleDisplayNamesImpl, locale
 service factories, sorted service display names, public Currency/MeasureUnit and
 the complete ICU4J port remain unfinished.
+
+### Public locale-sensitive case mapping
+
+CaseMap.Lower/Upper now expose locale-sensitive string/appendable APIs and cached
+omitUnchangedText options over the existing shared casing algorithms. Common
+callers use ULocale; JVM adapters also accept java.util.Locale. Null locale uses
+the current default. Greek, Turkic and Lithuanian rules use the shared ICU
+algorithms rather than host string casing. Appendable mapping retains Edits reset
+and precise change ranges, including null source/destination behavior: null
+outputs succeed if no output is written, and source failures reset Edits first.
+JVM IOException is wrapped as ICUUncheckedIOException with the original cause;
+other exceptions retain identity. Folding now shares these appendable boundary
+rules and error wrapping.
+
+Oracle tests compare eight locales, 200 generated Unicode strings plus contextual
+and length-boundary examples, both omit modes, prefixed appendables and complete
+fine edit traces. Null-input/output outcomes and edits, IOException causes and
+current-default behavior are verified separately. Common tests cover expansions,
+contextual mappings, options, edit resets and appendable failures. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 tests compile. An additional JVM
+suite passes after adding the default-locale test. CaseMap.Title adapters, locale
+BreakIterator factories, LocaleDisplayNames, service display-name enumeration,
+public Currency/MeasureUnit and the complete ICU4J port remain unfinished.
