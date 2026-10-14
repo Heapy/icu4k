@@ -515,6 +515,13 @@
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/units.res",
       "sha256": "df7bbbe068d99fff713ebc965f799c385d958fef83983cf5f9e0e9ffb2bb87d4",
       "size": 22976
+    },
+    {
+      "name": "currencyNumericCodes.res",
+      "file": "data/icu78/currencyNumericCodes.res",
+      "object": "CurrencyNumericCodesResourceData",
+      "sha256": "d0e8565d2c93183963ddfdab830131b80aea7f7133eeb8d3802cd593a3d61b20",
+      "size": 3136
     }
   ]
 }

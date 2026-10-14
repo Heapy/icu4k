@@ -3776,3 +3776,21 @@ Common tests cover names, equivalent yen symbols, failures and offsets. Full JVM
 JS Node and macOS Arm64 suites pass; Linux x64 tests compile. An additional JVM
 suite run passes after the mutable-cache boundary tests were added. Public
 Currency and MeasureUnit are still unfinished; no facade completeness is claimed.
+
+### Currency metadata queries
+
+CurrencyMetadata extracts Currency's ISO-code validation, numeric codes, regional
+currency selection, historical available-code queries, locale keyword preferences,
+availability and fraction/rounding calculations. It uses exact Long epoch dates,
+nullable range endpoints, source validation order and reclaimable whole-code
+caches. The pinned currencyNumericCodes resource is now embedded (70 resources).
+Legal-tender codes take precedence in regional selection, with non-tender fallback
+only when the tender list is empty. Unknown numeric codes return zero.
+
+Oracle tests compare every metadata currency and region, both usage modes,
+historical/extreme dates, invalid formats, reversed ranges and keyword preferences
+against ICU4J 78.3. Every numeric-code resource entry is compared directly. Common
+tests cover normalization, ISO numbers, region selection, cash rounding and date
+queries. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 tests compile;
+all generated resources verify. This is internal implementation work; public
+Currency, MeasureUnit and the complete ICU4J port remain unfinished.
