@@ -3415,3 +3415,35 @@ wrapped fields, invalid field diagnostics and numeric-field serialization.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
 A subsequent full JVM suite passes with additional alias/failure tests. Locale
 display names, full number formatting and the rest of ICU4J remain unfinished.
+
+
+### Common constrained positions and fraction field metadata
+
+ConstrainedFieldPosition now implements reset, field/class/value constraints,
+range/current-state getters, int64 iteration context, matching and debug output.
+Constraint changes preserve range/context; setState changes the current field/value
+without validating constraints in production. Field matching uses identity, and
+value matching preserves Objects.equals identity short-circuit and left-hand
+comparison direction. Nullable field/value constraints and exact null-rejection
+messages follow ICU4J. Constructor initialization invokes virtual reset, including
+subclass overrides that leave constraints uninitialized.
+
+Common class constraints use KClass.isInstance; a JVM Class overload bridges Java
+class constraints. FormatFieldPosition uses java.text.FieldPosition on JVM and
+portable field/attribute/index carriers on JS/Native. UFieldPosition implements
+all constructors and visible-fraction-digit metadata without changing the base
+position's equality/hash semantics. Portable carriers follow the FieldPosition
+public state contract; Java package-private formatting delegates are not part of
+that boundary.
+
+Common tests cover state/constraint transitions, nullable fields, mutable value
+identity, constructor override behavior, and fraction metadata. JVM differential
+tests compare 1,200 release-mode state transitions and field/value/class match
+matrices against an isolated ICU4J class with assertions disabled. Additional
+checks compare equality callback direction, constructor metadata, extreme int64
+values, base position equality/hash and diagnostic strings.
+
+Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
+FormattedValue/FormattedValueStringBuilderImpl span iteration, list/span field
+identities and attributed iterator exports remain unfinished, along with the
+complete ICU4J port.

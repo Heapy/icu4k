@@ -136,3 +136,9 @@ as an argument during replacement. Example: `SimpleFormatter.compile("{1} in {0}
 and `SimpleFormatterImpl.formatPrefixSuffix` applies compiled wrappers to a span.
 `FormatField` uses Java Format.Field on JVM; extracted `NumberFormatField` identities
 support numeric annotations while the full NumberFormat implementation is pending.
+
+
+`ConstrainedFieldPosition` carries field/class/value constraints and iteration state
+in Common code. `UFieldPosition` retains fraction-digit metadata; its JVM base is
+java.text.FieldPosition, with portable index/attribute carriers on JS and Native.
+Formatted-value span iteration and exports are still being ported.
