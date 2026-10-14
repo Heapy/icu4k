@@ -2716,3 +2716,16 @@ JVM differential fixtures cover both byte orders and input protection modes,
 binary payload/order/protection, compact references, marker updates and version.
 Common regressions cover shared compact storage and index-header exception types.
 Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 production sources compile.
+
+### Direct binary key comparisons
+
+ICUBinary.compareKeys now supplies both byte-array and BinaryBuffer variants,
+retaining signed-byte arithmetic, exact difference values and NUL termination.
+Resource-table searches use the original key bytes directly, including pooled
+16/32-bit key offsets, rather than allocating strings. Table.findValue uses the
+same binary search with the output ReaderValue's reader, as ICU4J does.
+
+Common tests use a CharSequence whose toString throws, proving query conversion
+is not part of lookup. JVM differential tests compare 3,000 arbitrary byte/UTF-16
+cases for both overloads, including read-only buffers and unchanged cursor state.
+Full JVM, JS Node and macOS Arm64 suites pass.

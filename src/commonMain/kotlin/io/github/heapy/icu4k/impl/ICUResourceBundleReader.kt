@@ -201,6 +201,11 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         else if (!key16 && offset < 0) key.setBytes(pool!!.keys, offset and 0x7fffffff)
         else key.setBytes(keys, offset)
     }
+    private fun compareKey(key: CharSequence, offset: Int, key16: Boolean): Int = when {
+        key16 && offset >= localKeyLimit -> ICUBinary.compareKeys(key, pool!!.keys, offset - localKeyLimit)
+        !key16 && offset < 0 -> ICUBinary.compareKeys(key, pool!!.keys, offset and 0x7fffffff)
+        else -> ICUBinary.compareKeys(key, keys, offset)
+    }
     private fun keyString(offset: Int, key16: Boolean): String {
         val keyBytes: ByteArray
         var position: Int
@@ -227,12 +232,13 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
         }
         fun getKey(index: Int): String? = if (index < 0 || index >= size || keyOffsets == null) null
             else keyString(keyOffsets[index], key16)
-        fun findTableItem(key: CharSequence): Int {
+        fun findTableItem(key: CharSequence): Int = findTableItem(this@ICUResourceBundleReader, key)
+        private fun findTableItem(reader: ICUResourceBundleReader, key: CharSequence): Int {
             var start = 0
             var limit = size
             while (start < limit) {
                 val mid = (start + limit) ushr 1
-                val result = key.toString().compareTo(getKey(mid)!!)
+                val result = reader.compareKey(key, keyOffsets!![mid], key16)
                 if (result < 0) limit = mid else if (result > 0) start = mid + 1 else return mid
             }
             return -1
@@ -261,16 +267,10 @@ internal class ICUResourceBundleReader(input: BinaryBuffer, private var pool: IC
             }
             override fun findValue(key: CharSequence, value: UResource.Value): Boolean {
                 val output = value as ReaderValue
-                var start = 0
-                var limit = size
-                val candidate = UResource.Key()
-                while (start < limit) {
-                    val mid = (start + limit) ushr 1
-                    output.reader.setKey(keyOffsets!![mid], key16, candidate)
-                    val comparison = candidate.compareTo(key)
-                    if (comparison > 0) limit = mid
-                    else if (comparison < 0) start = mid + 1
-                    else { output.res = resource(output.reader, mid); return true }
+                val index = findTableItem(output.reader, key)
+                if (index >= 0) {
+                    output.res = resource(output.reader, index)
+                    return true
                 }
                 return false
             }

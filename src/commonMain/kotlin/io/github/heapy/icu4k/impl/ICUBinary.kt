@@ -84,4 +84,30 @@ object ICUBinary {
         VersionInfo.getInstance(version ushr 24, (version shr 16) and 255, (version shr 8) and 255, version and 255)
     fun getVersionByteArrayFromCompactInt(version: Int): ByteArray =
         byteArrayOf((version shr 24).toByte(), (version shr 16).toByte(), (version shr 8).toByte(), version.toByte())
+    /** Compares a length-specified sequence with an ASCII NUL-terminated resource key. */
+    internal fun compareKeys(key: CharSequence, bytes: ByteArray, offset: Int): Int {
+        var index = 0
+        var position = offset
+        while (true) {
+            val c = bytes[position].toInt()
+            if (c == 0) return if (index == key.length) 0 else 1
+            if (index == key.length) return -1
+            val difference = key[index].code - c
+            if (difference != 0) return difference
+            ++index; ++position
+        }
+    }
+    internal fun compareKeys(key: CharSequence, bytes: BinaryBuffer, offset: Int): Int {
+        var index = 0
+        var position = offset
+        while (true) {
+            val c = bytes.getByte(position).toInt()
+            if (c == 0) return if (index == key.length) 0 else 1
+            if (index == key.length) return -1
+            val difference = key[index].code - c
+            if (difference != 0) return difference
+            ++index; ++position
+        }
+    }
+
 }
