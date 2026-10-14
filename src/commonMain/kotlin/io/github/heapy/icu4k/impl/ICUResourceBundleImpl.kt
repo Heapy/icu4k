@@ -54,6 +54,7 @@ internal open class ICUResourceBundleImpl : ICUResourceBundle {
         protected lateinit var value: ICUResourceBundleReader.Container
         protected constructor(container: ICUResourceBundleImpl, key: String, resource: Int) : super(container, key, resource)
         protected constructor(wholeBundle: WholeBundle) : super(wholeBundle)
+        internal fun readerContainer(): ICUResourceBundleReader.Container = value
         override fun getSize(): Int = value.size
         override fun getString(index: Int): String {
             val res = getContainerResource(index)

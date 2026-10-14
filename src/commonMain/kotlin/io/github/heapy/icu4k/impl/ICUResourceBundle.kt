@@ -64,6 +64,42 @@ open class ICUResourceBundle : UResourceBundle {
             throw MissingResourceException("Encountered NO_INHERITANCE_MARKER", path, getKey())
         return result
     }
+    fun findStringWithFallback(path: String): String? = findStringWithFallback(path, this, null)
+    fun getStringWithFallback(path: String): String {
+        val value = findStringWithFallback(path) ?: throw MissingResourceException(
+            "Can't find resource for bundle ${resourceClassName()}, key ${getType()}", path, getKey())
+        if (value == NO_INHERITANCE_MARKER) throw MissingResourceException("Encountered NO_INHERITANCE_MARKER", path, getKey())
+        return value
+    }
+    fun getValueWithFallback(path: String): UResource.Value {
+        val bundle = if (path.isEmpty()) this else findWithFallback(path) ?: throw MissingResourceException(
+            "Can't find resource for bundle ${resourceClassName()}, key ${getType()}", path, getKey())
+        val impl = bundle as ICUResourceBundleImpl
+        return ICUResourceBundleReader.ReaderValue().also { it.reader = impl.wholeBundle.reader; it.res = impl.getResource() }
+    }
+    fun getAllItemsWithFallbackNoFail(path: String, sink: UResource.Sink) {
+        try { getAllItemsWithFallback(path, sink) } catch (_: MissingResourceException) { }
+    }
+    fun getAllItemsWithFallback(path: String, sink: UResource.Sink) {
+        val bundle = if (path.isEmpty()) this else findWithFallback(path) ?: throw MissingResourceException(
+            "Can't find resource for bundle ${resourceClassName()}, key ${getType()}", path, getKey())
+        bundle.getAllItemsWithFallback(UResource.Key(), ICUResourceBundleReader.ReaderValue(), sink, this)
+    }
+    private fun getAllItemsWithFallback(key: UResource.Key, value: ICUResourceBundleReader.ReaderValue, sink: UResource.Sink, requested: UResourceBundle) {
+        val impl = this as ICUResourceBundleImpl
+        value.reader = impl.wholeBundle.reader
+        value.res = impl.getResource()
+        key.setString(resourceKey ?: "")
+        sink.put(key, value, parentBundle == null)
+        val parent = parentBundle as ICUResourceBundle? ?: return
+        val depth = getResDepth()
+        val next = if (depth == 0) parent else {
+            val pathKeys = Array(depth) { "" }
+            getResPathKeys(pathKeys, depth)
+            findResourceWithFallback(pathKeys, 0, parent, requested)
+        }
+        next?.getAllItemsWithFallback(key, value, sink, requested)
+    }
     private fun getResDepth(): Int = if (container == null) 0 else container.getResDepth() + 1
     private fun getResPathKeys(keys: Array<String>, initialDepth: Int) {
         var depth = initialDepth
@@ -137,6 +173,60 @@ open class ICUResourceBundle : UResourceBundle {
                 }
                 bundle
             })
+        }
+        private fun findStringWithFallback(path: String, actual: UResourceBundle, requestedBundle: UResourceBundle?): String? {
+            if (path.isEmpty() || actual !is ICUResourceBundleImpl.ResourceContainer) return null
+            val requested = requestedBundle ?: actual
+            var base: ICUResourceBundle = actual
+            var reader = base.wholeBundle.reader
+            var res = RES_BOGUS
+            var baseDepth = base.getResDepth()
+            var depth = baseDepth
+            val parts = path.split('/')
+            var keys = Array(depth + parts.size) { "" }
+            for (i in parts.indices) keys[depth + i] = parts[i]
+            while (true) {
+                while (true) {
+                    val readerContainer: ICUResourceBundleReader.Container
+                    if (res == RES_BOGUS) {
+                        if (base.getType() != TABLE && base.getType() != ARRAY) break
+                        readerContainer = (base as ICUResourceBundleImpl.ResourceContainer).readerContainer()
+                    } else {
+                        val type = ICUResourceBundleReader.RES_GET_TYPE(res)
+                        readerContainer = when {
+                            ICUResourceBundleReader.URES_IS_TABLE(type) -> reader.getTable(res)!!
+                            ICUResourceBundleReader.URES_IS_ARRAY(type) -> reader.getArray(res)!!
+                            else -> { res = RES_BOGUS; break }
+                        }
+                    }
+                    val key = keys[depth++]
+                    res = readerContainer.getResource(key)
+                    if (res == RES_BOGUS) { --depth; break }
+                    val sub = if (ICUResourceBundleReader.RES_GET_TYPE(res) == ALIAS) {
+                        base.getResPathKeys(keys, baseDepth)
+                        getAliasedResource(base, keys, depth, key, res, null, requested)
+                    } else null
+                    if (depth == keys.size) return sub?.getString() ?: reader.getString(res) ?: throw UResourceTypeMismatchException("")
+                    if (sub != null) {
+                        base = sub
+                        reader = base.wholeBundle.reader
+                        res = RES_BOGUS
+                        baseDepth = base.getResDepth()
+                        if (depth != baseDepth) {
+                            val replacement = Array(baseDepth + keys.size - depth) { "" }
+                            keys.copyInto(replacement, baseDepth, depth, keys.size)
+                            keys = replacement
+                            depth = baseDepth
+                        }
+                    }
+                }
+                val next = base.getParent() ?: return null
+                base.getResPathKeys(keys, baseDepth)
+                base = next
+                reader = base.wholeBundle.reader
+                baseDepth = 0
+                depth = 0
+            }
         }
         private fun findResourceWithFallback(path: String, actual: UResourceBundle, requested: UResourceBundle?): ICUResourceBundle? {
             if (path.isEmpty()) return null

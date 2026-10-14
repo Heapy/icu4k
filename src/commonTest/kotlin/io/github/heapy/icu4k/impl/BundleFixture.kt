@@ -68,11 +68,11 @@ internal object BundleFixture {
         return ICUBinary.writeHeader(0x52657342, 0x03000000, 0x11223344) + body.bytes.copyOf(top * 4)
     }
     fun data(): Map<String, ByteArray> = mapOf(
-        "root" to write(mapOf("target" to "root", "inherit" to "inherited", "nested" to mapOf("x" to "root-x", "inherited" to "deep"),
+        "root" to write(mapOf("target" to "root", "inherit" to "inherited", "nested" to mapOf("x" to "root-x", "inherited" to "deep", "sameName" to "implicit-target"),
             "dynamic" to Alias("/LOCALE/target"), "cycleA" to Alias("root/cycleB"), "cycleB" to Alias("root/cycleA"),
             "strings" to listOf("a", "b"), "mixed" to listOf("a", 42), "integer" to -1, "vector" to intArrayOf(-1, 42),
             "binary" to byteArrayOf(1, 2, 3), "marker" to "∅∅∅")),
-        "en" to write(mapOf("target" to "en", "nested" to mapOf("x" to "en-x"))),
+        "en" to write(mapOf("target" to "en", "nested" to mapOf("x" to "en-x", "sameName" to Alias("root")))),
         "en_US" to write(mapOf("target" to "US", "aliasGroup" to Alias("en/nested"), "inherit" to Alias("root"),
             "absolute" to Alias("/ICUDATA-brkitr/root/dictionaries/Mymr"))),
         "en_GB" to write(mapOf("%%Parent" to "en_US", "target" to "GB")),

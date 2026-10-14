@@ -2765,3 +2765,24 @@ factory; ResourceBundleWrapper/Java-resource targets remain pending with that
 dispatch. Optimized string/value path APIs, sink enumeration, locale availability
 and remaining bundle services are not complete. Only the manifest's resource
 subset is embedded; custom loaders can supply other binary bundles.
+
+### Optimized string/value fallback and item sinks
+
+findStringWithFallback/getStringWithFallback port the reader-based traversal,
+including raw container descent, alias path reservation and parent reconstruction.
+They do not substitute object-path lookup. Marker strings remain visible to find,
+while get rejects them. getValueWithFallback returns the actual reader/resource
+pair and accepts an empty path for the current resource, without rejecting markers.
+
+getAllItemsWithFallback enumerates the located resource child-first through its
+parent chain, preserving actual alias target paths and reusing Key/ReaderValue.
+The value and key are reset before each callback, so sinks may traverse/mutate
+these output objects. The noFallback flag reflects the enumerated resource's
+parent pointer. NoFail catches MissingResourceException only.
+
+Common tests cover implicit-path aliases, string-array indexes, markers, scalar
+mismatches, shared callback objects, callback mutation and error propagation.
+JVM differential tests compare string/value outcomes and full typed sink traces
+for four opening modes and multiple locales, mutating key/value outputs during
+nested traversal. JVM, JS Node and macOS Arm64 suites pass; Linux x64 production
+sources compile. Child enumeration and remaining resource services are pending.
