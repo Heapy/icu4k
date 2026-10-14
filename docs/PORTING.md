@@ -3473,3 +3473,22 @@ set. Full JVM, JS Node and macOS Arm64 suites pass; Linux x64 test sources compi
 
 No new binary resources are required. Formatted-value span iteration/exports,
 number parsing and the complete ICU4J port remain unfinished.
+
+### Common formatted-value field and span iteration
+
+FormattedValueStringBuilderImpl now applies and locates span placeholders and
+iterates constrained numeric, list and span fields in Common Kotlin. Integer and
+numeric ranges coalesce as in ICU4J; trimming uses StaticUnicodeSets rather than
+the broader default-ignorable property. List element ranges retain whitespace.
+FormatSpanField, ListFormatField and ListSpanField provide the extracted field
+identities; full UFormat and ListFormatter remain unfinished. Java attributed
+iterator export is supplied by a JVM extension; the Common FormattedValue
+interface and a portable attributed iterator are still pending.
+
+Generated JVM oracle tests compare constrained iteration, legacy field positions
+and attributed character runs with ICU4J, including UTF-16 supplementary text,
+empty segments, bidi marks and variation selectors. List spans cover complete
+list elements: arbitrary spans across mixed numeric fields can cycle in ICU4J
+itself and are not used for unbounded attributed export tests. Common tests cover
+numeric coalescing, trim boundaries and list span/element ordering. Full JVM,
+JS Node and macOS Arm64 suites pass; Linux x64 test sources compile.
