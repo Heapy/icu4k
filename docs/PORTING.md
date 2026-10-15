@@ -7311,3 +7311,26 @@ ordering, canonical equivalence, imports and settings-only data sharing.
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 54s. Linux tests were compiled,
 not executed on macOS. The targeted CollationBuilder JVM oracle run also passed.
+
+### SearchIterator protocol
+
+Ported the complete SearchIterator base class to Common Kotlin, using the existing
+portable CharacterIterator and BreakIterator contracts. Forward/backward state,
+repeated matches on direction changes, overlap, first/last/following/preceding,
+match text extraction, target aliasing, cloned boundary cursors and nullable
+element-comparison options follow ICU4J. The source distinction between constructor
+empty-range validation and setTarget's current-position-at-end rejection is
+retained, as are mutations before boundary clone failures. Protected state and
+search hooks remain available to subclasses; internal Search state supports the
+future StringSearch port. This class supplies the iteration protocol, not the
+collation matching algorithm; StringSearch remains pending.
+
+A JVM fixture subclass compares 4,000 mixed state transitions with the equivalent
+ICU4J subclass, including absolute nonzero ranges, dispatch arguments, invalid
+indices, cursor positions and match metadata. Common tests cover direction changes,
+overlap, reset, boundary cursor isolation, target replacement and clone failures.
+The targeted JVM test run passed before the final clone-failure coverage was added.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 24s, including the added
+clone-failure tests. Linux tests compiled only; they were not run on macOS.
