@@ -6519,3 +6519,46 @@ insertion after growth and the 131072-to-262144 capacity boundary. A seeded JVM
 oracle compares mutable backing contents and state through 3000 mixed valid and
 invalid operations and a large growth sequence. All target checks passed in the
 3m 54s collation data verification run (Linux compiled, not run on macOS).
+
+### CollationData container and script reordering
+
+CollationData.java is now ported to common impl.coll, including its full instance
+field layout, nullable construction state, fresh Jamo table and numeric-primary
+default. Lookups implement direct/supplementary CE32 access, numeric digit and
+unsafe-backward policy, compression flags, context words, one-step indirect
+CE32 resolution, offset records, single-CE extraction and FCD via the existing
+common normalizer. Single-CE fallback selects the base exactly once and resolves
+subsequent table references on that selected data owner; unsupported/malformed
+tags preserve the upstream explicit diagnostics, including unsigned printf-style
+hex in these messages (distinct from UnicodeSet's signed Utility.hex).
+
+Script groups preserve first/last boundaries, first matching script, aliases
+and shared empty-array identity. The complete reorder-range algorithm retains
+special groups, reserved ranges, the before-Latin optimization and retry with
+Latin moved, OTHERS processing from the high end, duplicate/equivalent/default
+errors, partial-primary exhaustion and packed limit/offset pairs. The caller's
+range vector is cleared before validating the reorder array. Source assertions
+are captured per class at initialization on JVM and disabled on JS/Native as in
+the existing portability convention. Common bounds checks cover array/string
+accesses whose JVM implicit checks would otherwise be missing on JS. Until the
+public Collator facade is ported, its FIRST/DEFAULT codes are exact internal
+constants, without introducing a substitute Collator API.
+
+Common tests use a synthetic serialized immutable trie and standalone script
+fixtures; the immutable fixture is not a production Trie2Writable replacement.
+They cover tags, base table ownership, context bounds, digit/safety short-circuit
+order, compression/FCD, group aliases and ICU4J-generated reorder vectors.
+The JVM oracle compares all instance field names, defaults and synthetic tags,
+and imports ICU4J's real root structural data into the common implementation
+for 4000 seeded code-point samples plus boundaries, group boundaries/aliases,
+1000 mixed reorders and 100 complete canonical-script permutations. Reserved
+range retry and exhaustion have dedicated fixtures. Normalizer and trie objects
+are converted to the common implementations; ICU4J is still test-only.
+
+Verification: jvmTest, jsNodeTest and macosArm64Test passed, and Linux x64 test
+sources compiled (not executed on macOS), 3m 54s. Initial root safety verification
+exposed the UnicodeSet signed diagnostic mismatch fixed separately above.
+Collation resource loading/embedding, runtime CE iterators, settings and public
+collators, and the standard RBNF lenient scanner remain unfinished. Importing
+root fixtures in a JVM oracle does not prove embedded collation resource
+availability on any target; no end-to-end collation claim is made at this stage.
