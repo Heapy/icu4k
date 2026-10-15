@@ -5025,3 +5025,29 @@ fallback, hash snapshots and equals callbacks that mutate later fields.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64. Full NumberFormatter settings resolution and formatting
 remain pending.
+
+### Custom currency symbols and virtual name dispatch
+
+Ported CustomSymbolCurrency, including the resolution policy for explicit currency,
+DecimalFormatSymbols currency, unknown XXX currency and customized display/ISO
+symbols. The resolved wrapper snapshots the two symbols while retaining the base
+ISO code for metadata and display names. Symbol name lookup preserves nullable
+symbols and choice-array write order. Equality preserves the source superclass
+check followed by a CustomSymbolCurrency cast, including its ClassCastException
+when compared against an ordinary currency with the same identifier; null-symbol
+hash/equality failures are also retained.
+
+Fixed Currency's four-argument getName dispatch: non-plural styles must call the
+virtual three-argument overload, allowing subclass/custom symbols to take effect.
+Plural long names continue to use the original underlying currency identifier.
+The source's unused resolve locale argument remains unused. JVM serialization
+retains the custom runtime class and symbols with serialVersionUID
+2497493016770137670 rather than replacing it with a cached plain Currency.
+
+Oracle coverage compares styles, nullable symbols/locales and choice arrays,
+metadata, hash/equality outcomes, symbol resolution and snapshots, getter/currency
+callback order, early returns and serialization. Common tests cover resolution,
+virtual dispatch and choice-array bounds on all runtime targets.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64. NumberPropertyMapper and complete DecimalFormat/
+NumberFormatter integration remain pending.

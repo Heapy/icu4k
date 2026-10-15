@@ -25,7 +25,9 @@ open class Currency protected constructor(theISOCode: String?) : MeasureUnit("cu
     open fun getSymbol(): String? = getSymbol(ULocale.getDefault(ULocale.Category.DISPLAY))
     open fun getSymbol(locale: ULocale?): String? = getName(locale, SYMBOL_NAME, null)
     open fun getName(locale: ULocale?, nameStyle: Int, isChoiceFormat: BooleanArray?): String? = CurrencyNames.name(subType, locale, nameStyle, isChoiceFormat)
-    open fun getName(locale: ULocale?, nameStyle: Int, pluralCount: String?, isChoiceFormat: BooleanArray?): String? = CurrencyNames.name(subType, locale, nameStyle, pluralCount, isChoiceFormat)
+    open fun getName(locale: ULocale?, nameStyle: Int, pluralCount: String?, isChoiceFormat: BooleanArray?): String? =
+        if (nameStyle != PLURAL_LONG_NAME) getName(locale, nameStyle, isChoiceFormat)
+        else CurrencyNames.name(subType, locale, nameStyle, pluralCount, isChoiceFormat)
     open fun getDisplayName(): String? = getName(ULocale.getDefault(), LONG_NAME, null)
     open fun getDisplayName(locale: ULocale?): String? = getName(locale, LONG_NAME, null)
     open fun getDefaultFractionDigits(): Int = getDefaultFractionDigits(CurrencyUsage.STANDARD)
