@@ -4688,3 +4688,18 @@ text, custom stream records, stream round trips, unknown fields, wrong types,
 primitive widening, legacy wrapping and repeated pattern projection. Common tests
 exercise unchecked values, live custom maps, shared invalid-rule objects and pattern
 updates on JVM, JS and Native. JS also checks runtime-subclass shallow cloning.
+
+
+### Padding from decimal properties and object-contract edges
+
+Added Padder.forProperties over the public property bag. It snapshots pad string,
+width and position through the virtual getters, preserving the constructor's
+fallbacks. Oracle tests compare formatted UTF-16 text, field annotations and inserted
+length for all positions and representative widths/strings. A Common test verifies
+that later bag mutation does not change a created padder and checks supplementary
+padding with affixes.
+
+Additional property-bag tests cover overridden getters, runtime subclass cloning,
+custom map equality with null, asymmetric equality, serialization default filtering
+and text callback evaluation before a null StringBuilder failure. These compare
+source behavior rather than replacing it with generalized object equality rules.

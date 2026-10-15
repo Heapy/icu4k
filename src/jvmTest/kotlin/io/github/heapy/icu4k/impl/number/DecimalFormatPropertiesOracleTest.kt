@@ -168,6 +168,32 @@ class DecimalFormatPropertiesOracleTest {
         val ji = RecordsInput(-1, emptyList()); val ki = RecordsInput(-1, emptyList())
         jread(j, ji); k.readObjectImpl(ki); assertEquals(snapshot(j), snapshot(k))
     }
+    private class NullEqualMap : HashMap<String, Map<String, String>>() {
+        override fun equals(other: Any?): Boolean = other == null || super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
+    }
+    @Test fun getterOverridesAndCustomObjectContractsRetainSourceBehavior() {
+        val j = object : JProps() { val extra = Any(); override fun getGroupingUsed() = false }
+        val k = object : DecimalFormatProperties() { val extra = Any(); override fun getGroupingUsed() = false }
+        assertEquals(j.toString(), k.toString()); assertEquals(j.hashCode(), k.hashCode())
+        assertEquals(j == JProps(), k == DecimalFormatProperties())
+        assertEquals(JProps().copyFrom(j).groupingUsed, DecimalFormatProperties().copyFrom(k).getGroupingUsed())
+        val cloned = k.clone(); assertEquals<Class<*>>(k.javaClass, cloned.javaClass)
+        assertSame(k.extra, cloned.javaClass.getDeclaredField("extra").also { it.isAccessible = true }.get(cloned))
+        val jm = JProps().setCompactCustomData(NullEqualMap()); val km = DecimalFormatProperties().setCompactCustomData(NullEqualMap())
+        assertEquals(jm == JProps(), km == DecimalFormatProperties())
+        assertEquals(JProps() == jm, DecimalFormatProperties() == km)
+        assertEquals(jm.toString(), km.toString())
+        val jo = RecordsOutput(); val ko = RecordsOutput(); jwrite(jm, jo); km.writeObjectImpl(ko)
+        assertEquals(jo.ints, ko.ints); assertEquals(listOf(0, 0), ko.ints)
+        var calls = 0
+        val badText = object : HashMap<String, Map<String, String>>() {
+            override fun toString(): String { calls++; throw IllegalStateException("text callback") }
+        }
+        assertEquals(outcome { JProps().setCompactCustomData(badText).toStringBare(null) },
+            outcome { DecimalFormatProperties().setCompactCustomData(badText).toStringBare(null) })
+        assertEquals(2, calls)
+    }
     @Test fun patternProjectionPreservesUnrelatedStateAndClearsEmptyPatterns() {
         val j = JProps().setCurrency(JCurrency.getInstance("USD")).setParseIntegerOnly(true).setPositivePrefix("literal")
         val k = DecimalFormatProperties().setCurrency(Currency.getInstance("USD")).setParseIntegerOnly(true).setPositivePrefix("literal")

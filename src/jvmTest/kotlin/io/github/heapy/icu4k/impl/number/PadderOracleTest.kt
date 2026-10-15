@@ -24,6 +24,18 @@ class PadderOracleTest {
             assertEquals(outcome { JPadder.codePoints(cp, width, null).isValid }, outcome { Padder.codePoints(cp, width, null).isValid() }, "$cp/$width")
         }
     }
+    @Test fun propertyBagFactoryMatchesFormattedOutput() {
+        for (pad in listOf(null, "_", "ab", "😀")) for (width in listOf(-1, 4, 8)) for (position in JPadder.PadPosition.entries + listOf(null)) {
+            val jp = com.ibm.icu.impl.number.DecimalFormatProperties().setPadString(pad).setFormatWidth(width).setPadPosition(position)
+            val kp = DecimalFormatProperties().setPadString(pad).setFormatWidth(width).setPadPosition(position?.let { Padder.PadPosition.valueOf(it.name) })
+            val j = JPadder.forProperties(jp); val k = Padder.forProperties(kp)
+            val jb = JBuilder().apply { append("12", JField.INTEGER) }; val kb = FormattedStringBuilder().apply { append("12", NumberFormatField.INTEGER) }
+            assertEquals(j.padAndApply(JAffix("[", "]", JField.SIGN, false), JAffix.EMPTY, jb, 0, jb.length),
+                k.padAndApply(ConstantAffixModifier("[", "]", NumberFormatField.SIGN, false), ConstantAffixModifier.EMPTY, kb, 0, kb.length))
+            assertEquals(jb.toDebugString(), kb.toDebugString())
+        }
+        assertEquals(outcome { JPadder.forProperties(null) }, outcome { Padder.forProperties(null) })
+    }
     @Test fun nullsAndAssertionOnlyRangeCheckMatchSource() {
         val j = JPadder(null, 4, null); val k = Padder(null, 4, null)
         assertEquals(outcome { j.padAndApply(null, null, null, 0, 0) }, outcome { k.padAndApply(null, null, null, 0, 0) })

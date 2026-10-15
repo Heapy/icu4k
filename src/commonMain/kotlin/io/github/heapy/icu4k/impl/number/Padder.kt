@@ -43,6 +43,8 @@ open class Padder(paddingString: String?, internal var targetWidth: Int, positio
         const val FALLBACK_PADDING_STRING = " "
         @JvmField val NONE = Padder(null, -1, null)
         @JvmStatic fun none(): Padder = NONE
+        @JvmStatic fun forProperties(properties: DecimalFormatProperties?): Padder = Padder(
+            properties!!.getPadString(), properties.getFormatWidth(), properties.getPadPosition())
         @JvmStatic fun codePoints(cp: Int, targetWidth: Int, position: PadPosition?): Padder {
             require(targetWidth >= 0) { "Padding width must not be negative" }
             if (cp !in 0..0x10ffff) throw IllegalArgumentException("Not a valid Unicode code point: 0x${cp.toUInt().toString(16).uppercase()}")
