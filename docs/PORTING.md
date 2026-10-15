@@ -4633,3 +4633,29 @@ pending.
 
 Oracle tests compare every style for all available locales, numbering-system
 fallback, accounting keywords, invalid styles and null-input evaluation paths.
+
+
+### Currency plural information
+
+Added public CurrencyPluralInfo with locale factories, plural rule replacement,
+currency-unit pattern construction, mutable pattern lookup/iteration, cloning,
+equality/hash and JVM serialization. Locale resets reinitialize rules and patterns
+in source order, retaining partial state on failure. Pattern construction substitutes
+number patterns and the triple currency sign, preserving positive/negative bodies.
+Null keys/values, fallback to other, the source NUL-prefixed default pattern and
+invalid-rule null state are preserved.
+
+A shared ICUCloneableBase provides runtime-type-preserving shallow copy on JVM/JS;
+CurrencyPluralInfo then copies its pattern map while sharing immutable rules and
+locale. Native copies the known class fields; unknown Native user subclasses still
+supply their own clone override. JVM locale constructor-style overloads and stream
+round trips use the existing serialized PluralRules/ULocale boundaries.
+
+Oracle tests cover all available locales, factories, FixedDecimal selection,
+mutable rules/patterns, null and failure states, iterator removal, map independence,
+subclass cloning and serialization. Rule-list identity contributes to PluralRules'
+source hash, so tests compare the remaining hash formula after removing that
+identity contribution. Common tests exercise patterns, mutation, reset, selection,
+cloning and style fallback on JVM, JS and Native; JS tests also verify subclass
+prototype/state cloning. DecimalFormatProperties and formatter integration remain
+pending.
