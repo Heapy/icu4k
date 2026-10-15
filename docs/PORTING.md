@@ -6846,3 +6846,37 @@ Verification: the implementation compiled on JVM first; jvmTest, jsNodeTest,
 macosArm64Test and compileTestKotlinLinuxX64 then passed on the first full run
 (3m 1s). Linux tests compiled, not executed on macOS. No production ICU4J
 runtime dependency or embedded fast-Latin collation data is introduced.
+
+## Fast Latin table builder and UVector64
+
+Ported CollationFastLatinBuilder and its primitive UVector64 dependency. The
+one-shot builder collects CE mappings, filters supported primary/secondary/
+tertiary groups, deduplicates CEs in unsigned order, assigns mini weights and
+encodes expansions and single-suffix contraction lists. It preserves the retry
+that moves digits to long primaries after short-primary overflow, all overflow
+bailouts and the source header/table split. Longer contractions sharing a first
+suffix character suppress that character's fast mapping, as in ICU4J.
+
+The port retains source quirks and failure state: append(0) writes the character
+'0' into provisional slots; the second-CE below-common-tertiary check reads the
+first CE again; missing metadata or exceptions can leave output that prohibits
+reuse, with header/table accessors then failing at the same point. No eager
+validation replaces these operations. UVector64 retains capacity-based indexing,
+backing-array exposure, stale contents on clear, 4x/2x growth and growth before
+an invalid insertion fails.
+
+Common tests use deterministic CE/script fixtures for exact output, runtime
+integration, short-primary retry/overflow and long-vector growth. JVM tests
+rebuild root and locale tailoring tables and compare every output unit and
+internal scalar, CE array and vector buffer with ICU4J 78.3. Additional synthetic
+fixtures cover overflow and context tags, missing/null metadata and partial
+failures; unsigned ordering/search and vector operations are checked separately.
+The rebuilt oracle data remains test-only. Embedded collation resources/loaders,
+public collators, tailoring compilation and the default RBNF scanner remain
+pending.
+
+Verification: the implementation compiled on JVM; after correcting an Int-to-Char
+literal in a test fixture, jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 44s. Linux tests compiled, not
+executed on macOS. Oracle rebuilds matched eight real root/tailoring data sets,
+six synthetic capacity cases and additional context/failure fixtures.
