@@ -5526,3 +5526,21 @@ compileTestKotlinLinuxX64, and checksums for all 106 embedded resources. The kno
 unrelated Kotlin/JS generic Number.toLong/toInt regression remains skipped.
 README contains a public range example. Full ICU4J porting remains incomplete,
 including legacy number formatting/parsing services and other major subsystems.
+
+### Number parsing matcher infrastructure
+
+Ported ParsedNumber, NumberParseMatcher, SymbolMatcher, SeriesMatcher,
+CodePointMatcher, ParsingUtils, sign/approximately/percent/permille/infinity/NaN
+matchers, weak ignorables/padding, validation matchers, and reciprocal multiplier
+post-processing. Strong character boundaries remain distinct from cursor
+movement. Series matching preserves flexible repetition, weak-character rewind,
+and deep quantity rollback. Number extraction retains special-value priority,
+negative zero, integral/BigDecimal selection and parse-flag behavior. Source
+assertions are lazy JVM assertions and omitted on JS/Native.
+
+JVM differential tests compare ICU4J across four locales, symbol prefixes,
+partial/custom padding, flags, validators, numeric representations and series
+rollback. This is infrastructure: DecimalMatcher, scientific/currency/affix
+matching and the complete number parser still require porting.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (full run, 2m 48s).
