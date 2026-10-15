@@ -16,7 +16,7 @@ import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.math.BigDecimal as IcuBigDecimal
 import kotlin.jvm.Transient
 
-/** Number-format instance and factory extension protocols. Localized factory entry points are still being ported. */
+/** Number formatting, localized factories, and factory registration. */
 abstract class NumberFormat : UFormat() {
     typealias Field = NumberFormatField
     typealias NumberFormatFactory = io.github.heapy.icu4k.text.NumberFormatFactory
@@ -175,6 +175,44 @@ abstract class NumberFormat : UFormat() {
         serialVersionOnStream = 2
     }
     companion object {
+        private val serviceLock = createAvailabilityLock()
+        private var service: NumberFormatServiceCore? = null
+        internal fun serviceOrNull(): NumberFormatServiceCore? = serviceLock.withLock { service }
+        private fun getService(): NumberFormatServiceCore = serviceLock.withLock {
+            service ?: NumberFormatServiceCore { locale, style ->
+                NumberFormatDataFactory.create(locale, style) { rulesLocale, rulesType, ruleSetName ->
+                    RuleBasedNumberFormat(rulesLocale, rulesType).also { it.setDefaultRuleSet(ruleSetName) }
+                }
+            }.also { service = it }
+        }
+        @JvmStatic fun getInstance(): NumberFormat = getInstance(ULocale.getDefault(ULocale.Category.FORMAT), NUMBERSTYLE)
+        @JvmStatic fun getInstance(style: Int): NumberFormat = getInstance(ULocale.getDefault(ULocale.Category.FORMAT), style)
+        @JvmStatic fun getInstance(locale: ULocale?): NumberFormat = getInstance(locale, NUMBERSTYLE)
+        @JvmStatic fun getInstance(desiredLocale: ULocale?, choice: Int): NumberFormat {
+            if (choice < NUMBERSTYLE || choice > STANDARDCURRENCYSTYLE)
+                throw IllegalArgumentException("choice should be from NUMBERSTYLE to STANDARDCURRENCYSTYLE")
+            return getService().createInstance(desiredLocale, choice)
+        }
+        @JvmStatic fun getNumberInstance(): NumberFormat = getInstance()
+        @JvmStatic fun getNumberInstance(locale: ULocale?): NumberFormat = getInstance(locale, NUMBERSTYLE)
+        @JvmStatic fun getIntegerInstance(): NumberFormat = getInstance(INTEGERSTYLE)
+        @JvmStatic fun getIntegerInstance(locale: ULocale?): NumberFormat = getInstance(locale, INTEGERSTYLE)
+        @JvmStatic fun getCurrencyInstance(): NumberFormat = getInstance(CURRENCYSTYLE)
+        @JvmStatic fun getCurrencyInstance(locale: ULocale?): NumberFormat = getInstance(locale, CURRENCYSTYLE)
+        @JvmStatic fun getPercentInstance(): NumberFormat = getInstance(PERCENTSTYLE)
+        @JvmStatic fun getPercentInstance(locale: ULocale?): NumberFormat = getInstance(locale, PERCENTSTYLE)
+        @JvmStatic fun getScientificInstance(): NumberFormat = getInstance(SCIENTIFICSTYLE)
+        @JvmStatic fun getScientificInstance(locale: ULocale?): NumberFormat = getInstance(locale, SCIENTIFICSTYLE)
+        @JvmStatic fun getAvailableULocales(): Array<ULocale>? = serviceOrNull()?.getAvailableULocales()
+            ?: io.github.heapy.icu4k.impl.ICUResourceBundle.getAvailableULocales()
+        @JvmStatic fun registerFactory(factory: NumberFormatFactory?): Any {
+            if (factory == null) throw IllegalArgumentException("factory must not be null")
+            return getService().registerFactory(factory)
+        }
+        @JvmStatic fun unregister(registryKey: Any?): Boolean {
+            if (registryKey == null) throw IllegalArgumentException("registryKey must not be null")
+            return serviceOrNull()?.unregister(registryKey) ?: false
+        }
         @Deprecated("This API is ICU internal only.")
         @JvmStatic fun getPatternForStyle(forLocale: ULocale?, choice: Int): String =
             NumberFormatPatternData.getPatternForStyle(forLocale, choice)

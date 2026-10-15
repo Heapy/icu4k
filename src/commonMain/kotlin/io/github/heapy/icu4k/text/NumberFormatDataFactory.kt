@@ -7,7 +7,7 @@ import io.github.heapy.icu4k.impl.number.NumberFormatPatternData
 import io.github.heapy.icu4k.util.Currency
 import io.github.heapy.icu4k.util.ULocale
 
-/** Built-in numeric style creation and algorithmic dispatch, before the RBNF facade is wired. */
+/** Built-in numeric style creation and algorithmic dispatch, including the RBNF facade. */
 internal object NumberFormatDataFactory {
     /** Construct RBNF and select its default rule set, in that order. */
     fun interface AlgorithmicFactory {

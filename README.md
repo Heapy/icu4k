@@ -277,3 +277,15 @@ println(selection.format("unknown")) // They
 ```
 
 Nested message arguments are returned as pattern text, as in ICU4J.
+
+Localized `NumberFormat` factories also run in Common Kotlin:
+
+```kotlin
+import io.github.heapy.icu4k.text.NumberFormat
+import io.github.heapy.icu4k.util.ULocale
+
+val decimal = NumberFormat.getNumberInstance(ULocale("en_US"))
+val roman = NumberFormat.getInstance(ULocale("en@numbers=roman"))
+println(decimal.format(1234.5)) // 1,234.5
+println(roman.format(2026L))   // MMXXVI
+```

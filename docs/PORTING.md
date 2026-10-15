@@ -6353,3 +6353,31 @@ Final jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed,
 4m 4s (Linux compiled, not executed). NumberFormat global factory wiring and
 full collation/default lenient scanning remain pending, alongside other ICU
 APIs and resource coverage in the full port.
+
+### Public NumberFormat factory wiring
+
+The common companion now exposes default/locale/style getInstance, number,
+integer, currency, percent and scientific factories, available ULocales and
+factory registration/removal. The previously ported locale-service engine is
+shared across these calls; initialization is protected by a recursive portable
+lock and availability/removal do not initialize it. Null registry arguments and
+invalid style diagnostics follow NumberFormat.java. Returned instances retain
+the source service clone, currency adjustment and locale metadata policy.
+Algorithmic numbering systems construct the common RuleBasedNumberFormat and
+select the named default rule set before the data factory publishes metadata.
+No production ICU4J dependency is introduced.
+
+JVM java.util.Locale overloads and Java locale availability use Kotlin companion
+extensions, consistently with BreakIterator; they are not additional Java
+static overloads on NumberFormat. Common tests exercise numeric/roman factories,
+clone independence, custom registration, visibility, null-result fallback and
+removal. JVM oracle tests compare all ten styles across six locale/numbering
+configurations, output, formatter class, currency and actual locale with ICU4J.
+The earlier statement that global factory wiring is pending is superseded by
+this stage. Full collation/default lenient scanning and remaining ICU APIs and
+resource coverage are still unfinished.
+
+Verification: jvmTest, jsNodeTest and macosArm64Test passed; Linux x64 test
+sources compiled (not executed on macOS). Full run: 2m 44s. An initial common
+test incorrectly expected 1234.5 to round to 1235; its expectation was corrected
+to source half-even 1234, with no production rounding change.
