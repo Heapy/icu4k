@@ -307,3 +307,22 @@ import io.github.heapy.icu4k.lang.UCharacter
 println(UCharacter.toUpperCase(ULocale("tr"), "istanbul")) // İSTANBUL
 println(UCharacter.toTitleCase(ULocale("nl"), "ijsselmeer", null)) // IJsselmeer
 ```
+
+Rule-based collation is available through the public Common Kotlin API:
+
+```kotlin
+import io.github.heapy.icu4k.text.RuleBasedCollator
+
+val collator = RuleBasedCollator("&c<ch<d")
+println(collator.compare("ch", "d")) // -1
+collator.setNumericCollation(true)
+println(collator.compare("2", "10")) // -1
+val key = collator.getCollationKey("ch")!!
+val elements = collator.getCollationElementIterator("ch")
+```
+
+The rule constructor, attributes, sort keys, CE iteration, freeze and cloning are
+implemented. Locale factories (`Collator.getInstance`), service registration and
+locale enumeration are still pending. `setReorderCodes` accepts both a nullable
+`IntArray` and Kotlin varargs; the JVM vararg convenience is named
+`setReorderCodesValues`, while the array method retains `setReorderCodes`.

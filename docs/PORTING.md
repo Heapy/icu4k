@@ -7493,3 +7493,44 @@ that fixture compile failure. Public collator/service wrappers remain pending.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 4s. Linux tests were compiled,
 not executed on this macOS host.
+
+### Public rule collators and CE iteration
+
+Added the public Collator instance contract, final RuleBasedCollator and final
+CollationElementIterator, connecting all previously ported engines. The rule
+constructor compiles the full rule language, sets rule-based locale metadata to
+null, clones the tailoring settings reference and initializes no reusable runtime
+buffer eagerly. Public attributes, comparison (String and Comparator<Object>),
+keys, introspection, locale metadata, CE cursor factories and order helpers are
+now usable from common code. Collator.getInstance/service/registration/enumeration
+static APIs are still pending; no direct-loader substitute is presented as that
+service. Equivalent reorder-code lookup is available.
+
+RuleBasedCollator clones retain shared immutable data/tailoring and a cloned
+settings reference, with fresh runtime buffers/locks and copied locale overlay
+state. Frozen clone returns the same object; cloneAsThawed always returns a new
+unfrozen rule collator. This typed copy works on Native as well as JVM and JS.
+Open Collator subclasses use host shallow cloning on JVM/JS. As with other open
+clone bridges in this port, Native custom subclasses must supply cloneNative for
+a typed copy; otherwise the portable CloneNotSupportedException is thrown.
+The bridge does not add Serializable to the source non-serializable hierarchy.
+
+Reordering has a nullable IntArray virtual method and a Kotlin vararg convenience.
+The latter is named setReorderCodesValues on JVM to avoid the erased array
+signature clash. The array method keeps setReorderCodes and preserves null reset
+and frozen-check order. Java callers supplying individual values use the named
+convenience or an explicit int array. This is an API migration detail, not an
+alternate ordering algorithm.
+
+Targeted public JVM tests passed for rule construction, keys, pairwise comparisons,
+complete forward/backward CE streams, clone isolation, frozen identities, errors,
+null cursor inputs, object-comparator dispatch and nullable reorder-array reset.
+Common tests cover the same entry points including Native typed clone and text
+cursor adapters. Additional base-class oracle coverage checks default behavior,
+unsupported methods, shallow cloning, runtime-type equality and non-serialization.
+An initial common test shadowed its CE cursor with repeat's Int parameter; the
+fixture now names that lambda parameter explicitly.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 25s, including public entry points
+and the additional base-class oracle. Linux tests compiled, not run on macOS.
