@@ -25,7 +25,7 @@ class FCDUTF16CollationIteratorTest {
         assertEquals(0xf72, it.previousCodePoint()); assertEquals(0xf71, it.previousCodePoint()); assertEquals(0, it.getOffset())
     }
     @Test fun fcdTextStaysComposedAndSurrogatesArePreserved() {
-        val it = FCDUTF16CollationIterator(iteratorFixtureData(), false, "é😀\ud800x\udc00", 0)
+        val it = FCDUTF16CollationIterator(iteratorFixtureData(), false, iteratorMalformedText("é😀", 'x'), 0)
         val expected = listOf(0xe9, 0x1f600, 0xd800, 0x78, 0xdc00)
         for (cp in expected) assertEquals(cp, it.nextCodePoint())
         assertEquals(-1, it.nextCodePoint())

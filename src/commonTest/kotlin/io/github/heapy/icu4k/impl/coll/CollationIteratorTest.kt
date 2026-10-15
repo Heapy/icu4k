@@ -27,7 +27,7 @@ class CollationIteratorTest {
         assertEquals(listOf(Collation.ceFromCE32(iteratorSimple('q'.code))), iteratorForward(UTF16CollationIterator(data, false, "xp", 1)))
         val skipped = iteratorForward(UTF16CollationIterator(data, false, "a\u0323\u0301", 0))
         assertEquals(listOf(Collation.ceFromCE32(0x350405c1), Collation.unassignedCEFromCodePoint(0x323)), skipped)
-        for (text in listOf("abc", "f", "g", "a\u0323\u0301", "xp", "12345678901234567890", "각", "😀\ud800A\udc00")) {
+        for (text in listOf("abc", "f", "g", "a\u0323\u0301", "xp", "12345678901234567890", "각", iteratorMalformedText("😀", 'A'))) {
             val forward = iteratorForward(UTF16CollationIterator(data, true, text, 0))
             val backwards = UTF16CollationIterator(data, true, text, text.length)
             val offsets = UVector32()
@@ -72,7 +72,7 @@ class CollationIteratorTest {
         assertEquals(123L, partial.getCE(1))
         partial.clearCEsIfNoneRemaining()
         assertEquals(0, partial.getCEsLength())
-        partial.setText(false, "😀\ud800A\udc00", 0)
+        partial.setText(false, iteratorMalformedText("😀", 'A'), 0)
         assertEquals(0x1f600, partial.nextCodePoint()); assertEquals(2, partial.getOffset())
         assertEquals(0xd800, partial.nextCodePoint()); assertEquals('A'.code, partial.nextCodePoint())
         assertEquals(0xdc00, partial.nextCodePoint()); assertEquals(-1, partial.nextCodePoint())
@@ -180,3 +180,6 @@ internal fun iteratorNestedFixtureData(): CollationData {
     data.trie = iteratorFixtureTrie(values)
     return data
 }
+
+// Construct at runtime: Kotlin/JS can lower malformed string literals to question marks.
+internal fun iteratorMalformedText(prefix: String, middle: Char): String = prefix + charArrayOf(0xd800.toChar(), middle, 0xdc00.toChar()).concatToString()

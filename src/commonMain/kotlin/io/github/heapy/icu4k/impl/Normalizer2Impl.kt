@@ -700,6 +700,10 @@ internal class Normalizer2Impl {
         val list = getData(norm16)
         return list + 1 + (extraData!![list].code and MAPPING_LENGTH_MASK)
     }
+    fun decompose(s: CharSequence, dest: StringBuilder): Appendable {
+        decompose(s, 0, s.length, dest, s.length)
+        return dest
+    }
     fun decompose(s: CharSequence, src: Int, limit: Int, dest: StringBuilder, destLengthEstimate: Int) {
         val capacity = if (destLengthEstimate < 0) limit - src else destLengthEstimate
         dest.setLength(0)

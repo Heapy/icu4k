@@ -6704,3 +6704,45 @@ remain pending.
 Verification: the full jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 command passed before and after removing boxed cursor
 results from the hot forward path. Linux tests compiled, not executed on macOS.
+
+## Collation over UCharacterIterator
+
+Ported IterCollationIterator and FCDIterCollationIterator against ICU4J 78.3.
+The raw variant delegates code-point movement to the caller-owned iterator and
+retains CE decoding's single-code-unit reads and trail-surrogate rollback.
+The FCD variant retains the five source states: forward/backward checking,
+raw FCD segment consumption and normalized consumption with the underlying
+iterator parked at either raw boundary. It gathers failing segments in both
+directions, normalizes into a reusable buffer and maps normalized positions to
+raw offsets without replacing the user's iterator.
+
+Backward segment reversal explicitly follows Java StringBuilder's surrogate
+pair repair on every platform. The missing Normalizer2Impl.decompose(text,
+builder) convenience overload was also ported with its destination identity
+and argument evaluation order. Source null-cursor failure timing, reset ordering,
+inherited iterator equality and class-specific assertions are retained.
+
+Common tests cover shared cursor ownership, code units/code points, CE streams,
+normalization direction changes and lazy failures. JVM oracle tests compare
+root-data forward/reverse CEs, offset vectors, full buffers, every FCD state and
+both internal and external cursor positions through seeded mixed-script inputs,
+resets, malformed UTF-16, Tibetan vowels and long numeric runs. Collation data
+used by JVM differential tests remains test-only. Embedded collation resources,
+loaders, public collators, tailoring compilation and the default RBNF scanner
+remain pending.
+
+The first full run also exposed two pre-existing malformed-string test fixtures
+being lowered to question marks in the emitted Kotlin/JS program. These inputs
+now build surrogate code units at runtime, keeping explicit malformed UTF-16
+assertions meaningful on every target. JVM companion-access compilation errors
+were resolved by using the equivalent common UTF16 surrogate predicates.
+
+The direction-change oracle also exercises source assertions: ICU4J itself can
+reach nextCodePoint's nonnegative-character assertion after some cursor
+histories. The test compares returned values or exception categories and then
+all cursor/segment fields, including after failures; it does not assume every
+seeded operation succeeds. The focused JVM oracle passed after this correction.
+
+Verification: the final full jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 command passed (1m 42s, with unchanged target tasks
+up-to-date). Linux tests were compiled, not executed on macOS.
