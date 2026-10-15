@@ -4659,3 +4659,32 @@ identity contribution. Common tests exercise patterns, mutation, reset, selectio
 cloning and style fallback on JVM, JS and Native; JS tests also verify subclass
 prototype/state cloning. DecimalFormatProperties and formatter integration remain
 pending.
+
+
+### Decimal-format property bag and named-field streams
+
+Added DecimalFormatProperties with all 43 source fields, unchecked fluent setters,
+source defaults, reference-preserving copy/clone, field-based equality/hash and
+bare/full diagnostic text. Reference equality is checked before invoking an object
+field's equals method, retaining behavior for shared objects with exceptional equals.
+The initially extracted CompactStyle enum supplies the property type; the full
+CompactDecimalFormat facade is still pending.
+
+JVM custom streams store only non-default values as name/value pairs, retain the
+reserved integer, clear through the virtual clear method before reads, ignore
+unknown fields and use source reflective field-assignment behavior, including
+primitive widening and AssertionError for incompatible values. The ICU 59 Properties
+wrapper delegates to the same stream implementation and retains lazy instance
+creation. All bag fields are transient in default serialization.
+
+PatternStringParserCore now projects parsed patterns into the public property bag.
+Nonempty patterns overwrite the 22 pattern-owned settings while preserving unrelated
+settings; null/empty patterns clear the complete bag. Public PatternStringParser
+parsed-info adapters and the rest of the formatter facade remain pending.
+
+Oracle tests enumerate every field, defaults, extreme primitive values, nullable
+objects/enums, fluent setters, shallow identity, equality/hash, self-copy, clearing,
+text, custom stream records, stream round trips, unknown fields, wrong types,
+primitive widening, legacy wrapping and repeated pattern projection. Common tests
+exercise unchecked values, live custom maps, shared invalid-rule objects and pattern
+updates on JVM, JS and Native. JS also checks runtime-subclass shallow cloning.

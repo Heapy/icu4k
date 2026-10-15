@@ -3,8 +3,9 @@ package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.impl.number.Padder.PadPosition
 import io.github.heapy.icu4k.impl.units.UnitDecimal
+import io.github.heapy.icu4k.util.decimalFromValue
 
-/** Recursive-descent parser and pattern-owned property projection; public property/quantity bridges are separate. */
+/** Recursive-descent parser with raw and public decimal-property projection. */
 internal object PatternStringParserCore {
     const val IGNORE_ROUNDING_NEVER = 0
     const val IGNORE_ROUNDING_IF_CURRENCY = 1
@@ -227,6 +228,34 @@ internal object PatternStringParserCore {
     fun parseToProperties(pattern: String?, ignoreRounding: Int = IGNORE_ROUNDING_NEVER): PatternProperties {
         if (pattern == null || pattern.isEmpty()) return PatternProperties()
         return toProperties(parseToPatternInfo(pattern), ignoreRounding)
+    }
+    fun parseToDecimalFormatProperties(pattern: String?, ignoreRounding: Int = IGNORE_ROUNDING_NEVER): DecimalFormatProperties =
+        DecimalFormatProperties().also { parseToExistingProperties(pattern, it, ignoreRounding) }
+    fun parseToExistingProperties(pattern: String?, properties: DecimalFormatProperties?, ignoreRounding: Int = IGNORE_ROUNDING_NEVER) {
+        if (pattern.isNullOrEmpty()) { properties!!.clear(); return }
+        val values = toProperties(parseToPatternInfo(pattern), ignoreRounding)
+        properties!!.setGroupingSize(values.groupingSize)
+        properties.setGroupingUsed(values.groupingUsed)
+        properties.setSecondaryGroupingSize(values.secondaryGroupingSize)
+        properties.setMinimumFractionDigits(values.minimumFractionDigits)
+        properties.setMaximumFractionDigits(values.maximumFractionDigits)
+        properties.setRoundingIncrement(values.roundingIncrement?.let { decimalFromValue(it) })
+        properties.setMinimumSignificantDigits(values.minimumSignificantDigits)
+        properties.setMaximumSignificantDigits(values.maximumSignificantDigits)
+        properties.setDecimalSeparatorAlwaysShown(values.decimalSeparatorAlwaysShown)
+        properties.setCurrencyAsDecimal(values.currencyAsDecimal)
+        properties.setExponentSignAlwaysShown(values.exponentSignAlwaysShown)
+        properties.setMinimumExponentDigits(values.minimumExponentDigits)
+        properties.setMinimumIntegerDigits(values.minimumIntegerDigits)
+        properties.setMaximumIntegerDigits(values.maximumIntegerDigits)
+        properties.setFormatWidth(values.formatWidth)
+        properties.setPadString(values.padString)
+        properties.setPadPosition(values.padPosition)
+        properties.setPositivePrefixPattern(values.positivePrefixPattern)
+        properties.setPositiveSuffixPattern(values.positiveSuffixPattern)
+        properties.setNegativePrefixPattern(values.negativePrefixPattern)
+        properties.setNegativeSuffixPattern(values.negativeSuffixPattern)
+        properties.setMagnitudeMultiplier(values.magnitudeMultiplier)
     }
     fun toProperties(info: ParsedPatternInfo, ignoreRounding: Int): PatternProperties {
         val p = info.positive!!
