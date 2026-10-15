@@ -99,6 +99,22 @@ standalone enums. JVM `java.util.Locale` entry points are Kotlin extensions.
 Legacy NumberFormat/DecimalFormat and the remaining ICU services are still being
 ported; locale resource coverage is still incremental.
 
+Numeric ranges are available through `NumberRangeFormatter`, including field
+spans and identity/collapse policies:
+
+```kotlin
+import io.github.heapy.icu4k.number.NumberRangeFormatter
+import io.github.heapy.icu4k.number.UnitWidth
+import io.github.heapy.icu4k.util.MeasureUnit
+
+val ranges = NumberRangeFormatter.withLocale(ULocale.ENGLISH)
+    .numberFormatterBoth(NumberFormatter.with()
+        .unit(MeasureUnit.METER)
+        .unitWidth(UnitWidth.FULL_NAME))
+println(ranges.formatRange(1, 2)) // 1–2 meters
+```
+
+
 ICU binary bundles support typed lookup, aliases and locale/path fallback:
 
 ```kotlin

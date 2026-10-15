@@ -5485,3 +5485,44 @@ existed; the registry incorrectly reported them absent. Common tests verify both
 relative/absolute existence and root enumeration. A JVM regression checks every
 manifest resource for registry membership, bytes and directory enumeration.
 Full JVM/JS/macOS tests and Linux Native test compilation passed.
+
+## Number range formatting and result API
+
+Ported NumberRangeFormatter, its complete fluent settings and localized/
+unlocalized facades, RangeMacroProps, NumberRangeFormatterImpl and
+FormattedNumberRange. Enums and the serialized NUMBER_RANGE_SPAN field retain
+source values/order/UID. The implementation builds both numeric engines even
+when the second is unused, enforces the source numbering-system check, loads
+range patterns with latin/default fallback, resolves range plurals and applies
+the complete inner/middle/outer collapse and spacing heuristics. Approximate
+fallback reformats the pre-rounding backup with approximately=true. Results retain
+both rounded quantities, identity metadata, field/span ranges, append/iterator
+exports and exact decimal/fixed-decimal endpoints.
+
+Source behavior is retained: numberFormatterBoth/First/Second write two settings
+nodes; resolving settings mutates child formatters' cached locale; sameFormatters
+is omitted from macro equality/hash; non-identical formatter paths may render a
+range despite equal identity metadata; Number input equality is virtual and
+scale/type-sensitive before rounding. FormattedNumberRange equality ignores
+identityResult and uses unwrapped fields plus scale-sensitive BigDecimals. Its
+hash uses raw field arrays (including span-placeholder identity hashes), as
+upstream does; it was not replaced with a new value-based hash. Source mixed-unit
+modifier-store assertion/failure paths remain, rather than adding new semantics.
+Null locale/number and unsupported numbering paths also follow ICU4J. JVM Locale
+entry points use the existing Kotlin extension convention.
+
+JVM differential tests cover all collapse/identity policies across six locales,
+plain/fraction/currency/long-unit/scientific/compact/percent/mixed configurations,
+identity before/after rounding, signs, zero, NaN/infinity, different formatters,
+numbering compatibility and numeric types/oversized integers. They compare text,
+rounded endpoints, identity, UTF-16 characters/slices, constrained numeric/span
+positions, attributed runs and all plural operands. Further contracts verify
+cached locale mutation, sameFormatters equality, constructor reference retention,
+shared-field hash formulas, equality/hash callback order, null metadata, span
+serialization and append IOException wrapping. Common tests cover collapsed
+units/spans, rounded identities, generic numeric inputs and locale removal.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test,
+compileTestKotlinLinuxX64, and checksums for all 106 embedded resources. The known
+unrelated Kotlin/JS generic Number.toLong/toInt regression remains skipped.
+README contains a public range example. Full ICU4J porting remains incomplete,
+including legacy number formatting/parsing services and other major subsystems.
