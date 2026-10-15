@@ -7,9 +7,10 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class BigDecimalCoreOracleTest {
-    private fun outcome(block: () -> Any?): Any? = try { block() } catch (e: Throwable) {
+    private fun outcome(implicitZeroDivisor: Boolean = false, block: () -> Any?): Any? = try { block() } catch (e: Throwable) {
         when (e) { is NumberFormatException -> "number"; is NullPointerException -> "null";
-            is ArithmeticException -> if (e.message in listOf("/ by zero", "BigInteger divide by zero")) "divisionZero" else "ArithmeticException:${e.message}"; else -> "${e.javaClass.simpleName}:${e.message}" }
+            is ArithmeticException -> if (e.message in listOf("/ by zero", "BigInteger divide by zero") ||
+                (implicitZeroDivisor && e.message == null && e.stackTrace.isEmpty())) "divisionZero" else "ArithmeticException:${e.message}"; else -> "${e.javaClass.simpleName}:${e.message}" }
     }
     private fun check(j: JDecimal, k: BigDecimalCore, label: String, hash: Boolean = true) {
         assertEquals(j.toString(), k.toString(), label)
@@ -61,10 +62,21 @@ class BigDecimalCoreOracleTest {
                 assertEquals(outcome { j.round(context).toString() }, outcome { k.round(context).toString() }, "$a/$precision/$mode/round")
             }
             for (scale in listOf(-2, 0, 3)) for (mode in RoundingMode.entries) {
-                assertEquals(outcome { j.divide(jd, scale, mode).toString() }, outcome { k.divide(kd, scale, mode).toString() }, "$a/$b/$scale/$mode")
+                assertEquals(outcome(implicitZeroDivisor = jd.signum() == 0) { j.divide(jd, scale, mode).toString() }, outcome { k.divide(kd, scale, mode).toString() }, "$a/$b/$scale/$mode")
                 assertEquals(outcome { j.setScale(scale, mode).toString() }, outcome { k.setScale(scale, mode).toString() }, "$a/$scale/$mode/scale")
             }
         }
+    }
+    @Test fun scaledZeroDivisionNormalizationSurvivesHotspotFastThrow() {
+        val numerator = JDecimal("25")
+        // HotSpot may reuse an implicit /0 exception with neither message nor trace after warmup.
+        // A nonzero-divisor operation and other explicit arithmetic failures are not normalized.
+        repeat(20_000) {
+            assertEquals("divisionZero", outcome(implicitZeroDivisor = true) {
+                numerator.divide(JDecimal.ZERO, -2, RoundingMode.UP).toString()
+            })
+        }
+        assertEquals("ArithmeticException:null", outcome { throw ArithmeticException() })
     }
     @Test fun exactAndCanonicalDoubleConstructionMatchJdkBoundary() {
         val random = Random(1396)
