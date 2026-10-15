@@ -6936,3 +6936,36 @@ compileTestKotlinLinuxX64 passed together. Linux tests compiled, not executed on
 macOS. The initial common fixture requested more capacity than its bounds
 allowed; its bounds were corrected, with no production changes needed after
 the first oracle comparison.
+
+## BOCSU and mutable byte-array ownership
+
+Ported BOCSU's identical-level encoder and the public ByteArrayWrapper utility.
+The encoder preserves one-to-four-byte signed difference encoding, floor
+quotient/remainder for negative differences, script-block/Unihan prediction,
+U+FFFE merge resets, streaming previous-code-point state and exact buffer growth.
+Code-point reads use the entire CharSequence, including a surrogate pair whose
+trail lies beyond the requested run limit. A default wrapper with null storage
+still fails on a nonempty BOCSU run; the encoder does not initialize it silently.
+
+ByteArrayWrapper retains array adoption/exposure/release, logical size separate
+from capacity, signed-byte hash and unsigned-byte comparison. The short-copy
+loop retains partial writes and forward-overlap behavior; bulk copies retain
+all-or-nothing bounds validation and overlap-safe array copying. Capacity growth
+is exact, remains virtual and copies only the logical prefix. Invalid public
+state is not normalized before operations. Negative allocation size retains the
+JVM exception and uses IllegalArgumentException on JS/Native. Common BinaryBuffer
+construction consumes limit bytes rather than remaining bytes; the JVM
+ByteBuffer convenience is a Kotlin factory, matching existing host API bridges.
+
+Common tests cover encoding, streaming, ordering, ownership and failure state.
+JVM tests compare 20,091 difference cases (including full Int operands and
+partially writable buffers), 1,535 run/capacity cases with malformed UTF-16 and
+invalid limits, custom CharSequence/capacity callbacks and 4,000 wrapper mutation
+steps. Every step compares the full backing buffer, not only logical contents.
+Heap/direct ByteBuffer construction is checked at every initial cursor offset.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 54s (Linux compiled, not executed
+on macOS). A subsequent JVM-only boundary run also passed after expanding the
+short-buffer test capacities to 0..3 bytes, exercising partial writes before
+bounds failures. Production code and common tests were unchanged for that run.
