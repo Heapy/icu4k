@@ -5544,3 +5544,24 @@ rollback. This is infrastructure: DecimalMatcher, scientific/currency/affix
 matching and the complete number parser still require porting.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (full run, 2m 48s).
+
+### Decimal and scientific number parsing
+
+Ported DecimalMatcher and ScientificMatcher. Decimal parsing preserves Unicode
+and custom string digits, literal/equivalent monetary and ordinary separators,
+strict primary/secondary grouping validation, lenient lone-group rewinds,
+integer-only parsing and exponent magnitude overflow handling. Scientific
+parsing retains partial separator/sign rollback, strict ignorable matching,
+NaN/infinity placeholder quantities and the one-exponent guard. The upstream
+cached lead-set selection ordering is retained.
+
+JVM differential matrices cover four locales, western/Indic grouping, custom
+multi-character separators and digits, seven flag policies, normal/positive/
+negative exponent modes, oversized exponents, random input, every prefix of
+scientific samples, special values and custom exponent/sign strings. Common
+regressions exercise grouping rollback, supplementary digits, fractions,
+scientific rollback and exponent overflow. Currency/affix matching and the
+NumberParserImpl integration remain to be ported.
+Final verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 3s). Separator getter/null-check order follows
+upstream even for subclassed DecimalFormatSymbols.
