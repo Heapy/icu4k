@@ -4955,3 +4955,27 @@ internal zero/significant combinations compare source assertions and quantity
 state. Common tests run a scale/scientific/rounding chain, engineering notation and
 the source UTF-16 digit-insertion quirk on JVM, JS and Native. Verification passed:
 jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
+
+### Compact notation pattern data
+
+Ported CompactData and its resource sink to commonMain. Resource loading retains
+numbering-system/style fallback order, child-locale precedence and the special
+resource "0" marker that blocks parent fallback. Custom data retains signed-byte
+magnitude narrowing, the first contiguous ASCII-zero run, exact-number plural
+variants, magnitude clamping and partial writes on failure. Literal custom "0"
+patterns remain distinct from resource fallback markers.
+
+getUniquePatterns passes a live fixed-size array list, including null entries,
+to the supplied set before removing null and the fallback marker. The view permits
+replacement but rejects structural changes. Assertions remain lazy and follow
+JVM class assertion status; JS/Native do not evaluate assertion callbacks. The
+source's marker uses String reference identity: Kotlin/JS primitive strings cannot
+distinguish separately allocated equal strings, as already noted for affix suffix
+identity. CompactNotation, its Notation factories and complete compact formatting
+remain pending.
+
+JVM oracle tests cover 12 locales, both styles and types, numbering-system fallback,
+exact-number/custom patterns, quoted zeros, literal-only patterns, magnitude limits,
+partial failure state and the live mutable list contract. Common tests exercise
+custom and resource patterns with fallback on JVM, JS and Native. Verification:
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
