@@ -175,3 +175,5 @@ internal class DecimalBcdStorage {
     }
 }
 internal expect fun assertDecimalBcd(condition: Boolean)
+
+internal expect fun assertDecimalBcd(condition: () -> Boolean)

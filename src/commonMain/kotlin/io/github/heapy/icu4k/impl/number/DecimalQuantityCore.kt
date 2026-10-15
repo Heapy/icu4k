@@ -4,7 +4,7 @@ package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.impl.units.UnitDecimal
 
-/** Numeric and display state from DecimalQuantity_AbstractBCD; plural operands and public number adapters are separate. */
+/** Numeric and display state from DecimalQuantity_AbstractBCD; public plural-rule and number adapters are separate. */
 internal class DecimalQuantityCore {
     private var bcd = DecimalBcdStorage()
     private var flags = 0
@@ -83,6 +83,10 @@ internal class DecimalQuantityCore {
         DecimalBcdRounding.round(bcd, isNegative(), magnitude, precision, mode.ordinal, nickel, this) { accurate() }
     }
     fun roundToIncrement(increment: UnitDecimal, precision: Int, mode: UnitDecimal.Rounding) {
+        assertDecimalBcd {
+            val normalized = increment.stripTrailingZeros()
+            normalized.precision != 1 || normalized.magnitude.toInt() * normalized.sign != 5 || normalized.magnitude.toInt() * normalized.sign != 1
+        }
         val result = toDecimal().divideToScale(increment, 0, mode).multiply(increment).round(precision, mode)
         if (result.sign == 0) bcd.setBcdToZero() else setToDecimal(result)
     }
@@ -120,9 +124,87 @@ internal class DecimalQuantityCore {
         val magnitude = bcd.precision - 1 + bcd.scale + bcd.exponent
         append('E'); if (magnitude >= 0) append('+'); append(magnitude)
     }
+    fun toLong(truncateIfOverflow: Boolean): Long {
+        assertDecimalBcd { truncateIfOverflow || fitsInLong() }
+        var result = 0L
+        var upper = bcd.exponent + bcd.scale + bcd.precision - 1
+        if (truncateIfOverflow) upper = minOf(upper, 17)
+        for (magnitude in upper downTo 0) result = result * 10 + bcd.getDigitPos(magnitude - bcd.scale - bcd.exponent)
+        return if (isNegative()) -result else result
+    }
+    fun toFractionLong(includeTrailingZeros: Boolean): Long {
+        var result = 0L
+        var magnitude = -1 - bcd.exponent
+        val lower = if (includeTrailingZeros) minOf(bcd.scale, rightRequired) else bcd.scale
+        while (magnitude >= lower && result.toDouble() <= 1e17) {
+            result = result * 10 + bcd.getDigitPos(magnitude - bcd.scale)
+            magnitude--
+        }
+        if (!includeTrailingZeros) while (result > 0 && result % 10 == 0L) result /= 10
+        return result
+    }
+    fun fitsInLong(): Boolean {
+        if (isInfinite() || isNaN()) return false
+        if (isZeroish()) return true
+        if (bcd.exponent + bcd.scale < 0) return false
+        val magnitude = getMagnitude()
+        if (magnitude < 18) return true
+        if (magnitude > 18) return false
+        for (p in 0 until bcd.precision) {
+            val digit = getDigit(18 - p)
+            if (digit < INT64_BCD[p]) return true
+            if (digit > INT64_BCD[p]) return false
+        }
+        return isNegative()
+    }
+    fun toDouble(): Double {
+        assertDecimalBcd(!bcd.isApproximate)
+        if (isNaN()) return Double.NaN
+        if (isInfinite()) return if (isNegative()) Double.NEGATIVE_INFINITY else Double.POSITIVE_INFINITY
+        return toScientificString().toDouble()
+    }
+    enum class Operand { n, i, f, t, v, w, e, c, j }
+    fun getPluralOperand(operand: Operand?): Double {
+        assertDecimalBcd(!bcd.isApproximate)
+        return when (operand!!) {
+            Operand.i -> (if (isNegative()) -toLong(true) else toLong(true)).toDouble()
+            Operand.f -> toFractionLong(true).toDouble()
+            Operand.t -> toFractionLong(false).toDouble()
+            Operand.v -> maxOf(0, -getLowerDisplayMagnitude() - bcd.exponent).toDouble()
+            Operand.w -> maxOf(-bcd.scale - bcd.exponent, 0).toDouble()
+            Operand.e, Operand.c -> bcd.exponent.toDouble()
+            else -> kotlin.math.abs(toDouble())
+        }
+    }
+    @Suppress("DEPRECATION")
+    fun populateUFieldPosition(position: io.github.heapy.icu4k.text.FormatFieldPosition?) {
+        if (position is io.github.heapy.icu4k.text.UFieldPosition) position.setFractionDigits(getPluralOperand(Operand.v).toInt(), getPluralOperand(Operand.f).toLong())
+    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DecimalQuantityCore) return false
+        if (bcd.scale != other.bcd.scale || bcd.precision != other.bcd.precision || flags != other.flags || leftRequired != other.leftRequired || rightRequired != other.rightRequired || bcd.isApproximate != other.bcd.isApproximate) return false
+        if (bcd.precision == 0) return true
+        if (bcd.isApproximate) return bcd.origDouble == other.bcd.origDouble && bcd.origDelta == other.bcd.origDelta
+        for (m in getUpperDisplayMagnitude() downTo getLowerDisplayMagnitude()) if (getDigit(m) != other.getDigit(m)) return false
+        return true
+    }
+    override fun hashCode(): Int {
+        val result = objectHash(bcd.scale, bcd.precision, flags, leftRequired, rightRequired, if (bcd.isApproximate) 1231 else 1237)
+        if (bcd.precision == 0) return result
+        if (bcd.isApproximate) {
+            val bits = bcd.origDouble.toBits()
+            return objectHash(result, (bits xor (bits ushr 32)).toInt(), bcd.origDelta)
+        }
+        // The source returns from the first loop iteration: only the first displayed digit is hashed.
+        for (m in getUpperDisplayMagnitude() downTo getLowerDisplayMagnitude()) return objectHash(result, getDigit(m).toInt())
+        return result
+    }
     fun checkHealth(): String? = bcd.checkHealth()
     override fun toString(): String = "<DecimalQuantity $leftRequired:$rightRequired ${if (bcd.usingBytes) "bytes" else "long"} ${if (isNegative()) "-" else ""}${bcd.toNumberString()}>"
     companion object {
+        private val INT64_BCD = byteArrayOf(9, 2, 2, 3, 3, 7, 2, 0, 3, 6, 8, 5, 4, 7, 7, 5, 8, 0, 8)
+        private fun objectHash(vararg values: Int): Int = values.fold(1) { result, value -> 31 * result + value }
         private const val NEGATIVE = 1
         private const val INFINITE = 2
         private const val NAN = 4
