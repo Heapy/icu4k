@@ -5673,3 +5673,26 @@ zero ranges and invalid helper inputs. Common regressions cover carry, borrow,
 virtual zeroes, destructive reuse and extension identity.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 17s).
+
+### Legacy decimal representation, parsing, layout and rounding
+
+Ported the next ICU BigDecimal algorithm layer into IcuDecimalValue, a mutable
+internal working representation with source sign/form/mantissa/exponent state.
+It includes string and char-array slice parsing, BMP Unicode digit conversion,
+explicit exponent limits, zero/scale handling, plain/scientific/engineering
+layout, significant-digit rounding, lost-digit checks and finish/canonicalization.
+Copies share mantissa arrays until the source algorithm replaces them. Rounding
+uses the previously ported digit kernel and retains mutation before errors,
+carry adjustment and exponent overflow diagnostics. Engineering boundary
+reprieves and source formatting thresholds are preserved.
+
+JVM comparisons inspect ICU4J state via reflection after parsing, rounding and
+finish, even on exceptions. Tests cover random malformed strings, char-array
+slices/bounds, Unicode, all rounding policies, negative/zero requested lengths,
+4,000 randomized finish states, exponent boundaries and lost-digit diagnostics.
+Common cases cover layout, scale-preserving zeros, shared copies, tie rounding,
+carry, failure state and canonicalization. This internal layer is preparatory;
+public ICU BigDecimal arithmetic/conversions still remain, as do the public
+legacy number formatter classes.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (6m 49s).
