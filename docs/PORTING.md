@@ -4886,3 +4886,39 @@ cloned exhaustion and a real rounding stage over independent pipeline results;
 JS also checks subtype/extra-field cloning. Verification passed: jvmTest,
 jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64. MutablePatternModifier and
 the complete formatter facade remain pending.
+
+### Mutable and immutable pattern modifiers
+
+Added MutablePatternModifier and its ImmutablePatternModifier pipeline stage.
+The mutable path prepares live sign/approximation/percent affixes and resolves
+locale currency symbols or plural names through the public symbol/currency APIs.
+The immutable builder snapshots four signs, or four signs for all eight plural
+forms, in source order and selects constant modifiers at quantity-processing time.
+Currency affixes use CurrencySpacingEnabledModifier; other affixes use the base
+constant multi-field modifier. UnitWidth is temporarily a top-level enum pending
+the NumberFormatter facade, matching the previously extracted formatter policies.
+
+Both stages retain parent-first processing, rounding before the existing-middle
+short circuit and the extra safe-copy rounding needed for plural selection. Raw
+parsed patterns can overwrite a number body; the property provider's hasBody is
+always true, as in the source. Mutable apply deliberately excludes currency-spacing
+insertions from its returned length. The prepared and mutable currency-spacing
+algorithms keep their earlier source differences. FULL_NAME currency-symbol lookup
+and unsupported modifier introspection retain their source assertion behavior.
+Assertions are lazy on JVM and do not evaluate on JS/Native.
+
+Nullable receiver evaluation order is explicit where observable: locale and plural
+keyword callbacks precede a null currency invocation, and nonplural immutable
+field assignment evaluates quantity signum before failing on a null MicroProps.
+Tests also retain the prefix already inserted before a suffix-symbol failure.
+
+JVM oracle tests cover all sign displays/signums, approximate and permille flags,
+quoted/supplementary/literal/currency affixes, symbol widths and token types,
+English/Russian/Arabic plural data, mutable/immutable chains, existing middle
+modifiers, live symbol changes versus snapshots, body erasure, exact fields,
+reported lengths, assertions, nulls and callback/failure order. Common tests run
+real rounding/modifier chains and verify currency plural names and ISO spacing.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64; the additional JVM-only failure-order/body-erasure tests
+also passed without further production edits. Complete number formatting,
+NumberFormatter and DecimalFormat facades remain pending.
