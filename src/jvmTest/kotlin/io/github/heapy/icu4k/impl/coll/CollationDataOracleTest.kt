@@ -121,7 +121,7 @@ class CollationDataOracleTest {
         assertEquals(s.size(), t.size())
         assertContentEquals(s.getBuffer(), t.getBuffer(), "range buffer/${reorder?.toList()}")
     }
-    private fun importSource(source: Source, seen: IdentityHashMap<Source, CollationData> = IdentityHashMap()): CollationData {
+    internal fun importSource(source: Source, seen: IdentityHashMap<Source, CollationData> = IdentityHashMap()): CollationData {
         seen[source]?.let { return it }
         val target = CollationData(if (source.nfcImpl == null) null else Norm2AllModes.getNFCInstance().impl)
         seen[source] = target
@@ -138,7 +138,7 @@ class CollationDataOracleTest {
         }
         return target
     }
-    private fun exportTarget(target: CollationData, seen: IdentityHashMap<CollationData, Source> = IdentityHashMap()): Source {
+    internal fun exportTarget(target: CollationData, seen: IdentityHashMap<CollationData, Source> = IdentityHashMap()): Source {
         seen[target]?.let { return it }
         val source = Source::class.java.getDeclaredConstructor(com.ibm.icu.impl.Normalizer2Impl::class.java).also { it.isAccessible = true }.newInstance(null)
         seen[target] = source

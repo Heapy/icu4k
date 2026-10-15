@@ -6639,3 +6639,39 @@ macosArm64Test, compileTestKotlinLinuxX64 command passed on the first run,
 5m 6s. Linux test sources compiled, not executed on macOS. No production
 CollationIterator implementation or collation resource availability is claimed
 by this standalone prerequisite stage.
+
+## Collation CE iteration and UTF-16 cursor
+
+Ported the complete ICU4J CollationIterator and UTF16CollationIterator runtime
+algorithms to common Kotlin. The CE decoder handles every source CE32 tag,
+expansions, prefixes, longest-match contractions, discontiguous matching and
+nested skipped-mark replay, Hangul/Jamo, supplementary and unpaired surrogates,
+offset primaries and implicit weights. Numeric iteration preserves the dense
+encoding boundaries, leading-zero handling and 254-digit segments. Reverse
+iteration replays unsafe segments and preserves expansion offset vectors.
+
+The cursor and CE buffer retain source mutation order, partial-constructor
+behavior, backing-array aliases and growth, repeated end markers, equality and
+assertion policy. In particular, callbacks and offset-data lookup can fail
+before a missing CE buffer is accessed. JVM assertion checks use class literals,
+including the nested skipped-state class; JS and Native follow the existing
+assertions-disabled convention.
+
+Common tests exercise synthetic trie/context fixtures, numeric boundaries,
+large buffers, forward/reverse offsets, nested discontiguous contractions and
+failure state. JVM differential tests import ICU4J root and locale tailoring
+data as test fixtures and compare CE values, cursor offsets, full backing
+buffers and reverse offset vectors against ICU4J 78.3. Tests include seeded
+mixed-script text, long numeric runs, malformed UTF-16, all surrogate lookup
+modes and partial initialization. ICU4J remains a test-only dependency.
+
+This adds raw UTF-16 iteration. FCD-normalizing iterator variants, embedded
+collation resources and loaders, public collators, tailoring compilation and the
+default RBNF scanner remain pending. Comparing imported JVM oracle data does not
+establish resource availability on JS or Native.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed after the final regression additions. Linux
+tests were compiled, not executed on macOS. The preceding full run caught a
+test-only access to an upstream package-private field; fixture preparation now
+uses the existing data converter.
