@@ -7,8 +7,8 @@ import io.github.heapy.icu4k.impl.units.MixedUnitIntegerNumber
 internal actual fun quantityFromNumber(number: Number?): DecimalQuantityCore = when (number) {
     is MixedUnitIntegerNumber -> DecimalQuantityCore(number.decimalValue())
     is Long -> DecimalQuantityCore(number)
-    is Int -> DecimalQuantityCore(number.toLong())
-    is Float -> DecimalQuantityCore(number.toDouble())
+    // JS primitive number tests cannot recover the original Kotlin numeric type.
+    // Use the double path so fractional values, signed zero and special values survive.
     is Double -> DecimalQuantityCore(number.toDouble())
     is BigDecimal -> DecimalQuantityCore().also { it.setToBigDecimal(number) }
     else -> {

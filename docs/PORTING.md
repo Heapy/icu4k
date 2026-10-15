@@ -5409,3 +5409,17 @@ and create/getOrCreate facade binding remain pending with public NumberFormatter
 NumberFormatterSettings, UnlocalizedNumberFormatter and LocalizedNumberFormatter.
 No partial public skeleton factory or fluent formatter was introduced. Other
 ICU4J subsystems and the complete port remain outstanding.
+
+## Generic Number dispatch on JavaScript
+
+The public format adapter exposed an existing DecimalQuantity generic Number
+bug: Kotlin/JS primitive numeric type tests classified fractional numbers as Int,
+truncating 12.5 to 12 and losing signed zero/NaN/infinity. The JS generic dispatch
+now uses its double input path for primitive numbers, retaining separate exact
+Long, BigDecimal and mixed integral object paths. This follows JS numeric
+representation; erased primitive source types cannot be recovered at runtime.
+An isolated JS regression covers fractions, negative zero, NaN, infinity and an
+exact Long above 2^53, and Common public-formatter tests cover both number and
+format-adapter entry points. Full JVM/JS/macOS tests and Linux Native test
+compilation passed; the final JS-only regression also passed. This does not fix
+the separately documented Kotlin/JS generic Number.toLong/toInt intrinsic gap.
