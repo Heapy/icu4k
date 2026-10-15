@@ -4766,3 +4766,28 @@ and literal overrides. Sign-policy, affix rendering and partial-output callback
 oracles now exercise the public entry points. Common round-trip/localization/sign
 tests pass on JVM, JS and Native. Verification passed: jvmTest, jsNodeTest,
 macosArm64Test and compileTestKotlinLinuxX64.
+
+### Currency-spacing modifier
+
+Added CurrencySpacingEnabledModifier over ConstantMultiFieldModifier, including
+prepared immutable boundary sets and the static in-place spacing path. The two
+CLDR default UnicodeSets are frozen and shared; custom sets are only parsed when
+a currency field and currency code point reach a boundary. Inserted spacing has
+null fields, and affix snapshots retain the base modifier's overwrite, strength,
+length, code-point count and inherited equality behavior.
+
+Both source algorithms are retained independently. In particular, the prepared
+path checks codePointBefore using the original right index after any prefix
+spacing insertion; the in-place path adjusts the suffix index. This can produce
+different spacing for a one-digit body with both currency affixes and is covered
+explicitly rather than normalized away. The source's inherited strictEquals also
+ignores spacing settings, as does this port.
+
+JVM oracle tests compare output, inserted lengths, all fields, empty and embedded
+number ranges, arbitrary boundary fields, supplementary/unpaired UTF-16, custom
+match sets, empty/multi-character spacing, overwrite, snapshots, inherited equality,
+nulls, invalid sets, lazy symbol callbacks and buffer state after callback failures.
+Common tests verify both paths, supplementary field boundaries and empty-number
+short circuits. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64. MutablePatternModifier and the remaining formatter
+pipeline are still pending.
