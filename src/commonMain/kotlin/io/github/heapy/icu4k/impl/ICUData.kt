@@ -4,6 +4,182 @@
 package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.impl.data.UcaData
+import io.github.heapy.icu4k.impl.data.CollationAfResourceData
+import io.github.heapy.icu4k.impl.data.CollationAmResourceData
+import io.github.heapy.icu4k.impl.data.CollationArResourceData
+import io.github.heapy.icu4k.impl.data.CollationArSAResourceData
+import io.github.heapy.icu4k.impl.data.CollationArsResourceData
+import io.github.heapy.icu4k.impl.data.CollationAsResourceData
+import io.github.heapy.icu4k.impl.data.CollationAzResourceData
+import io.github.heapy.icu4k.impl.data.CollationBeResourceData
+import io.github.heapy.icu4k.impl.data.CollationBgResourceData
+import io.github.heapy.icu4k.impl.data.CollationBloResourceData
+import io.github.heapy.icu4k.impl.data.CollationBnResourceData
+import io.github.heapy.icu4k.impl.data.CollationBoResourceData
+import io.github.heapy.icu4k.impl.data.CollationBrResourceData
+import io.github.heapy.icu4k.impl.data.CollationBsResourceData
+import io.github.heapy.icu4k.impl.data.CollationBsCyrlResourceData
+import io.github.heapy.icu4k.impl.data.CollationCaResourceData
+import io.github.heapy.icu4k.impl.data.CollationCebResourceData
+import io.github.heapy.icu4k.impl.data.CollationChrResourceData
+import io.github.heapy.icu4k.impl.data.CollationCsResourceData
+import io.github.heapy.icu4k.impl.data.CollationCyResourceData
+import io.github.heapy.icu4k.impl.data.CollationDaResourceData
+import io.github.heapy.icu4k.impl.data.CollationDeResourceData
+import io.github.heapy.icu4k.impl.data.CollationDe_ResourceData
+import io.github.heapy.icu4k.impl.data.CollationDeATResourceData
+import io.github.heapy.icu4k.impl.data.CollationDe_PHONEBOOKResourceData
+import io.github.heapy.icu4k.impl.data.CollationDsbResourceData
+import io.github.heapy.icu4k.impl.data.CollationDzResourceData
+import io.github.heapy.icu4k.impl.data.CollationEeResourceData
+import io.github.heapy.icu4k.impl.data.CollationElResourceData
+import io.github.heapy.icu4k.impl.data.CollationEnResourceData
+import io.github.heapy.icu4k.impl.data.CollationEnUSResourceData
+import io.github.heapy.icu4k.impl.data.CollationEnUSPOSIXResourceData
+import io.github.heapy.icu4k.impl.data.CollationEoResourceData
+import io.github.heapy.icu4k.impl.data.CollationEsResourceData
+import io.github.heapy.icu4k.impl.data.CollationEs_ResourceData
+import io.github.heapy.icu4k.impl.data.CollationEs_TRADITIONALResourceData
+import io.github.heapy.icu4k.impl.data.CollationEtResourceData
+import io.github.heapy.icu4k.impl.data.CollationFaResourceData
+import io.github.heapy.icu4k.impl.data.CollationFaAFResourceData
+import io.github.heapy.icu4k.impl.data.CollationFfResourceData
+import io.github.heapy.icu4k.impl.data.CollationFfAdlmResourceData
+import io.github.heapy.icu4k.impl.data.CollationFiResourceData
+import io.github.heapy.icu4k.impl.data.CollationFilResourceData
+import io.github.heapy.icu4k.impl.data.CollationFoResourceData
+import io.github.heapy.icu4k.impl.data.CollationFrResourceData
+import io.github.heapy.icu4k.impl.data.CollationFrCAResourceData
+import io.github.heapy.icu4k.impl.data.CollationFyResourceData
+import io.github.heapy.icu4k.impl.data.CollationGaResourceData
+import io.github.heapy.icu4k.impl.data.CollationGlResourceData
+import io.github.heapy.icu4k.impl.data.CollationGuResourceData
+import io.github.heapy.icu4k.impl.data.CollationHaResourceData
+import io.github.heapy.icu4k.impl.data.CollationHawResourceData
+import io.github.heapy.icu4k.impl.data.CollationHeResourceData
+import io.github.heapy.icu4k.impl.data.CollationHeILResourceData
+import io.github.heapy.icu4k.impl.data.CollationHiResourceData
+import io.github.heapy.icu4k.impl.data.CollationHrResourceData
+import io.github.heapy.icu4k.impl.data.CollationHsbResourceData
+import io.github.heapy.icu4k.impl.data.CollationHuResourceData
+import io.github.heapy.icu4k.impl.data.CollationHyResourceData
+import io.github.heapy.icu4k.impl.data.CollationIdResourceData
+import io.github.heapy.icu4k.impl.data.CollationIdIDResourceData
+import io.github.heapy.icu4k.impl.data.CollationIgResourceData
+import io.github.heapy.icu4k.impl.data.CollationInResourceData
+import io.github.heapy.icu4k.impl.data.CollationInIDResourceData
+import io.github.heapy.icu4k.impl.data.CollationIsResourceData
+import io.github.heapy.icu4k.impl.data.CollationItResourceData
+import io.github.heapy.icu4k.impl.data.CollationIwResourceData
+import io.github.heapy.icu4k.impl.data.CollationIwILResourceData
+import io.github.heapy.icu4k.impl.data.CollationJaResourceData
+import io.github.heapy.icu4k.impl.data.CollationKaResourceData
+import io.github.heapy.icu4k.impl.data.CollationKkResourceData
+import io.github.heapy.icu4k.impl.data.CollationKkArabResourceData
+import io.github.heapy.icu4k.impl.data.CollationKlResourceData
+import io.github.heapy.icu4k.impl.data.CollationKmResourceData
+import io.github.heapy.icu4k.impl.data.CollationKnResourceData
+import io.github.heapy.icu4k.impl.data.CollationKoResourceData
+import io.github.heapy.icu4k.impl.data.CollationKokResourceData
+import io.github.heapy.icu4k.impl.data.CollationKuResourceData
+import io.github.heapy.icu4k.impl.data.CollationKyResourceData
+import io.github.heapy.icu4k.impl.data.CollationLbResourceData
+import io.github.heapy.icu4k.impl.data.CollationLijResourceData
+import io.github.heapy.icu4k.impl.data.CollationLktResourceData
+import io.github.heapy.icu4k.impl.data.CollationLnResourceData
+import io.github.heapy.icu4k.impl.data.CollationLoResourceData
+import io.github.heapy.icu4k.impl.data.CollationLtResourceData
+import io.github.heapy.icu4k.impl.data.CollationLvResourceData
+import io.github.heapy.icu4k.impl.data.CollationMkResourceData
+import io.github.heapy.icu4k.impl.data.CollationMlResourceData
+import io.github.heapy.icu4k.impl.data.CollationMnResourceData
+import io.github.heapy.icu4k.impl.data.CollationMoResourceData
+import io.github.heapy.icu4k.impl.data.CollationMrResourceData
+import io.github.heapy.icu4k.impl.data.CollationMsResourceData
+import io.github.heapy.icu4k.impl.data.CollationMtResourceData
+import io.github.heapy.icu4k.impl.data.CollationMyResourceData
+import io.github.heapy.icu4k.impl.data.CollationNbResourceData
+import io.github.heapy.icu4k.impl.data.CollationNbNOResourceData
+import io.github.heapy.icu4k.impl.data.CollationNeResourceData
+import io.github.heapy.icu4k.impl.data.CollationNlResourceData
+import io.github.heapy.icu4k.impl.data.CollationNnResourceData
+import io.github.heapy.icu4k.impl.data.CollationNoResourceData
+import io.github.heapy.icu4k.impl.data.CollationNoNOResourceData
+import io.github.heapy.icu4k.impl.data.CollationNsoResourceData
+import io.github.heapy.icu4k.impl.data.CollationOmResourceData
+import io.github.heapy.icu4k.impl.data.CollationOrResourceData
+import io.github.heapy.icu4k.impl.data.CollationPaResourceData
+import io.github.heapy.icu4k.impl.data.CollationPaGuruResourceData
+import io.github.heapy.icu4k.impl.data.CollationPaGuruINResourceData
+import io.github.heapy.icu4k.impl.data.CollationPaINResourceData
+import io.github.heapy.icu4k.impl.data.CollationPlResourceData
+import io.github.heapy.icu4k.impl.data.CollationPsResourceData
+import io.github.heapy.icu4k.impl.data.CollationPtResourceData
+import io.github.heapy.icu4k.impl.data.CollationResIndexResourceData
+import io.github.heapy.icu4k.impl.data.CollationRoResourceData
+import io.github.heapy.icu4k.impl.data.CollationRootResourceData
+import io.github.heapy.icu4k.impl.data.CollationRuResourceData
+import io.github.heapy.icu4k.impl.data.CollationSaResourceData
+import io.github.heapy.icu4k.impl.data.CollationSeResourceData
+import io.github.heapy.icu4k.impl.data.CollationShResourceData
+import io.github.heapy.icu4k.impl.data.CollationShBAResourceData
+import io.github.heapy.icu4k.impl.data.CollationShCSResourceData
+import io.github.heapy.icu4k.impl.data.CollationShYUResourceData
+import io.github.heapy.icu4k.impl.data.CollationSiResourceData
+import io.github.heapy.icu4k.impl.data.CollationSkResourceData
+import io.github.heapy.icu4k.impl.data.CollationSlResourceData
+import io.github.heapy.icu4k.impl.data.CollationSmnResourceData
+import io.github.heapy.icu4k.impl.data.CollationSqResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrBAResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrCyrlResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrCyrlBAResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrCyrlMEResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrCyrlRSResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrLatnResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrLatnBAResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrLatnRSResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrMEResourceData
+import io.github.heapy.icu4k.impl.data.CollationSrRSResourceData
+import io.github.heapy.icu4k.impl.data.CollationStResourceData
+import io.github.heapy.icu4k.impl.data.CollationSvResourceData
+import io.github.heapy.icu4k.impl.data.CollationSwResourceData
+import io.github.heapy.icu4k.impl.data.CollationTaResourceData
+import io.github.heapy.icu4k.impl.data.CollationTeResourceData
+import io.github.heapy.icu4k.impl.data.CollationThResourceData
+import io.github.heapy.icu4k.impl.data.CollationTkResourceData
+import io.github.heapy.icu4k.impl.data.CollationTnResourceData
+import io.github.heapy.icu4k.impl.data.CollationToResourceData
+import io.github.heapy.icu4k.impl.data.CollationTrResourceData
+import io.github.heapy.icu4k.impl.data.CollationUgResourceData
+import io.github.heapy.icu4k.impl.data.CollationUkResourceData
+import io.github.heapy.icu4k.impl.data.CollationUrResourceData
+import io.github.heapy.icu4k.impl.data.CollationUzResourceData
+import io.github.heapy.icu4k.impl.data.CollationViResourceData
+import io.github.heapy.icu4k.impl.data.CollationWaeResourceData
+import io.github.heapy.icu4k.impl.data.CollationWoResourceData
+import io.github.heapy.icu4k.impl.data.CollationXhResourceData
+import io.github.heapy.icu4k.impl.data.CollationYiResourceData
+import io.github.heapy.icu4k.impl.data.CollationYoResourceData
+import io.github.heapy.icu4k.impl.data.CollationYueResourceData
+import io.github.heapy.icu4k.impl.data.CollationYueCNResourceData
+import io.github.heapy.icu4k.impl.data.CollationYueHansResourceData
+import io.github.heapy.icu4k.impl.data.CollationYueHansCNResourceData
+import io.github.heapy.icu4k.impl.data.CollationYueHantResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhCNResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHKResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHansResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHansCNResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHansSGResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHantResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHantHKResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHantMOResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhHantTWResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhMOResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhSGResourceData
+import io.github.heapy.icu4k.impl.data.CollationZhTWResourceData
+import io.github.heapy.icu4k.impl.data.CollationZuResourceData
 
 import io.github.heapy.icu4k.impl.data.RbnfAfResourceData
 import io.github.heapy.icu4k.impl.data.RbnfAkResourceData
@@ -249,7 +425,7 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("coll/ucadata.icu", "plurals.res", "pluralRanges.res", "unit/ar.res", "ru.res", "de.res", "unit/fr.res", "unit/de.res", "grammaticalFeatures.res", "region/fr.res", "region/ar.res", "region/ja.res", "brkitr/en_US.res", "brkitr/en_US_POSIX.res", "brkitr/el.res", "brkitr/ko.res", "brkitr/zh.res", "brkitr/zh_Hant.res", "brkitr/en.res", "brkitr/fr.res", "brkitr/de.res", "brkitr/es.res", "region/root.res", "region/pool.res", "region/en.res", "unit/root.res", "unit/pool.res", "unit/en.res", "unit/res_index.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict",
+    private val resourceNames = setOf("coll/af.res", "coll/am.res", "coll/ar.res", "coll/ar_SA.res", "coll/ars.res", "coll/as.res", "coll/az.res", "coll/be.res", "coll/bg.res", "coll/blo.res", "coll/bn.res", "coll/bo.res", "coll/br.res", "coll/bs.res", "coll/bs_Cyrl.res", "coll/ca.res", "coll/ceb.res", "coll/chr.res", "coll/cs.res", "coll/cy.res", "coll/da.res", "coll/de.res", "coll/de_.res", "coll/de_AT.res", "coll/de__PHONEBOOK.res", "coll/dsb.res", "coll/dz.res", "coll/ee.res", "coll/el.res", "coll/en.res", "coll/en_US.res", "coll/en_US_POSIX.res", "coll/eo.res", "coll/es.res", "coll/es_.res", "coll/es__TRADITIONAL.res", "coll/et.res", "coll/fa.res", "coll/fa_AF.res", "coll/ff.res", "coll/ff_Adlm.res", "coll/fi.res", "coll/fil.res", "coll/fo.res", "coll/fr.res", "coll/fr_CA.res", "coll/fy.res", "coll/ga.res", "coll/gl.res", "coll/gu.res", "coll/ha.res", "coll/haw.res", "coll/he.res", "coll/he_IL.res", "coll/hi.res", "coll/hr.res", "coll/hsb.res", "coll/hu.res", "coll/hy.res", "coll/id.res", "coll/id_ID.res", "coll/ig.res", "coll/in.res", "coll/in_ID.res", "coll/is.res", "coll/it.res", "coll/iw.res", "coll/iw_IL.res", "coll/ja.res", "coll/ka.res", "coll/kk.res", "coll/kk_Arab.res", "coll/kl.res", "coll/km.res", "coll/kn.res", "coll/ko.res", "coll/kok.res", "coll/ku.res", "coll/ky.res", "coll/lb.res", "coll/lij.res", "coll/lkt.res", "coll/ln.res", "coll/lo.res", "coll/lt.res", "coll/lv.res", "coll/mk.res", "coll/ml.res", "coll/mn.res", "coll/mo.res", "coll/mr.res", "coll/ms.res", "coll/mt.res", "coll/my.res", "coll/nb.res", "coll/nb_NO.res", "coll/ne.res", "coll/nl.res", "coll/nn.res", "coll/no.res", "coll/no_NO.res", "coll/nso.res", "coll/om.res", "coll/or.res", "coll/pa.res", "coll/pa_Guru.res", "coll/pa_Guru_IN.res", "coll/pa_IN.res", "coll/pl.res", "coll/ps.res", "coll/pt.res", "coll/res_index.res", "coll/ro.res", "coll/root.res", "coll/ru.res", "coll/sa.res", "coll/se.res", "coll/sh.res", "coll/sh_BA.res", "coll/sh_CS.res", "coll/sh_YU.res", "coll/si.res", "coll/sk.res", "coll/sl.res", "coll/smn.res", "coll/sq.res", "coll/sr.res", "coll/sr_BA.res", "coll/sr_Cyrl.res", "coll/sr_Cyrl_BA.res", "coll/sr_Cyrl_ME.res", "coll/sr_Cyrl_RS.res", "coll/sr_Latn.res", "coll/sr_Latn_BA.res", "coll/sr_Latn_RS.res", "coll/sr_ME.res", "coll/sr_RS.res", "coll/st.res", "coll/sv.res", "coll/sw.res", "coll/ta.res", "coll/te.res", "coll/th.res", "coll/tk.res", "coll/tn.res", "coll/to.res", "coll/tr.res", "coll/ug.res", "coll/uk.res", "coll/ur.res", "coll/uz.res", "coll/vi.res", "coll/wae.res", "coll/wo.res", "coll/xh.res", "coll/yi.res", "coll/yo.res", "coll/yue.res", "coll/yue_CN.res", "coll/yue_Hans.res", "coll/yue_Hans_CN.res", "coll/yue_Hant.res", "coll/zh.res", "coll/zh_CN.res", "coll/zh_HK.res", "coll/zh_Hans.res", "coll/zh_Hans_CN.res", "coll/zh_Hans_SG.res", "coll/zh_Hant.res", "coll/zh_Hant_HK.res", "coll/zh_Hant_MO.res", "coll/zh_Hant_TW.res", "coll/zh_MO.res", "coll/zh_SG.res", "coll/zh_TW.res", "coll/zu.res", "coll/ucadata.icu", "plurals.res", "pluralRanges.res", "unit/ar.res", "ru.res", "de.res", "unit/fr.res", "unit/de.res", "grammaticalFeatures.res", "region/fr.res", "region/ar.res", "region/ja.res", "brkitr/en_US.res", "brkitr/en_US_POSIX.res", "brkitr/el.res", "brkitr/ko.res", "brkitr/zh.res", "brkitr/zh_Hant.res", "brkitr/en.res", "brkitr/fr.res", "brkitr/de.res", "brkitr/es.res", "region/root.res", "region/pool.res", "region/en.res", "unit/root.res", "unit/pool.res", "unit/en.res", "unit/res_index.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict",
         "rbnf/af.res",
         "rbnf/ak.res",
         "rbnf/am.res",
@@ -377,6 +553,182 @@ object ICUData {
 
     /** Returns a private copy, so callers cannot mutate cached resource data. */
     fun getBytes(resourceName: String): ByteArray? = when (itemPath(resourceName)) {
+        "coll/af.res" -> CollationAfResourceData.copy()
+        "coll/am.res" -> CollationAmResourceData.copy()
+        "coll/ar.res" -> CollationArResourceData.copy()
+        "coll/ar_SA.res" -> CollationArSAResourceData.copy()
+        "coll/ars.res" -> CollationArsResourceData.copy()
+        "coll/as.res" -> CollationAsResourceData.copy()
+        "coll/az.res" -> CollationAzResourceData.copy()
+        "coll/be.res" -> CollationBeResourceData.copy()
+        "coll/bg.res" -> CollationBgResourceData.copy()
+        "coll/blo.res" -> CollationBloResourceData.copy()
+        "coll/bn.res" -> CollationBnResourceData.copy()
+        "coll/bo.res" -> CollationBoResourceData.copy()
+        "coll/br.res" -> CollationBrResourceData.copy()
+        "coll/bs.res" -> CollationBsResourceData.copy()
+        "coll/bs_Cyrl.res" -> CollationBsCyrlResourceData.copy()
+        "coll/ca.res" -> CollationCaResourceData.copy()
+        "coll/ceb.res" -> CollationCebResourceData.copy()
+        "coll/chr.res" -> CollationChrResourceData.copy()
+        "coll/cs.res" -> CollationCsResourceData.copy()
+        "coll/cy.res" -> CollationCyResourceData.copy()
+        "coll/da.res" -> CollationDaResourceData.copy()
+        "coll/de.res" -> CollationDeResourceData.copy()
+        "coll/de_.res" -> CollationDe_ResourceData.copy()
+        "coll/de_AT.res" -> CollationDeATResourceData.copy()
+        "coll/de__PHONEBOOK.res" -> CollationDe_PHONEBOOKResourceData.copy()
+        "coll/dsb.res" -> CollationDsbResourceData.copy()
+        "coll/dz.res" -> CollationDzResourceData.copy()
+        "coll/ee.res" -> CollationEeResourceData.copy()
+        "coll/el.res" -> CollationElResourceData.copy()
+        "coll/en.res" -> CollationEnResourceData.copy()
+        "coll/en_US.res" -> CollationEnUSResourceData.copy()
+        "coll/en_US_POSIX.res" -> CollationEnUSPOSIXResourceData.copy()
+        "coll/eo.res" -> CollationEoResourceData.copy()
+        "coll/es.res" -> CollationEsResourceData.copy()
+        "coll/es_.res" -> CollationEs_ResourceData.copy()
+        "coll/es__TRADITIONAL.res" -> CollationEs_TRADITIONALResourceData.copy()
+        "coll/et.res" -> CollationEtResourceData.copy()
+        "coll/fa.res" -> CollationFaResourceData.copy()
+        "coll/fa_AF.res" -> CollationFaAFResourceData.copy()
+        "coll/ff.res" -> CollationFfResourceData.copy()
+        "coll/ff_Adlm.res" -> CollationFfAdlmResourceData.copy()
+        "coll/fi.res" -> CollationFiResourceData.copy()
+        "coll/fil.res" -> CollationFilResourceData.copy()
+        "coll/fo.res" -> CollationFoResourceData.copy()
+        "coll/fr.res" -> CollationFrResourceData.copy()
+        "coll/fr_CA.res" -> CollationFrCAResourceData.copy()
+        "coll/fy.res" -> CollationFyResourceData.copy()
+        "coll/ga.res" -> CollationGaResourceData.copy()
+        "coll/gl.res" -> CollationGlResourceData.copy()
+        "coll/gu.res" -> CollationGuResourceData.copy()
+        "coll/ha.res" -> CollationHaResourceData.copy()
+        "coll/haw.res" -> CollationHawResourceData.copy()
+        "coll/he.res" -> CollationHeResourceData.copy()
+        "coll/he_IL.res" -> CollationHeILResourceData.copy()
+        "coll/hi.res" -> CollationHiResourceData.copy()
+        "coll/hr.res" -> CollationHrResourceData.copy()
+        "coll/hsb.res" -> CollationHsbResourceData.copy()
+        "coll/hu.res" -> CollationHuResourceData.copy()
+        "coll/hy.res" -> CollationHyResourceData.copy()
+        "coll/id.res" -> CollationIdResourceData.copy()
+        "coll/id_ID.res" -> CollationIdIDResourceData.copy()
+        "coll/ig.res" -> CollationIgResourceData.copy()
+        "coll/in.res" -> CollationInResourceData.copy()
+        "coll/in_ID.res" -> CollationInIDResourceData.copy()
+        "coll/is.res" -> CollationIsResourceData.copy()
+        "coll/it.res" -> CollationItResourceData.copy()
+        "coll/iw.res" -> CollationIwResourceData.copy()
+        "coll/iw_IL.res" -> CollationIwILResourceData.copy()
+        "coll/ja.res" -> CollationJaResourceData.copy()
+        "coll/ka.res" -> CollationKaResourceData.copy()
+        "coll/kk.res" -> CollationKkResourceData.copy()
+        "coll/kk_Arab.res" -> CollationKkArabResourceData.copy()
+        "coll/kl.res" -> CollationKlResourceData.copy()
+        "coll/km.res" -> CollationKmResourceData.copy()
+        "coll/kn.res" -> CollationKnResourceData.copy()
+        "coll/ko.res" -> CollationKoResourceData.copy()
+        "coll/kok.res" -> CollationKokResourceData.copy()
+        "coll/ku.res" -> CollationKuResourceData.copy()
+        "coll/ky.res" -> CollationKyResourceData.copy()
+        "coll/lb.res" -> CollationLbResourceData.copy()
+        "coll/lij.res" -> CollationLijResourceData.copy()
+        "coll/lkt.res" -> CollationLktResourceData.copy()
+        "coll/ln.res" -> CollationLnResourceData.copy()
+        "coll/lo.res" -> CollationLoResourceData.copy()
+        "coll/lt.res" -> CollationLtResourceData.copy()
+        "coll/lv.res" -> CollationLvResourceData.copy()
+        "coll/mk.res" -> CollationMkResourceData.copy()
+        "coll/ml.res" -> CollationMlResourceData.copy()
+        "coll/mn.res" -> CollationMnResourceData.copy()
+        "coll/mo.res" -> CollationMoResourceData.copy()
+        "coll/mr.res" -> CollationMrResourceData.copy()
+        "coll/ms.res" -> CollationMsResourceData.copy()
+        "coll/mt.res" -> CollationMtResourceData.copy()
+        "coll/my.res" -> CollationMyResourceData.copy()
+        "coll/nb.res" -> CollationNbResourceData.copy()
+        "coll/nb_NO.res" -> CollationNbNOResourceData.copy()
+        "coll/ne.res" -> CollationNeResourceData.copy()
+        "coll/nl.res" -> CollationNlResourceData.copy()
+        "coll/nn.res" -> CollationNnResourceData.copy()
+        "coll/no.res" -> CollationNoResourceData.copy()
+        "coll/no_NO.res" -> CollationNoNOResourceData.copy()
+        "coll/nso.res" -> CollationNsoResourceData.copy()
+        "coll/om.res" -> CollationOmResourceData.copy()
+        "coll/or.res" -> CollationOrResourceData.copy()
+        "coll/pa.res" -> CollationPaResourceData.copy()
+        "coll/pa_Guru.res" -> CollationPaGuruResourceData.copy()
+        "coll/pa_Guru_IN.res" -> CollationPaGuruINResourceData.copy()
+        "coll/pa_IN.res" -> CollationPaINResourceData.copy()
+        "coll/pl.res" -> CollationPlResourceData.copy()
+        "coll/ps.res" -> CollationPsResourceData.copy()
+        "coll/pt.res" -> CollationPtResourceData.copy()
+        "coll/res_index.res" -> CollationResIndexResourceData.copy()
+        "coll/ro.res" -> CollationRoResourceData.copy()
+        "coll/root.res" -> CollationRootResourceData.copy()
+        "coll/ru.res" -> CollationRuResourceData.copy()
+        "coll/sa.res" -> CollationSaResourceData.copy()
+        "coll/se.res" -> CollationSeResourceData.copy()
+        "coll/sh.res" -> CollationShResourceData.copy()
+        "coll/sh_BA.res" -> CollationShBAResourceData.copy()
+        "coll/sh_CS.res" -> CollationShCSResourceData.copy()
+        "coll/sh_YU.res" -> CollationShYUResourceData.copy()
+        "coll/si.res" -> CollationSiResourceData.copy()
+        "coll/sk.res" -> CollationSkResourceData.copy()
+        "coll/sl.res" -> CollationSlResourceData.copy()
+        "coll/smn.res" -> CollationSmnResourceData.copy()
+        "coll/sq.res" -> CollationSqResourceData.copy()
+        "coll/sr.res" -> CollationSrResourceData.copy()
+        "coll/sr_BA.res" -> CollationSrBAResourceData.copy()
+        "coll/sr_Cyrl.res" -> CollationSrCyrlResourceData.copy()
+        "coll/sr_Cyrl_BA.res" -> CollationSrCyrlBAResourceData.copy()
+        "coll/sr_Cyrl_ME.res" -> CollationSrCyrlMEResourceData.copy()
+        "coll/sr_Cyrl_RS.res" -> CollationSrCyrlRSResourceData.copy()
+        "coll/sr_Latn.res" -> CollationSrLatnResourceData.copy()
+        "coll/sr_Latn_BA.res" -> CollationSrLatnBAResourceData.copy()
+        "coll/sr_Latn_RS.res" -> CollationSrLatnRSResourceData.copy()
+        "coll/sr_ME.res" -> CollationSrMEResourceData.copy()
+        "coll/sr_RS.res" -> CollationSrRSResourceData.copy()
+        "coll/st.res" -> CollationStResourceData.copy()
+        "coll/sv.res" -> CollationSvResourceData.copy()
+        "coll/sw.res" -> CollationSwResourceData.copy()
+        "coll/ta.res" -> CollationTaResourceData.copy()
+        "coll/te.res" -> CollationTeResourceData.copy()
+        "coll/th.res" -> CollationThResourceData.copy()
+        "coll/tk.res" -> CollationTkResourceData.copy()
+        "coll/tn.res" -> CollationTnResourceData.copy()
+        "coll/to.res" -> CollationToResourceData.copy()
+        "coll/tr.res" -> CollationTrResourceData.copy()
+        "coll/ug.res" -> CollationUgResourceData.copy()
+        "coll/uk.res" -> CollationUkResourceData.copy()
+        "coll/ur.res" -> CollationUrResourceData.copy()
+        "coll/uz.res" -> CollationUzResourceData.copy()
+        "coll/vi.res" -> CollationViResourceData.copy()
+        "coll/wae.res" -> CollationWaeResourceData.copy()
+        "coll/wo.res" -> CollationWoResourceData.copy()
+        "coll/xh.res" -> CollationXhResourceData.copy()
+        "coll/yi.res" -> CollationYiResourceData.copy()
+        "coll/yo.res" -> CollationYoResourceData.copy()
+        "coll/yue.res" -> CollationYueResourceData.copy()
+        "coll/yue_CN.res" -> CollationYueCNResourceData.copy()
+        "coll/yue_Hans.res" -> CollationYueHansResourceData.copy()
+        "coll/yue_Hans_CN.res" -> CollationYueHansCNResourceData.copy()
+        "coll/yue_Hant.res" -> CollationYueHantResourceData.copy()
+        "coll/zh.res" -> CollationZhResourceData.copy()
+        "coll/zh_CN.res" -> CollationZhCNResourceData.copy()
+        "coll/zh_HK.res" -> CollationZhHKResourceData.copy()
+        "coll/zh_Hans.res" -> CollationZhHansResourceData.copy()
+        "coll/zh_Hans_CN.res" -> CollationZhHansCNResourceData.copy()
+        "coll/zh_Hans_SG.res" -> CollationZhHansSGResourceData.copy()
+        "coll/zh_Hant.res" -> CollationZhHantResourceData.copy()
+        "coll/zh_Hant_HK.res" -> CollationZhHantHKResourceData.copy()
+        "coll/zh_Hant_MO.res" -> CollationZhHantMOResourceData.copy()
+        "coll/zh_Hant_TW.res" -> CollationZhHantTWResourceData.copy()
+        "coll/zh_MO.res" -> CollationZhMOResourceData.copy()
+        "coll/zh_SG.res" -> CollationZhSGResourceData.copy()
+        "coll/zh_TW.res" -> CollationZhTWResourceData.copy()
+        "coll/zu.res" -> CollationZuResourceData.copy()
         "coll/ucadata.icu" -> UcaData.copy()
         "currencyNumericCodes.res" -> CurrencyNumericCodesResourceData.copy()
         "curr/de.res" -> CurrencyDeResourceData.copy()

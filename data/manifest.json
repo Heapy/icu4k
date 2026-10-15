@@ -1572,6 +1572,1414 @@
       "sha256": "e19cc11f62d76380c223aa5a9fa7c2eed1d1f86bb48229a5e8c05d8d1a8b5ae2",
       "size": 597168,
       "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ucadata.icu"
+    },
+    {
+      "name": "coll/af.res",
+      "file": "data/icu78/coll/af.res",
+      "object": "CollationAfResourceData",
+      "sha256": "7a41f52dea9a6c4fcf3dc959468f82c932389e295b5e77459ecbee7d09bd000c",
+      "size": 7472,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/af.res"
+    },
+    {
+      "name": "coll/am.res",
+      "file": "data/icu78/coll/am.res",
+      "object": "CollationAmResourceData",
+      "sha256": "69d6cb17d119e3da9d9fb4fc072a0e1e29c7052de4afc9249766d9858c3aa4c6",
+      "size": 528,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/am.res"
+    },
+    {
+      "name": "coll/ar.res",
+      "file": "data/icu78/coll/ar.res",
+      "object": "CollationArResourceData",
+      "sha256": "80ef0a5e88b7da7a7ecd070c123756511e11f0402f46518a6d26e56e43f2d163",
+      "size": 29408,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ar.res"
+    },
+    {
+      "name": "coll/ar_SA.res",
+      "file": "data/icu78/coll/ar_SA.res",
+      "object": "CollationArSAResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ar_SA.res"
+    },
+    {
+      "name": "coll/ars.res",
+      "file": "data/icu78/coll/ars.res",
+      "object": "CollationArsResourceData",
+      "sha256": "d41f56f5a83fa724b4a58f4ceddb80979d6b6fad83b269c40ae8f2d91fa5b9f5",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ars.res"
+    },
+    {
+      "name": "coll/as.res",
+      "file": "data/icu78/coll/as.res",
+      "object": "CollationAsResourceData",
+      "sha256": "bd7344f27986885e658c2f76b9b67b837c73fb59ebe6d65ff2b05cb64f595504",
+      "size": 7152,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/as.res"
+    },
+    {
+      "name": "coll/az.res",
+      "file": "data/icu78/coll/az.res",
+      "object": "CollationAzResourceData",
+      "sha256": "f98f5cfcd995226f4a52953d62a14a148b98e039ccf9e88fa66d61266cd64c38",
+      "size": 22448,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/az.res"
+    },
+    {
+      "name": "coll/be.res",
+      "file": "data/icu78/coll/be.res",
+      "object": "CollationBeResourceData",
+      "sha256": "b6ce6f4e4047b599b3c3777c6c598c960d96f70577a2537eddbaefe2622915cf",
+      "size": 7136,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/be.res"
+    },
+    {
+      "name": "coll/bg.res",
+      "file": "data/icu78/coll/bg.res",
+      "object": "CollationBgResourceData",
+      "sha256": "08833827a8161c381b44b6d9c59da2af9274463b4c8d4ff15644897d76040271",
+      "size": 512,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/bg.res"
+    },
+    {
+      "name": "coll/blo.res",
+      "file": "data/icu78/coll/blo.res",
+      "object": "CollationBloResourceData",
+      "sha256": "0a971d334b1f6e9f5c28fa3f18c2588f1efbaa04810e422ee5b58319d25e82b0",
+      "size": 9696,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/blo.res"
+    },
+    {
+      "name": "coll/bn.res",
+      "file": "data/icu78/coll/bn.res",
+      "object": "CollationBnResourceData",
+      "sha256": "207e524458b9060a500db5bbdaebc3ad1953fdb6231c5551c3043ed4003f36ef",
+      "size": 33648,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/bn.res"
+    },
+    {
+      "name": "coll/bo.res",
+      "file": "data/icu78/coll/bo.res",
+      "object": "CollationBoResourceData",
+      "sha256": "a4168406560ce965dc0bf7b0fec1298675ae7ae117325560bf035a3a8aa90303",
+      "size": 17104,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/bo.res"
+    },
+    {
+      "name": "coll/br.res",
+      "file": "data/icu78/coll/br.res",
+      "object": "CollationBrResourceData",
+      "sha256": "1f2d32e6c2ce866a068f7a1b992ca9a37e09d5e98d2f7c1f20eddd70852f8a16",
+      "size": 8240,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/br.res"
+    },
+    {
+      "name": "coll/bs.res",
+      "file": "data/icu78/coll/bs.res",
+      "object": "CollationBsResourceData",
+      "sha256": "fb99b764fa6ecd161e7d5a28bdb6ffdfbd22fa6bc7791690ab3f9bb00a7c556e",
+      "size": 19824,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/bs.res"
+    },
+    {
+      "name": "coll/bs_Cyrl.res",
+      "file": "data/icu78/coll/bs_Cyrl.res",
+      "object": "CollationBsCyrlResourceData",
+      "sha256": "2d26b7f9c8ef20ae3a1160f8f00b9dc6adddcceeab06b65621b842710090b6cd",
+      "size": 6800,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/bs_Cyrl.res"
+    },
+    {
+      "name": "coll/ca.res",
+      "file": "data/icu78/coll/ca.res",
+      "object": "CollationCaResourceData",
+      "sha256": "6b7761ce4f00ba878ade1538eaaacf3e5f6167c8fdcf30501bbf33f7547bdcea",
+      "size": 9280,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ca.res"
+    },
+    {
+      "name": "coll/ceb.res",
+      "file": "data/icu78/coll/ceb.res",
+      "object": "CollationCebResourceData",
+      "sha256": "f0fc07a7863fedf04b438ea0b73de58e53a8d05ec83d2793e5c91ae8cf8826a4",
+      "size": 8256,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ceb.res"
+    },
+    {
+      "name": "coll/chr.res",
+      "file": "data/icu78/coll/chr.res",
+      "object": "CollationChrResourceData",
+      "sha256": "c1d187f003443f2ac64b741d288a203549ec37f228e494ae3d0257c0fa7ba469",
+      "size": 528,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/chr.res"
+    },
+    {
+      "name": "coll/cs.res",
+      "file": "data/icu78/coll/cs.res",
+      "object": "CollationCsResourceData",
+      "sha256": "3bba0f76407d6248de70751c4b876f03aea515b8b7e4fdefb08625fec71e3a15",
+      "size": 9312,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/cs.res"
+    },
+    {
+      "name": "coll/cy.res",
+      "file": "data/icu78/coll/cy.res",
+      "object": "CollationCyResourceData",
+      "sha256": "41f99f50f74ce5ddf68d4bea468b1eb95652e47bbed23e8b7d162ce305a17c1c",
+      "size": 10384,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/cy.res"
+    },
+    {
+      "name": "coll/da.res",
+      "file": "data/icu78/coll/da.res",
+      "object": "CollationDaResourceData",
+      "sha256": "6af230231d54c7bf7c1d8e95c8023695688527a7f6e2ee03d39d3de55db2447e",
+      "size": 28000,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/da.res"
+    },
+    {
+      "name": "coll/de.res",
+      "file": "data/icu78/coll/de.res",
+      "object": "CollationDeResourceData",
+      "sha256": "b0e2da4c4168aa3dca8580da2131f987047d85ba2b4bf1f3dec768de43386d84",
+      "size": 20896,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/de.res"
+    },
+    {
+      "name": "coll/de_.res",
+      "file": "data/icu78/coll/de_.res",
+      "object": "CollationDe_ResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/de_.res"
+    },
+    {
+      "name": "coll/de_AT.res",
+      "file": "data/icu78/coll/de_AT.res",
+      "object": "CollationDeATResourceData",
+      "sha256": "23018f50b974e79824a3d126698fea00603c3912f5e007d4b62aca0bed0ddd37",
+      "size": 9680,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/de_AT.res"
+    },
+    {
+      "name": "coll/de__PHONEBOOK.res",
+      "file": "data/icu78/coll/de__PHONEBOOK.res",
+      "object": "CollationDe_PHONEBOOKResourceData",
+      "sha256": "d71ff6bb827f84ea5e9b15f1bc53252d011eac51dfff3d3447aa189fac412654",
+      "size": 128,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/de__PHONEBOOK.res"
+    },
+    {
+      "name": "coll/dsb.res",
+      "file": "data/icu78/coll/dsb.res",
+      "object": "CollationDsbResourceData",
+      "sha256": "af0fb96ce836896779d797bd8d2c0b085072f6d254f8d770a5245b05676cd1e5",
+      "size": 10672,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/dsb.res"
+    },
+    {
+      "name": "coll/dz.res",
+      "file": "data/icu78/coll/dz.res",
+      "object": "CollationDzResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/dz.res"
+    },
+    {
+      "name": "coll/ee.res",
+      "file": "data/icu78/coll/ee.res",
+      "object": "CollationEeResourceData",
+      "sha256": "65bc3e2237b557c8c974176f48f83c3749c71f8b961c43dba5131b20b56e16f3",
+      "size": 11616,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ee.res"
+    },
+    {
+      "name": "coll/el.res",
+      "file": "data/icu78/coll/el.res",
+      "object": "CollationElResourceData",
+      "sha256": "975012213fa83b0d88969d35aeee6c86d1e5a73342f7001e1105b2b12c0b0dff",
+      "size": 576,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/el.res"
+    },
+    {
+      "name": "coll/en.res",
+      "file": "data/icu78/coll/en.res",
+      "object": "CollationEnResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/en.res"
+    },
+    {
+      "name": "coll/en_US.res",
+      "file": "data/icu78/coll/en_US.res",
+      "object": "CollationEnUSResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/en_US.res"
+    },
+    {
+      "name": "coll/en_US_POSIX.res",
+      "file": "data/icu78/coll/en_US_POSIX.res",
+      "object": "CollationEnUSPOSIXResourceData",
+      "sha256": "179397975cad10026ef9351319f797933889a82500018466f81950a658c60fcb",
+      "size": 16000,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/en_US_POSIX.res"
+    },
+    {
+      "name": "coll/eo.res",
+      "file": "data/icu78/coll/eo.res",
+      "object": "CollationEoResourceData",
+      "sha256": "9d48b22c4e1c575c92b5f257475a34f67c2ffd3fd009e13839e95fcdddd8d35c",
+      "size": 9552,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/eo.res"
+    },
+    {
+      "name": "coll/es.res",
+      "file": "data/icu78/coll/es.res",
+      "object": "CollationEsResourceData",
+      "sha256": "1a2cddf079c47b2c2a8b121bb8f8621145b4c12145594692af18152e61c40cbb",
+      "size": 25504,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/es.res"
+    },
+    {
+      "name": "coll/es_.res",
+      "file": "data/icu78/coll/es_.res",
+      "object": "CollationEs_ResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/es_.res"
+    },
+    {
+      "name": "coll/es__TRADITIONAL.res",
+      "file": "data/icu78/coll/es__TRADITIONAL.res",
+      "object": "CollationEs_TRADITIONALResourceData",
+      "sha256": "1e8bc07c1bac7ddeecd4be76406d651ab76d8063ef916b7d830185379221598e",
+      "size": 128,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/es__TRADITIONAL.res"
+    },
+    {
+      "name": "coll/et.res",
+      "file": "data/icu78/coll/et.res",
+      "object": "CollationEtResourceData",
+      "sha256": "da9447d232d702e6ae985b7fa5818d11f082957c1293896e615c2e1133071a26",
+      "size": 10576,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/et.res"
+    },
+    {
+      "name": "coll/fa.res",
+      "file": "data/icu78/coll/fa.res",
+      "object": "CollationFaResourceData",
+      "sha256": "025f1f3e871208a86caeeaf26ecb5cf2c440a0d2cbf3f46bd8b59f2d61e7600b",
+      "size": 7952,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fa.res"
+    },
+    {
+      "name": "coll/fa_AF.res",
+      "file": "data/icu78/coll/fa_AF.res",
+      "object": "CollationFaAFResourceData",
+      "sha256": "96996fcbc9eda83afc9e26d0234cf04f7fdff30d3b1cd64ffa59a6670cb5f4c6",
+      "size": 8752,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fa_AF.res"
+    },
+    {
+      "name": "coll/ff.res",
+      "file": "data/icu78/coll/ff.res",
+      "object": "CollationFfResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ff.res"
+    },
+    {
+      "name": "coll/ff_Adlm.res",
+      "file": "data/icu78/coll/ff_Adlm.res",
+      "object": "CollationFfAdlmResourceData",
+      "sha256": "178454bff80dd4c298e6990b2a03f6e08957cd85bef73de6ce15c290dba17671",
+      "size": 11424,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ff_Adlm.res"
+    },
+    {
+      "name": "coll/fi.res",
+      "file": "data/icu78/coll/fi.res",
+      "object": "CollationFiResourceData",
+      "sha256": "783073190f99fd7f3856b096ea87c19dda1119cd83ad6c9043694688b1c11a5a",
+      "size": 34032,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fi.res"
+    },
+    {
+      "name": "coll/fil.res",
+      "file": "data/icu78/coll/fil.res",
+      "object": "CollationFilResourceData",
+      "sha256": "f0fc07a7863fedf04b438ea0b73de58e53a8d05ec83d2793e5c91ae8cf8826a4",
+      "size": 8256,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fil.res"
+    },
+    {
+      "name": "coll/fo.res",
+      "file": "data/icu78/coll/fo.res",
+      "object": "CollationFoResourceData",
+      "sha256": "ae1d68197cee98bf0df35bf0ec85f053b05f05159b0c2cd34efb418ce5351c82",
+      "size": 28032,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fo.res"
+    },
+    {
+      "name": "coll/fr.res",
+      "file": "data/icu78/coll/fr.res",
+      "object": "CollationFrResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fr.res"
+    },
+    {
+      "name": "coll/fr_CA.res",
+      "file": "data/icu78/coll/fr_CA.res",
+      "object": "CollationFrCAResourceData",
+      "sha256": "d97b896dec4eca9478036d6e515b7edb76bfa81b95237aa6c851bb70f85823d1",
+      "size": 240,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fr_CA.res"
+    },
+    {
+      "name": "coll/fy.res",
+      "file": "data/icu78/coll/fy.res",
+      "object": "CollationFyResourceData",
+      "sha256": "4b24f443fdefc1c3072795a05d94d63eaea743e6c95e0965728a691492b617df",
+      "size": 8112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/fy.res"
+    },
+    {
+      "name": "coll/ga.res",
+      "file": "data/icu78/coll/ga.res",
+      "object": "CollationGaResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ga.res"
+    },
+    {
+      "name": "coll/gl.res",
+      "file": "data/icu78/coll/gl.res",
+      "object": "CollationGlResourceData",
+      "sha256": "7ffc78e61c7d2979eb8cb46c4259d3442b8db307a09c3d2f337145980ba2e67d",
+      "size": 16912,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/gl.res"
+    },
+    {
+      "name": "coll/gu.res",
+      "file": "data/icu78/coll/gu.res",
+      "object": "CollationGuResourceData",
+      "sha256": "a3b26e06995f9f70180c884ccc2900231002193ef3fc8582003cce981fcf0a2c",
+      "size": 6864,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/gu.res"
+    },
+    {
+      "name": "coll/ha.res",
+      "file": "data/icu78/coll/ha.res",
+      "object": "CollationHaResourceData",
+      "sha256": "b3f8a60f09022226669f917f9d21c25d8d18bbd412a7b3a5d5a968c0a74051c3",
+      "size": 9680,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ha.res"
+    },
+    {
+      "name": "coll/haw.res",
+      "file": "data/icu78/coll/haw.res",
+      "object": "CollationHawResourceData",
+      "sha256": "ad1a2e0105c6eaf330b5a2c86ecb1c2734e570759535b41c14a1396486790ecb",
+      "size": 11280,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/haw.res"
+    },
+    {
+      "name": "coll/he.res",
+      "file": "data/icu78/coll/he.res",
+      "object": "CollationHeResourceData",
+      "sha256": "c6da1ea4492c4fd02a2e2e3f533579a8a3e09d5b5d454f10c0c2c8a14558c6f6",
+      "size": 576,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/he.res"
+    },
+    {
+      "name": "coll/he_IL.res",
+      "file": "data/icu78/coll/he_IL.res",
+      "object": "CollationHeILResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/he_IL.res"
+    },
+    {
+      "name": "coll/hi.res",
+      "file": "data/icu78/coll/hi.res",
+      "object": "CollationHiResourceData",
+      "sha256": "79aca6067871abcced0f2b101cdb9605e6d657d73b83e48d66211787ec2c9263",
+      "size": 6864,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/hi.res"
+    },
+    {
+      "name": "coll/hr.res",
+      "file": "data/icu78/coll/hr.res",
+      "object": "CollationHrResourceData",
+      "sha256": "18499dfd5cb3c34b3f7e9b53a1989e978f600610537579f69c64b06df5ed1efd",
+      "size": 20176,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/hr.res"
+    },
+    {
+      "name": "coll/hsb.res",
+      "file": "data/icu78/coll/hsb.res",
+      "object": "CollationHsbResourceData",
+      "sha256": "886f2d8c5ac311ae48a0be0ef3918b77281d3a276490bef0eb9a1249238e4020",
+      "size": 10144,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/hsb.res"
+    },
+    {
+      "name": "coll/hu.res",
+      "file": "data/icu78/coll/hu.res",
+      "object": "CollationHuResourceData",
+      "sha256": "14c58edc1e36d38a80c8461d08762339a74b3b416fccc2220ba9992746d9fd57",
+      "size": 18880,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/hu.res"
+    },
+    {
+      "name": "coll/hy.res",
+      "file": "data/icu78/coll/hy.res",
+      "object": "CollationHyResourceData",
+      "sha256": "cd82976e2df99e7fe4fcab746210c9040ce80f7c17b61de204576107b9686bf8",
+      "size": 6800,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/hy.res"
+    },
+    {
+      "name": "coll/id.res",
+      "file": "data/icu78/coll/id.res",
+      "object": "CollationIdResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/id.res"
+    },
+    {
+      "name": "coll/id_ID.res",
+      "file": "data/icu78/coll/id_ID.res",
+      "object": "CollationIdIDResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/id_ID.res"
+    },
+    {
+      "name": "coll/ig.res",
+      "file": "data/icu78/coll/ig.res",
+      "object": "CollationIgResourceData",
+      "sha256": "c99a93d0eede6d9d5bb571c34ee0f6919ddfc5828bc7fbdb5b1a51b1f5ac7045",
+      "size": 12608,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ig.res"
+    },
+    {
+      "name": "coll/in.res",
+      "file": "data/icu78/coll/in.res",
+      "object": "CollationInResourceData",
+      "sha256": "794563babf62e17d9e01eb4b02a41ad4ea06a30b762730ade3fc6643f7ba759f",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/in.res"
+    },
+    {
+      "name": "coll/in_ID.res",
+      "file": "data/icu78/coll/in_ID.res",
+      "object": "CollationInIDResourceData",
+      "sha256": "cdf155fb2b03f6a24bcfd9523f3c4c984fccef8d44119da0269f2464fb800dfb",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/in_ID.res"
+    },
+    {
+      "name": "coll/is.res",
+      "file": "data/icu78/coll/is.res",
+      "object": "CollationIsResourceData",
+      "sha256": "c697d5812cef89ce0b8c636f2d0b643b7b098e7e2b187a8873d03d34876d03a7",
+      "size": 24320,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/is.res"
+    },
+    {
+      "name": "coll/it.res",
+      "file": "data/icu78/coll/it.res",
+      "object": "CollationItResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/it.res"
+    },
+    {
+      "name": "coll/iw.res",
+      "file": "data/icu78/coll/iw.res",
+      "object": "CollationIwResourceData",
+      "sha256": "e7cdbd69da50c39f100ba7978256cd5b34832549caf0b30e09c656ce6d4b3dca",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/iw.res"
+    },
+    {
+      "name": "coll/iw_IL.res",
+      "file": "data/icu78/coll/iw_IL.res",
+      "object": "CollationIwILResourceData",
+      "sha256": "417753cdcfaa6b7874dd9c6d2c715824f3d09e0e66f12e6a137ea74ec3b2171a",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/iw_IL.res"
+    },
+    {
+      "name": "coll/ja.res",
+      "file": "data/icu78/coll/ja.res",
+      "object": "CollationJaResourceData",
+      "sha256": "9c57e64089dcb3d041e7f8bd05ad0085ab6e8fcd89e83a24d70119b3a510e188",
+      "size": 146160,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ja.res"
+    },
+    {
+      "name": "coll/ka.res",
+      "file": "data/icu78/coll/ka.res",
+      "object": "CollationKaResourceData",
+      "sha256": "e0048df8d6280297d96d794a40c22cc725d33c74dd5e326e99b3bdc151762392",
+      "size": 512,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ka.res"
+    },
+    {
+      "name": "coll/kk.res",
+      "file": "data/icu78/coll/kk.res",
+      "object": "CollationKkResourceData",
+      "sha256": "a123589d3057708451bdab1e82c0ccd11ed3db1e0d0ea7942c242ab0bf714869",
+      "size": 7232,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/kk.res"
+    },
+    {
+      "name": "coll/kk_Arab.res",
+      "file": "data/icu78/coll/kk_Arab.res",
+      "object": "CollationKkArabResourceData",
+      "sha256": "01469dc71d625eac2f36d380cb825ccf9e3acb96da64cb4952cecbc0784fa907",
+      "size": 7488,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/kk_Arab.res"
+    },
+    {
+      "name": "coll/kl.res",
+      "file": "data/icu78/coll/kl.res",
+      "object": "CollationKlResourceData",
+      "sha256": "f5ec941726bfe42af417844046b76dd93238c77d2143a92b72231db58c630aa3",
+      "size": 23264,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/kl.res"
+    },
+    {
+      "name": "coll/km.res",
+      "file": "data/icu78/coll/km.res",
+      "object": "CollationKmResourceData",
+      "sha256": "1e9561abbf9f22d3bae485336a1cee0d6b9095bdba77a1c3be6c1919860bd9cf",
+      "size": 9152,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/km.res"
+    },
+    {
+      "name": "coll/kn.res",
+      "file": "data/icu78/coll/kn.res",
+      "object": "CollationKnResourceData",
+      "sha256": "8ceb967157469e6ddd2d5857e93aed563a0182eef0da4473269e881eaad2f0d5",
+      "size": 34304,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/kn.res"
+    },
+    {
+      "name": "coll/ko.res",
+      "file": "data/icu78/coll/ko.res",
+      "object": "CollationKoResourceData",
+      "sha256": "6160baeb484f9088fc9e404f5cc9d5167738adad96e920cf7aa17887c8efe0a7",
+      "size": 289200,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ko.res"
+    },
+    {
+      "name": "coll/kok.res",
+      "file": "data/icu78/coll/kok.res",
+      "object": "CollationKokResourceData",
+      "sha256": "0badda061c43e6076cf8b4a3e76a3b136e736ee469f819c1f8d0f8e1432d14c5",
+      "size": 7008,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/kok.res"
+    },
+    {
+      "name": "coll/ku.res",
+      "file": "data/icu78/coll/ku.res",
+      "object": "CollationKuResourceData",
+      "sha256": "d53abda816dcba97174dab40a3a6f7bf656c42efb161d59ca5d1116126057cc6",
+      "size": 11056,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ku.res"
+    },
+    {
+      "name": "coll/ky.res",
+      "file": "data/icu78/coll/ky.res",
+      "object": "CollationKyResourceData",
+      "sha256": "0990225dc5c2c77189abecea4a0fd4cec8bdcc6bcb38fb7d9bd773dd48e821f4",
+      "size": 7056,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ky.res"
+    },
+    {
+      "name": "coll/lb.res",
+      "file": "data/icu78/coll/lb.res",
+      "object": "CollationLbResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lb.res"
+    },
+    {
+      "name": "coll/lij.res",
+      "file": "data/icu78/coll/lij.res",
+      "object": "CollationLijResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lij.res"
+    },
+    {
+      "name": "coll/lkt.res",
+      "file": "data/icu78/coll/lkt.res",
+      "object": "CollationLktResourceData",
+      "sha256": "8b22cf14f5bc5652d697922762fd4f63e4c0a28be6432001d4dab63964e44966",
+      "size": 9056,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lkt.res"
+    },
+    {
+      "name": "coll/ln.res",
+      "file": "data/icu78/coll/ln.res",
+      "object": "CollationLnResourceData",
+      "sha256": "f367f7f4adb2168442fb68946d1dd319b8abea6f8db7bf2b13103d707ed44f6a",
+      "size": 22816,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ln.res"
+    },
+    {
+      "name": "coll/lo.res",
+      "file": "data/icu78/coll/lo.res",
+      "object": "CollationLoResourceData",
+      "sha256": "996320f7c34547cdcc01725de840b68aae01f6a58b55ece37c1047c9eaf4a32b",
+      "size": 528,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lo.res"
+    },
+    {
+      "name": "coll/lt.res",
+      "file": "data/icu78/coll/lt.res",
+      "object": "CollationLtResourceData",
+      "sha256": "5c3eef58604f93e06553c405ebb4279ca43bfaa9aaf30a08d88a9c494eeeea45",
+      "size": 10256,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lt.res"
+    },
+    {
+      "name": "coll/lv.res",
+      "file": "data/icu78/coll/lv.res",
+      "object": "CollationLvResourceData",
+      "sha256": "311043156e1f29a7b0c91e5ed230f097e1f7a0ef85c5a1c9241e574fe086ea85",
+      "size": 11552,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/lv.res"
+    },
+    {
+      "name": "coll/mk.res",
+      "file": "data/icu78/coll/mk.res",
+      "object": "CollationMkResourceData",
+      "sha256": "e638e9de0575a50f8e62b69b101d242540cf527feeb38ca223df21446b95fdc6",
+      "size": 7232,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/mk.res"
+    },
+    {
+      "name": "coll/ml.res",
+      "file": "data/icu78/coll/ml.res",
+      "object": "CollationMlResourceData",
+      "sha256": "2a574d386da0611b98fb4d57c674943af579e9a6410c2eee000e40ed2d1733e8",
+      "size": 7632,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ml.res"
+    },
+    {
+      "name": "coll/mn.res",
+      "file": "data/icu78/coll/mn.res",
+      "object": "CollationMnResourceData",
+      "sha256": "2851be2dcf608129931cf823053068897318ff4afa16813f9408fbda4c3c9093",
+      "size": 560,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/mn.res"
+    },
+    {
+      "name": "coll/mo.res",
+      "file": "data/icu78/coll/mo.res",
+      "object": "CollationMoResourceData",
+      "sha256": "8a33e0698a6826f8dac61b1a4710f24304487cf11b70b60d98fe1a2c06912ef2",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/mo.res"
+    },
+    {
+      "name": "coll/mr.res",
+      "file": "data/icu78/coll/mr.res",
+      "object": "CollationMrResourceData",
+      "sha256": "7a6c4cb909dfb8d93bbec346bf8529706d20340d8965ec751b739f733f9b210c",
+      "size": 7088,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/mr.res"
+    },
+    {
+      "name": "coll/ms.res",
+      "file": "data/icu78/coll/ms.res",
+      "object": "CollationMsResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ms.res"
+    },
+    {
+      "name": "coll/mt.res",
+      "file": "data/icu78/coll/mt.res",
+      "object": "CollationMtResourceData",
+      "sha256": "80a928d60652c35eaedbd0976381c3006763c62d7aa2e700ae6a23625a73b864",
+      "size": 8272,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/mt.res"
+    },
+    {
+      "name": "coll/my.res",
+      "file": "data/icu78/coll/my.res",
+      "object": "CollationMyResourceData",
+      "sha256": "63bae2825d981851b2c470c8b13195005b988c59f2c107ffb76695229b224c39",
+      "size": 39296,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/my.res"
+    },
+    {
+      "name": "coll/nb.res",
+      "file": "data/icu78/coll/nb.res",
+      "object": "CollationNbResourceData",
+      "sha256": "260dbc349abea1332cf4b5d1700f03d9851d92aca91745bdcc34b24cc731a847",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/nb.res"
+    },
+    {
+      "name": "coll/nb_NO.res",
+      "file": "data/icu78/coll/nb_NO.res",
+      "object": "CollationNbNOResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/nb_NO.res"
+    },
+    {
+      "name": "coll/ne.res",
+      "file": "data/icu78/coll/ne.res",
+      "object": "CollationNeResourceData",
+      "sha256": "473fbf01b4071f33f0bcc7cf8ee727decf480441443d65708927c683eaea5cb9",
+      "size": 512,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ne.res"
+    },
+    {
+      "name": "coll/nl.res",
+      "file": "data/icu78/coll/nl.res",
+      "object": "CollationNlResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/nl.res"
+    },
+    {
+      "name": "coll/nn.res",
+      "file": "data/icu78/coll/nn.res",
+      "object": "CollationNnResourceData",
+      "sha256": "260dbc349abea1332cf4b5d1700f03d9851d92aca91745bdcc34b24cc731a847",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/nn.res"
+    },
+    {
+      "name": "coll/no.res",
+      "file": "data/icu78/coll/no.res",
+      "object": "CollationNoResourceData",
+      "sha256": "ec2c326a5c88dd1b0fc38ca0efb4b9ddf98aab3d2509ff372a9c3a11103a08d7",
+      "size": 28080,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/no.res"
+    },
+    {
+      "name": "coll/no_NO.res",
+      "file": "data/icu78/coll/no_NO.res",
+      "object": "CollationNoNOResourceData",
+      "sha256": "08a33c5da65939973fde483ffadb56234e4a4754d50143466754bf06e79070e6",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/no_NO.res"
+    },
+    {
+      "name": "coll/nso.res",
+      "file": "data/icu78/coll/nso.res",
+      "object": "CollationNsoResourceData",
+      "sha256": "55d7aa347cb6183513d5a4a0622f2691945c0340888904d036e7d8647844b703",
+      "size": 9360,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/nso.res"
+    },
+    {
+      "name": "coll/om.res",
+      "file": "data/icu78/coll/om.res",
+      "object": "CollationOmResourceData",
+      "sha256": "aa71899d2522761efdd7fd9f525d997c41cd480b668c4ea85e505ff741ddfb4c",
+      "size": 10320,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/om.res"
+    },
+    {
+      "name": "coll/or.res",
+      "file": "data/icu78/coll/or.res",
+      "object": "CollationOrResourceData",
+      "sha256": "43a344e3ddadc322c10f242366bbb8a52b919169ba701bb5d34b77ccf36810a7",
+      "size": 7024,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/or.res"
+    },
+    {
+      "name": "coll/pa.res",
+      "file": "data/icu78/coll/pa.res",
+      "object": "CollationPaResourceData",
+      "sha256": "ffd4ca89a5338a0b0c56890e1fa394b1761a1d6a7414083d6edc29740f52c504",
+      "size": 7264,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pa.res"
+    },
+    {
+      "name": "coll/pa_Guru.res",
+      "file": "data/icu78/coll/pa_Guru.res",
+      "object": "CollationPaGuruResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pa_Guru.res"
+    },
+    {
+      "name": "coll/pa_Guru_IN.res",
+      "file": "data/icu78/coll/pa_Guru_IN.res",
+      "object": "CollationPaGuruINResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pa_Guru_IN.res"
+    },
+    {
+      "name": "coll/pa_IN.res",
+      "file": "data/icu78/coll/pa_IN.res",
+      "object": "CollationPaINResourceData",
+      "sha256": "b1aa2093e091d2bd1428d8312125441eb37169f8851bbe864eb5773e986238b0",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pa_IN.res"
+    },
+    {
+      "name": "coll/pl.res",
+      "file": "data/icu78/coll/pl.res",
+      "object": "CollationPlResourceData",
+      "sha256": "872a553f99b5a89152054d38ed1b08242be89f03fc046e55a91a33bd7f405c19",
+      "size": 10256,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pl.res"
+    },
+    {
+      "name": "coll/ps.res",
+      "file": "data/icu78/coll/ps.res",
+      "object": "CollationPsResourceData",
+      "sha256": "36a19020cb6061b1add4904d34b16652894a39a57ca1dc102f13a4832629bfd5",
+      "size": 9120,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ps.res"
+    },
+    {
+      "name": "coll/pt.res",
+      "file": "data/icu78/coll/pt.res",
+      "object": "CollationPtResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/pt.res"
+    },
+    {
+      "name": "coll/res_index.res",
+      "file": "data/icu78/coll/res_index.res",
+      "object": "CollationResIndexResourceData",
+      "sha256": "c3307a90d023202706b032cfa2aa9aed45cdc8ba2add72b3bfe1c44658749349",
+      "size": 1536,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/res_index.res"
+    },
+    {
+      "name": "coll/ro.res",
+      "file": "data/icu78/coll/ro.res",
+      "object": "CollationRoResourceData",
+      "sha256": "2b86d876be3045551f777353f7af0eb1da131e6d43caa24f118ac049e9617700",
+      "size": 8992,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ro.res"
+    },
+    {
+      "name": "coll/root.res",
+      "file": "data/icu78/coll/root.res",
+      "object": "CollationRootResourceData",
+      "sha256": "cd0798b4b2d0469cb8d0588fccff37b09fb039ff6a9e879ece7145e7928feaad",
+      "size": 342240,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/root.res"
+    },
+    {
+      "name": "coll/ru.res",
+      "file": "data/icu78/coll/ru.res",
+      "object": "CollationRuResourceData",
+      "sha256": "08833827a8161c381b44b6d9c59da2af9274463b4c8d4ff15644897d76040271",
+      "size": 512,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ru.res"
+    },
+    {
+      "name": "coll/sa.res",
+      "file": "data/icu78/coll/sa.res",
+      "object": "CollationSaResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sa.res"
+    },
+    {
+      "name": "coll/se.res",
+      "file": "data/icu78/coll/se.res",
+      "object": "CollationSeResourceData",
+      "sha256": "76c92506ce6869da6c362b29e8ad24001582a05a43e485807c45a85e685ae634",
+      "size": 28960,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/se.res"
+    },
+    {
+      "name": "coll/sh.res",
+      "file": "data/icu78/coll/sh.res",
+      "object": "CollationShResourceData",
+      "sha256": "e09700397d3b3b1391ea1712dac2b60c5f23a2e6eb484edc0e6846605434341a",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sh.res"
+    },
+    {
+      "name": "coll/sh_BA.res",
+      "file": "data/icu78/coll/sh_BA.res",
+      "object": "CollationShBAResourceData",
+      "sha256": "a7c7599c9b50adce54e6ee44158c1717ba1a75c4195c088aa120b37a91f6145a",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sh_BA.res"
+    },
+    {
+      "name": "coll/sh_CS.res",
+      "file": "data/icu78/coll/sh_CS.res",
+      "object": "CollationShCSResourceData",
+      "sha256": "474b42b31570f9cc37f45db630c40be1c92e2c6572786c8fdae859e11c72f675",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sh_CS.res"
+    },
+    {
+      "name": "coll/sh_YU.res",
+      "file": "data/icu78/coll/sh_YU.res",
+      "object": "CollationShYUResourceData",
+      "sha256": "474b42b31570f9cc37f45db630c40be1c92e2c6572786c8fdae859e11c72f675",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sh_YU.res"
+    },
+    {
+      "name": "coll/si.res",
+      "file": "data/icu78/coll/si.res",
+      "object": "CollationSiResourceData",
+      "sha256": "56e19f79b3e660f09d6b67c817253cc1b680057b6e60ebea6eeda3426745cf62",
+      "size": 13840,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/si.res"
+    },
+    {
+      "name": "coll/sk.res",
+      "file": "data/icu78/coll/sk.res",
+      "object": "CollationSkResourceData",
+      "sha256": "5f68cb26a619600ccea671123248b35b08b5a6392eca8c635726b60d5ada22eb",
+      "size": 25424,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sk.res"
+    },
+    {
+      "name": "coll/sl.res",
+      "file": "data/icu78/coll/sl.res",
+      "object": "CollationSlResourceData",
+      "sha256": "e5b057f27bc476ba0b29f31d34a73cb0e2cc32f01c69cc92ef719cded555d4dd",
+      "size": 8672,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sl.res"
+    },
+    {
+      "name": "coll/smn.res",
+      "file": "data/icu78/coll/smn.res",
+      "object": "CollationSmnResourceData",
+      "sha256": "14a181352f28378d842693ca588114335afc3aecd72bb7f9a9c7fef0aa6ce6d7",
+      "size": 24304,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/smn.res"
+    },
+    {
+      "name": "coll/sq.res",
+      "file": "data/icu78/coll/sq.res",
+      "object": "CollationSqResourceData",
+      "sha256": "0a7227f17ff0477e361c779b3edd7d05d57db49400f4a3567d1f7769a0607234",
+      "size": 11888,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sq.res"
+    },
+    {
+      "name": "coll/sr.res",
+      "file": "data/icu78/coll/sr.res",
+      "object": "CollationSrResourceData",
+      "sha256": "813900e469a6fac76dfb0409e2bcd7bfb4f87206f92a040ff1ba5141588d2785",
+      "size": 6864,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr.res"
+    },
+    {
+      "name": "coll/sr_BA.res",
+      "file": "data/icu78/coll/sr_BA.res",
+      "object": "CollationSrBAResourceData",
+      "sha256": "22ef9a3be6950ffc6e964fac9ff0c3bb427227b7fcc142f98206efbef1fbf572",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_BA.res"
+    },
+    {
+      "name": "coll/sr_Cyrl.res",
+      "file": "data/icu78/coll/sr_Cyrl.res",
+      "object": "CollationSrCyrlResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Cyrl.res"
+    },
+    {
+      "name": "coll/sr_Cyrl_BA.res",
+      "file": "data/icu78/coll/sr_Cyrl_BA.res",
+      "object": "CollationSrCyrlBAResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Cyrl_BA.res"
+    },
+    {
+      "name": "coll/sr_Cyrl_ME.res",
+      "file": "data/icu78/coll/sr_Cyrl_ME.res",
+      "object": "CollationSrCyrlMEResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Cyrl_ME.res"
+    },
+    {
+      "name": "coll/sr_Cyrl_RS.res",
+      "file": "data/icu78/coll/sr_Cyrl_RS.res",
+      "object": "CollationSrCyrlRSResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Cyrl_RS.res"
+    },
+    {
+      "name": "coll/sr_Latn.res",
+      "file": "data/icu78/coll/sr_Latn.res",
+      "object": "CollationSrLatnResourceData",
+      "sha256": "fb99b764fa6ecd161e7d5a28bdb6ffdfbd22fa6bc7791690ab3f9bb00a7c556e",
+      "size": 19824,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Latn.res"
+    },
+    {
+      "name": "coll/sr_Latn_BA.res",
+      "file": "data/icu78/coll/sr_Latn_BA.res",
+      "object": "CollationSrLatnBAResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Latn_BA.res"
+    },
+    {
+      "name": "coll/sr_Latn_RS.res",
+      "file": "data/icu78/coll/sr_Latn_RS.res",
+      "object": "CollationSrLatnRSResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_Latn_RS.res"
+    },
+    {
+      "name": "coll/sr_ME.res",
+      "file": "data/icu78/coll/sr_ME.res",
+      "object": "CollationSrMEResourceData",
+      "sha256": "0a99d01a8da28fb970af70c8f2658eff82716a1b5b08396ed57b1adbda0a35db",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_ME.res"
+    },
+    {
+      "name": "coll/sr_RS.res",
+      "file": "data/icu78/coll/sr_RS.res",
+      "object": "CollationSrRSResourceData",
+      "sha256": "4a53c89fb62a3ba07afc3d98a044f7c1716318200a68cbcddcf13494d01501e4",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sr_RS.res"
+    },
+    {
+      "name": "coll/st.res",
+      "file": "data/icu78/coll/st.res",
+      "object": "CollationStResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/st.res"
+    },
+    {
+      "name": "coll/sv.res",
+      "file": "data/icu78/coll/sv.res",
+      "object": "CollationSvResourceData",
+      "sha256": "e4e627444eaeab27bf6b00954ada43b9c9ea3010b9e7d9e9c97edd78599442ac",
+      "size": 35168,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sv.res"
+    },
+    {
+      "name": "coll/sw.res",
+      "file": "data/icu78/coll/sw.res",
+      "object": "CollationSwResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/sw.res"
+    },
+    {
+      "name": "coll/ta.res",
+      "file": "data/icu78/coll/ta.res",
+      "object": "CollationTaResourceData",
+      "sha256": "f40acbe6d666da8b0cec4178dbaaeb2821cbe113804ce0adbd69699cd02d0ead",
+      "size": 8080,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ta.res"
+    },
+    {
+      "name": "coll/te.res",
+      "file": "data/icu78/coll/te.res",
+      "object": "CollationTeResourceData",
+      "sha256": "798b177908214bf0026506dd562235844930fc76be6e100932c5c6206da3f361",
+      "size": 6864,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/te.res"
+    },
+    {
+      "name": "coll/th.res",
+      "file": "data/icu78/coll/th.res",
+      "object": "CollationThResourceData",
+      "sha256": "08e5c3cf1f30e5e9d95f1f870b99f6ef27c76996a5e4ce239780855d64d30f0c",
+      "size": 6992,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/th.res"
+    },
+    {
+      "name": "coll/tk.res",
+      "file": "data/icu78/coll/tk.res",
+      "object": "CollationTkResourceData",
+      "sha256": "3b592b0a4414a640a21824787f41d045158bd1fd3d8c9f20ea290aa003fdabf5",
+      "size": 10576,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/tk.res"
+    },
+    {
+      "name": "coll/tn.res",
+      "file": "data/icu78/coll/tn.res",
+      "object": "CollationTnResourceData",
+      "sha256": "55d7aa347cb6183513d5a4a0622f2691945c0340888904d036e7d8647844b703",
+      "size": 9360,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/tn.res"
+    },
+    {
+      "name": "coll/to.res",
+      "file": "data/icu78/coll/to.res",
+      "object": "CollationToResourceData",
+      "sha256": "a980d1c7383834374984b036f560615acdbe5bc5227e8bbce432b861fed1f12a",
+      "size": 12160,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/to.res"
+    },
+    {
+      "name": "coll/tr.res",
+      "file": "data/icu78/coll/tr.res",
+      "object": "CollationTrResourceData",
+      "sha256": "ae5aeb1b34b90542d870bc2534359e3fa8831a6752e1702f49408a7c15ad2d51",
+      "size": 21152,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/tr.res"
+    },
+    {
+      "name": "coll/ug.res",
+      "file": "data/icu78/coll/ug.res",
+      "object": "CollationUgResourceData",
+      "sha256": "ca47fbf627d0c56121354775b4ed72c596c41d34e20bb68864c090dbb0156e50",
+      "size": 7472,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ug.res"
+    },
+    {
+      "name": "coll/uk.res",
+      "file": "data/icu78/coll/uk.res",
+      "object": "CollationUkResourceData",
+      "sha256": "044a598d079c682e6d65857fbc2368c8eb02e0c921075133f868978a561abf54",
+      "size": 7280,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/uk.res"
+    },
+    {
+      "name": "coll/ur.res",
+      "file": "data/icu78/coll/ur.res",
+      "object": "CollationUrResourceData",
+      "sha256": "e8a982ff61a804ec93fe8a2ab50819a99c4664a47bf1e91403181c24181a77b6",
+      "size": 8464,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ur.res"
+    },
+    {
+      "name": "coll/uz.res",
+      "file": "data/icu78/coll/uz.res",
+      "object": "CollationUzResourceData",
+      "sha256": "353d39ed296b5bd553386b87fdf0c65bc148ba336d651e944fe5e688b0c864b3",
+      "size": 8672,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/uz.res"
+    },
+    {
+      "name": "coll/vi.res",
+      "file": "data/icu78/coll/vi.res",
+      "object": "CollationViResourceData",
+      "sha256": "c1dee6ce32de21e254e802b39375c79cede6559693a5bde90ea7060d666bf586",
+      "size": 37088,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/vi.res"
+    },
+    {
+      "name": "coll/wae.res",
+      "file": "data/icu78/coll/wae.res",
+      "object": "CollationWaeResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/wae.res"
+    },
+    {
+      "name": "coll/wo.res",
+      "file": "data/icu78/coll/wo.res",
+      "object": "CollationWoResourceData",
+      "sha256": "ae5a70c8b5158686399849d2620a53bc4f3b7af3a0c39183712a0fcd75a78300",
+      "size": 10048,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/wo.res"
+    },
+    {
+      "name": "coll/xh.res",
+      "file": "data/icu78/coll/xh.res",
+      "object": "CollationXhResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/xh.res"
+    },
+    {
+      "name": "coll/yi.res",
+      "file": "data/icu78/coll/yi.res",
+      "object": "CollationYiResourceData",
+      "sha256": "6f7136d6bccbe171b50bfe06da39df517d22899339cb4a7e5e0ac7947d0aaef0",
+      "size": 7712,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yi.res"
+    },
+    {
+      "name": "coll/yo.res",
+      "file": "data/icu78/coll/yo.res",
+      "object": "CollationYoResourceData",
+      "sha256": "e4f93466227acf0b43f11e1443183a56099480921616030bf3e8bcc9bbab5e8f",
+      "size": 9168,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yo.res"
+    },
+    {
+      "name": "coll/yue.res",
+      "file": "data/icu78/coll/yue.res",
+      "object": "CollationYueResourceData",
+      "sha256": "1aae15cdd12463aba1a6164a29e8fe8caceeefc71f081202715e206e5c5668be",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yue.res"
+    },
+    {
+      "name": "coll/yue_CN.res",
+      "file": "data/icu78/coll/yue_CN.res",
+      "object": "CollationYueCNResourceData",
+      "sha256": "8ce855db910d9484d0814e164ca160f5c0b333f980fc112f6fbf75ab6ff160a5",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yue_CN.res"
+    },
+    {
+      "name": "coll/yue_Hans.res",
+      "file": "data/icu78/coll/yue_Hans.res",
+      "object": "CollationYueHansResourceData",
+      "sha256": "8ce855db910d9484d0814e164ca160f5c0b333f980fc112f6fbf75ab6ff160a5",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yue_Hans.res"
+    },
+    {
+      "name": "coll/yue_Hans_CN.res",
+      "file": "data/icu78/coll/yue_Hans_CN.res",
+      "object": "CollationYueHansCNResourceData",
+      "sha256": "8ce855db910d9484d0814e164ca160f5c0b333f980fc112f6fbf75ab6ff160a5",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yue_Hans_CN.res"
+    },
+    {
+      "name": "coll/yue_Hant.res",
+      "file": "data/icu78/coll/yue_Hant.res",
+      "object": "CollationYueHantResourceData",
+      "sha256": "1aae15cdd12463aba1a6164a29e8fe8caceeefc71f081202715e206e5c5668be",
+      "size": 96,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/yue_Hant.res"
+    },
+    {
+      "name": "coll/zh.res",
+      "file": "data/icu78/coll/zh.res",
+      "object": "CollationZhResourceData",
+      "sha256": "6a65a43d99a74fede5665d93992dbc2c413e99d727014ba7c4b32c5af868c2ea",
+      "size": 712480,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh.res"
+    },
+    {
+      "name": "coll/zh_CN.res",
+      "file": "data/icu78/coll/zh_CN.res",
+      "object": "CollationZhCNResourceData",
+      "sha256": "5a7321873b8338cfa70650cf34e1b815cc8cddd162a8a321bf5e8c8c172dfb88",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_CN.res"
+    },
+    {
+      "name": "coll/zh_HK.res",
+      "file": "data/icu78/coll/zh_HK.res",
+      "object": "CollationZhHKResourceData",
+      "sha256": "868ff461adeb4a556c5fc89f5e48e11382e338399e5bf1922aaa9fc5735b3c20",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_HK.res"
+    },
+    {
+      "name": "coll/zh_Hans.res",
+      "file": "data/icu78/coll/zh_Hans.res",
+      "object": "CollationZhHansResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hans.res"
+    },
+    {
+      "name": "coll/zh_Hans_CN.res",
+      "file": "data/icu78/coll/zh_Hans_CN.res",
+      "object": "CollationZhHansCNResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hans_CN.res"
+    },
+    {
+      "name": "coll/zh_Hans_SG.res",
+      "file": "data/icu78/coll/zh_Hans_SG.res",
+      "object": "CollationZhHansSGResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hans_SG.res"
+    },
+    {
+      "name": "coll/zh_Hant.res",
+      "file": "data/icu78/coll/zh_Hant.res",
+      "object": "CollationZhHantResourceData",
+      "sha256": "edea9ce0489fe42530a87b3d0aa8eec60e9402381485f037a8e6f12a0579bfbe",
+      "size": 128,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hant.res"
+    },
+    {
+      "name": "coll/zh_Hant_HK.res",
+      "file": "data/icu78/coll/zh_Hant_HK.res",
+      "object": "CollationZhHantHKResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hant_HK.res"
+    },
+    {
+      "name": "coll/zh_Hant_MO.res",
+      "file": "data/icu78/coll/zh_Hant_MO.res",
+      "object": "CollationZhHantMOResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hant_MO.res"
+    },
+    {
+      "name": "coll/zh_Hant_TW.res",
+      "file": "data/icu78/coll/zh_Hant_TW.res",
+      "object": "CollationZhHantTWResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_Hant_TW.res"
+    },
+    {
+      "name": "coll/zh_MO.res",
+      "file": "data/icu78/coll/zh_MO.res",
+      "object": "CollationZhMOResourceData",
+      "sha256": "0509e8ed87f8f9d433d1a8828f063a384adb0742de4d6df01599e597fd604f51",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_MO.res"
+    },
+    {
+      "name": "coll/zh_SG.res",
+      "file": "data/icu78/coll/zh_SG.res",
+      "object": "CollationZhSGResourceData",
+      "sha256": "f12257b645848911fa6996ac16a5d5b84b23aa9bc92350d6008b62ed514c4472",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_SG.res"
+    },
+    {
+      "name": "coll/zh_TW.res",
+      "file": "data/icu78/coll/zh_TW.res",
+      "object": "CollationZhTWResourceData",
+      "sha256": "3836750eb62a02a3dbdc6690b265d51c395bc256ca1bf558a91bdd6a56a7d2a3",
+      "size": 112,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zh_TW.res"
+    },
+    {
+      "name": "coll/zu.res",
+      "file": "data/icu78/coll/zu.res",
+      "object": "CollationZuResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zu.res"
     }
   ]
 }

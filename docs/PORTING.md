@@ -7040,3 +7040,38 @@ compileTestKotlinLinuxX64 passed together in 3m 29s. Linux tests compiled, not
 executed on macOS. The test-only package-local Java callback adapter allows the
 oracle to override ICU4J's package-private callback method; production encoding
 and callbacks are implemented entirely in commonMain.
+
+## Complete collation resource tree and locale tailoring loading
+
+Embedded all 176 .res files from the pinned ICU4J 78.3 collate data directory,
+including root rules, locale/type tailorings, aliases and res_index. Together
+with ucadata.icu, the complete coll/ directory contains 177 resources and
+3,366,608 bytes. The repository now embeds 395 resources overall. Each new
+manifest entry records size, SHA-256 and the exact collate-module source path;
+generated common Base64 data requires no host ICU or JVM resource loader.
+
+Ported CollationLoader's lazy, synchronized/volatile root-rules publication,
+ASCII type normalization, locale-root opening, search-type/default/standard
+fallback chain, root-tailoring reuse, binary loading, lazy rules and informational
+valid/actual locale keywords. It preserves mutation ordering for the output
+locale and source explicit IO wrapper text. Existing common binary IO failures
+use ICUUncheckedIOException in place of Java checked IOException.
+
+Common tests load real tailorings for European, Chinese, Korean, Thai, Swedish
+and Arabic locales, exercise unknown-locale fallback and uppercase type lookup,
+and verify lazy/root rules. JVM tests cover every locale in upstream
+InstalledLocales plus fallback variants with ten type selections per locale.
+They compare valid/actual locale names, root identity, versions, rules, settings,
+fast-Latin caches, CE arrays, contexts, unsafe sets and sampled trie mappings.
+Explicit rules loading is compared separately against the package-private source
+method. The first resource-import naming pass was corrected to retain empty
+locale components in de__PHONEBOOK and es__TRADITIONAL object names.
+
+Public collator APIs and tailoring compilation remain pending; locale binary
+loading is now implemented in common code rather than supplied by oracle tests.
+
+Verification: generate-data.py --check passed for all 395 resources; final
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed together
+in 5m 28s. Linux tests compiled, not executed on macOS. Both the embedded-data
+import and the locale-loader oracle checks completed without production fixes
+after the initial implementation.
