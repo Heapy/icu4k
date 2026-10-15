@@ -6600,3 +6600,42 @@ were compiled, not run on macOS. This is root weight/tailoring-table support,
 not resource loading, a runtime CE iterator or public Collator support. The real
 root table is still supplied only by the JVM test oracle; embedded collation
 resources and the remaining runtime/tailoring pipeline are pending.
+
+### CollationFCD fast-path tables
+
+The next runtime-iterator dependency is CollationFCD, now fully ported to common
+code: BMP leading/trailing combining-class flags, conservative supplementary
+leading-class detection and both Tibetan-composite-vowel checks. The source's
+exact static bitmaps are retained, including deliberate surrogate-block and
+Tibetan false positives. These are not recomputed from normalization properties
+or replaced with a more precise detector. Negative sentinels, oversized raw
+Int behavior and UTF16 lead-surrogate conversion preserve the source policy.
+JVM assertions are captured at class initialization; JS/Native retain the
+existing disabled convention and explicit bounds checks.
+
+All 4293 byte/int entries are extracted from the pinned ICU4J 78.3 source file
+(SHA-256 b83a2cd29b7750ac9658b78408c3cffdaa163ea729e25d6bb9270478dd1c07e4).
+The checked-in data/collation-fcd.json records the source path and commit;
+scripts/generate-collation-fcd.py verifies its checksum and ICU manifest revision
+and deterministically emits CollationFCDData.kt. CI checks that the generated
+file is current. Reproduce with:
+
+```sh
+python3 scripts/generate-collation-fcd.py --check
+```
+
+Common tests compare ICU4J-generated counts and ordered fingerprints over every
+BMP code unit and all Unicode code points, plus sentinels, bounds and concrete
+false-positive examples. JVM tests directly compare each bitmap entry, both
+BMP functions at every BMP value, both code-point functions through U+10FFFF,
+and every 16-bit FCD value. Additional raw-Int and isolated class-loader tests
+cover assertions disabled at initialization and later policy changes. This
+component prepares contraction/FCD iteration; CollationIterator and its UTF-16 /
+FCD variants, collation resources/loaders, public collators and the default RBNF
+scanner are still pending.
+
+Verification: generator --check and the full jvmTest, jsNodeTest,
+macosArm64Test, compileTestKotlinLinuxX64 command passed on the first run,
+5m 6s. Linux test sources compiled, not executed on macOS. No production
+CollationIterator implementation or collation resource availability is claimed
+by this standalone prerequisite stage.
