@@ -32,6 +32,8 @@ import io.github.heapy.icu4k.impl.data.BreakEnUsPosixResourceData
 import io.github.heapy.icu4k.impl.data.RegionFrResourceData
 import io.github.heapy.icu4k.impl.data.RegionArResourceData
 import io.github.heapy.icu4k.impl.data.RegionJaResourceData
+import io.github.heapy.icu4k.impl.data.PluralsResourceData
+import io.github.heapy.icu4k.impl.data.PluralRangesResourceData
 import io.github.heapy.icu4k.impl.data.UnitsResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyRootResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyPoolResourceData
@@ -172,6 +174,8 @@ object ICUData {
         "region/ar.res" -> RegionArResourceData.copy()
         "region/ja.res" -> RegionJaResourceData.copy()
         "units.res" -> UnitsResourceData.copy()
+        "plurals.res" -> PluralsResourceData.copy()
+        "pluralRanges.res" -> PluralRangesResourceData.copy()
         "curr/root.res" -> CurrencyRootResourceData.copy()
         "curr/pool.res" -> CurrencyPoolResourceData.copy()
         "curr/en.res" -> CurrencyEnResourceData.copy()

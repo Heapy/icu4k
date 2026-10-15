@@ -718,6 +718,20 @@
       "object": "RegionJaResourceData",
       "sha256": "0fcc9f4586197b2f0f76a4ea1f4eee99781679a8be9d6e9aae415820c9354f44",
       "size": 5296
+    },
+    {
+      "name": "plurals.res",
+      "file": "data/icu78/plurals.res",
+      "object": "PluralsResourceData",
+      "sha256": "2d06aa7251c8b96c777c79a51fb4cdf78f008180f22e263b71146249eff68c14",
+      "size": 35984
+    },
+    {
+      "name": "pluralRanges.res",
+      "file": "data/icu78/pluralRanges.res",
+      "object": "PluralRangesResourceData",
+      "sha256": "5d5a79c3039e1809ee865255532035b50c6273c0f445fc9955a01ced44942653",
+      "size": 3520
     }
   ]
 }

@@ -4202,3 +4202,27 @@ mutation and all keyword statuses. A locale corpus test additionally compares
 sample expansion, uniqueness and status for every distinct cardinal/ordinal
 rule set from ICU4J. This is still an internal layer; public plural-rule and
 quantity adapters, locale resource loading and remaining APIs are pending.
+
+### Locale plural loader and standard plural ranges
+
+Pinned `plurals.res` and `pluralRanges.res` are now embedded alongside the other
+ICU 78.3 resources (100 generated resources total). `StandardPluralRanges` loads
+language-to-set mappings and category triples through the common resource bundle
+reader. It preserves language-only selection, missing-language default identity,
+nullable category matching and `other` fallback.
+
+`PluralRulesLoaderCore` loads cardinal/ordinal IDs, canonical locale fallback,
+available locales and functional equivalents. Its nullable-result cache uses
+both rule ID and range-set ID, with publication under the shared monitor boundary;
+parsing occurs outside the cache lock, and a concurrent winner is retained.
+Absent rules use the shared default, while absent-resource initialization retains
+empty maps. Loaded objects currently expose the internal rule list plus ranges;
+the public PluralRules.Factory adapter remains pending.
+
+JVM oracle tests cover every available locale plus variants, aliases, keywords
+and unknown IDs; equivalent-locale availability flags; full descriptions and
+selection; cache identity partitions; and concurrent first initialization. Range
+oracle tests cover every resource set, all category pairs (including null), all
+range locales and missing-set failure. Common tests exercise locale selection,
+cardinal/ordinal differences, fallback, cache identity and French/Russian ranges.
+The data generator verifies pinned checksums and generated output consistency.
