@@ -4979,3 +4979,29 @@ exact-number/custom patterns, quoted zeros, literal-only patterns, magnitude lim
 partial failure state and the live mutable list contract. Common tests exercise
 custom and resource patterns with fallback on JVM, JS and Native. Verification:
 jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
+
+### Compact notation handler and factories
+
+Added CompactNotation, forCustomData and the cached compactShort/compactLong
+Notation factories. The handler loads CompactData, uses carry-aware rounding to
+select magnitude and plural before updating the quantity exponent, installs a
+compact middle modifier and consumes the rounder. Zero/NaN/infinity follow the
+source zeroish branch. Safe handlers precompute immutable modifiers; unsafe
+handlers update the supplied MutablePatternModifier in place. A null pattern
+preserves the existing middle modifier. Custom data is retained by reference by
+the notation and read when constructing each handler. Empty custom data does not
+dereference a null build reference, including during safe precomputation.
+
+Precomputation uses the platform HashSet, with the original JDK HashSet on JVM.
+Its unspecified iteration order can differ on JS/Native, including the final
+pattern left on the mutable build reference and callback order during construction;
+formatted pattern selection is keyed by pattern string. JVM oracle tests compare
+this callback order as well as quantity state, exponents, rounding consumption,
+modifier text and fields for short/long decimal/currency data in seven locales,
+custom exact-number variants, boundary carries and special values. Common tests
+exercise the full compact stage and modifiers in both safe and unsafe modes.
+NumberFormatter and its user-facing complete formatting pipeline remain pending.
+Additional JVM oracle checks preserve an existing default modifier when no compact
+pattern applies and compare parent/null-rounder/constructor failure order. All
+checks passed: jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64;
+the JVM-only failure tests passed in a subsequent jvmTest run.
