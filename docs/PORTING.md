@@ -7075,3 +7075,35 @@ jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed togethe
 in 5m 28s. Linux tests compiled, not executed on macOS. Both the embedded-data
 import and the locale-loader oracle checks completed without production fixes
 after the initial implementation.
+
+## Contraction/prefix and expansion enumeration
+
+Ported ContractionsAndExpansions and its CESink callbacks. It enumerates trie
+ranges, resolves tailoring/base mappings, follows context tries, reverses stored
+prefixes, collects contraction/expansion strings and emits simple or expanded
+CEs (including Hangul decomposition). Array callbacks retain backing-array
+identity and buffer reuse; nullable sinks/sets skip only the corresponding work.
+Failed callbacks leave prefixes, suffixes, tailored/range sets and CE scratch
+storage at the source operation's failure point. Reuse retains source state,
+including failures when collecting into an already frozen tailored set.
+
+The source range-subtraction quirk is preserved: after visiting un-tailored
+subranges, enumeration still visits the original range. Prefix reversal matches
+Java StringBuilder.reverse(), including repairing reversed surrogate pairs and
+forming pairs from initially reversed units. Invalid appendCodePoint arguments
+retain the source's uppercase hexadecimal error message rather than borrowing
+UTF16's different validation text.
+
+Common tests cover context strings, expansions, direct CE-array aliasing,
+optional prefixes/sinks, Hangul set collection, unexpected tags and dynamically
+constructed surrogate prefixes. JVM tests compare full root, five locale and
+two rule-built tailoring enumerations, callback order and array identity groups,
+repeated use, callback failures and all private accumulator fields. Additional
+tests exercise individual code points, all CE32 tags, fallback overlap and
+string-range helper boundaries/null sets. Source rules/data remain test-only.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 22s (Linux compiled, not executed
+on macOS). The boundary oracle found the appendCodePoint error-message mismatch;
+the common helper now reproduces the source message. Surrogate prefix reversal
+passed on all three executed platforms.
