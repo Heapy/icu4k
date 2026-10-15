@@ -7254,3 +7254,39 @@ executed on macOS. The final matrix includes changed/failing modifiers,
 post-suppress copies, live iterator state, and optimized-U+0000 table reuse.
 The null-output build path explicitly evaluates trie freezing before dereferencing
 the output receiver to retain Java assignment evaluation order.
+
+## CollationBuilder stable node graph and weight allocation
+
+Ported the node-graph portion of CollationBuilder as CollationNodeGraph, a common
+component for the remaining rule-to-tailoring compiler. It provides stable node
+indexes, sorted root-primary lookup, doubly linked insertion, implied/explicit
+common weights, below-common secondary/tertiary flags, preceding root weights,
+temporary CE/CE32 encoding and final primary/secondary/tertiary/quaternary weight
+allocation. Final allocation destroys graph links in tailored nodes exactly as
+in ICU4J; subsequent finalization must consume those slots as CEs.
+
+All field masks and signed widening retain Java arithmetic, including Int shifts
+before widening next indexes and temporary strength fields. An initially
+transcribed previous-index mask was corrected against the hexadecimal source
+before oracle tests. No eager node-limit validation replaces source mutations.
+
+Common tests exercise temporary index round trips, stable links, below-common
+nodes, allocated weight ordering and partial quaternary overflow. JVM tests
+compare 23,000 full-width bit-helper cases and 80 histories of 70 graph mutations,
+checking complete vector backing storage and partial weight-allocation failures.
+Additional tests parse actual rule chains with the original Sink, capture their
+pre-allocation graphs and compare final allocation against ICU4J. Rule chains
+cover reset-before, ignorable and variable boundaries and quaternary exhaustion.
+
+The CollationBuilder entry point is not yet implemented: reset/relation handling,
+case propagation, canonical closure and wiring to the graph/finalizer remain
+pending. This extracted graph will be used by that entry point, not presented as
+a completed rule compiler. Its constructor accepts the enclosing builder's assertion policy; the default
+follows the graph class for standalone checks.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 40s. Linux tests compiled, not
+executed on macOS. The real-rule replay fixture initially expected null for a
+successful Java void call; the adapter's Unit result is now checked correctly.
+Preceding weak weights, real-rule graph allocation and partial failures matched
+ICU4J, and the common graph tests passed on all executed platforms.
