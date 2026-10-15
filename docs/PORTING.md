@@ -7400,3 +7400,34 @@ need a change for that test failure.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 4m 4s, including the custom
 CharSequence freeze/release test. Linux tests were compiled, not executed on macOS.
+
+### RuleBasedCollator configuration transitions
+
+Ported the RuleBasedCollator setter/getter layer into the internal
+RuleBasedCollatorSettings, ready for the public wrapper. This covers case-first,
+alternate handling, case level, decomposition, backward secondary, strength,
+numeric mode, variable top, max-variable groups, reordering and construction
+default restoration. Each successful change refreshes Fast Latin options through
+the original path. Reference-identity no-ops, copy-on-write before strength/reorder
+validation, input array copying and default reorder table sharing are retained.
+Deprecated Hiragana setters remain frozen-checked no-ops.
+
+The source setMaxVariable method omits checkNotFrozen; this port deliberately
+retains that behavior, including its validation order. String variable-top input
+must map to exactly one CE and is pinned to the end of a supported special group.
+The integer overload preserves unsigned primary interpretation and exact explicit
+validation messages. Other setters reject frozen state before even a no-op or
+argument validation, matching ICU4J.
+
+A targeted JVM run passed for 1,500 mixed configuration transitions across root,
+custom-default and reordered tailors. Checks compare all option/reordering fields,
+Fast Latin arrays, default/reference ownership, current keys/comparisons, failures,
+freeze and cloned settings. Retained fixture generations make the COW oracle
+independent of GC cleanup timing. Further tests check caller reorder-array copies
+and default table sharing. Common tests cover configuration effects on ordering,
+clone isolation, default restoration, validation order and frozen behavior.
+Public Collator/RuleBasedCollator wiring and locale service remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 27s. Linux tests were compiled,
+not run on this macOS host. Caller-array/default-sharing coverage also passed.
