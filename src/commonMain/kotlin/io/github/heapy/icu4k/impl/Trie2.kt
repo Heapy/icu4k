@@ -6,7 +6,7 @@ package io.github.heapy.icu4k.impl
 import io.github.heapy.icu4k.text.UTF16
 import io.github.heapy.icu4k.util.BinaryBuffer
 
-/** ICU's legacy immutable Unicode trie, including alternate lead-code-unit values. */
+/** ICU's legacy Unicode trie, including alternate lead-code-unit values. */
 abstract class Trie2 protected constructor() : Iterable<Trie2.Range> {
     internal class UTrie2Header {
         var signature = 0x54726932

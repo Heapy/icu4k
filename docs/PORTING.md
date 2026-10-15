@@ -7173,3 +7173,38 @@ compileTestKotlinLinuxX64 passed together in 4m 12s. Linux tests compiled, not
 executed on macOS. Wrapped callback causes passed on all executed platforms;
 unique upstream rule strings and actual imports matched ICU4J on JVM. No
 production corrections were required after initial compilation/oracle comparison.
+
+## Writable legacy trie and exact frozen compaction
+
+Ported Trie2Writable, required by CollationDataBuilder. It includes protected
+ASCII/UTF-8 blocks, index/data allocation, shared range blocks, reference counts
+and free lists, overwrite/initial-only ranges, alternate UTF-16 lead-unit values,
+copy construction, high-start discovery, data/index deduplication and overlap,
+and exact 16/32-bit frozen layout/header construction. Runtime size failures
+occur after the source's in-place compaction, retaining its state.
+
+The port preserves source details rather than repairing them: the builder has
+its own shadowed index2NullOffset, and uncompact transfers the same fields as
+ICU4J without copying map or firstFreeBlock. Mutable and immutable indexes remain
+separate. The common Trie2 base exposes serialization operations which have no
+writable equivalent in ICU4J; callers must explicitly freeze before serializing.
+Private debug printing, disabled in the source, is not exposed as a new API.
+
+Common tests cover ranges, initial-only writes, lead-unit/code-point separation,
+16-bit truncation, copy/snapshot independence, post-freeze mutation and hash
+invalidation. JVM tests compare private scalars and complete backing arrays over
+4,800 random mutation steps plus post-compaction histories, exact serialized
+bytes for both frozen widths, copying the real root trie and every Unicode
+mapping, uniform/high-start/surrogate cases, allocation growth and oversized
+runtime failures. Initial test compilation issues were fixed by using reflection
+for a source package-private field and selecting Trie2 as the comparison type.
+
+CollationDataBuilder, final tailoring construction and public collator APIs
+remain pending; this stage supplies their mutable trie dependency.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 40s. Linux tests compiled, not
+executed on macOS. Exact frozen bytes, mutable internal state and runtime-limit
+failure state matched ICU4J; common snapshot/lead-unit/hash tests passed on all
+three executed platforms. No production corrections were required after the
+initial compilation and oracle comparison.
