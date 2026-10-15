@@ -7001,3 +7001,42 @@ compileTestKotlinLinuxX64 passed together. Linux tests compiled, not executed on
 macOS. The initial real-key oracle fixture was corrected to initialize the lazy
 length caches through the same constructor; no production correction was
 needed after the initial comparison.
+
+## Sort-key generation through quaternary level
+
+Ported the full CollationKeys encoder, SortKeyByteSink, LevelCallback and the
+private SortKeyLevel buffers. Encoding includes primary compression and script
+reordering; forward/backward secondary compression with merge-delimited reversal;
+case nibbles; all three tertiary case modes; shifted variables and quaternary
+compression. It preserves minimum-level masks, callback ordering, early return
+on primary overflow without preflight, and the source's omission of a final
+terminator byte. CollationDataReader now uses the actual SEC_COMMON_HIGH constant.
+
+Sink operations preserve virtual resize/overflow callbacks, separate attempted
+byte counts, mutation-before-failure ordering, fixed-capacity preflight and
+buffer replacement. Level buffers preserve 40-byte initial storage, source
+capacity growth, byte truncation, reverse writes and assertion behavior. The
+private nested level's assertion status follows the enclosing CollationKeys
+class, verified against the upstream bytecode.
+
+Common tests verify exact bytes, CE-comparison ordering, level callbacks and
+fixed-capacity counters. JVM oracle tests compare complete buffers, sink calls,
+callback calls, iterator offsets and CE storage for 38,000 root/locale cases
+across strengths, case settings, shifted/backward/numeric modes and reordering.
+Another 4,140 synthetic cases cover rare tertiary/quaternary weights and primary
+compression transitions. Callback/minimum-level tests include Java shift
+boundaries; fixed-capacity tests exercise preflight and early termination.
+There are also 1,000 sink mutation steps and 3,000 private-level operations.
+The latter resets each short series to bound memory: the initial fixture
+incorrectly called the doubling capacity method indefinitely and exhausted its
+test heap. It was corrected without a production change.
+
+Locale data used by oracle tests remains test-only; the common embedded root is
+usable by this encoder. Public collators, locale collation loading and tailoring
+compilation remain pending.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 29s. Linux tests compiled, not
+executed on macOS. The test-only package-local Java callback adapter allows the
+oracle to override ICU4J's package-private callback method; production encoding
+and callbacks are implemented entirely in commonMain.

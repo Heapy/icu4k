@@ -87,8 +87,7 @@ internal object CollationDataReader {
             data.rootElements=LongArray(count)
             for (i in 0 until count) data.rootElements!![i]=inBytes.readInt().toLong() and 0xffffffffL
             if (data.rootElements!![CollationRootElements.IX_COMMON_SEC_AND_TER_CE] != Collation.COMMON_SEC_AND_TER_CE.toLong()) throw ICUException("Common sec/ter weights in base data differ from the hardcoded value")
-            // CollationKeys.SEC_COMMON_HIGH = COMMON_BYTE + 0x40.
-            if ((data.rootElements!![CollationRootElements.IX_SEC_TER_BOUNDARIES] ushr 24) < Collation.COMMON_BYTE+0x40) throw ICUException("[fixed last secondary common byte] is too low")
+            if ((data.rootElements!![CollationRootElements.IX_SEC_TER_BOUNDARIES] ushr 24) < CollationKeys.SEC_COMMON_HIGH) throw ICUException("[fixed last secondary common byte] is too low")
             length=length and 3
         }
         ICUBinary.skipBytes(inBytes,length)
