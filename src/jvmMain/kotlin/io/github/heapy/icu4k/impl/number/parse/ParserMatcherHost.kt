@@ -7,3 +7,4 @@ internal actual fun assertSeriesMatcher(condition: () -> Boolean) {
     if (SeriesMatcher::class.java.desiredAssertionStatus() && !condition()) throw AssertionError()
 }
 internal actual fun assertDecimalMatcher(condition: () -> Boolean) { if (DecimalMatcher::class.java.desiredAssertionStatus() && !condition()) throw AssertionError() }
+internal actual fun assertNumberParser(condition: () -> Boolean) { if (NumberParserImpl::class.java.desiredAssertionStatus() && !condition()) throw AssertionError() }

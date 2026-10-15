@@ -5587,3 +5587,27 @@ currency names and weak spacing plus affix rollback and exact whitespace.
 AffixMatcher pairing and NumberParserImpl integration remain incomplete.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (2m 35s).
+
+### Affix pairing and complete NumberParserImpl
+
+Ported AffixMatcher and NumberParserImpl, including all parser factories and
+static number/currency parse helpers (portable ParsePosition). Affix generation
+preserves sign policies, unpaired lenient alternatives, source comparator tie
+breaking and paired-prefix/suffix post-processing. Greedy parsing restarts from
+the first matcher after every consumption; longest parsing tries code-point
+prefixes with copied candidates and the upstream 100-level recursion limit
+(or the explicit unlimited flag). Matcher order, live callbacks, assertions,
+post-processing, supplied result state, start offsets, strict/Java-compatible
+modes, validators and reciprocal multipliers follow ICU4J.
+
+JVM differential tests cover four locales, nine patterns, all three parse modes,
+number/currency parsing and both search strategies, plus parse option flags,
+static ParsePosition behavior, random simple-parser inputs and explicit starts.
+They compare parser plans, flags, matched affixes/currency, consumed boundaries,
+quantity and numeric types/values, success and exception types. Object identity
+addresses in Scale diagnostic strings are normalized only in tests. Common
+regressions cover strict paired affixes, percent scaling, currency amounts,
+recursive limits/unlimited mode and nonzero start offsets. Legacy public
+NumberFormat/DecimalFormat integration and other ICU4J subsystems remain.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 57s).
