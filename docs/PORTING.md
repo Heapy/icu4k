@@ -7365,3 +7365,38 @@ clone-failure fallback.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 18s. Linux tests compiled only;
 the host executes JVM, Node and macOS Arm64 tests.
+
+### RuleBasedCollator comparison and key engine
+
+Moved the RuleBasedCollator runtime comparison/key pipeline into the internal
+RuleBasedCollatorCore, ready for the future public collator's data/settings
+accessors. This is the original pipeline, including identical-prefix skipping
+with unsafe backtracking, Fast Latin dispatch and bailout, general CE comparison,
+IDENTICAL-level FCD/NFD code-point iteration and U+FFFE ordering. The identical
+sort-key level uses NFD quick-check spans and BOCSU runs, synchronized back into
+the resizable key sink. Raw keys retain source allocation growth and tail bytes;
+immutable keys take ownership of cached raw-key storage as upstream does.
+
+Reusable CE/NFD iterators and raw-key buffers are created lazily. Frozen buffers
+use a reentrant platform lock. Release retains the source frozen-state recheck,
+including the unheld-lock failure when a custom CharSequence freezes its collator
+inside internalGetCEs. The public configuration API, cloning, equality, locale
+metadata and Collator service remain pending; this engine is not a complete
+public RuleBasedCollator implementation.
+
+JVM differential tests cover five rule sets, all five strengths, numeric/FCD
+combinations, complete key bytes and CE streams, malformed UTF-16, canonical
+sequences, contractions, prefixes, backward secondary, shifted/case options,
+script reordering and common-prefix backtracking. Raw key tests compare entire
+backing arrays over reused capacities, including long identical-level keys.
+Concurrent frozen calls share one engine across six JVM threads. Common tests
+exercise rule order, canonical equality, identical tiebreakers, key/compare
+consistency, null inputs, storage reuse and frozen buffers.
+
+The targeted JVM run passed after correcting a test rule from invalid
+`[strength 15]` to ICU's `[strength I]`; the production implementation did not
+need a change for that test failure.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 4s, including the custom
+CharSequence freeze/release test. Linux tests were compiled, not executed on macOS.
