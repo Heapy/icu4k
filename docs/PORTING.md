@@ -4312,3 +4312,38 @@ Reflection compares the exact packed token states. Additional tests compare
 nullable callback/argument short-circuiting and supplied CharSequence accesses.
 Decimal pattern properties/parsing, symbol tables, currency-spacing modifiers
 and complete number formatting are still pending.
+
+### Decimal pattern parser core and padding
+
+`PatternStringParserCore` now implements the source recursive-descent grammar:
+positive/negative subpatterns, quoted affixes, padding endpoints/positions,
+integer and fraction placeholders, significant digits, packed grouping sizes,
+rounding increments, currency-as-decimal and scientific exponents. Parsed info
+implements the public AffixPatternProvider contract and retains mutable affix
+views plus source endpoint arithmetic. The internal PatternProperties projection
+covers all fields assigned by ICU4J patternInfoToProperties, including ignore-
+rounding policies, minimum-digit compatibility, padding width and multipliers.
+Null/empty parse-to-properties retains the source default/reset values. This
+projection is not a replacement for the full DecimalFormatProperties property bag.
+
+Public Padder supports code-point construction, four padding locations, legacy
+position values and modifier application. It retains source code-point width
+calculation, whole-string width semantics, repeated whole padding strings, field
+annotations and assertion-only index restrictions. Its DecimalFormatProperties
+factory remains pending with that public property bag.
+
+Common tests exercise grouping, exact increments/scales, scientific/currency
+patterns, padding and malformed positions. JVM oracle tests compare every raw
+parsed field, affix flags/views, pattern-owned property values and diagnostics on
+fixed and seeded patterns, including signed-short grouping boundaries. A corpus
+checks every distinct pattern produced by ICU4J's available locale number,
+currency, percent and scientific formats. Padding tests cover all positions,
+widths, strings, supplementary characters, fields, nulls and assertion behavior.
+Public PatternStringParser/quantity adapters, full DecimalFormatProperties,
+pattern serialization and complete decimal formatting still remain pending.
+
+The full parser-stage run also caught a JS test-fixture issue in the prior affix
+work: generated JavaScript emitted the standalone-surrogate expected string as
+`'?x'`. The replacement algorithm retained U+D83D correctly. The common test now
+compares numeric UTF-16 code units, so this behavior is checked without depending
+on standalone-surrogate string literal emission.

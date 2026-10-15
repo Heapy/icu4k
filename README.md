@@ -60,6 +60,21 @@ val available = ULocale.getAvailableLocalesByType(ULocale.AvailableType.WITH_LEG
 
 ULocale display names and remaining locale services are still being ported.
 
+Common Kotlin plural rules include locale data and custom rule descriptions:
+
+```kotlin
+import io.github.heapy.icu4k.text.PluralRules
+import io.github.heapy.icu4k.util.ULocale
+
+val plurals = PluralRules.forLocale(ULocale("en"))
+println(plurals.select(1.0)) // one
+println(plurals.select(1.0, 1, 0)) // other: visible fraction "1.0"
+val custom = PluralRules.parseDescription("one: n = 1; few: n = 2..4")
+println(custom.select(3.0)) // few
+```
+
+Decimal-quantity and formatted-number adapters are still in progress.
+
 ICU binary bundles support typed lookup, aliases and locale/path fallback:
 
 ```kotlin
