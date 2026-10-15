@@ -6224,3 +6224,43 @@ substitutions, without the ICU substitution adapters used by the earlier NFRule
 isolation tests. Production has no ICU4J dependency.
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed, final run 2m 46s (Linux compiled, not run).
+
+### RBNF formatter graph owner
+
+Ported RuleBasedNumberFormat's graph initialization and execution state into
+internal RbnfFormatterCore. The owner now prepares whitespace, extracts special
+sections, registers all rule sets before parsing, selects the provisional
+preferred/default set, parses rules, and applies localized public-name ordering
+at the source point. Preserved duplicate-name lookup, preferred-name condition
+precedence, public/@noparse/private visibility, display-name fallback and
+ownership, lazy symbols/DecimalFormat/special rules, symbol propagation,
+rounding, Long.MIN_VALUE numeric fallback and whole-formatter parsing.
+
+Shallow copies share the graph and cached objects: substitutions retain their
+original owner, including the source clone's symbol-selection behavior. The
+outer rounding condition can use a virtual facade query while setScale uses
+the stored mode, as in ICU4J. Postprocessor creation/init failures disable
+further discovery; processing runs outside that catch. The common Chinese
+postprocessor is connected to real rule sets. Scanner discovery preserves
+one-shot/lazy behavior and forwards exact special rules to an injected provider.
+The internal constructor requires a discovery factory: this does not supply or
+claim a completed default collation-backed provider. Public NumberFormat facade
+wiring, capitalization/context, serialization and JVM discovery of custom
+postprocessor classes remain pending.
+
+Common tests cover initialization/default order, localization copies and
+fallback, visibility, parse/error positions, lazy provider discovery,
+postprocessor state/copy/failure policy, Chinese cleanup, shallow symbol
+selection, rounding query order and an embedded English spellout graph.
+JVM oracle tests compare construction, full graph text, public/default names,
+locale metadata and basic long/double formatting for every one of the 111
+embedded RBNF locales and all four styles. Additional tests compare every public
+named set for root, English, French, Russian, Arabic and both Chinese scripts,
+including root numbering systems, Chinese postprocessing and parsing. They also
+compare malformed descriptions/localizations, default changes, null/bounds
+failures, display-name lookup, full parsing, rounding modes/fraction digits,
+provider callbacks and clone behavior with ICU4J. The first test runs exposed
+only two test expectations (string length and Unit/null normalization), which
+were corrected before the final checks.
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed, final run 2m 27s. Linux compiled, not executed.
