@@ -5119,3 +5119,51 @@ JVM BigDecimal subclass callbacks also receive the standard MathContext.DECIMAL1
 object itself. Base-unit results retain their source unserialized identifier until
 serialize() is called. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64.
+
+### Mixed-unit conversion, preference routing and formatter stages
+
+Ported ComplexUnitsConverter with all constructors, public mutable converter/unit
+lists, source ordering/comparison, epsilon thresholding, rounding and carry into
+larger units. Output measures retain the requested unit order and identify the
+fractional component. The source's low-64-bit integer residual/carry conversions
+are retained even for larger integer values. JVM integral components use the
+original BigInteger arithmetic/Number objects; JS/Native use exact arbitrary-
+precision integral Numbers with exact internal low-bit conversions and matching
+integer hashes.
+The fractional component remains BigDecimal. Mutable public converter lists and
+rounder callbacks are read at the source operation boundaries.
+
+Added UnitsRouter with locale/usage preference fallback, measurement-system and
+temperature keyword support from the existing preference core, precision-increment
+skeletons, BogusRounder resolution, route results and live mutable output-unit list.
+Clearing the output-unit list does not alter routing preferences. Public converter
+preferences use the public ConversionRates/ComplexUnitsConverter boundaries.
+
+Added UnitConversionHandler and UsagePrefsHandler. Both run their parent first,
+round the input to infinity before extracting its decimal, expose the selected
+output unit and retain the live mixed-measure list/index while replacing the
+quantity with the fractional BigDecimal. Source rounders remain on MicroProps.
+The protected static mixedMeasuresToMicros helper retains partial assignments on
+index/cast failures; nullable parent-result paths preserve quantity callback order.
+
+JVM oracle tests compare reordered/two/three-part mixed units, integer/fraction/
+increment rounding, carry boundaries, negative and oversized integer values,
+thresholds, locale/usage routing and precision, live output lists, both handlers,
+special values, helper failures and callbacks modifying converter lists during
+rounding. Common tests exercise mixed ordering/carry, preference rounding, handler
+state and a 2^64 integral Number. Complete NumberFormatter/long-name assembly
+remains pending.
+
+Kotlin/JS limitation: generic Number.toLong/toInt/toShort/toByte calls use stdlib
+numeric intrinsics rather than the overridden Number methods. For out-of-range
+integral objects this clamps through a JavaScript numeric conversion instead of
+returning BigInteger low bits. The converter's internal integral operations and
+low-bit calculations remain exact; measure text and hashes
+are preserved, while floating values follow host Number semantics. Generic integral conversions through Measure.getNumber() on JS
+remain an explicit portability gap, also relevant to other custom Number types;
+the Kotlin/JS generated numberToLong/numberToInt helpers do not dispatch overrides.
+A skipped JS regression retains the required low-64-bit Number conversion result
+until that intrinsic-dispatch gap is resolved. JVM custom singleton lists also
+receive their source sort callback. Verification passed for active checks:
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64; the final JS-only
+regression registration passed jsNodeTest with that one explicitly skipped case.
