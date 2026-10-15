@@ -202,8 +202,9 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
             while (i < text.length && text[i] != 'e' && text[i] != 'E') {
                 val c = text[i++]
                 if (c == '.' && !dot) dot = true else {
-                    if (c !in '0'..'9') throw NumberFormatException()
-                    digits.append(c); if (dot) fraction++
+                    val digit = io.github.heapy.icu4k.impl.number.DecimalNumberParsing.digit(c)
+                    if (digit < 0) throw NumberFormatException()
+                    digits.append(('0'.code + digit).toChar()); if (dot) fraction++
                 }
             }
             if (digits.isEmpty()) throw NumberFormatException()
@@ -214,8 +215,9 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
                 if (text[i] == '+' || text[i] == '-') { if (text[i] == '-') exponentSign = -1; i++ }
                 if (i == text.length) throw NumberFormatException()
                 while (i < text.length) {
-                    val c = text[i++]; if (c !in '0'..'9') throw NumberFormatException()
-                    exponent = exponent * 10 + (c - '0')
+                    val digit = io.github.heapy.icu4k.impl.number.DecimalNumberParsing.digit(text[i++])
+                    if (digit < 0) throw NumberFormatException()
+                    exponent = exponent * 10 + digit
                     if (exponent > Int.MAX_VALUE.toLong() * 2 + 1) throw NumberFormatException()
                 }
                 exponent *= exponentSign

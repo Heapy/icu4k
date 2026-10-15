@@ -203,6 +203,24 @@ internal class DecimalQuantityCore {
     fun checkHealth(): String? = bcd.checkHealth()
     override fun toString(): String = "<DecimalQuantity $leftRequired:$rightRequired ${if (bcd.usingBytes) "bytes" else "long"} ${if (isNegative()) "-" else ""}${bcd.toNumberString()}>"
     companion object {
+        fun fromExponentString(number: String?): DecimalQuantityCore {
+            val text = number!!
+            val hasExponent = text.any { it == 'e' || it == 'E' || it == 'c' || it == 'C' }
+            var exponent = 0
+            val fraction = if (hasExponent) {
+                var marker = text.lastIndexOf('e')
+                if (marker < 0) marker = text.lastIndexOf('c')
+                if (marker < 0) marker = text.lastIndexOf('E')
+                if (marker < 0) marker = text.lastIndexOf('C')
+                exponent = DecimalNumberParsing.int(text.substring(marker + 1))
+                text.substring(0, marker)
+            } else text
+            val point = fraction.indexOf('.') + 1
+            return DecimalQuantityCore(UnitDecimal(fraction)).also {
+                it.setMinFraction(if (point == 0) 0 else fraction.length - point)
+                if (hasExponent) it.adjustExponent(exponent)
+            }
+        }
         private val INT64_BCD = byteArrayOf(9, 2, 2, 3, 3, 7, 2, 0, 3, 6, 8, 5, 4, 7, 7, 5, 8, 0, 8)
         private fun objectHash(vararg values: Int): Int = values.fold(1) { result, value -> 31 * result + value }
         private const val NEGATIVE = 1
