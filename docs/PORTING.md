@@ -5611,3 +5611,29 @@ recursive limits/unlimited mode and nonzero start offsets. Legacy public
 NumberFormat/DecimalFormat integration and other ICU4J subsystems remain.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 57s).
+
+### UFormat and DisplayContext foundations
+
+Ported UFormat locale metadata and verified the existing DisplayContext
+(all eleven values and four types). UFormat retains reference identity,
+null type selecting the valid locale,
+atomic rejection of half-null locale pairs, and the source serialization UID.
+Its nested SpanField is a Kotlin alias for the already ported FormatSpanField,
+so existing number-range spans retain their category.
+
+UFormatBase provides the platform Format boundary. JVM UFormat subclasses are
+real java.text.Format instances with StringBuffer/Java ParsePosition entry
+points, and Common subclasses implement StringBuilder/portable ParsePosition
+operations. Bridges retain buffer/position mutations even when a callback
+throws, and distinct returned buffers remain distinct. JS/Native implement the
+standard one-argument format/parse and unannotated character iterator protocol.
+JVM and JS subclasses can use shallow cloneHost; Native subclasses provide typed
+copies using copyLocaleTo, following the existing ICUCloneableBase convention.
+This does not yet add public NumberFormat or DecimalFormat.
+
+JVM comparisons verify locale failure atomicity against ICU4J, Format callback
+results/mutations/failures, clone aliasing, serialization round trips/UID and all
+DisplayContext enum values. Common tests cover protocol dispatch, metadata,
+copying, parse errors and default attributed iterators.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (2m 49s).
