@@ -5227,3 +5227,29 @@ latter's nested ParentlessMicroPropsGenerator interface implemented by upstream
 LongNameHandler. The callable processQuantityWithMicros method is already present;
 its interface binding will be added with the multiplexer. The NumberFormatter
 facade and complete formatter assembly are still pending.
+
+## NumberFormatter numeric output stage
+
+Extracted ICU4J NumberFormatterImpl's complete writeNumber/writeAffixes portion
+into the internal NumberFormatterOutput module. It writes localized integer and
+fraction digits, grouping, standard/monetary/currency decimal marks, special
+values, forced zero output, and inner/middle/outer modifiers with padding. Both
+contiguous supplementary digit code points and multi-character digit strings
+retain UTF-16 lengths and field identities. Symbol getters retain repeated calls
+and argument evaluation before failure on a null output buffer. The source
+writeAffixes return value deliberately excludes the padded branch's padding and
+middle/outer modifier lengths, even though those characters are inserted.
+
+JVM differential tests invoke the pinned NumberFormatterImpl output methods and
+compare strings, fields and returned lengths across four locales, all grouping
+strategies, special values, minimum integer widths, currency separator policies,
+custom digit sets, insertion offsets, padding positions/strings/widths, and
+quantity/symbol callback traces on successful and failing paths. Common tests
+exercise explicit arab numbering, supplementary/string digits, forced zero,
+field identities and padded affixes. Verified with jvmTest, jsNodeTest,
+macosArm64Test and compileTestKotlinLinuxX64. The pre-existing Kotlin/JS generic
+Number integral-conversion regression remains explicitly skipped.
+
+This is the shared output stage, not yet the NumberFormatter facade or macro-to-
+micro pipeline builder. Those and MixedUnitLongNameHandler/LongNameMultiplexer
+remain pending; a replacement default integer formatter was not introduced.
