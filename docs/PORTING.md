@@ -5476,3 +5476,12 @@ The fluent number formatter and result/skeleton chain are connected. Full ICU4J
 porting remains incomplete: legacy NumberFormat/DecimalFormat services and
 parsing, number ranges and other ICU subsystems still require work, and locale
 resource coverage remains incremental.
+
+## Embedded plural resource registry
+
+Added the already embedded plurals.res and pluralRanges.res to ICUData's
+exists/enumeration registry. Their byte readers and manifest entries already
+existed; the registry incorrectly reported them absent. Common tests verify both
+relative/absolute existence and root enumeration. A JVM regression checks every
+manifest resource for registry membership, bytes and directory enumeration.
+Full JVM/JS/macOS tests and Linux Native test compilation passed.
