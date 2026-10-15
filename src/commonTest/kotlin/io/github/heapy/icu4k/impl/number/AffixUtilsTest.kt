@@ -15,7 +15,7 @@ class AffixUtilsTest {
         assertFalse(AffixUtils.hasCurrencySymbols("'¤'"))
         assertTrue(AffixUtils.containsType("+ '", AffixUtils.TYPE_PLUS_SIGN))
         assertEquals("¤x", AffixUtils.replaceType("¤¤", AffixUtils.TYPE_CURRENCY_DOUBLE, 'x'))
-        assertEquals("\ud83dx", AffixUtils.replaceType("😀", 0x1f600, 'x'))
+        assertEquals(listOf(0xd83d, 'x'.code), AffixUtils.replaceType("😀", 0x1f600, 'x').map { it.code })
         assertEquals("'-+%'x", AffixUtils.escape("-+%x"))
         assertEquals("~", AffixUtils.escape("~")) // Source does not quote approximately signs.
         assertFailsWith<IllegalArgumentException> { AffixUtils.estimateLength("'a") }
