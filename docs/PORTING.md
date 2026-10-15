@@ -4922,3 +4922,36 @@ Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64; the additional JVM-only failure-order/body-erasure tests
 also passed without further production edits. Complete number formatting,
 NumberFormatter and DecimalFormat facades remain pending.
+
+### Scientific and engineering notation stages
+
+Added Notation's scientific, engineering and simple factories, SimpleNotation and
+the complete ScientificNotation configuration/handler/modifier implementation.
+Scientific processing uses Precision's carry-sensitive multiplier selection,
+handles the required-integer zero/significant special case, records the exponent
+in the quantity and consumes the rounder. NaN/infinity retain their source early
+return and unconsumed rounding policy. Safe handlers cache modifier objects for
+exponents -12 through 12; other exponents allocate modifiers, while the unsafe
+path keeps its live exponent on the handler.
+
+Exponent modifiers retain the source's 999 code-point-count sentinel, assertion
+behavior, exponent-only strict equality and live symbol references. Sign-display
+handling is the source's exact NEVER/ALWAYS checks rather than general sign-policy
+resolution. Digit insertion uses i-j (digit count, not accumulated UTF-16 width),
+including source surrogate splitting for supplementary digit strings. Integer
+arithmetic and abs(MIN_VALUE) behavior remain unchanged.
+
+Added MultiplierFormatHandler with parent-before-scale processing, including a
+parent returning null: scaling still runs and the null result is returned. The
+remaining compact factories on Notation, CompactNotation, CompactData and compact
+formatting are explicitly pending; no placeholder compact implementation is used.
+
+Oracle coverage compares notation fields/copy/validation, scientific/engineering
+intervals and required integer widths, rounding families and carry boundaries,
+zero/special values, safe/unsafe paths, cache identities, modifier fields, all sign
+policies including null, Arabic/Persian/Bengali/custom symbols, multi-code-unit
+digits, live symbols, arithmetic extremes and callback/failure order. Invalid
+internal zero/significant combinations compare source assertions and quantity
+state. Common tests run a scale/scientific/rounding chain, engineering notation and
+the source UTF-16 digit-insertion quirk on JVM, JS and Native. Verification passed:
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
