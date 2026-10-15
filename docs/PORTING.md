@@ -5051,3 +5051,35 @@ virtual dispatch and choice-array bounds on all runtime targets.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64. NumberPropertyMapper and complete DecimalFormat/
 NumberFormatter integration remain pending.
+
+### Legacy number property projection
+
+Ported NumberPropertyMapper.oldToNew, including plural-rule/affix resolution,
+custom currency symbols, currency precision defaults, explicit currency usage,
+increment/significant/fraction precedence, integer/fraction validation, grouping,
+padding, decimal/sign policies, scientific and compact notation, scaling and
+validated property exports. Source property getter repetitions and export setter
+order remain intact, including exportedProperties aliasing the input property bag.
+
+Scientific projection retains the source maximum-eight-integer-digit heuristic,
+minimum/maximum adjustments and original-property significant-digit calculation.
+Compact style takes precedence over scientific notation. Exported rounding uses
+the pre-scientific local rounding policy, while returned macros can have the
+scientific significant-digit policy; no attempt is made to reconcile that source
+behavior. Min/max validation keeps minimum precedence and source integer overflow.
+The mapper retains symbol identity and leaves locale/threshold unset, as upstream.
+
+JVM oracle tests compare macro policy structure, rounding results, validated
+exports, affixes, currencies, locale rules, grouping, padding, scales, notation and
+virtual getter/setter order. Coverage includes parsed decimal/currency/scientific
+patterns, 240 seeded raw-boundary combinations, input/export aliasing, custom
+compact data and explicit currency usage. Large display widths compare display
+bounds without allocating their potentially enormous rendered strings. Common
+tests exercise scientific rounding versus exports and compact/currency precedence.
+
+Convenience create methods returning UnlocalizedNumberFormatter remain pending
+until the formatter facade is ported; no placeholder formatter is introduced.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64; the corrected/expanded JVM-only oracle suite passed in
+a subsequent jvmTest run. CurrencyPluralInfo-derived rules, explicit standard/cash
+currency usage and calls without an exported property bag are also covered.
