@@ -289,3 +289,12 @@ val roman = NumberFormat.getInstance(ULocale("en@numbers=roman"))
 println(decimal.format(1234.5)) // 1,234.5
 println(roman.format(2026L))   // MMXXVI
 ```
+
+Plural messages are available through `PluralFormat`:
+
+```kotlin
+import io.github.heapy.icu4k.text.PluralFormat
+
+val files = PluralFormat(ULocale.ENGLISH, "one{# file} other{# files}")
+println(files.format(2.0)) // 2 files
+```

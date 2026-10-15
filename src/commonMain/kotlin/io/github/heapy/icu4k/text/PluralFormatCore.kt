@@ -5,8 +5,7 @@
 package io.github.heapy.icu4k.text
 
 /**
- * The PluralFormat execution state. Locale constructors and serialized facade fields are
- * connected when the NumberFormat/RBNF factory dependency cycle is complete.
+ * Shared execution state for PluralFormat and RBNF plural substitutions.
  */
 internal class PluralFormatCore(var rules: PluralRules?, var numberFormat: NumberFormat?) {
     var pattern: String? = null

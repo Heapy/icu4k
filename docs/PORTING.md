@@ -6381,3 +6381,45 @@ Verification: jvmTest, jsNodeTest and macosArm64Test passed; Linux x64 test
 sources compiled (not executed on macOS). Full run: 2m 44s. An initial common
 test incorrectly expected 1234.5 to round to 1235; its expectation was corrected
 to source half-even 1234, with no production rounding change.
+
+### Public PluralFormat facade
+
+Common PluralFormat now exposes all source locale/rules/type/pattern constructor
+combinations, the internal constructor with a supplied NumberFormat, plural
+message formatting, pattern application, deprecated locale reset, number-format
+replacement, equality, diagnostics and unsupported parse methods. Locale
+metadata remains unset as in the source constructor. The existing common
+PluralFormatCore continues to supply execution and RBNF parsing policy.
+Pattern parse errors clear the active pattern; locale reset restores cardinal
+rules and the locale's numeric factory, while a caller-supplied number formatter
+is retained by reference. Null output buffers are checked after number
+validation and formatting, preserving source evaluation order.
+
+Shallow clone semantics retain shared MessagePattern and NumberFormat objects
+and a selector bound to the original owner's rules. Consequently resetting a
+locale clears a clone's shared parsed pattern, and reapplying a pattern can make
+the clone select using the original's new rules. Source's legacy parsedValues
+field remains null, including its ordinary hashCode NPE; this is not replaced
+with a newly invented hash. Native copying follows the existing typed facade
+clone convention; arbitrary Native subclass state requires a typed override.
+
+JVM serialization preserves UID 1 and the five source persistent fields. On
+read the transient execution state/selector is rebuilt, legacy parsedValues is
+cleared, and a non-null pattern is reparsed through virtual applyPattern.
+Real independent ICU4J/icu4k roundtrips and field descriptors are compared;
+automatic cross-package stream loading is not claimed. JVM Locale constructor
+forms are Kotlin factory functions, not added Java-callable constructors.
+
+Common tests cover offset/exact selectors, ordinal/custom rules, mutable number
+format ownership, unsupported parsing, invalid patterns and clone aliases. JVM
+oracle tests compare six locales and both plural types across quoted/nested
+patterns, finite/special numbers, large integer/decimal objects, Java Format
+bridges, failure order, equality, serialization and clone behavior.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed (Linux compiled, not executed on macOS).
+Final run: 1m 37s; unchanged target tasks were up-to-date. Initial verification
+found ambiguous null literals in JVM tests and an invalid new oracle pattern
+rejected by ICU4J itself; the test calls were typed explicitly and the pattern
+replaced with an existing verified nested/quoted case. Production code did not
+need changes after its initial implementation.
