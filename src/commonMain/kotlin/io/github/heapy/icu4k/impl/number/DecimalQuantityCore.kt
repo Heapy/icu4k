@@ -5,6 +5,9 @@ package io.github.heapy.icu4k.impl.number
 import io.github.heapy.icu4k.impl.units.UnitDecimal
 import io.github.heapy.icu4k.impl.number.Modifier.Signum
 import io.github.heapy.icu4k.util.MathContext
+import io.github.heapy.icu4k.util.BigDecimal
+import io.github.heapy.icu4k.util.decimalFromValue
+import io.github.heapy.icu4k.util.decimalValue
 
 /** Numeric and display state from DecimalQuantity_AbstractBCD; public plural-rule and number adapters are separate. */
 internal class DecimalQuantityCore {
@@ -40,6 +43,8 @@ internal class DecimalQuantityCore {
     }
     fun roundToInfinity() { if (bcd.isApproximate) accurate() }
     fun toDecimal(): UnitDecimal { roundToInfinity(); return bcd.toDecimal(isNegative()) }
+    fun toBigDecimal(): BigDecimal = decimalFromValue(toDecimal())
+    fun setToBigDecimal(value: BigDecimal?) = setToDecimal(value!!.decimalValue())
     fun clear(): DecimalQuantityCore {
         leftRequired = 0; rightRequired = 0; flags = 0; bcd.setBcdToZero(); return this
     }
@@ -94,6 +99,11 @@ internal class DecimalQuantityCore {
         if (result.sign == 0) bcd.setBcdToZero() else setToDecimal(result)
     }
     fun multiplyBy(value: UnitDecimal) { if (!isZeroish()) setToDecimal(toDecimal().multiply(value)) }
+    fun multiplyBy(value: BigDecimal?) {
+        if (isZeroish()) return
+        val original = toDecimal()
+        setToDecimal(original.multiply(value!!.decimalValue()))
+    }
     fun truncate() { if (bcd.scale < 0) { bcd.shiftRight(-bcd.scale); bcd.scale = 0; bcd.compact() } }
     fun appendDigit(value: Byte, leadingZeros: Int, asInteger: Boolean) {
         assertDecimalBcd(leadingZeros >= 0)

@@ -8,6 +8,11 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
     val precision: Int get() = magnitude.length
     fun negate(): UnitDecimal = UnitDecimal(-sign, magnitude, scale)
     fun abs(): UnitDecimal = if (sign < 0) negate() else this
+    fun scaleByPowerOfTen(places: Int): UnitDecimal = UnitDecimal(sign, magnitude, checkedScale(scale.toLong() - places, sign == 0))
+    fun movePointLeft(places: Int): UnitDecimal {
+        val moved = UnitDecimal(sign, magnitude, checkedScale(scale.toLong() + places, sign == 0))
+        return if (moved.scale < 0) moved.setScale(0, Rounding.UNNECESSARY) else moved
+    }
     fun movePointRight(places: Int): UnitDecimal {
         val moved = UnitDecimal(sign, magnitude, checkedScale(scale.toLong() - places, sign == 0))
         return if (moved.scale < 0) moved.setScale(0, Rounding.UNNECESSARY) else moved
@@ -23,7 +28,7 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         return if (comparison >= 0) of(sign, subtractNatural(a, b), targetScale) else of(other.sign, subtractNatural(b, a), targetScale)
     }
     fun subtract(other: UnitDecimal): UnitDecimal = add(other.negate())
-    fun multiply(other: UnitDecimal): UnitDecimal = of(sign * other.sign, multiplyNatural(magnitude, other.magnitude), checkedScale(scale.toLong() + other.scale, sign * other.sign == 0))
+    fun multiply(other: UnitDecimal): UnitDecimal = of(sign * other.sign, multiplyNatural(magnitude, other.magnitude), checkedScale(scale.toLong() + other.scale, sign == 0))
     fun round(precision: Int = 34, mode: Rounding = Rounding.HALF_EVEN): UnitDecimal {
         require(precision >= 0)
         if (precision == 0 || this.precision <= precision) return this
@@ -32,8 +37,9 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         if (result.precision > precision) result = result.setScale(checkedScale(result.scale.toLong() - 1, result.sign == 0), Rounding.DOWN)
         return result
     }
-    fun divide(other: UnitDecimal, precision: Int = 34): UnitDecimal {
-        require(precision > 0)
+    fun divide(other: UnitDecimal, precision: Int = 34, mode: Rounding = Rounding.HALF_EVEN): UnitDecimal {
+        require(precision >= 0)
+        if (precision == 0) return divideExact(other)
         if (other.sign == 0) throw ArithmeticException(if (sign == 0) "Division undefined" else "Division by zero")
         val preferred = scale.toLong() - other.scale
         if (sign == 0) return of(0, "0", checkedScale(preferred, true))
@@ -45,11 +51,53 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         val denominator = if (shift < 0) zeros(other.magnitude, -shift) else other.magnitude
         val (quotient, remainder) = divideNatural(numerator, denominator)
         var result = quotient
-        if (roundUp(result, multiplyNatural(remainder, "2"), denominator)) result = addNatural(result, "1")
+        if (remainder != "0") {
+            val half = compareNatural(multiplyNatural(remainder, "2"), denominator)
+            val up = when (mode) {
+                Rounding.UP -> true
+                Rounding.DOWN -> false
+                Rounding.CEILING -> sign * other.sign > 0
+                Rounding.FLOOR -> sign * other.sign < 0
+                Rounding.HALF_UP -> half >= 0
+                Rounding.HALF_DOWN -> half > 0
+                Rounding.HALF_EVEN -> half > 0 || half == 0 && (result.last() - '0') % 2 != 0
+                Rounding.UNNECESSARY -> throw ArithmeticException("Rounding necessary")
+            }
+            if (up) result = addNatural(result, "1")
+        }
         var resultScale = preferred + shift
         if (result.length > precision) { result = result.dropLast(1); resultScale-- }
         if (remainder == "0") while (result.endsWith('0') && resultScale > preferred) { result = result.dropLast(1); resultScale-- }
         return of(sign * other.sign, result, checkedScale(resultScale, false))
+    }
+    fun divideExact(other: UnitDecimal): UnitDecimal {
+        if (other.sign == 0) throw ArithmeticException(if (sign == 0) "Division undefined" else "Division by zero")
+        val preferred = scale.toLong() - other.scale
+        if (sign == 0) return of(0, "0", checkedScale(preferred, true))
+        try {
+            var a = magnitude; var b = other.magnitude
+            while (b != "0") { val remainder = divideNatural(a, b).second; a = b; b = remainder }
+            var numerator = divideNatural(magnitude, a).first
+            var denominator = divideNatural(other.magnitude, a).first
+            var twos = 0; var fives = 0
+            while (true) {
+                val pair = divideNatural(denominator, "2")
+                if (pair.second != "0") break
+                denominator = pair.first; twos++
+            }
+            while (true) {
+                val pair = divideNatural(denominator, "5")
+                if (pair.second != "0") break
+                denominator = pair.first; fives++
+            }
+            if (denominator != "1") throw ArithmeticException()
+            val places = maxOf(twos, fives)
+            repeat(places - twos) { numerator = multiplyNatural(numerator, "2") }
+            repeat(places - fives) { numerator = multiplyNatural(numerator, "5") }
+            return of(sign * other.sign, numerator, checkedScale(preferred + places, false))
+        } catch (_: ArithmeticException) {
+            throw ArithmeticException("Non-terminating decimal expansion; no exact representable decimal result.")
+        }
     }
     fun pow(exponent: Int): UnitDecimal {
         if (exponent !in 0..999999999) throw ArithmeticException("Invalid operation")
@@ -106,7 +154,7 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
         return of(sign, integer, newScale)
     }
     fun divideToScale(other: UnitDecimal, newScale: Int, rounding: Rounding = Rounding.HALF_EVEN): UnitDecimal {
-        if (other.sign == 0) throw ArithmeticException(if (sign == 0) "Division undefined" else "Division by zero")
+        if (other.sign == 0) throw ArithmeticException("/ by zero")
         if (sign == 0) return of(0, "0", newScale)
         val shift = other.scale.toLong() + newScale - scale
         val numerator = if (shift >= 0) zeros(magnitude, shift) else magnitude
@@ -170,6 +218,26 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
     }
     override fun equals(other: Any?): Boolean = other is UnitDecimal && sign == other.sign && magnitude == other.magnitude && scale == other.scale
     override fun hashCode(): Int = 31 * (31 * sign + magnitude.hashCode()) + scale
+    fun bigDecimalHashCode(): Int {
+        var coefficient = magnitude
+        val words = ArrayList<Int>()
+        while (coefficient != "0") {
+            val pair = divideNatural(coefficient, "4294967296")
+            words.add(pair.second.toLong().toInt()); coefficient = pair.first
+        }
+        var hash = 0
+        for (i in words.indices.reversed()) hash = 31 * hash + words[i]
+        return 31 * sign * hash + scale
+    }
+    fun toPlainString(): String {
+        val body = when {
+            scale < 0 -> if (sign == 0) "0" else zeros(magnitude, -scale.toLong())
+            scale == 0 -> magnitude
+            scale < magnitude.length -> magnitude.substring(0, magnitude.length - scale) + "." + magnitude.substring(magnitude.length - scale)
+            else -> "0." + "0".repeat(scale - magnitude.length) + magnitude
+        }
+        return (if (sign < 0) "-" else "") + body
+    }
     override fun toString(): String {
         val adjusted = magnitude.length.toLong() - 1 - scale
         val body = if (scale >= 0 && adjusted >= -6) {

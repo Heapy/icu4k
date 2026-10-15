@@ -4426,3 +4426,39 @@ portable core against the JDK context boundary, verify Java assignability/preset
 identity, and compare typed-context BCD rounding with ICU4J for every rounding
 mode and multiple precisions, including failure state. Public BigDecimal and
 DecimalQuantity bridges and the remaining number formatting API are still pending.
+
+### Public standard decimal boundary
+
+The util BigDecimal boundary now aliases java.math.BigDecimal on JVM and uses the
+portable BigDecimalCore/UnitDecimal implementation on JS/Native. BigDecimals
+provides common constant/valueOf access with standard small-value factory caches.
+The boundary currently exposes constructors from strings and primitive numbers,
+exact and context division, scaled division/rounding, exact add/subtract/multiply,
+scale/point movement, comparison, equality/hash, plain/scientific text and Number
+conversions. BigInteger, exact integer conversions and remaining context arithmetic
+APIs are not exposed yet; the legacy ICU math.BigDecimal remains a separate port.
+
+The binary Double constructor uses exact mantissa/exponent arithmetic; valueOf
+uses the existing JDK-compatible shortest-decimal conversion. The two paths retain
+different scales and values, including negative zero. Exact division reduces the
+fraction and accepts terminating powers of 2/5; context division now supports all
+eight rounding modes. Decimal hashing follows coefficient base-2^32 words. Zero
+multiplication retains the host's left-operand scale-overflow validation order.
+
+Typed DecimalQuantityCore conversion/set/multiply methods now use this boundary;
+JVM conversion transfers unscaled coefficient/scale rather than losing extreme
+scales through textual exponent restrictions. Zero-quantity multiplication keeps
+the source early return and negative-zero flags.
+
+Kotlin actual matching reports Java Number's inherited concrete byteValue and
+shortValue as abstract built-ins. The JVM alias/common expect declaration carry
+scoped compatibility-diagnostic suppressions for this metadata mismatch; JS and
+Native implement both conversions normally. Tests verify assignability and byte/
+short invocation through Number, alongside public decimal operations on all targets.
+
+JVM oracle tests compare the portable core with JDK values, scales, precision,
+hashes, primitive conversions, arithmetic, every division mode/precision, exact
+Double construction and extreme-scale operations. Common tests exercise the
+actual JS/Native boundary and BCD transfer. Implicit division-by-zero diagnostics
+are normalized across the JDK's compact/BigInteger backends. Public DecimalQuantity,
+BigInteger and the remaining decimal/formatting APIs are still pending.

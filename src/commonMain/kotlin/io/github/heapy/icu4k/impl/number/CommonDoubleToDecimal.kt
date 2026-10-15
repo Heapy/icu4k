@@ -18,6 +18,19 @@ internal object CommonDoubleToDecimal {
         val product = value.multiply(fives[-exponent])
         return UnitDecimal(product.magnitude + "E" + exponent)
     }
+    fun exact(value: Double): UnitDecimal {
+        val raw = value.toRawBits()
+        val bits = raw and Long.MAX_VALUE
+        if (bits >= 0x7ff0000000000000L) throw NumberFormatException("Infinite or NaN")
+        if (bits == 0L) return UnitDecimal.ZERO
+        val biased = (bits ushr 52).toInt()
+        val fraction = bits and 0x000fffffffffffffL
+        val mantissa = if (biased == 0) fraction else fraction or 0x0010000000000000L
+        val exponent = if (biased == 0) -1074 else biased - 1075
+        var result = binary(mantissa, exponent).stripTrailingZeros()
+        if (result.scale < 0) result = result.setScale(0, UnitDecimal.Rounding.UNNECESSARY)
+        return if (raw < 0) result.negate() else result
+    }
     fun format(value: Double): String {
         val raw = value.toRawBits()
         val bits = raw and Long.MAX_VALUE
