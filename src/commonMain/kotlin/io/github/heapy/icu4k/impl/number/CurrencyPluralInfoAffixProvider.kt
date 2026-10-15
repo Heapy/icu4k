@@ -11,7 +11,7 @@ open class CurrencyPluralInfoAffixProvider(cpi: CurrencyPluralInfo?, properties:
         val pluralProperties = DecimalFormatProperties().copyFrom(properties)
         affixesByPlural = Array(StandardPlural.COUNT) { ordinal ->
             val pattern = cpi!!.getCurrencyPluralPattern(StandardPlural.VALUES[ordinal].getKeyword())
-            PatternStringParserCore.parseToExistingProperties(pattern, pluralProperties)
+            PatternStringParser.parseToExistingProperties(pattern, pluralProperties)
             PropertiesAffixPatternProvider(pluralProperties)
         }
     }

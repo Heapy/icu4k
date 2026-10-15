@@ -22,15 +22,15 @@ class PatternStringParserCoreOracleTest {
             val port = k.javaClass.getDeclaredField(field.name).apply { isAccessible = true }.get(k)
             val original = field.get(j)
             val a = when (original) { is Enum<*> -> original.name; is JQuantity -> original.toString(); else -> original }
-            val b = when (port) { is Enum<*> -> port.name; is DecimalQuantityCore -> port.toString(); else -> port }
+            val b = when (port) { is Enum<*> -> port.name; is DecimalQuantity_DualStorageBCD -> port.toString(); else -> port }
             assertEquals(a, b, "$label/${field.name}")
         }
     }
     @Test fun recursiveParserAllFieldsAndAffixViewsMatchSource() {
         for (pattern in patterns() + listOf(null)) {
-            assertEquals(outcome { JParser.parseToPatternInfo(pattern).pattern }, outcome { PatternStringParserCore.parseToPatternInfo(pattern).pattern }, pattern)
+            assertEquals(outcome { JParser.parseToPatternInfo(pattern).pattern }, outcome { PatternStringParser.parseToPatternInfo(pattern).pattern }, pattern)
             val j = try { JParser.parseToPatternInfo(pattern) } catch (_: Exception) { continue }
-            val k = PatternStringParserCore.parseToPatternInfo(pattern)
+            val k = PatternStringParser.parseToPatternInfo(pattern)
             compareSubpattern(j.positive, k.positive, "$pattern/positive")
             compareSubpattern(j.negative, k.negative, "$pattern/negative")
             assertEquals(j.hasNegativeSubpattern(), k.hasNegativeSubpattern())
@@ -75,7 +75,7 @@ class PatternStringParserCoreOracleTest {
                 val pattern = format.toPattern()
                 if (!seen.add(pattern)) continue
                 val j = JParser.parseToPatternInfo(pattern)
-                val k = PatternStringParserCore.parseToPatternInfo(pattern)
+                val k = PatternStringParser.parseToPatternInfo(pattern)
                 compareSubpattern(j.positive, k.positive, "$locale/$pattern/positive")
                 compareSubpattern(j.negative, k.negative, "$locale/$pattern/negative")
                 for (ignore in 0..2) compareProperties(JParser.parseToProperties(pattern, ignore), PatternStringParserCore.parseToProperties(pattern, ignore), "$locale/$pattern/$ignore")
@@ -88,7 +88,7 @@ class PatternStringParserCoreOracleTest {
             assertEquals(JParser.ParsedPatternInfo.getLengthFromEndpoints(endpoints), PatternStringParserCore.ParsedPatternInfo.getLengthFromEndpoints(endpoints))
         }
         for (replacement in listOf(null, "", "x", "abcdef")) {
-            val j = JParser.parseToPatternInfo("ab0cd;-0x"); val k = PatternStringParserCore.parseToPatternInfo("ab0cd;-0x")
+            val j = JParser.parseToPatternInfo("ab0cd;-0x"); val k = PatternStringParser.parseToPatternInfo("ab0cd;-0x")
             j.pattern = replacement; k.pattern = replacement
             for (flags in listOf(0, 0x100, 0x200, 0x300, 0x400)) {
                 assertEquals(outcome { j.getString(flags) }, outcome { k.getString(flags) })

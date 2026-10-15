@@ -10,61 +10,8 @@ internal object PatternStringParserCore {
     const val IGNORE_ROUNDING_NEVER = 0
     const val IGNORE_ROUNDING_IF_CURRENCY = 1
     const val IGNORE_ROUNDING_ALWAYS = 2
-    class ParsedPatternInfo(var pattern: String?) : AffixPatternProvider {
-        var positive: ParsedSubpatternInfo? = null
-        var negative: ParsedSubpatternInfo? = null
-        private fun endpoints(flags: Int): Long {
-            val selected = if (flags and AffixPatternProvider.Flags.NEGATIVE_SUBPATTERN != 0) negative!! else positive!!
-            return if (flags and AffixPatternProvider.Flags.PADDING != 0) selected.paddingEndpoints
-            else if (flags and AffixPatternProvider.Flags.PREFIX != 0) selected.prefixEndpoints else selected.suffixEndpoints
-        }
-        override fun charAt(flags: Int, index: Int): Char {
-            val endpoints = endpoints(flags)
-            val left = endpoints.toInt(); val right = (endpoints ushr 32).toInt()
-            if (index < 0 || index >= right - left) throw IndexOutOfBoundsException()
-            return pattern!![left + index]
-        }
-        override fun length(flags: Int): Int = getLengthFromEndpoints(endpoints(flags))
-        override fun getString(flags: Int): String {
-            val endpoints = endpoints(flags)
-            val left = endpoints.toInt(); val right = (endpoints ushr 32).toInt()
-            return if (left == right) "" else pattern!!.substring(left, right)
-        }
-        override fun positiveHasPlusSign(): Boolean = positive!!.hasPlusSign
-        override fun hasNegativeSubpattern(): Boolean = negative != null
-        override fun negativeHasMinusSign(): Boolean = negative!!.hasMinusSign
-        override fun hasCurrencySign(): Boolean = positive!!.hasCurrencySign || negative?.hasCurrencySign == true
-        override fun containsSymbolType(type: Int): Boolean = AffixUtils.containsType(pattern, type)
-        override fun hasBody(): Boolean = positive!!.integerTotal > 0
-        override fun currencyAsDecimal(): Boolean = positive!!.hasCurrencyDecimal
-        companion object { fun getLengthFromEndpoints(endpoints: Long): Int = (endpoints ushr 32).toInt() - endpoints.toInt() }
-    }
-    class ParsedSubpatternInfo {
-        var groupingSizes = 0x0000ffffffff0000L
-        var integerLeadingHashSigns = 0
-        var integerTrailingHashSigns = 0
-        var integerNumerals = 0
-        var integerAtSigns = 0
-        var integerTotal = 0
-        var fractionNumerals = 0
-        var fractionHashSigns = 0
-        var fractionTotal = 0
-        var hasDecimal = false
-        var widthExceptAffixes = 0
-        var paddingLocation: PadPosition? = null
-        var rounding: DecimalQuantityCore? = null
-        var exponentHasPlusSign = false
-        var exponentZeros = 0
-        var hasPercentSign = false
-        var hasPerMilleSign = false
-        var hasCurrencySign = false
-        var hasCurrencyDecimal = false
-        var hasMinusSign = false
-        var hasPlusSign = false
-        var prefixEndpoints = 0L
-        var suffixEndpoints = 0L
-        var paddingEndpoints = 0L
-    }
+    typealias ParsedPatternInfo = PatternStringParser.ParsedPatternInfo
+    typealias ParsedSubpatternInfo = PatternStringParser.ParsedSubpatternInfo
     class PatternProperties {
         var groupingSize = -1
         var groupingUsed = true
@@ -102,7 +49,7 @@ internal object PatternStringParserCore {
     }
     fun parseToPatternInfo(pattern: String?): ParsedPatternInfo {
         val state = State(pattern)
-        val result = ParsedPatternInfo(pattern)
+        val result = ParsedPatternInfo.create(pattern)
         result.positive = ParsedSubpatternInfo().also { consumeSubpattern(state, it) }
         if (state.peek() == 59) {
             state.next()
@@ -186,7 +133,7 @@ internal object PatternStringParserCore {
                 in 48..57 -> {
                     if (result.integerAtSigns > 0) state.error("Cannot mix @ and 0")
                     result.widthExceptAffixes++; result.groupingSizes++; result.integerNumerals++; result.integerTotal++
-                    if (state.peek() != 48 && result.rounding == null) result.rounding = DecimalQuantityCore()
+                    if (state.peek() != 48 && result.rounding == null) result.rounding = DecimalQuantity_DualStorageBCD()
                     result.rounding?.appendDigit((state.peek() - 48).toByte(), 0, true)
                 }
                 else -> break
@@ -208,7 +155,7 @@ internal object PatternStringParserCore {
                     if (result.fractionHashSigns > 0) state.error("0 cannot follow # after decimal point")
                     result.widthExceptAffixes++; result.fractionNumerals++; result.fractionTotal++
                     if (state.peek() == 48) zeroCounter++ else {
-                        if (result.rounding == null) result.rounding = DecimalQuantityCore()
+                        if (result.rounding == null) result.rounding = DecimalQuantity_DualStorageBCD()
                         result.rounding!!.appendDigit((state.peek() - 48).toByte(), zeroCounter, false)
                         zeroCounter = 0
                     }
@@ -280,7 +227,7 @@ internal object PatternStringParserCore {
                 maximumSignificantDigits = p.integerAtSigns + p.integerTrailingHashSigns
             } else if (!ignore) {
                 minimumFractionDigits = minFrac; maximumFractionDigits = p.fractionTotal
-                roundingIncrement = p.rounding?.toDecimal()?.setScale(p.fractionNumerals, UnitDecimal.Rounding.UNNECESSARY)
+                roundingIncrement = p.rounding?.core?.toDecimal()?.setScale(p.fractionNumerals, UnitDecimal.Rounding.UNNECESSARY)
             }
             decimalSeparatorAlwaysShown = p.hasDecimal && p.fractionTotal == 0
             currencyAsDecimal = p.hasCurrencyDecimal

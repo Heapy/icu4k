@@ -4722,3 +4722,22 @@ literal override, UTF-16 indexing, snapshot behavior, suffix identity and curren
 plural dispatch for English, Russian, Arabic and French. Common tests exercise
 literal escaping and plural dispatch on JVM, JS and Native. Verification passed:
 jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
+
+### Public pattern parser and live parsed models
+
+Added PatternStringParser with the source constants and all parse-to-info,
+parse-to-properties and parse-to-existing-properties overloads. The recursive parser
+now constructs the public ParsedPatternInfo and ParsedSubpatternInfo objects directly;
+internal nested aliases preserve existing consumers without a second grammar or
+snapshot adapters. All parsed fields remain mutable; rounding is the public
+DecimalQuantity_DualStorageBCD. JVM fields and static entry points are exposed to
+Java callers, and the parsed-info constructor remains private.
+
+The currency-plural affix provider uses the public parser. JVM assertion status is
+now resolved against the public PatternStringParser class. Existing seeded random,
+locale pattern corpus and packed-endpoint oracle tests exercise the public parsed
+models. Added tests verify field shape, quantity aliasing, replacement of positive
+and negative subpatterns, null/replaced pattern text, malformed endpoints, all public
+property getters and parse failure order. Common tests run on JVM, JS and Native.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64.
