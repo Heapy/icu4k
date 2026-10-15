@@ -7334,3 +7334,34 @@ The targeted JVM test run passed before the final clone-failure coverage was add
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 4m 24s, including the added
 clone-failure tests. Linux tests compiled only; they were not run on macOS.
+
+### CollationElementIterator engine
+
+Ported CollationElementIterator's runtime algorithms into the internal
+CollationElementIteratorCore. The future public collator supplies its owner,
+current data/settings and maximum-expansion cache through accessors. No temporary
+public RuleBasedCollator facade was introduced. Public Collator,
+RuleBasedCollator and CollationElementIterator constructors remain pending.
+
+The engine preserves splitting 64-bit CEs into legacy 32-bit halves, continuation
+markers, forward/backward direction errors, buffered expansion offsets, unsafe
+setOffset backtracking, reset and the three text-input paths. CharacterIterator
+inputs remain aliased; UCharacterIterator inputs are cloned, with the source
+fallback to string text specifically for CloneNotSupportedException. A portable
+exception bridge aliases java.lang.CloneNotSupportedException on JVM. Maximum
+expansion enumeration, order extraction, equality and assertion-sensitive hashing
+also follow the original implementation. FCD iterator equality retains its
+previously documented upstream recursion; this stage does not change it.
+
+Targeted JVM tests passed for complete forward/reverse CE streams and offsets,
+then mixed cursor operations with numeric and FCD options, three text cursor
+kinds, rule-built contractions/prefixes/expansions, imported phonebook rules,
+normalization, Hangul, supplementary and malformed UTF-16. Full maximum-expansion
+maps match ICU4J. Additional coverage checks 10,000 full-width half encodings,
+non-FCD equality and lazy failures after a null text replacement. Common tests
+cover direction constraints, safe contraction offsets, cursor ownership and
+clone-failure fallback.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 18s. Linux tests compiled only;
+the host executes JVM, Node and macOS Arm64 tests.
