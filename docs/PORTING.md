@@ -7208,3 +7208,49 @@ executed on macOS. Exact frozen bytes, mutable internal state and runtime-limit
 failure state matched ICU4J; common snapshot/lead-unit/hash tests passed on all
 three executed platforms. No production corrections were required after the
 initial compilation and oracle comparison.
+
+## Low-level collation data construction
+
+Ported the complete CollationDataBuilder: simple/long/Latin-mini/32-bit/64-bit CE
+encoding and sequence deduplication; linked conditional mappings; contextual base
+copying; CEModifier copies; optimize/suppress; cached build-time CE iteration;
+Jamo/Hangul finalization; digit and lead-surrogate tags; unsafe-backward sets;
+context-trie serialization/deduplication; and optional fast-Latin construction
+and base-table reuse. Output CE arrays and inherited metadata keep source aliases.
+
+The build-time iterator redirects unfinished mappings and Jamo entries through
+the existing runtime CE decoder. It refreshes vector storage, builds/caches
+contexts on demand, invalidates caches by contextsEra and retries context builds
+after clearing on bounds failures. Prefix ordering, longest-prefix fallback,
+contraction CCC flags and surrogate-aware reversal retain source behavior.
+
+Error and partial-state order are preserved, including encoding before rejecting
+an empty source string, incremental expansion writes, failed modifiers and
+compaction before a null output receiver fails. Methods such as optimize and
+suppress retain their source guards rather than gaining an eager mutable check.
+
+Common tests cover live/final context lookup, all CE encoding forms, modifiers,
+suppression, output limits, backing-array aliases, frozen state and fast-Latin
+reuse. JVM tests compare complete CE-vector buffers and conditional nodes,
+context eras/strings, unsafe/context sets, iterator state, frozen trie bytes and
+output arrays/settings. Histories include 360 mapping updates across root and
+locale bases, 500 encoding sequences, failed/changed/unchanged modifiers,
+post-suppress copying, malformed lengths/arrays, repeated/null build and fast
+Latin reuse. Locale-base failures are compared where the source requires a root
+base rather than treating unsupported base input as a successful construction.
+
+The fast-Latin reuse fixture accounts for U+0000: an unoptimized builder retains
+an indirect fallback that the fast-Latin builder does not resolve. Optimizing
+U+0000 first makes the fixture's tables comparable to a directly rebuilt base.
+A test syntax spacing error and initial assumptions about table identity were
+corrected. Java Long/Int masks were translated with explicit widening.
+
+Final rule-to-tailoring weight construction (CollationBuilder) and public
+collator APIs remain pending; low-level data building now runs in common code.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 21s. Linux tests compiled, not
+executed on macOS. The final matrix includes changed/failing modifiers,
+post-suppress copies, live iterator state, and optimized-U+0000 table reuse.
+The null-output build path explicitly evaluates trie freezing before dereferencing
+the output receiver to retain Java assignment evaluation order.
