@@ -24,4 +24,23 @@ internal object DecimalNumberParsing {
         }
         return if (negative) value else -value
     }
+    /** Signed decimal long parsing with the source's BMP decimal-digit and overflow behavior. */
+    fun long(text: String): Long {
+        if (text.isEmpty()) throw NumberFormatException()
+        var index = 0
+        val negative = text[0] == '-'
+        if (negative || text[0] == '+') index++
+        if (index == text.length) throw NumberFormatException()
+        val limit = if (negative) Long.MIN_VALUE else -Long.MAX_VALUE
+        val threshold = limit / 10
+        var value = 0L
+        while (index < text.length) {
+            val digit = digit(text[index++])
+            if (digit < 0 || value < threshold) throw NumberFormatException()
+            value *= 10
+            if (value < limit + digit) throw NumberFormatException()
+            value -= digit
+        }
+        return if (negative) value else -value
+    }
 }

@@ -4148,3 +4148,15 @@ pass; Linux x64 tests compile. A further JVM suite passes after expanding row an
 nullable-field coverage. UI types/engine remain internal pending LocaleDisplayNames'
 public/cache/provider facade. Locale services, Currency/MeasureUnit and the full
 ICU4J port remain unfinished.
+
+### Plural constraint parser
+
+`PluralConditionParser` ports the internal ICU4J constraint grammar: plural
+operands, modulus, integer/within ranges and lists, negation, AND/OR precedence,
+canonical text and integer/decimal limitedness. It retains source tokenization,
+Java regex split behavior, BMP decimal digits, signed Long bounds and malformed
+input behavior. Internal parse diagnostics carry source messages and offset -1;
+the public ParseException boundary will be connected with the PluralRules facade.
+Common tests exercise visible fractions, precedence, Unicode bounds and overflow.
+JVM oracle tests compare parsing, diagnostics, evaluation and limitedness against
+ICU4J 78.3. Public PluralRules, rule lists, samples and locale loading remain pending.
