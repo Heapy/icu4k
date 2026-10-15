@@ -3,6 +3,8 @@
 package io.github.heapy.icu4k.math
 
 import io.github.heapy.icu4k.lang.UCharacter
+import io.github.heapy.icu4k.impl.number.CommonDoubleToDecimal
+import io.github.heapy.icu4k.util.BigDecimal as StandardBigDecimal
 
 /** Mutable working representation for the legacy ICU decimal algorithms; copies share mantissas. */
 internal class IcuDecimalValue {
@@ -11,6 +13,33 @@ internal class IcuDecimalValue {
     var mant: ByteArray = ZERO
     var exp: Int = 0
     fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.mant = mant; it.exp = exp }
+    fun integerText(): String {
+        val result: IcuDecimalValue
+        if (exp >= 0 && form.toInt() == MathContext.PLAIN) result = this
+        else if (exp >= 0) result = copy().also { it.form = MathContext.PLAIN.toByte() }
+        else if (-exp >= mant.size) result = ZERO_VALUE
+        else result = copy().also { it.mant = it.mant.copyOfRange(0, it.mant.size + it.exp); it.form = MathContext.PLAIN.toByte(); it.exp = 0 }
+        return result.layout().concatToString()
+    }
+    fun exactIntegerText(): String {
+        if (exp < 0 && !IcuDecimalDigits.allZero(mant, mant.size + exp)) throw ArithmeticException("Decimal part non-zero: $this")
+        return integerText()
+    }
+    fun unscaledText(): String = if (exp >= 0) integerText() else copy().also { it.exp = 0 }.integerText()
+    fun toStandardBigDecimal(): StandardBigDecimal {
+        // Equivalent to new java.math.BigDecimal(unscaledValue(), scale()).
+        val unscaled = unscaledText()
+        val scale = scale()
+        return StandardBigDecimal(unscaled + "E" + (-scale.toLong()))
+    }
+    fun lowLongValue(): Long {
+        val text = integerText()
+        var result = 0L
+        var i = if (text[0] == '-') 1 else 0
+        while (i < text.length) { result = result * 10 + (text[i] - '0'); i++ }
+        return if (text[0] == '-') -result else result
+    }
+    fun lowIntValue(): Int = lowLongValue().toInt()
     fun longValueExact(): Long {
         if (ind.toInt() == 0) return 0L
         var lodigit = mant.size - 1
@@ -605,7 +634,51 @@ internal class IcuDecimalValue {
         private val ONE = byteArrayOf(1)
         val ZERO_VALUE = IcuDecimalValue()
         val ONE_VALUE = IcuDecimalValue().also { it.ind = 1; it.mant = ONE }
+        val TEN_VALUE = fromLong(10)
         private val PLAIN_CONTEXT = MathContext(0, MathContext.PLAIN)
+        fun fromInt(input: Int): IcuDecimalValue {
+            if (input in -9..9) return IcuDecimalValue().also {
+                when (input) {
+                    0 -> { it.mant = ZERO; it.ind = 0 }
+                    1 -> { it.mant = ONE; it.ind = 1 }
+                    -1 -> { it.mant = ONE; it.ind = -1 }
+                    else -> { it.mant = byteArrayOf((if (input > 0) input else -input).toByte()); it.ind = if (input > 0) 1 else -1 }
+                }
+            }
+            val result = IcuDecimalValue()
+            var num = input
+            if (num > 0) { result.ind = 1; num = -num } else result.ind = -1
+            var mun = num; var i = 9
+            while (true) { mun /= 10; if (mun == 0) break; i-- }
+            result.mant = ByteArray(10 - i); i = 10 - i - 1
+            while (true) { result.mant[i] = (-(num % 10).toByte()).toByte(); num /= 10; if (num == 0) break; i-- }
+            return result
+        }
+        fun fromLong(input: Long): IcuDecimalValue {
+            val result = IcuDecimalValue()
+            var num = input
+            if (num > 0) { result.ind = 1; num = -num } else result.ind = if (num == 0L) 0 else -1
+            var mun = num; var i = 18
+            while (true) { mun /= 10; if (mun == 0L) break; i-- }
+            result.mant = ByteArray(19 - i); i = 19 - i - 1
+            while (true) { result.mant[i] = (-(num % 10).toByte()).toByte(); num /= 10; if (num == 0L) break; i-- }
+            return result
+        }
+        fun fromDouble(input: Double): IcuDecimalValue = parse(StandardBigDecimal(input).toString())
+        fun fromStandardBigDecimal(input: StandardBigDecimal?): IcuDecimalValue = parse(input!!.toString())
+        fun fromIntegerText(input: String?, scale: Int = 0): IcuDecimalValue {
+            val result = parse(input)
+            if (scale < 0) throw NumberFormatException("Negative scale: $scale")
+            result.exp = -scale
+            return result
+        }
+        fun valueOf(input: Long, scale: Int = 0): IcuDecimalValue {
+            val result = when (input) { 0L -> ZERO_VALUE; 1L -> ONE_VALUE; 10L -> TEN_VALUE; else -> fromLong(input) }
+            if (scale == 0) return result
+            if (scale < 0) throw NumberFormatException("Negative scale: $scale")
+            return result.copy().also { it.exp = -scale }
+        }
+        fun valueOf(input: Double): IcuDecimalValue = parse(CommonDoubleToDecimal.format(input))
         fun parse(text: String?): IcuDecimalValue = parse(text!!.toCharArray(), 0, text.length)
         private fun bad(chars: CharArray?): Nothing = throw NumberFormatException("Not a number: " + chars!!.concatToString())
         fun parse(chars: CharArray?, initialOffset: Int, initialLength: Int): IcuDecimalValue {

@@ -5767,3 +5767,29 @@ conversions remain incomplete, followed by public legacy number formatters.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (final run, 2m 11s). Native subnormal midpoint regression
 was reproduced, corrected and verified across seven adjacent midpoint cases.
+
+### Legacy decimal construction and arbitrary-integer conversion layer
+
+Added source Int and Long construction algorithms, exact Double/standard decimal
+construction and cached valueOf factories to IcuDecimalValue. Int constructors
+retain shared zero/one mantissas, Long constructors allocate fresh digits, and
+valueOf caches exactly zero/one/ten before applying scale. Shortest Double text
+uses the existing CommonDoubleToDecimal Java-compatible algorithm, preserving
+scientific-form distinctions and signed-zero scale versus exact construction.
+
+Ported integer-part/exact/unscaled conversion preparation, standard BigDecimal
+conversion and truncating low-32/64-bit numeric conversion. Integer text is the
+source preparation step for the forthcoming BigInteger boundary; this does not
+yet introduce a partial public ICU BigDecimal facade. Standard-decimal conversion
+retains the source non-negative scale via unscaled integer plus scale.
+
+JVM comparisons cover random Int/Long and Double inputs, bounds, factory identity,
+mantissa sharing, invalid scales/nonfinite values, integer truncation, exactness,
+unscaled values and standard decimal scale. Common regressions cover constructor
+sharing, exact versus shortest Double, cached scaled constants and oversized
+signed low-bit conversion. Public BigInteger interchange/BigDecimal and remaining
+legacy formatter integration are still incomplete.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (4m 58s). Repository exploration confirmed no existing
+Common BigInteger type; UnitDecimal supplies decimal arbitrary precision and
+low-bit arithmetic, but a public integer boundary/radix API remains needed.
