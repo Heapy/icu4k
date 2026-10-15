@@ -4285,3 +4285,30 @@ null SimpleModifier pattern. Further tests compare two-argument patterns and
 buffer/helper state after failures. Currency-spacing and mutable pattern
 modifiers, public quantity numeric boundaries and complete number formatting
 remain pending.
+
+### Decimal affix utilities
+
+`AffixUtils` now provides the complete source affix utility API: quoting/escaping,
+width estimates, symbol-field mapping, symbol substitution and counts, token
+queries/replacement, ignorable checks and consumer iteration. The packed Long
+token state retains UTF-16 offsets, quote states, currency widths and code points.
+Six or more currency signs produce the overflow token and U+FFFD with the currency
+field, without calling the symbol provider. Replacements retain the source's
+last-code-unit behavior, including supplementary literals and multi-sign tokens.
+The source escape behavior for `~` is retained rather than silently extended.
+
+Callbacks, early returns and malformed trailing quotes retain source order and
+partial mutation. Symbol counting captures the same CharSequence bounds as Java
+Character.codePointCount. Assertions use the JVM host boundary and are disabled
+on JS/Native. SymbolProvider and TokenConsumer support SAM construction; the
+existing ModifierStore now supports SAM construction too, and Parameters remains
+subclassable like the source.
+
+Common tests cover quotes, supplementary characters, field annotation, provider
+calls, currency overflow, early query termination and replacement. JVM oracle
+tests use 1,218 fixed/seeded patterns to compare all public utility operations,
+malformed diagnostics, provider counts/call order and partial output/fields.
+Reflection compares the exact packed token states. Additional tests compare
+nullable callback/argument short-circuiting and supplied CharSequence accesses.
+Decimal pattern properties/parsing, symbol tables, currency-spacing modifiers
+and complete number formatting are still pending.

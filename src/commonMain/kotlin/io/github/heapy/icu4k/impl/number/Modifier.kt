@@ -19,7 +19,7 @@ interface Modifier {
     fun getCodePointCount(): Int
     fun isStrong(): Boolean
     fun containsField(field: FormatField?): Boolean
-    class Parameters {
+    open class Parameters {
         @JvmField var obj: ModifierStore? = null
         @JvmField var signum: Signum? = null
         @JvmField var plural: StandardPlural? = null
@@ -43,7 +43,7 @@ interface Modifier {
     }
 }
 
-interface ModifierStore {
+fun interface ModifierStore {
     fun getModifier(signum: Modifier.Signum?, plural: StandardPlural?): Modifier?
 }
 
