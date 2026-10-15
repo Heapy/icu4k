@@ -6562,3 +6562,41 @@ Collation resource loading/embedding, runtime CE iterators, settings and public
 collators, and the standard RBNF lenient scanner remain unfinished. Importing
 root fixtures in a JVM oracle does not prove embedded collation resource
 availability on any target; no end-to-end collation claim is made at this stage.
+
+### CollationRootElements weights and tailoring boundaries
+
+The complete CollationRootElements class now runs in common code: metadata and
+boundary getters, first/last CE queries around primary boundaries, modified
+binary search through interleaved secondary/tertiary deltas, two-/three-byte
+primary ranges and secondary/tertiary predecessor/successor lookup. Signed
+widening and the distinct signed-versus-unsigned secondary packing in the two
+tertiary directions follow the source. The constructor retains the supplied
+nullable array without copying or eager validation, and getters reread mutable
+header values. Zero-primary boundary queries still return zero even for a null
+table. Common explicit array checks preserve JVM-style bounds failures on JS.
+
+Assertions capture this class's JVM status at initialization and evaluate their
+conditions lazily. On JS/Native they use the existing disabled-assertion
+convention; the checks do not accidentally read arrays when disabled. An
+isolated JVM class-loader test compares this behavior with ICU4J, including a
+later assertion-policy change. Synthetic common tests cover explicit weights
+below common/common, implied common weights, deltas, both range widths,
+secondary/tertiary limits, aliasing, null state and disabled precondition reads.
+
+The JVM oracle uses the real 7122-entry ICU4J root table, checks every source
+constant and all 18 public/package entry points, and compares assigned primary
+entries, range interiors and secondary/tertiary tuples, including successors of
+returned lower boundaries. A second matrix exercises synthetic/malformed inputs
+and failure order. The initial oracle incorrectly treated the FE040200
+unassigned boundary marker as an assigned-primary input; ICU4J itself rejected
+it. The valid-input enumeration was corrected and explicit rejection remains
+compared, with no production code change. The shared source table is verified
+unchanged after the complete pass.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed, final run 1m 45s (unchanged JS/Native/Linux
+tasks were up-to-date after their initial successful checks). Linux test sources
+were compiled, not run on macOS. This is root weight/tailoring-table support,
+not resource loading, a runtime CE iterator or public Collator support. The real
+root table is still supplied only by the JVM test oracle; embedded collation
+resources and the remaining runtime/tailoring pipeline are pending.
