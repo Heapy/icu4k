@@ -5253,3 +5253,11 @@ Number integral-conversion regression remains explicitly skipped.
 This is the shared output stage, not yet the NumberFormatter facade or macro-to-
 micro pipeline builder. Those and MixedUnitLongNameHandler/LongNameMultiplexer
 remain pending; a replacement default integer formatter was not introduced.
+
+## Number pipeline locale resources
+
+Added pinned de.res and ru.res number/locale bundles and unit/ar.res so the number
+pipeline can use German/Russian numeric conventions and Arabic unit plural data.
+There are now 106 checksum-verified embedded resources. generate-data.py --check
+passed; the complete pipeline differential suite covers these resources against
+ICU4J 78.3, with common JVM/JS/Native coverage for explicit arab numbering.

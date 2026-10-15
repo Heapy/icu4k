@@ -756,6 +756,30 @@
       "sha256": "ec86615859f6fdc3511e1af8b2681c1c1dcb127dcbe51f79542cfea0c704bf97",
       "size": 25696,
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/fr.res"
+    },
+    {
+      "name": "de.res",
+      "file": "data/icu78/de.res",
+      "object": "GermanResourceData",
+      "sha256": "f90cf25ced9e3d532299a71df03781a7085bd6868cb42611e821424ce12e5595",
+      "size": 18064,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/de.res"
+    },
+    {
+      "name": "ru.res",
+      "file": "data/icu78/ru.res",
+      "object": "RussianResourceData",
+      "sha256": "2a155a85c5dc4c38a7715696d1b3a0bd3ff19a1799f2c2300f76ae596a9750e9",
+      "size": 28384,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/ru.res"
+    },
+    {
+      "name": "unit/ar.res",
+      "file": "data/icu78/unit/ar.res",
+      "object": "ArabicUnitResourceData",
+      "sha256": "40a416938f37b721c569bfd5f1d6264dd3ba42c23cf241499237c87454c869c2",
+      "size": 27744,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/ar.res"
     }
   ]
 }
