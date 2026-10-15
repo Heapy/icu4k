@@ -5893,3 +5893,32 @@ The correction was verified with the DecimalFormat settings matrix and existing
 property tests. jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed in
 the combined run; final jvmTest passed in 1m 42s after old test assumptions were
 corrected. Production sources were unchanged between these verification runs.
+
+### DecimalFormat configuration operations
+
+Added the source configuration getters/setters to DecimalFormatCore: affixes,
+sign, multiplier normalization, rounding-increment overloads, rounding modes,
+standard and ICU math contexts, integer/fraction/significant digit coupling,
+padding, scientific notation, grouping, currency and parsing flags. The ICU
+context form is remembered independently of standard context changes and copied
+with the runtime. Requested properties versus exported effective values follow
+the source; negative/boundary values are delegated to the existing mapper.
+
+Preserved source no-op/publication policies: deprecated parse-max-digits does
+nothing; an already-matching significant-digit mode does not refresh; a zero
+standard-decimal rounding increment changes the requested maximum fraction count
+without refreshing, whereas a zero Double clears the increment and refreshes.
+A failed ICU context update may change the remembered form/requested context
+while retaining the prior formatter, exported values and parser caches.
+
+JVM comparisons cover all setting getter states and complete requested/exported
+property bags, boundary Int/Byte/Char inputs, invalid/null arguments, every
+rounding mode and ICU context form/lost-digits combination, currencies, parse
+modes and 180 successive random digit/multiplier/grouping updates. They compare
+exceptions, output/patterns, getter values, copy state and formatter/parser
+publication identity. Common regressions cover these source-specific behaviors
+and plural-info ownership. Verification passed: jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 in the combined run; final jvmTest in 1m 42s. Only JVM
+test corrections followed the combined run. The public inheritance facades must
+still supply synchronization and virtual cross-method dispatch, serialization,
+number-format service factories and rule-based numbering integration.

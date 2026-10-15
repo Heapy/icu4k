@@ -20,6 +20,12 @@ import io.github.heapy.icu4k.util.Currency
 import io.github.heapy.icu4k.util.CurrencyAmount
 import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.math.BigDecimal as IcuBigDecimal
+import io.github.heapy.icu4k.util.BigDecimals
+import io.github.heapy.icu4k.util.RoundingModes
+import io.github.heapy.icu4k.util.RoundingMode
+import io.github.heapy.icu4k.util.MathContext
+import io.github.heapy.icu4k.math.MathContext as IcuMathContext
+import kotlin.math.pow
 import kotlin.concurrent.Volatile
 
 /** DecimalFormat's mutable configuration and published runtime, before its public inheritance facade.
@@ -34,9 +40,11 @@ internal class DecimalFormatCore private constructor() {
     @Volatile private var parser: NumberParserImpl? = null
     @Volatile private var currencyParser: NumberParserImpl? = null
     var actualLocale: ULocale? = null
+    private var icuMathContextForm: Int = IcuMathContext.PLAIN
 
     fun copy(): DecimalFormatCore = DecimalFormatCore().also {
         it.actualLocale = actualLocale
+        it.icuMathContextForm = icuMathContextForm
         it.symbols = symbols.clone()
         it.properties = properties.clone()
         it.exportedProperties = DecimalFormatProperties()
@@ -59,6 +67,186 @@ internal class DecimalFormatCore private constructor() {
         refreshFormatter()
     }
     fun getDecimalFormatSymbols(): DecimalFormatSymbols = symbols.clone()
+    // Source configuration operations: the public facade supplies its reentrant monitor.
+    fun getPositivePrefix(): String = formatter!!.getAffixImpl(true, false)
+    fun setPositivePrefix(value: String?) {
+        properties.setPositivePrefix(value!!)
+        refreshFormatter()
+    }
+    fun getNegativePrefix(): String = formatter!!.getAffixImpl(true, true)
+    fun setNegativePrefix(value: String?) {
+        properties.setNegativePrefix(value!!)
+        refreshFormatter()
+    }
+    fun getPositiveSuffix(): String = formatter!!.getAffixImpl(false, false)
+    fun setPositiveSuffix(value: String?) {
+        properties.setPositiveSuffix(value!!)
+        refreshFormatter()
+    }
+    fun getNegativeSuffix(): String = formatter!!.getAffixImpl(false, true)
+    fun setNegativeSuffix(value: String?) {
+        properties.setNegativeSuffix(value!!)
+        refreshFormatter()
+    }
+    fun getMultiplier(): Int {
+        return if (properties.getMultiplier() != null) properties.getMultiplier()!!.toInt()
+            else 10.0.pow(properties.getMagnitudeMultiplier()).toInt()
+    }
+    fun setMultiplier(multiplier: Int) {
+        if (multiplier == 0) throw IllegalArgumentException("Multiplier must be nonzero.")
+        var delta = 0
+        var value = multiplier
+        while (value != 1) {
+            delta++
+            val temp = value / 10
+            if (temp * 10 != value) { delta = -1; break }
+            value = temp
+        }
+        if (delta != -1) {
+            properties.setMagnitudeMultiplier(delta)
+            properties.setMultiplier(null)
+        } else {
+            properties.setMagnitudeMultiplier(0)
+            properties.setMultiplier(BigDecimals.valueOf(multiplier.toLong()))
+        }
+        refreshFormatter()
+    }
+    fun getRoundingIncrement(): BigDecimal? = exportedProperties!!.getRoundingIncrement()
+    fun setRoundingIncrement(increment: BigDecimal?) {
+        if (increment != null && increment.compareTo(BigDecimals.ZERO) == 0) {
+            properties.setMaximumFractionDigits(Int.MAX_VALUE)
+            return
+        }
+        properties.setRoundingIncrement(increment)
+        refreshFormatter()
+    }
+    fun setRoundingIncrement(increment: IcuBigDecimal?) { setRoundingIncrement(increment?.toBigDecimal()) }
+    fun setRoundingIncrement(increment: Double) {
+        if (increment == 0.0) setRoundingIncrement(null as BigDecimal?)
+        else setRoundingIncrement(BigDecimals.valueOf(increment).stripTrailingZeros())
+    }
+    fun getRoundingMode(): Int = exportedProperties!!.getRoundingMode()?.ordinal ?: 0
+    fun setRoundingMode(value: Int) { properties.setRoundingMode(RoundingModes.valueOf(value)); refreshFormatter() }
+    fun getMathContext(): MathContext? {
+        val context = exportedProperties!!.getMathContext()
+        assertDecimalFormatCore { context != null }
+        return context
+    }
+    fun setMathContext(value: MathContext?) { properties.setMathContext(value); refreshFormatter() }
+    fun getMathContextICU(): IcuMathContext {
+        val context = getMathContext()!!
+        return IcuMathContext(context.getPrecision(), icuMathContextForm, false, context.getRoundingMode().ordinal)
+    }
+    fun setMathContextICU(value: IcuMathContext?) {
+        icuMathContextForm = value!!.getForm()
+        val context = if (value.getLostDigits()) MathContext(value.getDigits(), RoundingMode.UNNECESSARY)
+            else MathContext(value.getDigits(), RoundingModes.valueOf(value.getRoundingMode()))
+        setMathContext(context)
+    }
+    fun getMinimumIntegerDigits(): Int = exportedProperties!!.getMinimumIntegerDigits()
+    fun setMinimumIntegerDigits(value: Int) {
+        val other = properties.getMaximumIntegerDigits()
+        if (other >= 0 && other < value) properties.setMaximumIntegerDigits(value)
+        properties.setMinimumIntegerDigits(value)
+        refreshFormatter()
+    }
+    fun getMaximumIntegerDigits(): Int = exportedProperties!!.getMaximumIntegerDigits()
+    fun setMaximumIntegerDigits(value: Int) {
+        val other = properties.getMinimumIntegerDigits()
+        if (other >= 0 && other > value) properties.setMinimumIntegerDigits(value)
+        properties.setMaximumIntegerDigits(value)
+        refreshFormatter()
+    }
+    fun getMinimumFractionDigits(): Int = exportedProperties!!.getMinimumFractionDigits()
+    fun setMinimumFractionDigits(value: Int) {
+        val other = properties.getMaximumFractionDigits()
+        if (other >= 0 && other < value) properties.setMaximumFractionDigits(value)
+        properties.setMinimumFractionDigits(value)
+        refreshFormatter()
+    }
+    fun getMaximumFractionDigits(): Int = exportedProperties!!.getMaximumFractionDigits()
+    fun setMaximumFractionDigits(value: Int) {
+        val other = properties.getMinimumFractionDigits()
+        if (other >= 0 && other > value) properties.setMinimumFractionDigits(value)
+        properties.setMaximumFractionDigits(value)
+        refreshFormatter()
+    }
+    fun getMinimumSignificantDigits(): Int = exportedProperties!!.getMinimumSignificantDigits()
+    fun setMinimumSignificantDigits(value: Int) {
+        val other = properties.getMaximumSignificantDigits()
+        if (other >= 0 && other < value) properties.setMaximumSignificantDigits(value)
+        properties.setMinimumSignificantDigits(value)
+        refreshFormatter()
+    }
+    fun getMaximumSignificantDigits(): Int = exportedProperties!!.getMaximumSignificantDigits()
+    fun setMaximumSignificantDigits(value: Int) {
+        val other = properties.getMinimumSignificantDigits()
+        if (other >= 0 && other > value) properties.setMinimumSignificantDigits(value)
+        properties.setMaximumSignificantDigits(value)
+        refreshFormatter()
+    }
+    fun areSignificantDigitsUsed(): Boolean = properties.getMinimumSignificantDigits() != -1 || properties.getMaximumSignificantDigits() != -1
+    fun setSignificantDigitsUsed(value: Boolean) {
+        val min = properties.getMinimumSignificantDigits()
+        val max = properties.getMaximumSignificantDigits()
+        if (value) { if (min != -1 || max != -1) return }
+        else { if (min == -1 && max == -1) return }
+        properties.setMinimumSignificantDigits(if (value) 1 else -1)
+        properties.setMaximumSignificantDigits(if (value) 6 else -1)
+        refreshFormatter()
+    }
+    fun getFormatWidth(): Int = properties.getFormatWidth()
+    fun setFormatWidth(value: Int) { properties.setFormatWidth(value); refreshFormatter() }
+    fun getPadCharacter(): Char = (properties.getPadString() ?: Padder.FALLBACK_PADDING_STRING)[0]
+    fun setPadCharacter(value: Char) { properties.setPadString(value.toString()); refreshFormatter() }
+    fun getPadPosition(): Int = properties.getPadPosition()?.toOld() ?: PAD_BEFORE_PREFIX
+    fun setPadPosition(value: Int) { properties.setPadPosition(Padder.PadPosition.fromOld(value)); refreshFormatter() }
+    fun isScientificNotation(): Boolean = properties.getMinimumExponentDigits() != -1
+    fun setScientificNotation(value: Boolean) { properties.setMinimumExponentDigits(if (value) 1 else -1); refreshFormatter() }
+    fun getMinimumExponentDigits(): Byte = properties.getMinimumExponentDigits().toByte()
+    fun setMinimumExponentDigits(value: Byte) { properties.setMinimumExponentDigits(value.toInt()); refreshFormatter() }
+    fun getGroupingSize(): Int = if (properties.getGroupingSize() < 0) 0 else properties.getGroupingSize()
+    fun setGroupingSize(value: Int) { properties.setGroupingSize(value); refreshFormatter() }
+    fun getSecondaryGroupingSize(): Int = if (properties.getSecondaryGroupingSize() < 0) 0 else properties.getSecondaryGroupingSize()
+    fun setSecondaryGroupingSize(value: Int) { properties.setSecondaryGroupingSize(value); refreshFormatter() }
+    fun getMinimumGroupingDigits(): Int = if (properties.getMinimumGroupingDigits() > 0) properties.getMinimumGroupingDigits() else 1
+    fun setMinimumGroupingDigits(value: Int) { properties.setMinimumGroupingDigits(value); refreshFormatter() }
+    fun getCurrency(): Currency? = exportedProperties!!.getCurrency()
+    fun setCurrency(value: Currency?) {
+        properties.setCurrency(value)
+        if (value != null) symbols.setCurrency(value)
+        refreshFormatter()
+    }
+    fun getCurrencyUsage(): Currency.CurrencyUsage = properties.getCurrencyUsage() ?: Currency.CurrencyUsage.STANDARD
+    fun setCurrencyUsage(value: Currency.CurrencyUsage?) { properties.setCurrencyUsage(value); refreshFormatter() }
+    fun getCurrencyPluralInfo(): CurrencyPluralInfo? = properties.getCurrencyPluralInfo()
+    fun setCurrencyPluralInfo(value: CurrencyPluralInfo?) { properties.setCurrencyPluralInfo(value); refreshFormatter() }
+    fun getParseMaxDigits(): Int = 1000
+    fun setParseMaxDigits(value: Int) = Unit
+    fun isParseStrict(): Boolean = properties.getParseMode() == DecimalFormatProperties.ParseMode.STRICT
+    fun setParseStrict(value: Boolean) {
+        properties.setParseMode(if (value) DecimalFormatProperties.ParseMode.STRICT else DecimalFormatProperties.ParseMode.LENIENT)
+        refreshFormatter()
+    }
+    fun setParseStrictMode(value: DecimalFormatProperties.ParseMode?) { properties.setParseMode(value); refreshFormatter() }
+    fun isSignAlwaysShown(): Boolean = properties.getSignAlwaysShown()
+    fun setSignAlwaysShown(value: Boolean) { properties.setSignAlwaysShown(value); refreshFormatter() }
+    fun isExponentSignAlwaysShown(): Boolean = properties.getExponentSignAlwaysShown()
+    fun setExponentSignAlwaysShown(value: Boolean) { properties.setExponentSignAlwaysShown(value); refreshFormatter() }
+    fun isGroupingUsed(): Boolean = properties.getGroupingUsed()
+    fun setGroupingUsed(value: Boolean) { properties.setGroupingUsed(value); refreshFormatter() }
+    fun isDecimalSeparatorAlwaysShown(): Boolean = properties.getDecimalSeparatorAlwaysShown()
+    fun setDecimalSeparatorAlwaysShown(value: Boolean) { properties.setDecimalSeparatorAlwaysShown(value); refreshFormatter() }
+    fun isParseBigDecimal(): Boolean = properties.getParseToBigDecimal()
+    fun setParseBigDecimal(value: Boolean) { properties.setParseToBigDecimal(value); refreshFormatter() }
+    fun isParseIntegerOnly(): Boolean = properties.getParseIntegerOnly()
+    fun setParseIntegerOnly(value: Boolean) { properties.setParseIntegerOnly(value); refreshFormatter() }
+    fun isDecimalPatternMatchRequired(): Boolean = properties.getDecimalPatternMatchRequired()
+    fun setDecimalPatternMatchRequired(value: Boolean) { properties.setDecimalPatternMatchRequired(value); refreshFormatter() }
+    fun isParseNoExponent(): Boolean = properties.getParseNoExponent()
+    fun setParseNoExponent(value: Boolean) { properties.setParseNoExponent(value); refreshFormatter() }
+    fun isParseCaseSensitive(): Boolean = properties.getParseCaseSensitive()
+    fun setParseCaseSensitive(value: Boolean) { properties.setParseCaseSensitive(value); refreshFormatter() }
     fun refreshFormatter() {
         if (exportedProperties == null) return
         var locale = actualLocale
@@ -172,6 +360,12 @@ internal class DecimalFormatCore private constructor() {
     override fun hashCode(): Int = properties.hashCode() xor symbols.hashCode()
 
     companion object {
+        const val PAD_BEFORE_PREFIX = 0
+        const val PAD_AFTER_PREFIX = 1
+        const val PAD_BEFORE_SUFFIX = 2
+        const val PAD_AFTER_SUFFIX = 3
+        const val MINIMUM_GROUPING_DIGITS_AUTO = -2
+        const val MINIMUM_GROUPING_DIGITS_MIN2 = -3
         fun createDefault(): DecimalFormatCore {
             val locale = ULocale.getDefault(ULocale.Category.FORMAT)
             val pattern = NumberFormatPatternData.getPatternForStyle(locale, NumberFormatPatternData.NUMBERSTYLE)
