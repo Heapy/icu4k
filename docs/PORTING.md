@@ -5167,3 +5167,29 @@ until that intrinsic-dispatch gap is resolved. JVM custom singleton lists also
 receive their source sort callback. Verification passed for active checks:
 jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64; the final JS-only
 regression registration passed jsNodeTest with that one explicitly skipped case.
+
+## Long-name resource loading and grammatical derivation
+
+Ported the data-loading portion of ICU4J LongNameHandler into the internal
+LongNameData module: plural/display/per/gender slots, plural fallback, placeholder
+extraction, built-in gender lookup, aliases and person-duration mapping, measure
+patterns and case selection, inflected gender/case sinks, currency long names,
+compound patterns, deriveComponent and deriveCompound rules. The pinned
+grammaticalFeatures resource is now embedded with checksum verification (101
+resources total). Missing rules and partial sink writes follow the source.
+
+The source repeats the same resource key in two purported short-width fallback
+paths; this behavior is retained. Inflected gender/case fallback also retains
+source reference comparisons against literal strings; JavaScript string identity
+cannot distinguish separately allocated equal strings. Currency patterns retain
+the provider's live map and fill missing locale plural entries in that map.
+
+Common tests cover plural fallback, Unicode space separators and German component
+rules. JVM differential tests compare ICU4J private helpers across units, aliases,
+widths, cases, preseeded/undersized arrays, currencies and plural locales,
+compound/missing keys, grammatical rules and placeholder positions. Verification:
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed, along
+with generate-data.py --check. The pre-existing generic integral Number conversion
+regression on Kotlin/JS remains explicitly skipped. Full arbitrary-unit pattern
+assembly, LongNameHandler/MixedUnitLongNameHandler and the formatter facade
+remain pending; this internal resource module does not expose a partial handler.

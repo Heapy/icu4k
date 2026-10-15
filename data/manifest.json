@@ -732,6 +732,14 @@
       "object": "PluralRangesResourceData",
       "sha256": "5d5a79c3039e1809ee865255532035b50c6273c0f445fc9955a01ced44942653",
       "size": 3520
+    },
+    {
+      "name": "grammaticalFeatures.res",
+      "file": "data/icu78/grammaticalFeatures.res",
+      "object": "GrammaticalFeaturesResourceData",
+      "sha256": "a1013016bc9d200c3de3260c6f2a497255cd0829f6a450045f5babc403577151",
+      "size": 5008,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/grammaticalFeatures.res"
     }
   ]
 }
