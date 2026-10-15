@@ -5922,3 +5922,39 @@ compileTestKotlinLinuxX64 in the combined run; final jvmTest in 1m 42s. Only JVM
 test corrections followed the combined run. The public inheritance facades must
 still supply synchronization and virtual cross-method dispatch, serialization,
 number-format service factories and rule-based numbering integration.
+
+### Public NumberFormat instance base and stream compatibility
+
+Added the public abstract NumberFormat instance protocol in commonMain, with
+source numeric overload dispatch, convenience methods, parse wrappers, default
+currency formatting/parsing, digit limits, grouping, parse flags, capitalization
+contexts, currency, equality/hash, constants and the existing Field identities.
+Localized static factories, nested factory/service APIs and the concrete public
+DecimalFormat hierarchy are still pending; the base does not publish substitute
+factory implementations.
+
+Digit limits clamp negatives and update their paired bounds as the NumberFormat
+source does (distinct from DecimalFormat's raw property setters). Equality ignores
+currency and locale metadata and requires equal runtime classes. Hashing retains
+the source use of the legacy maxFractionDigits byte. Stream hooks preserve the
+source fields and serialVersionUID, legacy byte conversion/capitalization defaults,
+range validation, version upgrades and write-time byte saturation, including its
+observable mutation of hashCode. JVM tests verify field descriptors, real round
+trips and historical/malformed stream-hook states against ICU4J.
+
+Currency formatting shares the owning object's reentrant monitor and preserves
+virtual calls, equality callbacks and source failure order: an exception during
+formatting leaves the temporary currency set. Subclasses can use the same monitor
+for their synchronized configuration methods. JVM locking still works after
+object-stream restoration; Native uses recursive locks. UFormatBase now exposes
+its clone protocol. JVM/JS retain host shallow copying; Native custom subclasses
+provide a typed clone using copyNumberFormatTo, as the other portable clone bases
+already require.
+
+The JS generic-Number-to-Double boundary invokes overrides for custom Number
+objects instead of coercing their toString value. Common tests cover dispatch,
+custom numbers, returned-buffer handling, cloning, contexts, reentrant currency
+updates, equality callbacks and parsing wrappers. JVM tests compare settings,
+exceptions, identity, monitor ownership, serialization and callback order.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (final run, 6m 28s).

@@ -16,7 +16,7 @@ import io.github.heapy.icu4k.util.MathContext
 import io.github.heapy.icu4k.util.RoundingMode
 import kotlin.jvm.Transient
 
-/** Raw decimal-format settings. Setters retain references and perform no validation. */
+/** Raw decimal-format settings. Setters do not validate; currency plural info is defensively cloned. */
 open class DecimalFormatProperties : ICUCloneableBase() {
     enum class ParseMode { LENIENT, STRICT, JAVA_COMPATIBILITY }
     @Transient private var compactCustomData: Map<out String?, Map<out String?, String?>?>? = null

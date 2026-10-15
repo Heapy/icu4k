@@ -11,6 +11,7 @@ expect abstract class UFormatBase() : ICUSerializable {
     abstract fun parseObject(source: String?, position: ParsePosition?): Any?
     open fun parseObject(source: String?): Any?
     open fun formatToCharacterIterator(input: Any?): FormatAttributedCharacterIterator
+    open fun clone(): Any
     protected fun cloneHost(): Any?
 }
 
@@ -26,6 +27,7 @@ abstract class PortableUFormatBase : ICUSerializable {
         return result
     }
     open fun formatToCharacterIterator(input: Any?): FormatAttributedCharacterIterator = attributedCharacterIterator(format(input), emptyList())
+    open fun clone(): Any = cloneHost() ?: throw UnsupportedOperationException("Native format subclasses must supply a typed clone")
     protected fun cloneHost(): Any? = clonePortableUFormat(this)
 }
 internal expect fun clonePortableUFormat(value: Any): Any?
