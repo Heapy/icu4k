@@ -365,3 +365,12 @@ val snapshot = index.buildImmutableIndex() // labels and boundaries, without rec
 val bucket = snapshot.getBucket(snapshot.getBucketIndex("Bob"))!!
 println(bucket.getLabel()) // B
 ```
+
+`LocalePriorityList` parses Accept-Language priorities and supports reusable builders:
+
+```kotlin
+import io.github.heapy.icu4k.util.LocalePriorityList
+
+val priorities = LocalePriorityList.add("en, fr;q=0.7, de;q=0.5").build(true)
+println(priorities.getWeight(ULocale.FRENCH)) // 0.7
+```

@@ -7753,3 +7753,42 @@ contractions, collator cloning, null names and retained old bucket iterators.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 21s. Linux tests compiled only;
 AlphabeticIndex common tests ran on JVM, Node and macOS Arm64.
+
+
+### LocalePriorityList and DateTimeRule
+
+Dependency inspection for GlobalizationPreferences found that TimeZone, Calendar,
+DateFormat/SimpleDateFormat and LocalePriorityList were still absent. NumberFormat,
+Currency, Collator and BreakIterator are already common. This stage ports the
+complete independent LocalePriorityList and DateTimeRule classes; the preferences
+front end and date-returning time-zone rules remain pending until their date/time
+boundary and remaining dependencies are implemented.
+
+LocalePriorityList retains descending weight groups, stable insertion order,
+last-addition replacement/removal, null locale keys and programmatic NaN handling.
+Builder reuse copies built maps before mutation; repeated build calls preserve
+object identity and ignore a later preserveWeights argument. A single shared
+non-unit weight is retained even by build(false), matching ICU4J's implementation.
+The locale set is a cached immutable view and rejects all mutators, including
+no-op removals and empty addAll. Equality ignores locale order, while iteration
+and rendering retain it. Hashing uses Java Double bit semantics on every target.
+ASCII regex whitespace, Java trim, floating-point literal parsing and shortest
+Double rendering use the source contracts. Failed parsing retains prior additions.
+The copy-builder assertion follows the JVM outer class assertion policy.
+
+DateTimeRule implements all four date forms and wall/standard/UTC time constants,
+virtual getters, identity equality and source debug formatting. Constructors do
+not add validation: invalid fields remain observable, and invalid month/day name
+indices fail only when formatting. Negative time fields preserve Java quotient
+and remainder formatting. The JVM serial UID and fields are retained through the
+existing serialization marker; round-trip tests compare stored values.
+
+Targeted JVM tests passed for 3,000 DateTimeRule cases, serialized snapshots,
+Accept-Language grammar/errors, 5,600 reusable-builder mutations and immutable
+set views. Common tests cover ordering, weight quirks, snapshots, null/NaN values,
+scientific Double rendering, hash codes, partial parsing failures, rule forms,
+invalid fields and subclass getter dispatch.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
+LocalePriorityList and DateTimeRule common tests ran on JVM, Node and macOS Arm64.
