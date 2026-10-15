@@ -18,6 +18,7 @@ class DecimalQuantity_DualStorageBCD private constructor(core: DecimalQuantityCo
     fun isUsingBytes(): Boolean = core.isUsingBytes()
     override fun toString(): String = core.toString()
     companion object {
+        internal fun fromCore(core: DecimalQuantityCore): DecimalQuantity_DualStorageBCD = DecimalQuantity_DualStorageBCD(core)
         @JvmStatic fun fromExponentString(value: String?): DecimalQuantity = DecimalQuantity_DualStorageBCD(DecimalQuantityCore.fromExponentString(value))
     }
 }

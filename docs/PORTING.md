@@ -4485,3 +4485,28 @@ Common tests exercise typed numeric mutation, copies, operands and output on all
 runnable targets. JVM oracle tests compare public adapter state and behavior with
 ICU4J, including boxed numeric dispatch, rounding, appended output, plural selection
 and source self-copy behavior. Production code does not delegate to ICU4J.
+
+
+### Public plural quantity samples and keyword status
+
+PluralRules now exposes DecimalQuantitySamplesRange/DecimalQuantitySamples,
+decimal quantity sample/all/unique queries, typed all-keyword queries, and both
+keyword-status overloads. Sample descriptors are cached per rule facade under a
+portable lock. Endpoints retain the underlying quantities and singleton identity;
+mutating an endpoint affects subsequent enumeration and rule rendering. Returned
+quantity collections retain the source Set-versus-Collection shape, stable element
+identities and unmodifiable operations. The public no-unique sentinel wraps the
+same quantity as the core query implementation.
+
+Sample expansion invokes collection callbacks before constructing the next value,
+so a caller's mutation of a supplied quantity participates in the source increment
+schedule. Keyword status accepts arbitrary DecimalQuantity implementations through
+the public decimal boundary, clears Output before validation, and retains source
+limitedness, suppression, offset and null-input behavior.
+
+Oracle tests cover every distinct locale rule description, both sample types and
+null sample types, sample ordering/formatting, low-level double filtering, quantity
+expansion, endpoint identity/mutation, collection callbacks and status/output
+transitions. Common tests exercise public sample APIs and custom interface inputs
+on JVM, JS and Native. FormattedNumber/FormattedNumberRange selection and remaining
+number formatter APIs are still pending.

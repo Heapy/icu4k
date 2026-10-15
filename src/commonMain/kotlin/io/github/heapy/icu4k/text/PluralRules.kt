@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.text
 
+import io.github.heapy.icu4k.impl.createResourceCacheLock
+import io.github.heapy.icu4k.impl.number.DecimalQuantity
+import io.github.heapy.icu4k.impl.number.DecimalQuantity_DualStorageBCD
+import io.github.heapy.icu4k.impl.number.PluralSamplesCore
+import io.github.heapy.icu4k.util.BigDecimal
+import io.github.heapy.icu4k.util.Output
 import io.github.heapy.icu4k.impl.PluralRulesLoader
 import io.github.heapy.icu4k.impl.number.DecimalQuantityCore
 import io.github.heapy.icu4k.impl.number.FixedDecimalCore
@@ -16,7 +22,7 @@ import io.github.heapy.icu4k.util.ULocale
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
-/** Unicode plural rules. Formatted-number and decimal-quantity adapters are ported separately. */
+/** Unicode plural rules. Formatted-number adapters are ported separately. */
 open class PluralRules private constructor(internal val rules: PluralRuleListCore, internal val ranges: StandardPluralRanges?) : ICUSerializable {
     enum class Operand { n, i, f, t, v, w, e, c, j }
     enum class PluralType { CARDINAL, ORDINAL }
@@ -68,6 +74,47 @@ open class PluralRules private constructor(internal val rules: PluralRuleListCor
             @JvmStatic fun getOperand(text: String?): Operand = Operand.valueOf(text!!)
         }
     }
+    open class DecimalQuantitySamplesRange(start: DecimalQuantity?, end: DecimalQuantity?) {
+        @JvmField val start: DecimalQuantity
+        @JvmField val end: DecimalQuantity
+        init {
+            require(start!!.getPluralOperand(Operand.v) == end!!.getPluralOperand(Operand.v)) {
+                "Ranges must have the same number of visible decimals: $start~$end"
+            }
+            this.start = start
+            this.end = end
+        }
+        override fun toString(): String = start.toExponentString() + if (end === start) "" else "~${end.toExponentString()}"
+    }
+    open class DecimalQuantitySamples internal constructor(private val core: PluralSamplesCore) {
+        @JvmField val sampleType: SampleType = SampleType.entries[core.sampleType.ordinal]
+        @JvmField val bounded: Boolean = core.bounded
+        @JvmField val samples: Set<DecimalQuantitySamplesRange> = pluralReadOnlySet(core.samples.mapTo(linkedSetOf()) {
+            val start = DecimalQuantity_DualStorageBCD.fromCore(it.start)
+            DecimalQuantitySamplesRange(start, if (it.end === it.start) start else DecimalQuantity_DualStorageBCD.fromCore(it.end))
+        })
+        fun getSamples(): Set<DecimalQuantitySamplesRange> = samples
+        fun addSamples(result: MutableCollection<Double>?): MutableCollection<Double>? {
+            addSamples(result, null)
+            return result
+        }
+        fun addDecimalQuantitySamples(result: MutableCollection<DecimalQuantity>?): MutableCollection<DecimalQuantity>? {
+            addSamples(null, result)
+            return result
+        }
+        fun addSamples(doubleResult: MutableCollection<Double>?, dqResult: MutableCollection<DecimalQuantity>?) {
+            if ((doubleResult == null) == (dqResult == null)) return
+            if (doubleResult != null) core.addSamples(doubleResult, null)
+            else core.forEachQuantity { dqResult!!.add(DecimalQuantity_DualStorageBCD.fromCore(it)) }
+        }
+        fun getStartEndSamples(target: MutableSet<DecimalQuantity>?) {
+            for (range in samples) { target!!.add(range.start); target.add(range.end) }
+        }
+        override fun toString(): String = core.toString()
+        companion object {
+            internal fun parse(source: String): DecimalQuantitySamples = DecimalQuantitySamples(PluralSamplesCore.parse(source))
+        }
+    }
     abstract class Factory protected constructor() {
         abstract fun forLocale(locale: ULocale?, type: PluralType?): PluralRules
         fun forLocale(locale: ULocale?): PluralRules = forLocale(locale, PluralType.CARDINAL)
@@ -77,6 +124,8 @@ open class PluralRules private constructor(internal val rules: PluralRuleListCor
         companion object { @JvmStatic fun getDefaultFactory(): PluralRulesLoader = PluralRulesLoader.loader }
     }
     private val queries = PluralRuleSamplesCore(rules)
+    private val sampleViews = HashMap<PluralSamplesCore, DecimalQuantitySamples>()
+    private val sampleMonitor = createResourceCacheLock()
     private val keywords: Set<String> = pluralReadOnlyKeywords(rules.getKeywords())
     fun select(number: Double): String = select(FixedDecimal(number))
     fun select(number: Double, countVisibleFractionDigits: Int, fractionaldigits: Long): String = select(FixedDecimal(number, countVisibleFractionDigits, fractionaldigits))
@@ -98,6 +147,44 @@ open class PluralRules private constructor(internal val rules: PluralRuleListCor
         if (keyword == null && !rules.hasExplicitBoundingInfo) throw NullPointerException()
         return keyword?.let { queries.getUniqueKeywordValue(it) } ?: NO_UNIQUE_VALUE
     }
+    fun getDecimalSamples(keyword: String?, sampleType: SampleType?): DecimalQuantitySamples? {
+        val samples = keyword?.let { rules.getDecimalSamples(it, sampleType?.core()) } ?: return null
+        return sampleMonitor.withLock { sampleViews.getOrPut(samples) { DecimalQuantitySamples(samples) } }
+    }
+    fun getDecimalQuantitySamples(keyword: String?): Collection<DecimalQuantity>? = getDecimalQuantitySamples(keyword, SampleType.INTEGER)
+    fun getDecimalQuantitySamples(keyword: String?, sampleType: SampleType?): Collection<DecimalQuantity>? =
+        keyword?.let { queries.getDecimalQuantitySamples(it, sampleType?.core()) }?.publicView()
+    fun getAllKeywordDecimalQuantityValues(keyword: String?): Collection<DecimalQuantity>? = getAllKeywordValues(keyword, SampleType.INTEGER)
+    fun getAllKeywordValues(keyword: String?, type: SampleType?): Collection<DecimalQuantity>? =
+        if (!isLimited(keyword, type)) null else getDecimalQuantitySamples(keyword, type)
+    fun getUniqueKeywordDecimalQuantityValue(keyword: String?): DecimalQuantity {
+        val values = getAllKeywordDecimalQuantityValues(keyword)
+        return if (values?.size == 1) values.first() else NO_UNIQUE_VALUE_DECIMAL_QUANTITY
+    }
+    fun getKeywordStatus(keyword: String?, offset: Int, explicits: Set<DecimalQuantity>?, uniqueValue: Output<DecimalQuantity>?): KeywordStatus =
+        getKeywordStatus(keyword, offset, explicits, uniqueValue, SampleType.INTEGER)
+    fun getKeywordStatus(keyword: String?, offset: Int, explicits: Set<DecimalQuantity>?, uniqueValue: Output<DecimalQuantity>?, sampleType: SampleType?): KeywordStatus {
+        uniqueValue?.value = null
+        if (keyword !in keywords) return KeywordStatus.INVALID
+        if (!isLimited(keyword, sampleType)) return KeywordStatus.UNBOUNDED
+        val values = getDecimalQuantitySamples(keyword, sampleType)!!
+        val originalSize = values.size
+        if (originalSize > (explicits?.size ?: 0)) {
+            if (originalSize == 1) {
+                uniqueValue?.value = values.first()
+                return KeywordStatus.UNIQUE
+            }
+            return KeywordStatus.BOUNDED
+        }
+        val remaining = values.toMutableList()
+        for (explicit in explicits.orEmpty()) {
+            val remove = DecimalQuantity_DualStorageBCD(explicit.toBigDecimal().subtract(BigDecimal(offset)))
+            remaining.remove(remove)
+        }
+        if (remaining.isEmpty()) return KeywordStatus.SUPPRESSED
+        if (remaining.size == 1) uniqueValue?.value = remaining.first()
+        return if (originalSize == 1) KeywordStatus.UNIQUE else KeywordStatus.BOUNDED
+    }
     fun isLimited(keyword: String?, sampleType: SampleType?): Boolean =
         if (rules.hasExplicitBoundingInfo) keyword?.let { rules.isLimited(it, sampleType?.core()) } ?: true else computeLimited(keyword, sampleType)
     fun computeLimited(keyword: String?, sampleType: SampleType?): Boolean = rules.computeLimited(keyword!!, sampleType?.core())
@@ -117,6 +204,7 @@ open class PluralRules private constructor(internal val rules: PluralRuleListCor
         const val KEYWORD_MANY = "many"
         const val KEYWORD_OTHER = "other"
         const val NO_UNIQUE_VALUE = PluralRuleSamplesCore.NO_UNIQUE_VALUE
+        @JvmField val NO_UNIQUE_VALUE_DECIMAL_QUANTITY: DecimalQuantity = DecimalQuantity_DualStorageBCD.fromCore(PluralRuleSamplesCore.NO_UNIQUE_VALUE_DECIMAL_QUANTITY)
         @JvmField val DEFAULT = PluralRules(PluralRuleListCore.parse(""), StandardPluralRanges.DEFAULT)
         @JvmStatic fun parseDescription(description: String?): PluralRules = newInternal(description, null)
         @JvmStatic fun createRules(description: String?): PluralRules? = try { parseDescription(description) } catch (_: Exception) { null }
@@ -135,25 +223,51 @@ open class PluralRules private constructor(internal val rules: PluralRuleListCor
     }
 }
 
-private fun pluralReadOnlyKeywords(values: Set<String>): Set<String> = object : AbstractMutableSet<String>() {
+private fun pluralReadOnlyKeywords(values: Set<String>): Set<String> = pluralReadOnlySet(values)
+
+private fun <T> pluralReadOnlySet(values: Set<T>): Set<T> = object : AbstractMutableSet<T>() {
     override val size get() = values.size
-    override fun contains(element: String) = values.contains(element)
-    override fun iterator(): MutableIterator<String> {
+    override fun contains(element: T) = values.contains(element)
+    override fun iterator(): MutableIterator<T> {
         val source = values.iterator()
-        return object : MutableIterator<String> {
+        return object : MutableIterator<T> {
             override fun hasNext() = source.hasNext()
             override fun next() = source.next()
             override fun remove(): Nothing = throw UnsupportedOperationException()
         }
     }
-    override fun add(element: String): Nothing = throw UnsupportedOperationException()
-    override fun addAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
-    override fun remove(element: String): Nothing = throw UnsupportedOperationException()
-    override fun removeAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
-    override fun retainAll(elements: Collection<String>): Nothing = throw UnsupportedOperationException()
+    override fun add(element: T): Nothing = throw UnsupportedOperationException()
+    override fun addAll(elements: Collection<T>): Nothing = throw UnsupportedOperationException()
+    override fun remove(element: T): Nothing = throw UnsupportedOperationException()
+    override fun removeAll(elements: Collection<T>): Nothing = throw UnsupportedOperationException()
+    override fun retainAll(elements: Collection<T>): Nothing = throw UnsupportedOperationException()
     override fun clear(): Nothing = throw UnsupportedOperationException()
 }
 
 internal expect fun pluralRulesSerialProxy(description: String): Any
 internal expect open class PluralObjectInputStream
 internal expect open class PluralObjectOutputStream
+
+private fun Collection<DecimalQuantityCore>.publicView(): Collection<DecimalQuantity> {
+    val source = this
+    // Stable element identities, and membership based on the quantities' current state.
+    val values: Set<DecimalQuantity> = source.mapTo(linkedSetOf()) { DecimalQuantity_DualStorageBCD.fromCore(it) }
+    return if (source is Set<*>) pluralReadOnlySet(values) else object : AbstractMutableCollection<DecimalQuantity>() {
+        override val size get() = values.size
+        override fun contains(element: DecimalQuantity) = values.contains(element)
+        override fun iterator(): MutableIterator<DecimalQuantity> {
+            val iterator = values.iterator()
+            return object : MutableIterator<DecimalQuantity> {
+                override fun hasNext() = iterator.hasNext()
+                override fun next() = iterator.next()
+                override fun remove(): Nothing = throw UnsupportedOperationException()
+            }
+        }
+        override fun add(element: DecimalQuantity): Nothing = throw UnsupportedOperationException()
+        override fun addAll(elements: Collection<DecimalQuantity>): Nothing = throw UnsupportedOperationException()
+        override fun remove(element: DecimalQuantity): Nothing = throw UnsupportedOperationException()
+        override fun removeAll(elements: Collection<DecimalQuantity>): Nothing = throw UnsupportedOperationException()
+        override fun retainAll(elements: Collection<DecimalQuantity>): Nothing = throw UnsupportedOperationException()
+        override fun clear(): Nothing = throw UnsupportedOperationException()
+    }
+}

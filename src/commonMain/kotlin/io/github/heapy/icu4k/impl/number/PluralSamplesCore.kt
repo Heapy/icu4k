@@ -39,17 +39,23 @@ internal class PluralSamplesCore private constructor(
     }
     fun addSamples(doubleResult: MutableCollection<Double>?, quantityResult: MutableCollection<DecimalQuantityCore>?) {
         if ((doubleResult == null) == (quantityResult == null)) return
+        forEachQuantity { dq ->
+            if (doubleResult != null) {
+                val value = dq.toDouble()
+                // Source's double API excludes integer-valued samples with visible zeros.
+                if (value != floor(value) && dq.getPluralOperand(Operand.v) > 0) doubleResult.add(value)
+            } else quantityResult!!.add(dq)
+        }
+    }
+    // Invoke before incrementing: a caller's collection may mutate the supplied quantity.
+    internal fun forEachQuantity(action: (DecimalQuantityCore) -> Unit) {
         for (range in ranges) {
             val lower = range.start.getLowerDisplayMagnitude()
             val exponent = range.start.getExponent()
             val increment = UnitDecimal.ONE.movePointRight(lower + exponent)
             var dq = range.start.createCopy()
             while (dq.toDouble() <= range.end.toDouble()) {
-                if (doubleResult != null) {
-                    val value = dq.toDouble()
-                    // Source's double API excludes integer-valued samples with visible zeros.
-                    if (value != floor(value) && dq.getPluralOperand(Operand.v) > 0) doubleResult.add(value)
-                } else quantityResult!!.add(dq)
+                action(dq)
                 dq = DecimalQuantityCore(dq.toDecimal().add(increment)).apply {
                     setMinFraction(-lower)
                     adjustMagnitude(-exponent)
