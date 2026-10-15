@@ -4620,3 +4620,16 @@ currency overrides and same-currency early return, subclass cloning and all stre
 migration versions. Common tests exercise initialization and copy-on-write behavior
 on JVM, JS and Native; a JS-specific subclass clone test checks prototype/state.
 Full DecimalFormat and NumberFormatter integration remains pending.
+
+
+### Number-format style pattern data
+
+Ported NumberFormat's shared style/numbering-system pattern lookup for all ten
+styles, including the currency cf=account override and Latin numbering-system
+fallback. Invalid styles retain assertion-only validation: JVM class assertion
+settings govern the failure and other targets use the source production fallback.
+This is an internal data helper; the public NumberFormat formatter facade remains
+pending.
+
+Oracle tests compare every style for all available locales, numbering-system
+fallback, accounting keywords, invalid styles and null-input evaluation paths.
