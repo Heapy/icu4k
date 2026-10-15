@@ -6746,3 +6746,42 @@ seeded operation succeeds. The focused JVM oracle passed after this correction.
 Verification: the final full jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 command passed (1m 42s, with unchanged target tasks
 up-to-date). Linux tests were compiled, not executed on macOS.
+
+## Collation settings and shared ownership
+
+Ported CollationSettings' complete option bit fields, default setters, strength,
+case/tertiary decisions, equality/hash rules and script reordering. Reordering
+retains the source lead-byte permutation, split-byte ranges and signed offsets,
+alias-or-regenerate behavior, array sharing and partial mutation order.
+
+SharedObject provides atomic reference counts and copy-on-write holders.
+JVM and JS use platform shallow cloning, preserving extra subclass fields;
+Native follows this port's existing typed-copy convention. CollationSettings
+is ICU4J's only SharedObject subclass and supplies that typed copy, preserving
+reordering array aliases while cloning mutable fast-Latin primaries. Clones
+start with a fresh zero reference count. The JVM host clone base deliberately
+does not add Serializable, which ICU4J SharedObject does not implement.
+
+Explicit holder clear remains deterministic. Platform cleanup replaces Java's
+holder finalizer: a JVM finalization token, JS FinalizationRegistry, and Native
+createCleaner over a separate reference state. The Native action captures no
+holder; collation settings do not point back to their holders. As elsewhere in
+the port, Native arbitrary new subclasses must provide a typed clone; generic
+runtime cloning is available on JVM/JS. GC cleanup timing is not deterministic.
+
+The Native cleanup action follows the [createCleaner contract](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native.ref/create-cleaner.html):
+it captures nothing and receives the separate reference state as its resource.
+The common tests exercise option semantics, split-byte thresholds, array aliases,
+clone isolation and ownership counts. JVM differential tests cover every 16-bit
+option combination, seeded mutations, real-root script permutations and alias
+round trips, malformed serialized metadata, clone failures and controlled
+finalization-token release. A multithreaded JVM check verifies atomic counts.
+
+The initial oracle failures were test-adapter issues: reflection returns null
+for void while Kotlin returns Unit, and a rejected reordering leaves the prior
+codes in place. The corrected oracle round-trips the actual retained codes and
+checks both aliased tables and regeneration from codes. All focused JVM checks
+then passed. Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 8s. Linux tests compiled, not
+executed on macOS. Public collators, collation resources/loaders, fast-Latin
+comparison, tailoring compilation and the default RBNF scanner remain pending.
