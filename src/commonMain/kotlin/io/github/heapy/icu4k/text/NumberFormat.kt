@@ -5,6 +5,8 @@ package io.github.heapy.icu4k.text
 import io.github.heapy.icu4k.impl.ResourceCacheLock
 import io.github.heapy.icu4k.impl.createAvailabilityLock
 import io.github.heapy.icu4k.impl.number.formatNumberInput
+import io.github.heapy.icu4k.impl.number.NumberFormatPatternData
+import kotlin.jvm.JvmStatic
 import io.github.heapy.icu4k.util.BigInteger
 import io.github.heapy.icu4k.util.BigDecimal
 import io.github.heapy.icu4k.util.Currency
@@ -173,6 +175,12 @@ abstract class NumberFormat : UFormat() {
         serialVersionOnStream = 2
     }
     companion object {
+        @Deprecated("This API is ICU internal only.")
+        @JvmStatic fun getPatternForStyle(forLocale: ULocale?, choice: Int): String =
+            NumberFormatPatternData.getPatternForStyle(forLocale, choice)
+        @Deprecated("This API is ICU internal only.")
+        @JvmStatic fun getPatternForStyleAndNumberingSystem(forLocale: ULocale?, nsName: String?, choice: Int): String =
+            NumberFormatPatternData.getPatternForStyleAndNumberingSystem(forLocale, nsName, choice)
         const val NUMBERSTYLE = 0
         const val CURRENCYSTYLE = 1
         const val PERCENTSTYLE = 2

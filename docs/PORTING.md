@@ -6079,3 +6079,37 @@ Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 15s), followed by the additional JVM clone boundary
 oracle test (19s). Public factory entry points, the built-in format creator,
 PluralFormat's public facade and RBNF remain to be connected.
+
+### Built-in NumberFormat creation and public pattern access
+
+Ported NumberFormat.createInstance's built-in style creator to internal
+NumberFormatDataFactory. Pattern lookup and symbol construction precede currency
+pattern overrides, ISO currency-sign replacement and final numbering-system
+resolution. Numeric DecimalFormat construction preserves integer-style setter
+order, cash usage, plural currency info and final valid/actual locale assignment.
+Algorithmic descriptions retain the source first/last slash parsing, exact
+SpelloutRules group comparison, numbering-system default group, locale and rule
+set selection. An injected callback must construct RBNF and set its default rule
+set before returning; the creator applies symbols' locale metadata afterwards.
+This callback is the integration boundary for the pending Common RBNF engine,
+not an alternative implementation of algorithmic formatting.
+
+Exposed the source public getPatternForStyle and
+getPatternForStyleAndNumberingSystem methods on NumberFormat, including JVM
+static entry points. Their existing exhaustive locale/style oracle now exercises
+these public methods. Invalid-style JVM assertions use the NumberFormat class,
+matching the source assertion site.
+
+Common tests cover numeric style behavior, integer parsing, ISO patterns, CHF
+cash rounding, service composition, algorithmic dispatch and metadata timing.
+JVM tests compare all styles across representative locales/keywords, every
+numeric digit system, formatting, parsing, settings and locale metadata. Every
+built-in algorithmic numbering system is checked by constructing an ICU4J RBNF
+oracle from the callback parameters and comparing rules, default rule set and
+constructor locale with ICU4J's own built-in creator. Production remains free of
+ICU4J dependencies. Null/invalid inputs and public JVM pattern signatures are
+also compared.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 23s); final JVM oracle/pattern check after simplifying
+the invalid-input assertions passed (21s). Global NumberFormat factories and the
+public PluralFormat/RBNF facades are still pending the RBNF engine and data.
