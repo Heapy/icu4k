@@ -6164,3 +6164,28 @@ binary values and neighbors of half-integers. Concrete-rule integration and
 full NFRuleSet differential coverage remain pending.
 Verification: jvmTest, jsNodeTest and macosArm64Test passed;
 compileTestKotlinLinuxX64 passed (Linux tests compiled, not executed), 3m 11s.
+
+### RBNF individual rules
+
+Ported ICU4J NFRule into internal RbnfRuleCore: descriptor parsing, radix and
+exponent computation, wrapped integer powers, optional/alternative bracket
+expansion, substitution extraction, plural fragments, formatting offset
+adjustments, rollback and delimiter-based parsing. Preserved source construction
+order, fraction-special expansion details, lazy failures, partial output and
+parse-position behavior. Substring/array checks are explicit where JS would
+otherwise accept invalid indices. RbnfRuleOwner and RbnfSubstitution contracts
+retain the rule-construction cycle; concrete substitution classes and the
+public RuleBasedNumberFormat are still pending.
+
+Common tests cover numeric boundaries, optional alternatives, callback order,
+substitution offsets, divisor updates, delimiter composition, fraction
+reciprocals, plural offset adjustments and exact-before-lenient prefix matching.
+JVM oracle tests compare descriptors (including 200 deterministic random
+radix/base pairs), power overflow, factory expansion and errors, special rules,
+long/double formatting, plural fragments, parsing and partial state. ICU4J
+substitutions are used only in JVM test adapters to isolate NFRule policy;
+production has no ICU4J dependency. Full common substitution integration remains
+unfinished. Corrected two test-adapter issues after the first run (delegated
+Any.toString and target-specific Double string rendering).
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed, final run 2m 5s. Linux was compiled, not run.
