@@ -14,9 +14,11 @@ import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.math.BigDecimal as IcuBigDecimal
 import kotlin.jvm.Transient
 
-/** Base number-format instance protocol. Localized factory/service APIs are still being ported. */
+/** Number-format instance and factory extension protocols. Localized factory entry points are still being ported. */
 abstract class NumberFormat : UFormat() {
     typealias Field = NumberFormatField
+    typealias NumberFormatFactory = io.github.heapy.icu4k.text.NumberFormatFactory
+    typealias SimpleNumberFormatFactory = io.github.heapy.icu4k.text.SimpleNumberFormatFactory
     private var groupingUsed = true
     private var maxIntegerDigits: Byte = 40
     private var minIntegerDigits: Byte = 1

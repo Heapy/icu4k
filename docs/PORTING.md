@@ -6043,3 +6043,39 @@ messages, large numbers, non-finite values, selector call order, both apostrophe
 modes, failure state and lenient scanner interactions.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (final boundary run, 2m 41s).
+
+### NumberFormat factory contracts and service engine
+
+Added NumberFormatFactory and SimpleNumberFormatFactory, exposed through the
+source-style NumberFormat nested Kotlin aliases. JVM implementations retain
+both virtual createFormat overloads (ULocale and java.util.Locale), including
+mutual delegation and null behavior, plus both sets of Simple factory locale
+constructors. Either overload can be overridden on JVM. Portable factories use
+the ULocale overload. The source contract requires an override to avoid recursive
+default dispatch. Constants, visibility, base locale names, stable singleton set
+identity and immutable set operations are preserved. Implementation classes are
+top-level JVM types behind Common nested aliases, as with other portable aliases.
+
+Added internal NumberFormatServiceCore using the existing ICULocaleService,
+with the source default resource-factory registration and markDefault behavior.
+The built-in format creator is injected until numeric/RBNF factory wiring is
+complete; this is not yet the public global getInstance/registerFactory facade.
+Custom factories use canonical requested locales, continue lookup after themselves
+when returning null, participate in normal locale fallback and retain the source
+cache policy. Each result is cloned, currency styles resolve currency from the
+requested locale, and actual/valid locale metadata is applied last. Missing
+results and invalid unregister keys follow source exceptions. Default locale
+availability reuses the resource arrays and Java-locale cache; modified registries
+use visible factory IDs. Removal restores the default availability path.
+
+Common tests cover factory names/mutation, visibility, fallback, caching, clone
+isolation, all currency styles, metadata and unregistration. JVM tests compare
+ICU4J virtual overloads, constructors/constants/final methods, callback traces,
+fallback within a custom factory, prototype isolation, requested currency,
+locale availability and exception behavior. A null-clone fixture confirms currency
+argument evaluation before the null receiver failure, including invalid currency
+codes, matching the source.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 15s), followed by the additional JVM clone boundary
+oracle test (19s). Public factory entry points, the built-in format creator,
+PluralFormat's public facade and RBNF remain to be connected.
