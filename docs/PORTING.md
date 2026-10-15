@@ -4819,3 +4819,36 @@ check cache identity, source default quirks and changing property getter values.
 Common tests exercise normalization, forward/reciprocal scaling, zero behavior and
 property scale precedence on JVM, JS and Native. Verification passed: jvmTest,
 jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
+
+### Precision families and safe plural rounding
+
+Added Precision, FractionPrecision and CurrencyPrecision with the source factories,
+validation, cached policies, copy/mode/trailing-zero operations, BogusRounder and all
+infinite, fraction, significant, combined fraction/significant, general increment,
+power-of-ten increment, nickel and currency rounders. Currency resolution retains
+cash/standard metadata and source cache behavior. RoundingPriority and
+TrailingZeroDisplay are temporarily top-level enums pending the NumberFormatter
+facade, like SignDisplay. Added MultiplierProducer and carry-sensitive multiplier
+selection, plus the previously pending RoundingUtils.getPluralSafe copy/round path.
+
+The increment specialization preserves scale and calls JVM unscaledValue/intValue
+through a small host boundary; common hosts inspect the decimal coefficient. JVM
+assertions are lazy and use Precision's assertion status, with non-evaluating host
+assertion helpers on JS/Native. Source quirks remain: combined precision accepts a
+negative minimum significant count, HIDE_IF_WHOLE leaves any prior minimum fraction
+setting untouched, fraction-combination helpers do not copy the base trailing-zero
+policy, and withCurrency can assign its trailing policy to a shared cached rounder.
+Oracle tests save and restore cache state to keep that last behavior isolated.
+
+JVM oracle coverage includes every family, all rounding modes, unlimited/finite
+contexts, nullable trailing policies, special/seeded doubles, carry boundaries,
+validation extremes, policy fields and identities, null contexts/quantities,
+standard/cash currencies, null priority assertions, the zero-significant special
+case, multiplier re-selection and safe plural-copy behavior. Proxy quantities and
+BigDecimal subclasses verify callback/failure order. Common tests cover rounding,
+combined priorities, increment scale, currency cash increments and unchanged input
+for safe plural selection on JVM, JS and Native. Verification passed: jvmTest,
+jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64. The final JVM-only rerun
+corrected reflection void/Unit normalization in the test adapter; production code
+was unchanged after the cross-platform run. MicroProps and the rest of the formatter
+pipeline remain pending.

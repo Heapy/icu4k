@@ -3,6 +3,9 @@
 package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.number.Scale
+import io.github.heapy.icu4k.number.Precision
+import io.github.heapy.icu4k.impl.StandardPlural
+import io.github.heapy.icu4k.text.PluralRules
 import io.github.heapy.icu4k.util.MathContext
 import io.github.heapy.icu4k.util.RoundingMode
 import kotlin.jvm.JvmField
@@ -36,6 +39,12 @@ open class RoundingUtils {
             return contexts34[(properties.getRoundingMode() ?: RoundingMode.HALF_EVEN).ordinal]
         }
         @JvmStatic fun mathContextUnlimited(roundingMode: RoundingMode?): MathContext = contextsUnlimited[roundingMode!!.ordinal]
+        @JvmStatic fun getPluralSafe(rounder: Precision?, rules: PluralRules?, dq: DecimalQuantity?): StandardPlural {
+            if (rounder == null) return dq!!.getStandardPlural(rules)
+            val copy = dq!!.createCopy()
+            rounder.apply(copy)
+            return copy.getStandardPlural(rules)
+        }
         @JvmStatic fun scaleFromProperties(properties: DecimalFormatProperties?): Scale? {
             val context = getMathContextOr34Digits(properties)
             val p = properties!!
