@@ -5005,3 +5005,23 @@ Additional JVM oracle checks preserve an existing default modifier when no compa
 pattern applies and compare parent/null-rounder/constructor failure order. All
 checks passed: jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64;
 the JVM-only failure tests passed in a subsequent jvmTest run.
+
+### Formatter macro settings
+
+Ported MacroProps with all 20 public mutable fields, fallback merging, shallow
+cloning and source equality/hash behavior. The internal threshold is copied by
+clone but excluded from fallback, equality and hashCode. Fallback reads its nullable
+argument only when a setting is missing, allowing a fully populated receiver to
+accept null. Objects.equals retains reference-identity short circuits, ordered
+field reads and user callback behavior; Objects.hash snapshots every argument
+before invoking any field hashCode.
+
+JVM clone uses Object.clone, including subclass fields, and adds no Serializable
+marker. JS preserves the prototype and own property descriptors. Native copies
+the known MacroProps fields; subclasses adding state must override clone, as with
+MicroProps. Tests verify all public field names, each field's equality/fallback
+participation, reference sharing, runtime subtype preservation on JVM/JS, null
+fallback, hash snapshots and equals callbacks that mutate later fields.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64. Full NumberFormatter settings resolution and formatting
+remain pending.
