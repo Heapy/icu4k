@@ -6785,3 +6785,35 @@ then passed. Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 4m 8s. Linux tests compiled, not
 executed on macOS. Public collators, collation resources/loaders, fast-Latin
 comparison, tailoring compilation and the default RBNF scanner remain pending.
+
+## Collation comparison through quaternary
+
+Ported CollationCompare.compareUpToQuaternary in full. It fetches primary CEs,
+shifts variable weights and clears following primary ignorables in the stored
+buffer, then compares secondary, optional case, tertiary and quaternary levels.
+French secondary ordering is segmented by merge separators. Case-level filtering,
+uppercase-first tertiary remapping, quaternary fast exits and script reordering
+retain the source order of reads and mutations. Assertions use this class's
+initial JVM assertion policy. Nullable inputs fail when first dereferenced;
+there is no text-equality or iterator-identity shortcut.
+
+Common tests use explicit CE expansions to isolate each weight level, reversed
+secondary segments, case ordering, ignorable weights, shifted-buffer changes and
+script permutation. JVM oracle tests compare root and locale tailoring data for
+all strengths through IDENTICAL, case options, backward secondaries, numeric and
+shifted handling, script reordering, normalization, malformed UTF-16 and merge
+separators. Synthetic streams cover tertiary-only and quaternary weights. The
+oracle also compares raw CE buffers, consumed CE indexes and cursor offsets,
+including early returns and failures.
+
+As in ICU4J, this method stops at quaternary even when the strength is IDENTICAL;
+the public collator's final identical-level tie-breaker is separate. Root and
+locale data in JVM oracle tests remain test-only. Public collators, embedded
+collation resources/loaders, fast-Latin comparison, tailoring compilation and
+the default RBNF scanner remain pending.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed on the first full run (3m 19s). Linux tests
+compiled, not executed on macOS. The differential matrix contains 60,000 real
+root/tailoring comparisons and 9,900 synthetic CE comparisons, plus nullable,
+failing-position and aliased-iterator cases.
