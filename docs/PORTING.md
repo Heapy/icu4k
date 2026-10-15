@@ -4160,3 +4160,25 @@ the public ParseException boundary will be connected with the PluralRules facade
 Common tests exercise visible fractions, precedence, Unicode bounds and overflow.
 JVM oracle tests compare parsing, diagnostics, evaluation and limitedness against
 ICU4J 78.3. Public PluralRules, rule lists, samples and locale loading remain pending.
+
+### Plural rule lists and decimal sample core
+
+`PluralRuleListCore` now parses complete rule descriptions with integer/decimal
+sample sections, validates keyword order and duplicates, moves `other` last,
+and selects the first matching category. Explicit samples control `isLimited`,
+while `computeLimited` continues to inspect the constraint itself. Missing
+keywords retain the source's distinct results for those two methods.
+
+`PluralSamplesCore` retains endpoint identity, visible decimal digits, exponent
+notation, repeated ranges, insertion order and ellipsis bounding. It expands
+samples with common arbitrary-precision decimal arithmetic and retains ICU4J's
+double API behavior excluding all integer-valued samples. Endpoint quantities
+remain mutable, while the range set is read-only. `UnitDecimal.movePointRight`
+provides the source decimal increment operation, including scale normalization.
+
+Tests compare parse diagnostics, malformed sections, sample expansion, endpoint
+sets and decimal-point movement against ICU4J/BigDecimal. A corpus test reparses
+all distinct cardinal and ordinal locale rule sets supplied by the test oracle
+and compares canonical descriptions, sample metadata, limitedness and selection.
+This remains an internal core: public PluralRules/DecimalQuantity adapters,
+locale rule resource loading and the remaining plural APIs still need porting.

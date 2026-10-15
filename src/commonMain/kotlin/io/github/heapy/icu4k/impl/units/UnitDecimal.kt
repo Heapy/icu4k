@@ -8,6 +8,10 @@ internal class UnitDecimal private constructor(val sign: Int, val magnitude: Str
     val precision: Int get() = magnitude.length
     fun negate(): UnitDecimal = UnitDecimal(-sign, magnitude, scale)
     fun abs(): UnitDecimal = if (sign < 0) negate() else this
+    fun movePointRight(places: Int): UnitDecimal {
+        val moved = UnitDecimal(sign, magnitude, checkedScale(scale.toLong() - places, sign == 0))
+        return if (moved.scale < 0) moved.setScale(0, Rounding.UNNECESSARY) else moved
+    }
     fun add(other: UnitDecimal): UnitDecimal {
         val targetScale = maxOf(scale, other.scale)
         val a = zeros(magnitude, targetScale.toLong() - scale)

@@ -10,9 +10,7 @@ internal interface PluralCondition {
     fun isLimited(type: SampleType): Boolean
 }
 
-internal class PluralConditionParseException(message: String) : Exception(message) {
-    val errorOffset: Int = -1
-}
+internal class PluralConditionParseException(message: String, val errorOffset: Int = -1) : Exception(message)
 
 internal object PluralConditionParser {
     private val or = Regex("[\\t-\\r ]*or[\\t-\\r ]*")
