@@ -6912,3 +6912,27 @@ jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed. Linux tests wer
 compiled, not executed on macOS. The oracle uses reflection for ICU4J's
 package-private version helpers; the first comparison was corrected to match
 the source's trailing-byte cursor rather than requiring complete consumption.
+
+## Tailoring weight allocation
+
+Ported CollationWeights, the complete range allocator used by tailoring
+compilation. It supports compressible/non-compressible primaries, secondaries
+and six-bit tertiaries; merges intersecting/adjacent ranges, lengthens the
+shortest ranges and splits ranges to satisfy requested capacity. Weight
+iteration retains range mutations and the exhaustion sentinel. Initialization,
+failed allocations and partially consumed/reused instances retain the source
+state rather than clearing it eagerly. Signed Long comparisons, Int overflow
+and byte-mask/shift operations follow the Java implementation.
+
+Common tests check short primary sequences, exhaustion, invalid bounds, byte
+constraints and lengths. JVM oracle tests compare allocation outcomes and all
+private range fields over 2,176 deterministic and random cases across four
+modes, followed by partial or full requested consumption. Another 8,000 cases
+compare all static/private weight arithmetic helpers, including arbitrary Long
+weights and Int byte operands. No ICU4J dependency is used by commonMain.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together. Linux tests compiled, not executed on
+macOS. The initial common fixture requested more capacity than its bounds
+allowed; its bounds were corrected, with no production changes needed after
+the first oracle comparison.
