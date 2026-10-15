@@ -11,6 +11,146 @@ internal class IcuDecimalValue {
     var mant: ByteArray = ZERO
     var exp: Int = 0
     fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.mant = mant; it.exp = exp }
+    fun plus(set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(null, set.digits)
+        if (set.form == MathContext.PLAIN && form.toInt() == MathContext.PLAIN && (mant.size <= set.digits || set.digits == 0)) return this
+        return copy().finish(set, false)
+    }
+    fun negate(set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(null, set.digits)
+        val result = copy(); result.ind = (-result.ind).toByte()
+        return result.finish(set, false)
+    }
+    fun abs(set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = if (ind.toInt() == -1) negate(set) else plus(set)
+    fun subtract(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(rhs, set.digits)
+        val newrhs = rhs!!.copy(); newrhs.ind = (-newrhs.ind).toByte()
+        return add(newrhs, set)
+    }
+    fun add(right: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(right, set.digits)
+        var lhs = this
+        var rhs = right
+        if (lhs.ind.toInt() == 0 && set.form != MathContext.PLAIN) return rhs!!.plus(set)
+        if (rhs!!.ind.toInt() == 0 && set.form != MathContext.PLAIN) return lhs.plus(set)
+        val reqdig = set.digits
+        if (reqdig > 0) {
+            if (lhs.mant.size > reqdig) lhs = lhs.copy().round(set)
+            if (rhs.mant.size > reqdig) rhs = rhs.copy().round(set)
+        }
+        val result = IcuDecimalValue()
+        var usel = lhs.mant; var usellen = lhs.mant.size
+        var user = rhs.mant; var userlen = rhs.mant.size
+        if (lhs.exp == rhs.exp) result.exp = lhs.exp
+        else if (lhs.exp > rhs.exp) {
+            var newlen = usellen + lhs.exp - rhs.exp
+            if (newlen >= userlen + reqdig + 1 && reqdig > 0) {
+                result.mant = usel; result.exp = lhs.exp; result.ind = lhs.ind
+                if (usellen < reqdig) { result.mant = IcuDecimalDigits.extend(lhs.mant, reqdig); result.exp -= reqdig - usellen }
+                return result.finish(set, false)
+            }
+            result.exp = rhs.exp
+            if (newlen > reqdig + 1 && reqdig > 0) {
+                val tlen = newlen - reqdig - 1
+                userlen -= tlen; result.exp += tlen; newlen = reqdig + 1
+            }
+            if (newlen > usellen) usellen = newlen
+        } else {
+            var newlen = userlen + rhs.exp - lhs.exp
+            if (newlen >= usellen + reqdig + 1 && reqdig > 0) {
+                result.mant = user; result.exp = rhs.exp; result.ind = rhs.ind
+                if (userlen < reqdig) { result.mant = IcuDecimalDigits.extend(rhs.mant, reqdig); result.exp -= reqdig - userlen }
+                return result.finish(set, false)
+            }
+            result.exp = lhs.exp
+            if (newlen > reqdig + 1 && reqdig > 0) {
+                val tlen = newlen - reqdig - 1
+                usellen -= tlen; result.exp += tlen; newlen = reqdig + 1
+            }
+            if (newlen > userlen) userlen = newlen
+        }
+        result.ind = if (lhs.ind.toInt() == 0) 1 else lhs.ind
+        val mult: Int
+        if ((lhs.ind.toInt() == -1) == (rhs.ind.toInt() == -1)) mult = 1
+        else {
+            mult = -1
+            fun swap() {
+                val t = usel; usel = user; user = t
+                val tlen = usellen; usellen = userlen; userlen = tlen
+                result.ind = (-result.ind).toByte()
+            }
+            if (rhs.ind.toInt() == 0) { /* Left side is larger. */ }
+            else if (usellen < userlen || lhs.ind.toInt() == 0) swap()
+            else if (usellen > userlen) { /* Left side is larger. */ }
+            else {
+                var ia = 0; var ib = 0
+                val ea = usel.size - 1; val eb = user.size - 1
+                while (true) {
+                    val ca: Byte
+                    if (ia <= ea) ca = usel[ia]
+                    else {
+                        if (ib > eb) { if (set.form != MathContext.PLAIN) return ZERO_VALUE; break }
+                        ca = 0
+                    }
+                    val cb: Byte = if (ib <= eb) user[ib] else 0
+                    if (ca != cb) { if (ca < cb) swap(); break }
+                    ia++; ib++
+                }
+            }
+        }
+        result.mant = IcuDecimalDigits.addSub(usel, usellen, user, userlen, mult, false)
+        return result.finish(set, false)
+    }
+    fun multiply(right: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(right, set.digits)
+        var lhs = this; var rhs = right
+        var padding = 0
+        val reqdig = set.digits
+        if (reqdig > 0) {
+            if (lhs.mant.size > reqdig) lhs = lhs.copy().round(set)
+            if (rhs!!.mant.size > reqdig) rhs = rhs.copy().round(set)
+        } else {
+            if (lhs.exp > 0) padding += lhs.exp
+            if (rhs!!.exp > 0) padding += rhs.exp
+        }
+        val multer: ByteArray; val multand: ByteArray
+        if (lhs.mant.size < rhs.mant.size) { multer = lhs.mant; multand = rhs.mant }
+        else { multer = rhs.mant; multand = lhs.mant }
+        var multandlen = multer.size + multand.size - 1
+        val acclen = if (multer[0] * multand[0] > 9) multandlen + 1 else multandlen
+        val result = IcuDecimalValue()
+        var acc = ByteArray(acclen)
+        for (n in multer.indices) {
+            val mult = multer[n]
+            if (mult.toInt() != 0) acc = IcuDecimalDigits.addSub(acc, acc.size, multand, multandlen, mult.toInt(), true)
+            multandlen--
+        }
+        result.ind = (lhs.ind * rhs.ind).toByte(); result.exp = lhs.exp + rhs.exp - padding
+        result.mant = if (padding == 0) acc else IcuDecimalDigits.extend(acc, acc.size + padding)
+        return result.finish(set, false)
+    }
+    fun compareTo(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): Int {
+        if (set!!.lostDigits) checkDigits(rhs, set.digits)
+        if ((ind == rhs!!.ind) and (exp == rhs.exp)) {
+            val length = mant.size
+            if (length < rhs.mant.size) return (-ind).toByte().toInt()
+            if (length > rhs.mant.size) return ind.toInt()
+            if ((length <= set.digits) or (set.digits == 0)) {
+                for (i in 0 until length) {
+                    if (mant[i] < rhs.mant[i]) return (-ind).toByte().toInt()
+                    if (mant[i] > rhs.mant[i]) return ind.toInt()
+                }
+                return 0
+            }
+        } else {
+            if (ind < rhs.ind) return -1
+            if (ind > rhs.ind) return 1
+        }
+        val newrhs = rhs.copy(); newrhs.ind = (-newrhs.ind).toByte()
+        return add(newrhs, set).ind.toInt()
+    }
+    fun max(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = if (compareTo(rhs, set) >= 0) plus(set) else rhs!!.plus(set)
+    fun min(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = if (compareTo(rhs, set) <= 0) plus(set) else rhs!!.plus(set)
     fun checkDigits(rhs: IcuDecimalValue?, digits: Int) {
         if (digits == 0) return
         if (mant.size > digits && !IcuDecimalDigits.allZero(mant, digits)) throw ArithmeticException("Too many digits: $this")
@@ -144,6 +284,8 @@ internal class IcuDecimalValue {
         const val MAX_EXP = 999999999
         private val ZERO = byteArrayOf(0)
         private val ONE = byteArrayOf(1)
+        val ZERO_VALUE = IcuDecimalValue()
+        private val PLAIN_CONTEXT = MathContext(0, MathContext.PLAIN)
         fun parse(text: String?): IcuDecimalValue = parse(text!!.toCharArray(), 0, text.length)
         private fun bad(chars: CharArray?): Nothing = throw NumberFormatException("Not a number: " + chars!!.concatToString())
         fun parse(chars: CharArray?, initialOffset: Int, initialLength: Int): IcuDecimalValue {

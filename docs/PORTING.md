@@ -5696,3 +5696,26 @@ public ICU BigDecimal arithmetic/conversions still remain, as do the public
 legacy number formatter classes.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (6m 49s).
+
+### Legacy decimal basic arithmetic and comparison
+
+Added source algorithms for plus, negate, abs, add, subtract, multiply,
+context-sensitive compare, min and max to IcuDecimalValue. Addition preserves
+virtual alignment/truncation, dominant-operand shortcuts, sign swaps and
+canonical floating cancellation. Multiplication preserves operand rounding,
+shorter-operand iteration, virtual multiplicand lengths and unlimited fixed-point
+padding. Lost-digit checks and failures run in source order. Unary/plain fast
+paths preserve object and mantissa sharing; inputs remain unchanged on success
+or failure. The public BigDecimal facade, division, powers and conversions still
+remain incomplete.
+
+JVM differential matrices compare all nine operations over signs/scales,
+precisions, three forms and eight rounding policies, randomized lost-digit cases,
+aliased operands, null order, defaults and extreme exponents. Result state,
+identity (including canonical zero), mantissa sharing and both original operands
+are checked. Billion-digit plain layouts are deliberately not materialized in
+these tests; their exact internal state is compared instead. Common regressions
+cover scales, pre-rounded multiplication, carry, dominance, precision-sensitive
+comparison, canonical zero and lost-digit diagnostics.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 37s).
