@@ -740,6 +740,22 @@
       "sha256": "a1013016bc9d200c3de3260c6f2a497255cd0829f6a450045f5babc403577151",
       "size": 5008,
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/grammaticalFeatures.res"
+    },
+    {
+      "name": "unit/de.res",
+      "file": "data/icu78/unit/de.res",
+      "object": "GermanUnitResourceData",
+      "sha256": "cfe6dd3cb5ab1c5e0587dfa770c711f202ec478717f989a2f6c2f79bf88cba71",
+      "size": 34592,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/de.res"
+    },
+    {
+      "name": "unit/fr.res",
+      "file": "data/icu78/unit/fr.res",
+      "object": "FrenchUnitResourceData",
+      "sha256": "ec86615859f6fdc3511e1af8b2681c1c1dcb127dcbe51f79542cfea0c704bf97",
+      "size": 25696,
+      "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/fr.res"
     }
   ]
 }

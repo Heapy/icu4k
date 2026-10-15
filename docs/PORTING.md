@@ -5193,3 +5193,37 @@ with generate-data.py --check. The pre-existing generic integral Number conversi
 regression on Kotlin/JS remains explicitly skipped. Full arbitrary-unit pattern
 assembly, LongNameHandler/MixedUnitLongNameHandler and the formatter facade
 remain pending; this internal resource module does not expose a partial handler.
+
+## LongNameHandler compound names and modifiers
+
+Added the complete LongNameHandler naming algorithm over LongNameData: built-in
+and arbitrary units, numerator/denominator decomposition, times/per composition,
+SI/binary prefixes, powers, constant denominators, case/plural propagation,
+locale-aware lowercasing, and top-down/bottom-up grammatical gender selection.
+Factories produce plural-specific SimpleModifiers with source field identities
+and ModifierStore parameters. Parent processing selects a plural safely through
+its rounder and assigns the output gender; processQuantityWithMicros deliberately
+preserves the incoming gender, as upstream does.
+
+Source quirks remain: the prefix-gender override branch tests dimensionality
+again; intermediate unit components are mutated while formatting patterns;
+unsupported powers and mixed-unit paths retain their source failure behavior.
+JVM assertions evaluate conditions and diagnostic callbacks lazily under the
+LongNameHandler class assertion status; JS/Native omit those evaluations.
+German and French unit bundles were added from the pinned source, bringing
+checksum-verified embedded resources to 103.
+
+JVM oracles compare builtin/arbitrary/prefix/power/per/constant-denominator units,
+all unit widths and plural categories, grammatical cases, localized fields,
+modifier metadata, display names, gender rules, rounding and currency names.
+Common tests cover compound/currency pipeline output, grammatical gender and
+parentless processing. The full JVM/JS/macOS test suite and Linux Native test
+compilation passed. An additional JVM oracle checks mutated product components
+and partial data after failures. The existing explicitly skipped Kotlin/JS
+generic Number integral-conversion regression remains outstanding.
+
+MixedUnitLongNameHandler and LongNameMultiplexer remain pending, including the
+latter's nested ParentlessMicroPropsGenerator interface implemented by upstream
+LongNameHandler. The callable processQuantityWithMicros method is already present;
+its interface binding will be added with the multiplexer. The NumberFormatter
+facade and complete formatter assembly are still pending.
