@@ -12,20 +12,26 @@ import io.github.heapy.icu4k.impl.SoftCache
 import io.github.heapy.icu4k.impl.locale.*
 
 /** ICU locale identity and BCP47 conversion. Locale services are being ported from ICU4J. */
-class ULocale private constructor(localeID: String, normalize: Boolean) : Comparable<ULocale> {
+class ULocale private constructor(localeID: String, normalize: Boolean) : Comparable<ULocale>, ICUSerializable {
     private val localeID = if (normalize) getName(localeID) else localeID
     constructor(localeID: String) : this(localeID, true)
     constructor(a: String?, b: String?) : this(a, b, null)
     constructor(a: String?, b: String?, c: String?) : this(lscvToID(a, b, c, ""))
+    @kotlin.jvm.Transient @kotlin.concurrent.Volatile
     internal var platformLocale: Any? = null
-    private val base: BaseLocale by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @kotlin.jvm.Transient @kotlin.concurrent.Volatile
+    private var cachedBase: BaseLocale? = null
+    @kotlin.jvm.Transient @kotlin.concurrent.Volatile
+    private var cachedExtensions: LocaleExtensions? = null
+    private val base: BaseLocale get() = cachedBase ?: createBase().also { cachedBase = it }
+    private fun createBase(): BaseLocale =
         if (this.localeID.isEmpty()) BaseLocale.ROOT else LocaleIDParser(this.localeID).let {
             BaseLocale.getInstance(it.getLanguage(), it.getScript(), it.getCountry(), it.getVariant())
         }
-    }
-    private val extensions: LocaleExtensions by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val extensions: LocaleExtensions get() = cachedExtensions ?: createExtensions().also { cachedExtensions = it }
+    private fun createExtensions(): LocaleExtensions {
         val keywords = getKeywords()
-        if (keywords == null) LocaleExtensions.EMPTY_EXTENSIONS else {
+        return if (keywords == null) LocaleExtensions.EMPTY_EXTENSIONS else {
             val builder = InternalLocaleBuilder()
             while (keywords.hasNext()) {
                 val key = keywords.next()
@@ -198,6 +204,7 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
     enum class Category { DISPLAY, FORMAT }
     enum class AvailableType { DEFAULT, ONLY_LEGACY_ALIASES, WITH_LEGACY_ALIASES }
     companion object {
+        private const val serialVersionUID: Long = 3715177670352309217L
         fun getDisplayLanguage(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayLanguage(ULocale(displayLocaleID!!))
         fun getDisplayLanguage(localeID: String?, displayLocale: ULocale?): String? = ULocale(localeID!!).getDisplayLanguage(displayLocale)
         fun getDisplayLanguageWithDialect(localeID: String?, displayLocaleID: String?): String? = ULocale(localeID!!).getDisplayLanguageWithDialect(ULocale(displayLocaleID!!))

@@ -4574,3 +4574,16 @@ text for subnormal edges, each exponent boundary, specials and a seeded random
 sample. Common tests cover amount identity, decimal scale, binary32 expansion,
 signed zero, NaNs and large integers on JVM, JS and Native. Number/measure formatter
 APIs remain unfinished.
+
+
+### Locale identity serialization
+
+ULocale now implements the host serialization marker with ICU4J's serialVersionUID.
+The serialized field descriptor contains only localeID, matching the source. Java
+locale, base-locale and extension caches are transient volatile references and are
+reconstructed on first use after deserialization. This replaces serializable lazy
+delegates without attempting to serialize cached locale implementation objects.
+
+Oracle tests compare stream field descriptors/UID and round-trip locale identity,
+BCP47 conversion, Java Locale conversion and components before/after cache warming.
+The change also enables serialized DecimalFormatSymbols to retain locale metadata.
