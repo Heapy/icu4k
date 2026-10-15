@@ -7464,3 +7464,32 @@ remain pending.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 26s, including concurrent initial
 cache publication. Linux tests compiled only; the host is macOS Arm64.
+
+### Collator locale keyword application
+
+Ported Collator's keyword parsing/application to CollationLocaleOptions, with
+separate base-collator and RuleBasedCollator sinks for future service integration.
+The existing settings engine has a complete adapter. Source ordering is retained:
+deprecated Hiragana/variable-top keywords fail first, known attributes apply in
+fixed order and unrelated keywords are ignored. A later failure retains earlier
+setter effects. Non-RuleBasedCollator rejection precedes parsing of RBC-specific
+values, including the source's colCaseLevel error text referring to colBackwards.
+
+ASCII-only case matching, yes/no and enumerated values, strength mapping, strict
+four-character script names, special reorder groups, bounded script lists and
+max-variable keyword parsing follow ICU4J. No Unicode case folding replaces the
+ASCII checks. Factory selection of collation type remains the loader/service's
+responsibility; these attribute keywords do not replace locale tailoring loading.
+
+Targeted JVM tests passed for individual and 180 randomized mixed keyword sets,
+language tags, non-RBC paths, explicit errors, partial state and recorded base
+setter dispatch. Resulting keys also match ICU4J. Helpers are checked for null and
+invalid inputs, plus 5,000 full-width ASCII-comparison samples. Common tests cover
+settings integration and partial failures. The first test adapter incorrectly
+attempted to subclass ICU4J's final RuleBasedCollator; it now uses a base Collator
+recorder delegating to an original instance. No production change was needed for
+that fixture compile failure. Public collator/service wrappers remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 4s. Linux tests were compiled,
+not executed on this macOS host.
