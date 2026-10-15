@@ -9,7 +9,7 @@ import io.github.heapy.icu4k.util.Output
 internal class PluralRuleSamplesCore(private val rules: PluralRuleListCore) {
     enum class KeywordStatus { INVALID, SUPPRESSED, UNIQUE, BOUNDED, UNBOUNDED }
 
-    fun getDecimalQuantitySamples(keyword: String, type: SampleType = SampleType.INTEGER): Collection<DecimalQuantityCore>? {
+    fun getDecimalQuantitySamples(keyword: String, type: SampleType? = SampleType.INTEGER): Collection<DecimalQuantityCore>? {
         if (keyword !in rules.getKeywords()) return null
         val result = linkedSetOf<DecimalQuantityCore>()
         if (rules.hasExplicitBoundingInfo) {
@@ -27,6 +27,7 @@ internal class PluralRuleSamplesCore(private val rules: PluralRuleListCore) {
             return true
         }
         when (type) {
+            null -> throw NullPointerException()
             SampleType.INTEGER -> {
                 for (i in 0 until 200) if (!addSample(DecimalQuantityCore(i.toLong()))) break
                 addSample(DecimalQuantityCore(1000000L))
@@ -42,10 +43,10 @@ internal class PluralRuleSamplesCore(private val rules: PluralRuleListCore) {
         return if (result.isEmpty()) null else readOnly(result, true)
     }
 
-    fun getSamples(keyword: String, type: SampleType = SampleType.INTEGER): Collection<Double>? =
+    fun getSamples(keyword: String, type: SampleType? = SampleType.INTEGER): Collection<Double>? =
         getDecimalQuantitySamples(keyword, type)?.mapTo(linkedSetOf()) { it.toDouble() }
 
-    fun getAllKeywordValues(keyword: String, type: SampleType): Collection<DecimalQuantityCore>? =
+    fun getAllKeywordValues(keyword: String, type: SampleType?): Collection<DecimalQuantityCore>? =
         if (!rules.isLimited(keyword, type)) null else getDecimalQuantitySamples(keyword, type)
 
     fun getAllKeywordDecimalQuantityValues(keyword: String): Collection<DecimalQuantityCore>? =
@@ -65,7 +66,7 @@ internal class PluralRuleSamplesCore(private val rules: PluralRuleListCore) {
     }
 
     fun getKeywordStatus(keyword: String, offset: Int, explicits: Set<DecimalQuantityCore>?,
-                         uniqueValue: Output<DecimalQuantityCore>?, type: SampleType = SampleType.INTEGER): KeywordStatus {
+                         uniqueValue: Output<DecimalQuantityCore>?, type: SampleType? = SampleType.INTEGER): KeywordStatus {
         uniqueValue?.value = null
         if (keyword !in rules.getKeywords()) return KeywordStatus.INVALID
         if (!rules.isLimited(keyword, type)) return KeywordStatus.UNBOUNDED

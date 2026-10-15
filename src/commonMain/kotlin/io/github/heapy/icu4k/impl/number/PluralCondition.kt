@@ -7,7 +7,7 @@ import io.github.heapy.icu4k.impl.number.DecimalQuantityCore.Operand
 internal interface PluralCondition {
     enum class SampleType { INTEGER, DECIMAL }
     fun evaluate(number: (Operand) -> Double): Boolean
-    fun isLimited(type: SampleType): Boolean
+    fun isLimited(type: SampleType?): Boolean
 }
 
 internal class PluralConditionParseException(message: String, val errorOffset: Int = -1) : Exception(message)
@@ -107,14 +107,14 @@ internal object PluralConditionParser {
 
     private object Always : PluralCondition {
         override fun evaluate(number: (Operand) -> Double) = true
-        override fun isLimited(type: PluralCondition.SampleType) = false
+        override fun isLimited(type: PluralCondition.SampleType?) = false
         override fun toString() = ""
     }
 
     private class Binary(val a: PluralCondition, val b: PluralCondition?, val conjunction: Boolean) : PluralCondition {
         override fun evaluate(number: (Operand) -> Double) =
             if (conjunction) a.evaluate(number) && b!!.evaluate(number) else a.evaluate(number) || b!!.evaluate(number)
-        override fun isLimited(type: PluralCondition.SampleType) =
+        override fun isLimited(type: PluralCondition.SampleType?) =
             if (conjunction) a.isLimited(type) || b!!.isLimited(type) else a.isLimited(type) && b!!.isLimited(type)
         override fun toString() = a.toString() + (if (conjunction) " and " else " or ") + b!!.toString()
     }
@@ -133,10 +133,11 @@ internal object PluralConditionParser {
             }
             return inRange == test
         }
-        override fun isLimited(type: PluralCondition.SampleType): Boolean {
+        override fun isLimited(type: PluralCondition.SampleType?): Boolean {
             val hasDecimals = operand in arrayOf(Operand.v, Operand.w, Operand.f, Operand.t) && inRange != (lower == upper && lower == 0.0)
             return when (type) {
                 PluralCondition.SampleType.INTEGER -> hasDecimals || (operand in arrayOf(Operand.n, Operand.i, Operand.j) && mod == 0 && inRange)
+                null -> throw NullPointerException()
                 PluralCondition.SampleType.DECIMAL -> (!hasDecimals || operand == Operand.n || operand == Operand.j) && (integersOnly || lower == upper) && mod == 0 && inRange
             }
         }

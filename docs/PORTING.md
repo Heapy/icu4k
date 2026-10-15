@@ -4226,3 +4226,34 @@ oracle tests cover every resource set, all category pairs (including null), all
 range locales and missing-set failure. Common tests exercise locale selection,
 cardinal/ordinal differences, fallback, cache identity and French/Russian ranges.
 The data generator verifies pinned checksums and generated output consistency.
+
+### Public plural-rule facade and fixed decimal
+
+`text.PluralRules` now exposes Operand/IFixedDecimal/FixedDecimal, rule parsing,
+locale factories, ordinary double and operand-provider selection, matches,
+keywords, rule text, double samples/all-values/unique values, limitedness,
+comparison and textual equality. Its hash retains the source rule-list identity
+behavior. Public `impl.PluralRulesLoader` adapts the internal loader while
+preserving shared facade identities and defaults. JVM Locale overloads are
+provided as Kotlin companion extensions.
+
+FixedDecimal delegates to the source-checked numeric model with its constructors,
+exponent factory, operand getters, comparison, formatting and Number conversions;
+subclasses can override operand evaluation. Infinite/NaN provider checks preserve
+source call order and short-circuiting. Nullable keyword and sample-type behavior
+is retained, including distinctions between explicit sample metadata, constraint
+limitedness, always-true constraints and AND/OR short-circuit evaluation.
+
+The public ParseException boundary maps to java.text.ParseException on JVM and
+carries the same message/offset on JS/Native. PluralRules uses the text-based Java
+serialization proxy and rejects raw stream callbacks; restored rules have no
+range data. FixedDecimal rejects Java serialization. The host serialization
+marker and private stream parameter boundaries map to Java types on JVM.
+
+Common tests exercise locale and parsed rules, fractional display, immutable
+keywords, factories and custom/overridden operand providers. JVM oracle tests
+cover all distinct locale rule sets through the public API, samples/limitedness,
+nullable inputs, diagnostics, equality/comparison, FixedDecimal and serialization.
+Public DecimalQuantity sample/range/status adapters, formatted number/range
+selection and their numeric/formatting dependencies still remain to be ported;
+this is not yet the complete PluralRules API or the complete ICU4J port.

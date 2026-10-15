@@ -18,11 +18,11 @@ internal class PluralRuleListCore private constructor(private val rules: List<Ru
         rules.any { it.keyword == keyword && it.condition!!.evaluate(number) }
     fun getKeywords(): Set<String> = rules.mapTo(linkedSetOf()) { it.keyword }
     fun getRules(keyword: String): String? = rules.firstOrNull { it.keyword == keyword }?.let { it.condition!!.toString() }
-    fun getDecimalSamples(keyword: String, type: SampleType): PluralSamplesCore? =
+    fun getDecimalSamples(keyword: String, type: SampleType?): PluralSamplesCore? =
         rules.firstOrNull { it.keyword == keyword }?.let { if (type == SampleType.INTEGER) it.integers else it.decimals }
-    fun computeLimited(keyword: String, type: SampleType): Boolean =
+    fun computeLimited(keyword: String, type: SampleType?): Boolean =
         rules.firstOrNull { it.keyword == keyword }?.let { it.condition!!.isLimited(type) } ?: false
-    fun isLimited(keyword: String, type: SampleType): Boolean =
+    fun isLimited(keyword: String, type: SampleType?): Boolean =
         if (hasExplicitBoundingInfo) getDecimalSamples(keyword, type)?.bounded ?: true else computeLimited(keyword, type)
     override fun toString(): String = rules.joinToString(";  ")
 
