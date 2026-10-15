@@ -5317,3 +5317,41 @@ oracle compares the source for empty/text/supplementary buffers and extreme,
 negative and boundary indices, including field access and subsequences. The
 complete JVM/JS/macOS suites and Linux Native test compilation passed after the
 fix; the final additional JVM boundary oracle also passed.
+
+## DisplayOptions and FormattedNumber results
+
+Ported the entire DisplayOptions model and builder, including all seven enums,
+CLDR identifier lookups and unmodifiable VALUES lists. Builders accept null
+values as upstream does; build/copy operations create independent snapshots,
+while options retain identity equality. Identifier matching remains exact and
+case-sensitive, with UNDEFINED for unknown/null identifiers. The existing common
+read-only-list implementation preserves failed mutation operations, including
+no-op mutation attempts and iterator methods.
+
+Added FormattedNumber as a FormattedValue: text, UTF-16 length/access, immutable
+String subsequences, appendable export, constrained fields, attributed character
+iterator, exact rounded BigDecimal, output unit, noun class, legacy gender and
+fixed-decimal access. It retains the supplied buffer/quantity/unit references,
+as the source package constructor does. The deprecated fixed-decimal accessor
+returns the actual quantity, and null gender normalizes only through getGender
+and noun-class lookup. Checked JVM append IOExceptions retain the source
+ICUUncheckedIOException wrapping through Utility.appendTo.
+
+JVM oracles compare DisplayOptions constants, identifiers, builder null/default/
+copy/snapshot behavior and list mutation failures. FormattedNumber oracles use
+ICU4J public formatted results across locales, simple/scientific/compact modes,
+currencies and builtin/mixed units, including NaN and infinity on supported
+paths. They compare strings, indices/slices, exact decimals, metadata, all plural
+operands, constrained field positions and attributed runs, plus constructor
+aliasing, nullable metadata and append failures. Common tests cover German unit
+fields/gender, rounded decimal export, enum snapshots, readonly lists and exact
+2^64+1 output. Full verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64; the additional JVM assertion/special-value tests also
+passed. The known unrelated Kotlin/JS generic Number integral-conversion
+regression remains explicitly skipped.
+
+Public fluent NumberFormatterSettings, NumberFormatter, UnlocalizedNumberFormatter
+and LocalizedNumberFormatter facades and skeleton parsing/generation remain
+pending, as do legacy formatters and other ICU4J subsystems. FormattedNumber is
+ready for those facades; its package-level construction is currently used by
+common tests with the complete internal number pipeline.
