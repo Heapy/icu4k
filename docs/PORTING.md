@@ -5841,3 +5841,41 @@ primitive/exact conversions, formatting, exceptions, sharing and serialization
 against ICU4J. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (final run, 2m 28s). Public legacy NumberFormat and
 DecimalFormat integration and other unported ICU subsystems remain outstanding.
+
+### DecimalFormat runtime, parser publication and pattern updates
+
+Added internal DecimalFormatCore as the source runtime for the forthcoming public
+DecimalFormat/NumberFormat hierarchy. It implements constructor/style rounding
+policy, symbol ownership/copies, pattern and localized-pattern application,
+property callbacks, formatter refresh, lazy parser/currency-parser publication,
+formatting, currency-amount overrides, field-position/fraction metadata,
+attributed output, parsing and legacy-decimal result conversion. Pattern export
+uses effective currency rounding while retaining original affix patterns. Runtime
+copies clone properties and symbols and rebuild their formatter/parser state.
+
+Source update/failure order is preserved: failed pattern parsing or a throwing
+property callback does not refresh the published formatter or clear parser
+caches; prior property mutations remain. Invalid parse offsets, end-of-input,
+existing error indexes, source error-index arithmetic and extreme legacy decimal
+fallback (including negative zero and zero with oversized positive exponent)
+are retained. Configuration synchronization remains the owning public facade's
+responsibility; immutable formatter/unsynchronized lazy parser access uses source
+volatile fields rather than a new locking policy.
+
+JS/Native generic quantity dispatch now accepts the Common BigInteger boundary.
+The Any-to-Number formatting bridge recognizes Kotlin Number subclasses on JS,
+where the compiler's intrinsic Number check/cast only covers primitives and Long.
+It also fixes the existing NumberFormatter.toFormat adapter for portable decimal
+and integer objects, while preserving rejection of unsupported Number subclasses
+inside the quantity loader rather than at the outer type check.
+
+JVM comparisons cover eight patterns across five locales, numeric kinds, field
+positions/fraction metadata, parsing/currency parsing at multiple offsets,
+mutation/copy/reset behavior, all ten style constructors, currency overrides and
+cache/failure ordering. Common regressions verify snapshot publication, copies,
+legacy-decimal parse results, Any/Number bridges and range fallback. Verification
+passed: jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 in the initial
+run; jvmTest in the final run (1m 27s) after JVM test-table typing was corrected.
+No production changes occurred between these checks. The public inheritance
+facades, their configuration accessors/serialization and number-format service
+factories (including rule-based numbering) still remain to be ported.

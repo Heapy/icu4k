@@ -24,8 +24,8 @@ expect open class LocalizedNumberFormatterAsFormat(formatter: LocalizedNumberFor
 
 internal class LocalizedNumberFormatterAsFormatCore(private val formatter: LocalizedNumberFormatter?) {
     fun format(input: Any?, output: Appendable?, outputLength: () -> Int, position: FormatFieldPosition?) {
-        if (input !is Number) throw IllegalArgumentException()
-        val quantity = DecimalQuantity_DualStorageBCD(input)
+        val number = formatNumberInput(input)
+        val quantity = DecimalQuantity_DualStorageBCD(number)
         val buffer = FormattedStringBuilder()
         formatter!!.formatImpl(quantity, buffer)
         position!!.setBeginIndex(0)
@@ -38,8 +38,8 @@ internal class LocalizedNumberFormatterAsFormatCore(private val formatter: Local
         Utility.appendTo(buffer, output!!)
     }
     fun iterator(input: Any?): FormatAttributedCharacterIterator {
-        if (input !is Number) throw IllegalArgumentException()
-        return formatter!!.format(input).toCharacterIterator()
+        val number = formatNumberInput(input)
+        return formatter!!.format(number).toCharacterIterator()
     }
 }
 internal fun localizedFormatEquals(self: LocalizedNumberFormatterAsFormat, formatter: LocalizedNumberFormatter?, other: Any?): Boolean {

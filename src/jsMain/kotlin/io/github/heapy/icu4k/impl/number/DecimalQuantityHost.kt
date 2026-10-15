@@ -10,6 +10,7 @@ internal actual fun quantityFromNumber(number: Number?): DecimalQuantityCore = w
     // JS primitive number tests cannot recover the original Kotlin numeric type.
     // Use the double path so fractional values, signed zero and special values survive.
     is Double -> DecimalQuantityCore(number.toDouble())
+    is io.github.heapy.icu4k.util.BigInteger -> DecimalQuantityCore(io.github.heapy.icu4k.impl.units.UnitDecimal(number.toString()))
     is BigDecimal -> DecimalQuantityCore().also { it.setToBigDecimal(number) }
     is io.github.heapy.icu4k.math.BigDecimal -> DecimalQuantityCore().also { it.setToBigDecimal(number.toBigDecimal()) }
     else -> {
