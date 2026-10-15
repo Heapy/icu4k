@@ -6,3 +6,6 @@ internal actual fun assertPadder(condition: Boolean) {
 internal actual fun assertPatternStringParser(condition: Boolean) {
     if (PatternStringParserCore::class.java.desiredAssertionStatus() && !condition) throw AssertionError()
 }
+internal actual fun assertPatternStringUtils(condition: Boolean) {
+    if (PatternStringUtilsCore::class.java.desiredAssertionStatus() && !condition) throw AssertionError()
+}

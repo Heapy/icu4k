@@ -4347,3 +4347,31 @@ work: generated JavaScript emitted the standalone-surrogate expected string as
 `'?x'`. The replacement algorithm retained U+D83D correctly. The common test now
 compares numeric UTF-16 code units, so this behavior is checked without depending
 on standalone-surrogate string literal emission.
+
+### Decimal pattern generation, localization and sign rendering
+
+`PatternStringUtilsCore` ports property-to-pattern digit generation, significant
+and increment notation, grouping, exponent/padding serialization and negative
+body copying. It retains source property limits, rounding-increment significance
+checks, coefficient/scale behavior and padding quoting. The generator takes an
+AffixPatternProvider explicitly: public DecimalFormatProperties and the default/
+currency-plural property-affix provider are still separate pending dependencies.
+
+The localized-pattern state machine reads the same 21 symbol rows, substitutes
+ASCII quotes in local symbols with U+2019, preserves source greedy matching and
+adds/removes collision quotes. Symbol getters are supplied through a callback so
+the eventual DecimalFormatSymbols adapter can preserve source read order.
+Pattern affix rendering handles signs, negative subpatterns, approximation,
+plural flags and permille replacement. Sign-display resolution retains distinct
+negative-zero policies and nullable NEVER behavior; its enum remains internal
+until NumberFormatter's public enums are ported.
+
+Common tests cover pattern generation, rounding thresholds, localized collisions
+and quoted digits, symbol-read order and sign rendering. JVM oracle tests compare
+609 parsed/arbitrary property bags (with identical affix-provider inputs), all
+distinct available-locale symbol sets plus custom multi-character/quoted symbols,
+all sign-display/signum combinations and affix rendering options. Provider traces
+and partial output are compared for callback failures and null output. These tests
+prove the utility algorithms; they do not yet prove the pending property-affix,
+CurrencyPluralInfo or DecimalFormatSymbols adapters. Complete decimal formatting
+and the full ICU4J port remain unfinished.
