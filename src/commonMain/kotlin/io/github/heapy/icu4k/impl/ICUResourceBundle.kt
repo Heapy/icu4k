@@ -268,7 +268,7 @@ open class ICUResourceBundle : UResourceBundle {
             names.add(ULocale.ROOT.toString())
             return localeReadOnlySet(names)
         }
-        fun getFunctionalEquivalent(baseName: String, loader: ICUResourceLoader, resName: String, keyword: String,
+        fun getFunctionalEquivalent(baseName: String, loader: ICUResourceLoader, resName: String, keyword: String?,
                                     locID: ULocale, isAvailable: BooleanArray?, omitDefault: Boolean): ULocale {
             var keywordValue = locID.getKeywordValue(keyword) ?: ""
             val baseLocale = locID.getBaseName()

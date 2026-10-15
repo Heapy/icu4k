@@ -7534,3 +7534,44 @@ fixture now names that lambda parameter explicitly.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 25s, including public entry points
 and the additional base-class oracle. Linux tests compiled, not run on macOS.
+
+### Collator locale service and static factory APIs
+
+Implemented the CollatorServiceShim behavior with the existing portable
+ICULocaleService: lazy shared service initialization, collation-resource factories,
+root fallback independent of the process default locale, cached prototypes cloned
+on every retrieval, registered instances, visible/invisible factories and removal.
+Registered instances receive locale metadata before insertion. Frozen prototypes
+retain ICU4J's same-object clone result, so subsequent keyword application can
+reject mutation. CloneNotSupportedException is wrapped in the newly ported
+ICUCloneNotSupportedException with the original cause and serial UID.
+
+Public Collator factories now apply locale keywords after obtaining the service
+clone. Available locales, display names, keywords, keyword values and functional
+equivalent locale lookup are connected to the real resources. Keyword value sinks
+retain default-first ordering, fallback de-duplication and exclusion of private
+collations. Source-unused key/commonlyUsed arguments remain unused. The returned
+getKeywords array remains shared as upstream does. JVM Locale conveniences use
+extensions, as elsewhere in this port. CollatorFactoryLocaleBridge retains legacy
+overridable Java Locale factory/display-name overloads; Common factories override
+ULocale. As in ICU4J, a factory must override a creation method to avoid delegation
+recursion.
+
+Oracle evidence exposed an existing overly narrow resource helper signature:
+getFunctionalEquivalent accepts a null keyword in ICU4J, including a root lookup
+that returns root successfully. Its common keyword parameter is now nullable;
+no premature assertion replaces the original locale/resource processing.
+
+Targeted JVM tests passed for default and requested locale factories, language-tag
+keywords, root fallback, available locale sets, keyword values/order, functional
+equivalence (including null keywords and availability outputs), display names,
+instance/factory registration, frozen prototypes and legacy Java Locale overrides.
+Final coverage adds generic collator keyword rejection, clone-failure wrapping and
+root fallback while the process default locale is Japanese. Common tests cover
+independent factory results, keyword effects, registration and invisible factories.
+
+Verification: the full jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 run passed in 3m 24s. Linux tests compiled only. A final
+JVM service run also passed after improving the test's restoration of process
+DISPLAY/FORMAT defaults; production and common tests were unchanged after the
+full run.

@@ -322,7 +322,18 @@ val elements = collator.getCollationElementIterator("ch")
 ```
 
 The rule constructor, attributes, sort keys, CE iteration, freeze and cloning are
-implemented. Locale factories (`Collator.getInstance`), service registration and
-locale enumeration are still pending. `setReorderCodes` accepts both a nullable
+implemented. Locale factories, service registration and locale enumeration are
+also available:
+
+```kotlin
+import io.github.heapy.icu4k.text.Collator
+import io.github.heapy.icu4k.util.ULocale
+
+val german = Collator.getInstance(ULocale("de@collation=phonebook"))
+val numeric = Collator.getInstance(ULocale("en@colNumeric=yes"))
+println(numeric.compare("2", "10")) // -1
+```
+
+`setReorderCodes` accepts both a nullable
 `IntArray` and Kotlin varargs; the JVM vararg convenience is named
 `setReorderCodesValues`, while the array method retains `setReorderCodes`.
