@@ -7610,3 +7610,35 @@ Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 4m 1s. Linux tests were compiled,
 not executed on macOS. Default provider discovery and lenient 255 examples
 passed on every executed target.
+
+### StringSearch processed CEs and circular history
+
+Ported StringSearch's CollationPCE iterator and raw/processed backward stacks to
+StringSearchPCE, along with the complete compareCE64s wildcard comparison.
+Strength filtering, signed Int variable-top comparison, continuation grouping,
+shifted-state propagation and quaternary weights retain source arithmetic.
+init changes the iterator/settings but deliberately retains buffered processed
+CEs. nextProcessed resets that buffer before fetching, even when fetching fails.
+Backward end ranges remain (-1,-1), distinct from forward end ranges.
+
+StringSearchCEBuffer supplies the original circular history with pattern/Jamo
+sizing, effective history eviction, sequential-access assertions and mutable slot
+aliases. Accessor callbacks will connect it to the public search owner without
+replacing the source processing algorithm. Mixed forward/backward requests for
+already cached entries return the same slot; new requests retain the underlying
+cursor's direction restrictions. All UTF-16 Jamo-L classification intervals are
+preserved, including compatibility Jamo and code-unit-based supplementary sizing.
+
+Targeted JVM tests passed for complete processed streams, ranges, shifted state
+and backing storage across strengths, shifted/FCD modes and long combining runs.
+They also compare 7,560 full-width processCE cases, 17,184 wildcard comparisons,
+all 65,536 Jamo classification inputs and circular history sizes, eviction and
+aliasing against the original private ICU4J classes. Reinitialization with live
+buffered CEs and partial failure after a null cursor are checked explicitly.
+Common tests exercise long backward stacks, offsets, wildcard matching and slot
+reuse. The public StringSearch front end, pattern compilation and search loops
+remain pending; this stage is its internal CE machinery.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 17s. Linux tests compiled only;
+processed-CE and circular-history common tests ran on JVM, Node and macOS Arm64.
