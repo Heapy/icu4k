@@ -7290,3 +7290,24 @@ executed on macOS. The real-rule replay fixture initially expected null for a
 successful Java void call; the adapter's Unit result is now checked correctly.
 Preceding weak weights, real-rule graph allocation and partial failures matched
 ICU4J, and the common graph tests passed on all executed platforms.
+
+### Rule tailoring compilation
+
+Implemented the CollationBuilder entry point on top of CollationNodeGraph and
+CollationDataBuilder: reset-before and special reset positions, relations at all
+strengths, case propagation, canonical closure, tail composites, temporary CE
+finalization, imported rules, optimization and Fast Latin generation. Settings-only
+rules retain the base data. ICUInputTooLongException is available in common code.
+This replaces the pending builder entry point described in the previous stage;
+public collator APIs and the remaining ICU4J surface still require migration.
+
+JVM oracle coverage compares complete compiled trie bytes, CE arrays, contexts,
+Jamo mappings, unsafe sets, Fast Latin tables, settings, node storage and failures
+against ICU4J 78.3. It includes canonical equivalents, prefixes, contractions,
+extensions, imported German phonebook rules, reset-before, all supported special
+reset boundaries and quaternary exhaustion. Common tests exercise generated
+ordering, canonical equivalence, imports and settings-only data sharing.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 54s. Linux tests were compiled,
+not executed on macOS. The targeted CollationBuilder JVM oracle run also passed.
