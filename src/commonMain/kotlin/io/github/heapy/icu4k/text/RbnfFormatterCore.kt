@@ -17,7 +17,7 @@ internal interface RbnfPostProcessor {
 }
 
 /**
- * The RBNF graph owner. Public NumberFormat dispatch, capitalization, serialization and
+ * The RBNF graph owner. Public NumberFormat dispatch, serialization and
  * the default collation-backed scanner are separate dependencies of the facade port.
  */
 internal class RbnfFormatterCore private constructor(
@@ -41,6 +41,7 @@ internal class RbnfFormatterCore private constructor(
     private var postProcessor: RbnfPostProcessor? = null
     private var ruleSetDisplayNames: Map<String?, Array<String>>? = null
     private var publicRuleSetNames: Array<String>? = null
+    private var capitalization = RbnfCapitalizationCore(locale)
 
     /** Allows the eventual facade's virtual rounding-mode query without changing stored mode. */
     var roundingModeReader: () -> Int = { roundingMode }
@@ -243,6 +244,8 @@ internal class RbnfFormatterCore private constructor(
         }
         return null
     }
+    fun setContext(context: DisplayContext?, setParentContext: (DisplayContext?) -> Unit) = capitalization.setContext(context, setParentContext)
+    fun adjustForContext(result: String?, readContext: () -> DisplayContext?): String? = capitalization.adjustForContext(result, readContext)
     fun format(number: Long): String = formatRaw(number, defaultRuleSet)
     fun format(number: Double, maximumFractionDigits: () -> Int): String = formatRaw(number, defaultRuleSet, maximumFractionDigits)
     fun format(number: Long, name: String?): String {
@@ -322,6 +325,7 @@ internal class RbnfFormatterCore private constructor(
         it.lenientParse = lenientParse; it.lenientParseRules = lenientParseRules
         it.postProcessRules = postProcessRules; it.postProcessor = postProcessor
         it.ruleSetDisplayNames = ruleSetDisplayNames; it.publicRuleSetNames = publicRuleSetNames
+        it.capitalization = capitalization.copy()
     }
     companion object {
         private val ZERO: Number = 0L

@@ -6264,3 +6264,36 @@ only two test expectations (string length and Unit/null normalization), which
 were corrected before the final checks.
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed, final run 2m 27s. Linux compiled, not executed.
+
+### RBNF display-context capitalization
+
+Ported RuleBasedNumberFormat.setContext's initialization policy and
+adjustForContext into RbnfCapitalizationCore, connected to RbnfFormatterCore and
+its shallow copy. NumberFormat's parent context update precedes resource and
+iterator initialization. Context flags load only on the first UI-list/menu or
+standalone request; short/missing vectors retain defaults. Bundle lookup stays
+outside the missing-key catch. A successful flag load remains published if
+sentence-iterator creation fails, and later calls retry only that iterator.
+
+Adjustment reads the facade's virtual context first, gates on GC=Ll for the
+first Unicode code point, and uses the already-ported CaseMap title machinery
+with an explicit sentence iterator, no lowercasing and no break adjustment.
+The first-code-point gate intentionally leaves strings beginning with uppercase,
+titlecase, spaces, digits, modifier letters or unpaired surrogates unchanged.
+Iterator creation has the source lazy fallback used by deserialization/virtual
+contexts. Copies preserve primitive flags and share the existing iterator,
+including its text and position; no additional synchronization was introduced.
+
+Common tests cover flags/vectors, initialization and failure order, retries,
+parent/null context behavior, virtual context reads, supplementary characters,
+locale-sensitive titlecase, unchanged text, shallow iterator ownership and
+formatter-owner integration. JVM oracle tests compare every DisplayContext and
+multiple texts for all 111 embedded RBNF locales, including internal flags,
+iterator presence/position and unchanged-string identity. They also compare
+virtual context overrides, clones and actual spellout output for nine locales.
+The existing CaseMap implementation is reused; UCharacter's missing string
+convenience overloads were not added as part of this state port.
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed, final run 2m 32s (Linux compiled, not executed).
+The public RBNF facade/NumberFormat factory connection, serialization and default
+collation-backed lenient scanner remain unfinished.
