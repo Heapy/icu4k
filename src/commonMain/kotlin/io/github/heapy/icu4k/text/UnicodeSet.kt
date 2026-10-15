@@ -1414,7 +1414,7 @@ class UnicodeSet() : UnicodeFilter(), Iterable<String>, Comparable<UnicodeSet>, 
         const val MAX_VALUE = 0x10ffff
         private const val HIGH = 0x110000
         private const val MAX_LENGTH = HIGH + 1
-        private fun validate(c: Int) { require(c in MIN_VALUE..MAX_VALUE) { "Invalid code point U+${c.toUInt().toString(16).uppercase().padStart(6, '0')}" } }
+        private fun validate(c: Int) { require(c in MIN_VALUE..MAX_VALUE) { "Invalid code point U+${Utility.hex(c.toLong(), 6)}" } }
         private fun singleCP(s: CharSequence): Int {
             if (s.length == 1) return s[0].code
             if (s.length == 2 && s[0].code in 0xd800..0xdbff && s[1].code in 0xdc00..0xdfff)

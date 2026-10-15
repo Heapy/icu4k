@@ -6494,3 +6494,14 @@ all 33 source helper overloads and every Int/Long constant. It also verifies
 that changing class-loader assertion policy after initialization leaves the
 original assertion behavior unchanged. The initial oracle's incorrect expected
 method count (36 instead of 33) was corrected before the final successful run.
+
+### UnicodeSet signed invalid-code-point diagnostics
+
+The CollationData root oracle exposed an older UnicodeSet.validate mismatch:
+negative code points were formatted as unsigned Int hex, losing ICU4J's minus
+sign and signed minimum-width padding. Validation now delegates to the already
+ported Utility.hex(c.toLong(), 6), matching the upstream call. No accepted code
+point or set operation changes. Common and JVM oracle regressions compare
+contains/add/remove/complement diagnostics for negative values including
+Int.MIN_VALUE and values above U+10FFFF. The full JVM/JS/macOS test run and Linux
+test compilation passed together with the collation data stage, 3m 54s.
