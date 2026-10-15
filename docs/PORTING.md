@@ -7137,3 +7137,39 @@ compileTestKotlinLinuxX64 passed together in 3m 25s. Linux tests compiled, not
 executed on macOS. The production implementation required no changes after its
 initial JVM compilation and oracle comparison; the parallel-context and
 surrogate-prefix fixtures passed on all three executed platforms.
+
+## Collation rule syntax and settings parser
+
+Ported the complete CollationRuleParser with its Position, Sink and Importer
+contracts. It handles resets and reset-before strengths, all relation operators,
+prefixes/extensions, quoting/backslash literals, starred characters/ranges,
+special reset positions, comments, settings, reorder codes, UnicodeSet options
+and nested imports. It retains shared raw-builder callback arguments, settings
+mutation order, parse offsets, UTF-16-aware error context and source failure state
+when imports fail before restoring outer rules.
+
+ParseException can now attach an internal cause in common code. JVM uses the
+existing java.text.ParseException alias and initCause; JS/Native retain the cause
+on their common exception implementation. Callback/import failures preserve
+explicit source wrapper messages and causes. As elsewhere in the port, implicit
+JVM null/bounds exception messages are normalized in oracle comparisons.
+
+Common tests exercise relation/setting results, special resets, UnicodeSet
+callbacks, BCP47 imports, unpaired surrogates and wrapped callback failures.
+JVM tests compare events, retained mutable callback strings, settings/reordering,
+private parser state, exact explicit error context/offsets and cause chains.
+Coverage includes syntax/settings fixtures, callback failures, import failures,
+1,200 random fragment combinations, surrogate context windows and unique rule
+strings across upstream indexed locale/type selections, with actual data imports.
+A test-only package-local Java adapter reaches the source parser's internal
+Sink/Importer and constructor without changing production visibility.
+
+This is the syntax/settings parser, not the tailoring compiler: low-level data
+building and final tailoring construction remain pending, together with public
+collator APIs.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 12s. Linux tests compiled, not
+executed on macOS. Wrapped callback causes passed on all executed platforms;
+unique upstream rule strings and actual imports matched ICU4J on JVM. No
+production corrections were required after initial compilation/oracle comparison.
