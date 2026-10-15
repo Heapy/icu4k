@@ -42,8 +42,24 @@ internal object CommonDoubleToDecimal {
         val fraction = bits and 0x000fffffffffffffL
         val mantissa = if (biased == 0) fraction else fraction or 0x0010000000000000L
         val exponent = if (biased == 0) -1074 else biased - 1075
+        return formatBinary(mantissa, exponent, fraction == 0L && biased > 1, sign, 17)
+    }
+    fun format(value: Float): String {
+        val raw = value.toRawBits()
+        val bits = raw and Int.MAX_VALUE
+        if (bits > 0x7f800000) return "NaN"
+        val sign = if (raw < 0) "-" else ""
+        if (bits == 0x7f800000) return sign + "Infinity"
+        if (bits == 0) return sign + "0.0"
+        val biased = bits ushr 23
+        val fraction = bits and 0x007fffff
+        val mantissa = (if (biased == 0) fraction else fraction or 0x00800000).toLong()
+        val exponent = if (biased == 0) -149 else biased - 150
+        return formatBinary(mantissa, exponent, fraction == 0 && biased > 1, sign, 9)
+    }
+    private fun formatBinary(mantissa: Long, exponent: Int, asymmetricLower: Boolean, sign: String, maxDigits: Int): String {
         val exact = binary(mantissa, exponent)
-        val lower = if (fraction == 0L && biased > 1) binary(4 * mantissa - 1, exponent - 2) else binary(2 * mantissa - 1, exponent - 1)
+        val lower = if (asymmetricLower) binary(4 * mantissa - 1, exponent - 2) else binary(2 * mantissa - 1, exponent - 1)
         val upper = binary(2 * mantissa + 1, exponent - 1)
         val closed = (mantissa and 1L) == 0L
         fun inInterval(candidate: UnitDecimal): Boolean {
@@ -61,7 +77,7 @@ internal object CommonDoubleToDecimal {
             val comparison = exact.subtract(down).compareTo(up.subtract(exact))
             return if (comparison < 0 || comparison == 0 && (down.magnitude.last() - '0') % 2 == 0) down else up
         }
-        for (precision in 1..17) {
+        for (precision in 1..maxDigits) {
             val candidate = choose(precision) ?: continue
             val selected = (if (precision == 1) choose(2) ?: candidate else candidate).stripTrailingZeros()
             val digits = selected.magnitude
@@ -73,6 +89,6 @@ internal object CommonDoubleToDecimal {
             }
             return sign + body
         }
-        error("No decimal in binary64 rounding interval")
+        error("No decimal in binary rounding interval")
     }
 }

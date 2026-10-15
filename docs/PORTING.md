@@ -4545,3 +4545,32 @@ names/metadata/date queries, trie contents and matches, Java currency conversion
 service fallback, override ordering and removal. Common tests exercise composition,
 factory identity, catalog access and currency registration on JVM, JS and Native.
 Measure/CurrencyAmount/TimeUnitAmount and the formatter APIs remain pending.
+
+
+### Public numeric measures and amounts
+
+Added Measure, CurrencyAmount and TimeUnitAmount. They retain Number/unit fields,
+use the source boxed-number equality followed by primitive double comparison, and
+hash via canonical binary64 bits before the unit hash. Signed-zero equality/hash
+inconsistency and rounded large-Long comparisons deliberately retain ICU4J behavior.
+Getters are virtual, but equality/hash/text use the retained fields as in the source;
+convenience currency/time getters dispatch through getUnit. JVM constructor-style
+factories also accept java.util.Currency.
+
+The exact rounding-interval decimal printer now supports binary32 as well as
+binary64. Native Float/Double measure text uses these portable printers; JVM uses
+the supplied Number's own text. Typed Float/Double constructors retain input-kind
+metadata on JavaScript. Typed Float inputs are forced to binary32 before value
+comparison/hashing, so 0.1f has the same numeric value and hash as the corresponding
+binary32 value expanded to Double, while printing as 0.1. Typed NaNs preserve boxed
+Float-versus-Double equality. A generic Number input cannot recover numeric boxing
+metadata already erased by JavaScript, including integer-valued Double versus Int;
+callers needing those distinctions use the typed constructors.
+
+Oracle tests compare ICU4J construction, null failures, retained mutable Numbers,
+all numeric type pairings, hash/text, subclass getter boundaries, amount getters
+and Java currency inputs. The portable binary32 printer is compared with JDK Float
+text for subnormal edges, each exponent boundary, specials and a seeded random
+sample. Common tests cover amount identity, decimal scale, binary32 expansion,
+signed zero, NaNs and large integers on JVM, JS and Native. Number/measure formatter
+APIs remain unfinished.
