@@ -7642,3 +7642,36 @@ remain pending; this stage is its internal CE machinery.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 4m 17s. Linux tests compiled only;
 processed-CE and circular-history common tests ran on JVM, Node and macOS Arm64.
+
+### StringSearch pattern compilation and boundary helpers
+
+Ported the pattern CE/PCE tables to StringSearchPatternCompiler and its pattern
+state. Compilation retains the initial 256-element arrays, source growth
+estimates, terminators, expansion counting and reusable utility CE iterator. CE
+filtering uses cached mask/strength/shift/variable-top fields, while a newly built
+processed table reads the current collator through its CE iterator. Invalidation
+clears PCE storage without resetting the previous PCELength, matching source.
+Tables are replaced only after successful completion; failed compilation retains
+previous CE storage and the source's partially advanced utility cursor.
+
+Added the IDENTICAL NFD check, bounded CharacterIterator string extraction,
+codePointAt/codePointBefore and external/internal break-boundary selection.
+Cursor restoration occurs on normal completion, not in finally. Slices beyond
+an iterator's end retain repeated DONE code units; boundary lookup without either
+iterator returns the supplied start index, while isBreakBoundary returns false.
+No new range or empty-pattern validation replaces these private helpers.
+
+Targeted JVM tests passed for full table backing arrays, long expanding patterns,
+repeated initialization, stale cached attributes, late collator mutations and
+failure after null pattern text. They also compare 3,200 arbitrary CE filter cases,
+array-growth aliases and failure mutations, canonical IDENTICAL slices, bounded
+UTF-16 code points, boundary cursor state and extraction failures. The original
+StringSearch constructor rejects the nonzero-begin fixture cursor; the private
+slice-helper oracle binds that cursor after normal source construction, keeping
+constructor and helper semantics distinct. Common tests cover long tables,
+invalidation, canonical equality and cursor/boundary behavior.
+Public StringSearch construction and forward/backward search loops remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 59s. Linux tests compiled only;
+pattern compilation and boundary/cursor common tests ran on all executed targets.
