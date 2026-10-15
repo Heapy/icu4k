@@ -5373,3 +5373,39 @@ windows, invalid/failed mutations, folds, sets, null/empty comparisons and
 CharSequence callback order. Common tests cover cut-pair behavior, relative
 access, window reset, code-point advancement and folding versus exact matching.
 The full JVM/JS/macOS suites and Linux Native test compilation passed.
+
+## Number skeleton parsing and canonical generation
+
+Ported NumberSkeletonImpl's complete parsing and generation algorithms into the
+internal NumberSkeletonCore, with the same stem trie entries and concise aliases.
+The parser retains token/option state, Pattern_White_Space separators, blueprint
+fraction/significant/scientific/integer syntax, precision and trailing-zero
+options, unit/currency/usage/numbering-system/scale options, duplicate detection,
+range validation and error ordering. The generator preserves canonical ordering,
+default elision, precision retention/priority forms and unsupported custom-setting
+failures. Source quirks remain: repeated base-unit settings are accepted since
+they leave unit null; perUnit is ignored by generation when unit is null.
+
+Added the public SkeletonSyntaxException with source message/token/cause
+construction and serialVersionUID. StringSegment debug views retain the complete
+input and bracket the error token; numeric parse causes are preserved. Standard
+BigDecimal cause-message details continue to follow the platform decimal backend.
+JVM oracles compare constructor callback count, diagnostic snapshots, cause
+initialization policy and serialization against ICU4J.
+
+Differential tests compare private ICU4J parsing, canonical generation and actual
+public formatter output for every literal/concise stem, required/optional options,
+precision bounds, Unicode separators, units and invalid input. Deterministic
+random token/option tests cover 800 additional sequences. Generator tests exercise
+precision combinations, priority, trailing zeros, exponent options, per units,
+scale, numbering systems and unsupported settings. Common tests cover
+canonicalization, formatting, token diagnostics and source duplicate behavior.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64. The known Kotlin/JS generic Number integral-conversion
+regression remains explicitly skipped.
+
+The core is complete for parsing/generation; NumberSkeletonImpl's formatter cache
+and create/getOrCreate facade binding remain pending with public NumberFormatter,
+NumberFormatterSettings, UnlocalizedNumberFormatter and LocalizedNumberFormatter.
+No partial public skeleton factory or fluent formatter was introduced. Other
+ICU4J subsystems and the complete port remain outstanding.
