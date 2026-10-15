@@ -4791,3 +4791,31 @@ Common tests verify both paths, supplementary field boundaries and empty-number
 short circuits. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64. MutablePatternModifier and the remaining formatter
 pipeline are still pending.
+
+### Scale and rounding-context foundations
+
+Added the public Scale factories, normalization of decimal powers of ten, source
+singletons, custom math contexts, direct multiplication and reciprocal application.
+Positive unit coefficients become magnitude shifts, zero becomes the canonical
+zero decimal, and a nonzero arbitrary multiplier gets a context-rounded reciprocal.
+The JVM normalization boundary calls unscaledValue().equals(BigInteger.ONE),
+preserving virtual BigDecimal callbacks; JS and Native inspect their common decimal
+coefficient. No ICU4J implementation is delegated to in production.
+
+Added RoundingUtils's direction, midpoint, cached math-context and property-to-scale
+APIs over the existing rounding-direction algorithm. The 34-digit cache deliberately
+matches ICU4J's MathContext(34) initialization: every rounding-mode entry uses HALF_UP
+and remains a distinct object, despite the declared default mode being HALF_EVEN.
+Magnitude-multiplier precedence and repeated virtual property reads are retained.
+The Precision-dependent getPluralSafe method remains pending with Precision; the
+complete number formatter and MicroProps pipeline are not yet ported.
+
+Oracle tests cover decimal/double factories, canonical identities, all rounding
+modes, explicit/null/unlimited contexts, reciprocal rounding, zero multipliers,
+special and seeded doubles, exact decimals, original approximate-quantity state,
+integer-extreme metadata, virtual quantity callbacks and failure order. BigDecimal
+subclass tests cover normalization callbacks including unscaledValue. Context tests
+check cache identity, source default quirks and changing property getter values.
+Common tests exercise normalization, forward/reciprocal scaling, zero behavior and
+property scale precedence on JVM, JS and Native. Verification passed: jvmTest,
+jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
