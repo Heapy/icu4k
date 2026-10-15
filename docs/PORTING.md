@@ -5719,3 +5719,24 @@ cover scales, pre-rounded multiplication, carry, dominance, precision-sensitive
 comparison, canonical zero and lost-digit diagnostics.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 37s).
+
+### Legacy decimal division, remainder, powers and scale
+
+Ported the source long-division algorithm into IcuDecimalValue, including scaled
+and precision-based division, integer division, remainder and all internal exit
+paths. Residual-digit rounding markers, quotient overflow checks, zero identity,
+source exponent accounting and operand pre-rounding remain. Added scale/setScale,
+exact Int conversion and the source 31-bit power algorithm with working precision,
+negative-power reciprocal and argument validation order. setScale retains lazy
+rounding-mode validation and carry/scale repair.
+
+JVM comparisons exercise context matrices and 2,000 randomized divisions,
+explicit scales/modes (including invalid arguments), defaults, powers, zero
+bases/divisors, negative/fractional/oversized exponents and exact Int limits.
+They compare internal state, values, sharing/identity, exceptions and unchanged
+operands. Common regressions cover recurring/scaled division, signed residue,
+integer overflow, rounding failures, negative powers, scale repair and Int bounds.
+The legacy public BigDecimal facade, remaining conversions and format methods
+are still incomplete; public NumberFormat/DecimalFormat integration also remains.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 48s).

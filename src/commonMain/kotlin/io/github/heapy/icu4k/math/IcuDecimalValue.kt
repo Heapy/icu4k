@@ -11,6 +11,191 @@ internal class IcuDecimalValue {
     var mant: ByteArray = ZERO
     var exp: Int = 0
     fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.mant = mant; it.exp = exp }
+    fun scale(): Int = if (exp >= 0) 0 else -exp
+    fun setScale(scale: Int, mode: Int = MathContext.ROUND_UNNECESSARY): IcuDecimalValue {
+        val ourscale = scale()
+        if (ourscale == scale && form.toInt() == MathContext.PLAIN) return this
+        val result = copy()
+        if (ourscale <= scale) {
+            val padding = if (ourscale == 0) result.exp + scale else scale - ourscale
+            result.mant = IcuDecimalDigits.extend(result.mant, result.mant.size + padding); result.exp = -scale
+        } else {
+            if (scale < 0) throw ArithmeticException("Negative scale: $scale")
+            result.round(result.mant.size - (ourscale - scale), mode)
+            if (result.exp != -scale) { result.mant = IcuDecimalDigits.extend(result.mant, result.mant.size + 1); result.exp-- }
+        }
+        result.form = MathContext.PLAIN.toByte()
+        return result
+    }
+    fun intValueExact(): Int {
+        if (ind.toInt() == 0) return 0
+        var lodigit = mant.size - 1
+        val useexp: Int
+        if (exp < 0) {
+            lodigit += exp
+            if (!IcuDecimalDigits.allZero(mant, lodigit + 1)) throw ArithmeticException("Decimal part non-zero: $this")
+            if (lodigit < 0) return 0
+            useexp = 0
+        } else {
+            if (exp + lodigit > 9) throw ArithmeticException("Conversion overflow: $this")
+            useexp = exp
+        }
+        var result = 0
+        for (i in 0..lodigit + useexp) { result *= 10; if (i <= lodigit) result += mant[i] }
+        if (lodigit + useexp == 9 && result / 1000000000 != mant[0].toInt()) {
+            if (result == Int.MIN_VALUE && ind.toInt() == -1 && mant[0].toInt() == 2) return result
+            throw ArithmeticException("Conversion overflow: $this")
+        }
+        return if (ind.toInt() == 1) result else -result
+    }
+    fun divide(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = doDivide('D', rhs, set, -1)
+    fun divide(rhs: IcuDecimalValue?, mode: Int): IcuDecimalValue = doDivide('D', rhs, MathContext(0, MathContext.PLAIN, false, mode), -1)
+    fun divide(rhs: IcuDecimalValue?, scale: Int, mode: Int): IcuDecimalValue {
+        if (scale < 0) throw ArithmeticException("Negative scale: $scale")
+        return doDivide('D', rhs, MathContext(0, MathContext.PLAIN, false, mode), scale)
+    }
+    fun divideInteger(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = doDivide('I', rhs, set, 0)
+    fun remainder(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue = doDivide('R', rhs, set, -1)
+    private fun doDivide(code: Char, right: IcuDecimalValue?, set: MathContext?, initialScale: Int): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(right, set.digits)
+        var lhs = this; var rhs = right
+        var scale = initialScale
+        if (rhs!!.ind.toInt() == 0) throw ArithmeticException("Divide by 0")
+        if (lhs.ind.toInt() == 0) {
+            if (set.form != MathContext.PLAIN) return ZERO_VALUE
+            if (scale == -1) return lhs
+            return lhs.setScale(scale)
+        }
+        var reqdig = set.digits
+        if (reqdig > 0) {
+            if (lhs.mant.size > reqdig) lhs = lhs.copy().round(set)
+            if (rhs.mant.size > reqdig) rhs = rhs.copy().round(set)
+        } else {
+            if (scale == -1) scale = lhs.scale()
+            reqdig = lhs.mant.size
+            if (scale != -lhs.exp) reqdig = reqdig + scale + lhs.exp
+            reqdig = reqdig - (rhs.mant.size - 1) - rhs.exp
+            if (reqdig < lhs.mant.size) reqdig = lhs.mant.size
+            if (reqdig < rhs.mant.size) reqdig = rhs.mant.size
+        }
+        val newexp = lhs.exp - rhs.exp + lhs.mant.size - rhs.mant.size
+        if (newexp < 0 && code != 'D') {
+            if (code == 'I') return ZERO_VALUE
+            return lhs.copy().finish(set, false)
+        }
+        val result = IcuDecimalValue()
+        result.ind = (lhs.ind * rhs.ind).toByte(); result.exp = newexp; result.mant = ByteArray(reqdig + 1)
+        val newlen = reqdig + reqdig + 1
+        var var1 = IcuDecimalDigits.extend(lhs.mant, newlen)
+        var var1len = newlen
+        val var2 = rhs.mant
+        var var2len = newlen
+        var b2b = var2[0] * 10 + 1
+        if (var2.size > 1) b2b += var2[1]
+        var have = 0
+        outer@ while (true) {
+            var thisdigit = 0
+            inner@ while (true) {
+                if (var1len < var2len) break
+                val ba: Int
+                if (var1len == var2len) {
+                    var equal = true
+                    for (i in 0 until var1len) {
+                        val v2: Byte = if (i < var2.size) var2[i] else 0
+                        if (var1[i] < v2) break@inner
+                        if (var1[i] > v2) { equal = false; break }
+                    }
+                    if (equal) { thisdigit++; result.mant[have++] = thisdigit.toByte(); var1[0] = 0; break@outer }
+                    ba = var1[0].toInt()
+                } else { ba = var1[0] * 10 + if (var1len > 1) var1[1].toInt() else 0 }
+                var mult = ba * 10 / b2b
+                if (mult == 0) mult = 1
+                thisdigit += mult
+                var1 = IcuDecimalDigits.addSub(var1, var1len, var2, var2len, -mult, true)
+                if (var1[0].toInt() != 0) continue
+                var start = 0
+                val last = var1len - 2
+                while (start <= last) { if (var1[start].toInt() != 0) break; var1len--; start++ }
+                if (start == 0) continue
+                var1.copyInto(var1, 0, start, start + var1len)
+            }
+            if (have != 0 || thisdigit != 0) {
+                result.mant[have++] = thisdigit.toByte()
+                if (have == reqdig + 1 || var1[0].toInt() == 0) break
+            }
+            if (scale >= 0 && -result.exp > scale) break
+            if (code != 'D' && result.exp <= 0) break
+            result.exp--; var2len--
+        }
+        if (have == 0) have = 1
+        if (code == 'I' || code == 'R') {
+            if (have + result.exp > reqdig) throw ArithmeticException("Integer overflow")
+            if (code == 'R') {
+                if (result.mant[0].toInt() == 0) return lhs.copy().finish(set, false)
+                if (var1[0].toInt() == 0) return ZERO_VALUE
+                result.ind = lhs.ind
+                val padding = reqdig + reqdig + 1 - lhs.mant.size
+                result.exp = result.exp - padding + lhs.exp
+                var d = var1len
+                var i = d - 1
+                while (i >= 1) {
+                    if (!(result.exp < lhs.exp && result.exp < rhs.exp)) break
+                    if (var1[i].toInt() != 0) break
+                    d--; result.exp++; i--
+                }
+                if (d < var1.size) var1 = var1.copyOfRange(0, d)
+                result.mant = var1
+                return result.finish(set, false)
+            }
+        } else if (var1[0].toInt() != 0) {
+            val lasthave = result.mant[have - 1]
+            if (lasthave % 5 == 0) result.mant[have - 1] = (lasthave + 1).toByte()
+        }
+        if (scale >= 0) {
+            if (have != result.mant.size) result.exp -= result.mant.size - have
+            val actdig = result.mant.size - (-result.exp - scale)
+            result.round(actdig, set.roundingMode)
+            if (result.exp != -scale) { result.mant = IcuDecimalDigits.extend(result.mant, result.mant.size + 1); result.exp-- }
+            return result.finish(set, true)
+        }
+        if (have == result.mant.size) result.round(set)
+        else {
+            if (result.mant[0].toInt() == 0) return ZERO_VALUE
+            result.mant = result.mant.copyOfRange(0, have)
+        }
+        return result.finish(set, true)
+    }
+    fun pow(rhs: IcuDecimalValue?, set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
+        if (set!!.lostDigits) checkDigits(rhs, set.digits)
+        var n = rhs!!.intValueExact()
+        if (n < -999999999 || n > 999999999) throw ArithmeticException("Conversion overflow: $n")
+        var lhs = this
+        val reqdig = set.digits
+        val workdigits: Int
+        if (reqdig == 0) {
+            if (rhs.ind.toInt() == -1) throw ArithmeticException("Negative power: $rhs")
+            workdigits = 0
+        } else {
+            if (rhs.mant.size + rhs.exp > reqdig) throw ArithmeticException("Too many digits: $rhs")
+            if (lhs.mant.size > reqdig) lhs = lhs.copy().round(set)
+            val length = rhs.mant.size + rhs.exp
+            workdigits = reqdig + length + 1
+        }
+        val workset = MathContext(workdigits, set.form, false, set.roundingMode)
+        var result = ONE_VALUE
+        if (n == 0) return result
+        if (n < 0) n = -n
+        var seenbit = false
+        for (i in 1..31) {
+            n += n
+            if (n < 0) { seenbit = true; result = result.multiply(lhs, workset) }
+            if (i == 31) break
+            if (!seenbit) continue
+            result = result.multiply(result, workset)
+        }
+        if (rhs.ind < 0) result = ONE_VALUE.divide(result, workset)
+        return result.finish(set, true)
+    }
     fun plus(set: MathContext? = PLAIN_CONTEXT): IcuDecimalValue {
         if (set!!.lostDigits) checkDigits(null, set.digits)
         if (set.form == MathContext.PLAIN && form.toInt() == MathContext.PLAIN && (mant.size <= set.digits || set.digits == 0)) return this
@@ -285,6 +470,7 @@ internal class IcuDecimalValue {
         private val ZERO = byteArrayOf(0)
         private val ONE = byteArrayOf(1)
         val ZERO_VALUE = IcuDecimalValue()
+        val ONE_VALUE = IcuDecimalValue().also { it.ind = 1; it.mant = ONE }
         private val PLAIN_CONTEXT = MathContext(0, MathContext.PLAIN)
         fun parse(text: String?): IcuDecimalValue = parse(text!!.toCharArray(), 0, text.length)
         private fun bad(chars: CharArray?): Nothing = throw NumberFormatException("Not a number: " + chars!!.concatToString())
