@@ -4852,3 +4852,37 @@ jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64. The final JVM-only rer
 corrected reflection void/Unit normalization in the test adapter; production code
 was unchanged after the cross-platform run. MicroProps and the rest of the formatter
 pipeline remain pending.
+
+### MicroProps pipeline base and public grouping
+
+Added MicroPropsGenerator and MicroProps with all 17 public mutable result fields,
+source defaults, the private immutable flag and volatile exhausted state. Immutable
+bases call the virtual clone method for every quantity; mutable bases return
+this once and preserve exhaustion in subsequent clones. Quantity is deliberately
+unused by this first pipeline stage. Cloning is shallow, retaining symbols,
+modifiers, rounding/grouping policies, unit and mixed-measure list references.
+
+The dedicated host clone base does not add Serializable. JVM uses Object.clone
+with Cloneable and preserves runtime subclasses and extra fields; JS clones own
+property descriptors with the original prototype. Native copies all known MicroProps
+fields including the exhausted flag. As with the earlier open cloneable classes,
+unknown user Native subclasses must override clone themselves; generic Native
+runtime-subtype cloning remains unavailable in the current supported toolchain.
+
+Promoted the single GrouperCore algorithm to public Grouper, retaining an internal
+class alias for existing consumers. Grouping accepts the public DecimalQuantity
+and parsed-pattern types, and forProperties preserves virtual getter order and
+the disabled-grouping short circuit. Source singletons, short narrowing, locale
+minimums, arithmetic short circuits and assertions remain unchanged. GroupingStrategy
+and DecimalSeparatorDisplay are temporarily top-level formatter enums pending
+NumberFormatter, alongside the earlier extracted policies.
+
+Existing all-locale grouping and narrowing/cache oracles now use public grouping
+and quantity/property APIs. Additional oracle tests verify quantity callback order,
+property short circuits, MicroProps field shape/defaults/volatility, lack of a
+serialization marker, shallow copying, mutable exhaustion, virtual clone dispatch
+and JVM runtime subclasses. Common tests exercise all fields, shared list mutation,
+cloned exhaustion and a real rounding stage over independent pipeline results;
+JS also checks subtype/extra-field cloning. Verification passed: jvmTest,
+jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64. MutablePatternModifier and
+the complete formatter facade remain pending.
