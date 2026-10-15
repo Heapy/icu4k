@@ -4741,3 +4741,28 @@ and negative subpatterns, null/replaced pattern text, malformed endpoints, all p
 property getters and parse failure order. Common tests run on JVM, JS and Native.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64.
+
+### Public pattern utilities and property/symbol integration
+
+Added PatternStringUtils with rounding-increment significance, generation of a
+pattern from public DecimalFormatProperties, localization through public
+DecimalFormatSymbols, affix rendering and sign-policy resolution. PatternSignType
+has source order and its mutable VALUES array. SignDisplay is temporarily a public
+top-level enum in the number package; relocation under the full NumberFormatter
+facade remains pending, as with the earlier extracted CompactStyle enum.
+
+Property getters run in source order, with affix-provider creation before the
+rounding-increment getter. Rounding operations call the public BigDecimal directly,
+retaining virtual double/scale/power/plain-string callbacks rather than converting
+an overridden decimal through text. Internal raw-property consumers use the same
+rendering algorithm. Localization reads all 21 symbol rows before normalization,
+including ten separate digit-array getter calls and deferred null-exponent failure.
+JVM assertions now use the public utility class's assertion status.
+
+Oracle coverage extends the 600 seeded unconstrained property bags and distinct
+locale symbol tables to the public adapters. Additional tests cover overridden
+property/decimal callback order, null-symbol read order, currency-plural patterns
+and literal overrides. Sign-policy, affix rendering and partial-output callback
+oracles now exercise the public entry points. Common round-trip/localization/sign
+tests pass on JVM, JS and Native. Verification passed: jvmTest, jsNodeTest,
+macosArm64Test and compileTestKotlinLinuxX64.

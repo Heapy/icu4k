@@ -42,6 +42,20 @@ class PatternStringUtilsCoreOracleTest {
         }
         return j
     }
+    private fun portProperties(p: PatternStringParserCore.PatternProperties): DecimalFormatProperties {
+        val result = DecimalFormatProperties()
+        for (field in p.javaClass.declaredFields) {
+            field.isAccessible = true
+            val value = when (val v = field.get(p)) { is UnitDecimal -> BigDecimal(v.toString()); else -> v }
+            result.javaClass.methods.single { it.name == "set" + field.name.replaceFirstChar { it.uppercaseChar() } }.invoke(result, value)
+        }
+        return result
+    }
+    private fun portSymbols(values: List<String>) = io.github.heapy.icu4k.text.DecimalFormatSymbols(io.github.heapy.icu4k.util.ULocale("en")).apply {
+        setPercentString(values[0]); setPerMillString(values[1]); setDecimalSeparatorString(values[2]); setGroupingSeparatorString(values[3])
+        setMinusSignString(values[4]); setPlusSignString(values[5]); setPatternSeparator(values[6][0]); setSignificantDigit(values[7][0])
+        setExponentSeparator(values[8]); setPadEscape(values[9][0]); setDigit(values[10][0]); setDigitStrings(values.drop(11).toTypedArray())
+    }
     @Test fun propertySerializationMatchesSourceForParsedAndUnconstrainedBags() {
         val properties = mutableListOf<PatternStringParserCore.PatternProperties>()
         for (pattern in listOf("", "0", "#,##0.00", "0.050", "@@##", "##0.0E+00", "¤0.00;(¤0.00)", "P0S;-P0S", "*'a''b'0")) properties.add(PatternStringParserCore.parseToProperties(pattern))
@@ -67,6 +81,7 @@ class PatternStringUtilsCoreOracleTest {
         for ((index, p) in properties.withIndex()) {
             val j = sourceProperties(p); val affixes = JProvider.forProperties(j)
             assertEquals(outcome { JUtils.propertiesToPatternString(j) }, outcome { PatternStringUtilsCore.propertiesToPatternString(p, adapter(affixes)) }, "bag $index")
+            assertEquals(outcome { JUtils.propertiesToPatternString(j) }, outcome { PatternStringUtils.propertiesToPatternString(portProperties(p)) }, "public bag $index")
         }
         for (text in listOf("0", "0.005", "0.006", "0.0001", "-0.001", "1E-9999", "1E9999", "2.2250738585072014E-308")) for (max in listOf(-2, -1, 0, 1, 2, 3, 10, 100))
             assertEquals(JUtils.ignoreRoundingIncrement(BigDecimal(text), max), PatternStringUtilsCore.ignoreRoundingIncrement(UnitDecimal(text), max), "$text/$max")
@@ -82,21 +97,23 @@ class PatternStringUtilsCoreOracleTest {
         for (s in all) {
             val values = symbols(s)
             if (!seen.add(values)) continue
+            val port = portSymbols(values)
             for (pattern in patterns) for (toLocalized in listOf(false, true)) {
                 assertEquals(outcome { JUtils.convertLocalized(pattern, s, toLocalized) }, outcome { PatternStringUtilsCore.convertLocalized(pattern, values::get, toLocalized) }, "$values/$pattern/$toLocalized")
+                assertEquals(outcome { JUtils.convertLocalized(pattern, s, toLocalized) }, outcome { PatternStringUtils.convertLocalized(pattern, port, toLocalized) }, "public $values/$pattern/$toLocalized")
             }
         }
         assertTrue(seen.size > 10)
     }
     @Test fun signResolutionAndAffixRenderingMatchSource() {
         for (display in JSign.entries + listOf(null)) for (signum in JSignum.entries + listOf(null)) {
-            assertEquals(outcome { JUtils.resolveSignDisplay(display, signum).name }, outcome { PatternStringUtilsCore.resolveSignDisplay(display?.let { PatternStringUtilsCore.SignDisplay.valueOf(it.name) }, signum?.let { Modifier.Signum.valueOf(it.name) }).name }, "$display/$signum")
+            assertEquals(outcome { JUtils.resolveSignDisplay(display, signum).name }, outcome { PatternStringUtils.resolveSignDisplay(display?.let { PatternStringUtilsCore.SignDisplay.valueOf(it.name) }, signum?.let { Modifier.Signum.valueOf(it.name) }).name }, "$display/$signum")
         }
         for (pattern in listOf("0", "+0", "0%;(0%)", "0;-0", "'x-y'0;(-0)", "¤0;¤-0", "0+;0-")) {
             val jp = JProvider.forProperties(JParser.parseToProperties(pattern)); val kp = adapter(jp)
             for (prefix in listOf(false, true)) for (sign in JUtils.PatternSignType.entries + listOf(null)) for (approx in listOf(false, true)) for (plural in JPlural.VALUES + listOf(null)) for (perMille in listOf(false, true)) {
                 val jo = StringBuilder("seed"); val ko = StringBuilder("seed")
-                assertEquals(outcome { JUtils.patternInfoToStringBuilder(jp, prefix, sign, approx, plural, perMille, jo) }, outcome { PatternStringUtilsCore.patternInfoToStringBuilder(kp, prefix, sign?.let { PatternStringUtilsCore.PatternSignType.valueOf(it.name) }, approx, plural?.let { StandardPlural.valueOf(it.name) }, perMille, ko) })
+                assertEquals(outcome { JUtils.patternInfoToStringBuilder(jp, prefix, sign, approx, plural, perMille, jo) }, outcome { PatternStringUtils.patternInfoToStringBuilder(kp, prefix, sign?.let { PatternStringUtilsCore.PatternSignType.valueOf(it.name) }, approx, plural?.let { StandardPlural.valueOf(it.name) }, perMille, ko) })
                 assertEquals(jo.toString(), ko.toString(), "$pattern/$prefix/$sign/$approx/$plural/$perMille")
             }
         }
@@ -124,7 +141,7 @@ class PatternStringUtilsCoreOracleTest {
             val jt = mutableListOf<String>(); val kt = mutableListOf<String>()
             val jo = StringBuilder("seed"); val ko = StringBuilder("seed")
             assertEquals(outcome { JUtils.patternInfoToStringBuilder(traced(jt, failure), true, JUtils.PatternSignType.POS_SIGN, true, JPlural.ONE, true, if (nullOutput) null else jo) },
-                outcome { PatternStringUtilsCore.patternInfoToStringBuilder(adapter(traced(kt, failure)), true, PatternStringUtilsCore.PatternSignType.POS_SIGN, true, StandardPlural.ONE, true, if (nullOutput) null else ko) }, "$failure/$nullOutput")
+                outcome { PatternStringUtils.patternInfoToStringBuilder(adapter(traced(kt, failure)), true, PatternStringUtilsCore.PatternSignType.POS_SIGN, true, StandardPlural.ONE, true, if (nullOutput) null else ko) }, "$failure/$nullOutput")
             assertEquals(jt, kt, "$failure/$nullOutput/trace")
             assertEquals(jo.toString(), ko.toString(), "$failure/$nullOutput/output")
         }

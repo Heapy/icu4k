@@ -6,14 +6,19 @@ import io.github.heapy.icu4k.impl.number.Modifier.Signum
 import io.github.heapy.icu4k.impl.number.Padder.PadPosition
 import io.github.heapy.icu4k.impl.number.PatternStringParserCore.PatternProperties
 import io.github.heapy.icu4k.impl.units.UnitDecimal
+import io.github.heapy.icu4k.util.BigDecimal
+import io.github.heapy.icu4k.util.decimalFromValue
 
 /** Pattern algorithms; public property, currency-plural and symbol adapters are separate. */
 internal object PatternStringUtilsCore {
-    enum class PatternSignType { POS, POS_SIGN, NEG }
-    enum class SignDisplay { AUTO, ALWAYS, NEVER, ACCOUNTING, ACCOUNTING_ALWAYS, EXCEPT_ZERO, ACCOUNTING_EXCEPT_ZERO, NEGATIVE, ACCOUNTING_NEGATIVE }
+    typealias PatternSignType = PatternStringUtils.PatternSignType
+    typealias SignDisplay = io.github.heapy.icu4k.number.SignDisplay
 
     fun ignoreRoundingIncrement(rounding: UnitDecimal?, maxFrac: Int): Boolean {
-        var value = rounding!!.toString().toDouble()
+        return ignoreRoundingIncrementValue(rounding!!.toString().toDouble(), maxFrac)
+    }
+    fun ignoreRoundingIncrementValue(input: Double, maxFrac: Int): Boolean {
+        var value = input
         if (value == 0.0) return true
         if (maxFrac < 0) return false
         value *= 2.0
@@ -21,7 +26,8 @@ internal object PatternStringUtilsCore {
         while (frac <= maxFrac && value <= 1.0) { frac++; value *= 10.0 }
         return frac > maxFrac
     }
-    fun propertiesToPatternString(p: PatternProperties, affixes: AffixPatternProvider): String {
+    fun propertiesToPatternString(p: PatternProperties, affixes: AffixPatternProvider,
+                                  roundingProvider: () -> BigDecimal? = { p.roundingIncrement?.let { decimalFromValue(it) } }): String {
         val sb = StringBuilder()
         val limit = 100
         var grouping1 = p.groupingSize.coerceIn(0, limit)
@@ -46,14 +52,15 @@ internal object PatternStringUtilsCore {
         val groupingLength = grouping1 + grouping2 + 1
         val digits = StringBuilder()
         var scale = 0
-        val increment = p.roundingIncrement
+        val increment = roundingProvider()
         if (maxSig != -1) {
             while (digits.length < minSig) digits.append('@')
             while (digits.length < maxSig) digits.append('#')
-        } else if (increment != null && !ignoreRoundingIncrement(increment, maxFrac)) {
-            scale = -increment.scale
-            // scaleByPowerOfTen(scale).toPlainString() is the unsigned coefficient here.
-            digits.append(increment.magnitude)
+        } else if (increment != null && !ignoreRoundingIncrementValue(increment.toDouble(), maxFrac)) {
+            scale = -increment.scale()
+            val coefficient = increment.scaleByPowerOfTen(increment.scale()).toPlainString()
+            if (coefficient[0] == '-') digits.append(coefficient, 1, coefficient.length)
+            else digits.append(coefficient)
         }
         while (digits.length + scale < minInt) digits.insert(0, '0')
         while (-scale < minFrac) { digits.append('0'); scale-- }
