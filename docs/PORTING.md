@@ -7575,3 +7575,38 @@ compileTestKotlinLinuxX64 run passed in 3m 24s. Linux tests compiled only. A fin
 JVM service run also passed after improving the test's restoration of process
 DISPLAY/FORMAT defaults; production and common tests were unchanged after the
 full run.
+
+### RBNF collation-backed lenient scanning
+
+Ported RbnfScannerProviderImpl from the collate module, including its primary-CE
+allIgnorable/prefixLength/findText algorithms and the unused source findText2
+method. Extra rules are appended to locale tailoring rules and recompiled, then
+canonical decomposition is enabled. Scanner construction catches Exception,
+retaining a null collator on failure; the returned scanner fails lazily when
+actually using it. Debug printing follows ICUDebug's rbnf flag.
+
+The synchronized cache retains creation outside its lock and no second lookup
+before insertion. Keys use the original locale plus slash plus extras, including
+the source collision between null extras and literal "null". Null override results
+are stored but treated as misses on subsequent retrieval. No new bounds or
+nonempty-prefix validation replaces source behavior, and the legacy consumed
+length still uses CE offsets followed by a one-code-unit decrement.
+
+JVM discovery now finds the public implementation through the existing class name.
+JS/Native discovery creates the same Common Kotlin provider directly. The source's
+Java Locale round trip is retained exactly on JVM. Portable targets use the
+existing language-tag round trip to filter supported locale extensions; JVM
+oracle checks compare resulting collator keys for legacy variants, aliases,
+collation and attribute keywords, unknown extensions and invalid options.
+
+Targeted JVM tests passed across scanner methods, nulls, boundary offsets,
+supplementary and malformed UTF-16, primary-ignorable extras, contractions and
+phonebook equivalence. Full lenient RuleBasedNumberFormat parse results and
+positions match ICU4J in English, French, German and Spanish. Common tests verify
+discovery and all five ICU English examples that parse as 255.
+StringSearch and AlphabeticIndex remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 4m 1s. Linux tests were compiled,
+not executed on macOS. Default provider discovery and lenient 255 examples
+passed on every executed target.

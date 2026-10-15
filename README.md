@@ -246,11 +246,11 @@ the source custom serialization protocol. JVM `Locale` conveniences are Kotlin
 factory functions; Java constructor/typed-overload parity is still incremental.
 Native subclasses follow the existing typed-clone convention.
 
-The default collation-backed lenient scanner is not ported yet. As in ICU4J's
-core module without collate, discovery returns null when that module is absent;
-custom `RbnfLenientScannerProvider` implementations can be supplied. Localized
-`NumberFormat` factory entry points and ICU data outside the embedded subset
-are still being ported.
+The default collation-backed lenient scanner is available on all targets.
+Enable it with `words.setLenientParseMode(true)` to accept primary-equivalent
+spellings and the locale's lenient separators. Custom
+`RbnfLenientScannerProvider` implementations can still be supplied. ICU data
+outside the embedded subset is still being ported.
 
 `MessagePattern` parses message, choice, plural and select patterns in Common Kotlin:
 
