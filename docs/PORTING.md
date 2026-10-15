@@ -6113,3 +6113,35 @@ Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 23s); final JVM oracle/pattern check after simplifying
 the invalid-input assertions passed (21s). Global NumberFormat factories and the
 public PluralFormat/RBNF facades are still pending the RBNF engine and data.
+
+### Complete RBNF resource data and predefined-description loading
+
+Embedded all 112 RBNF .res files from the pinned ICU 78.3 source tree (685,824
+binary bytes), including root, locale aliases and res_index. Each file is recorded
+with size and SHA-256 in the data manifest and generated as portable lazy Base64
+data. ICUData registers byte lookup and directory enumeration for every file.
+The total embedded resource count is now 218. No fullLocaleNames.lst was added:
+it is absent from both the pinned RBNF source directory and published ICU4J jar;
+the source index fallback remains in use when resource scanning is disabled.
+
+Added internal RbnfRuleData loading from RuleBasedNumberFormat's predefined-locale
+constructor. It reports bundle locale metadata before reading rules, concatenates
+rule-array strings in order, loads optional display-name arrays with top-level
+fallback and retains the source missing-group exception policy. Root includes
+minimal numeric spellout rules. Invalid format bounds fail at the source lookup
+point after the locale callback; an explicit check is needed on JS because its
+ordinary Array.get is unchecked. Rule parsing and the public RBNF facade remain
+separate pending work.
+
+Common tests use the embedded-only loader to load all four rule groups for all
+111 resource locales (excluding res_index, with root represented by the empty
+locale ID). They cover resource-copy ownership, descriptions, aliases/fallback,
+root rules, metadata ordering and invalid bounds. JVM oracle tests compare every
+RBNF byte with the published ICU4J artifact and on-disk pinned files, locale
+availability with scanning enabled/disabled, descriptions, display-name tables,
+aliases and fallback locales. They also verify fresh localization arrays and
+source-constructor bounds behavior.
+Verification passed: scripts/generate-data.py --check (218 resources), jvmTest,
+jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 (final run, 2m 48s).
+The RBNF engine classes, standard collation-backed lenient scanner and public
+factory/facade wiring remain unfinished; other ICU data coverage is incremental.

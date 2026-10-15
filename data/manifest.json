@@ -780,6 +780,790 @@
       "sha256": "40a416938f37b721c569bfd5f1d6264dd3ba42c23cf241499237c87454c869c2",
       "size": 27744,
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/ar.res"
+    },
+    {
+      "name": "rbnf/af.res",
+      "file": "data/icu78/rbnf/af.res",
+      "object": "RbnfAfResourceData",
+      "sha256": "fad0a29ca1babe25c8e728baff969de847834dca5b6487258fef4f3d9631c8d5",
+      "size": 3536
+    },
+    {
+      "name": "rbnf/ak.res",
+      "file": "data/icu78/rbnf/ak.res",
+      "object": "RbnfAkResourceData",
+      "sha256": "a5032ae1c3f85bcfb12aba5bdb01a08c22556a00c74f872900cb25fff03c27e2",
+      "size": 2384
+    },
+    {
+      "name": "rbnf/am.res",
+      "file": "data/icu78/rbnf/am.res",
+      "object": "RbnfAmResourceData",
+      "sha256": "37730eaa43a0f430e940fd863cc7d4eaa08d43057e63e65bb88c6277073ba3c6",
+      "size": 1472
+    },
+    {
+      "name": "rbnf/ar.res",
+      "file": "data/icu78/rbnf/ar.res",
+      "object": "RbnfArResourceData",
+      "sha256": "e05065e5410a98b7a90085fed4aa849fbb4ad8c122304c49a980cc00cacf54db",
+      "size": 11488
+    },
+    {
+      "name": "rbnf/ar_SA.res",
+      "file": "data/icu78/rbnf/ar_SA.res",
+      "object": "RbnfArSAResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80
+    },
+    {
+      "name": "rbnf/ars.res",
+      "file": "data/icu78/rbnf/ars.res",
+      "object": "RbnfArsResourceData",
+      "sha256": "d41f56f5a83fa724b4a58f4ceddb80979d6b6fad83b269c40ae8f2d91fa5b9f5",
+      "size": 96
+    },
+    {
+      "name": "rbnf/az.res",
+      "file": "data/icu78/rbnf/az.res",
+      "object": "RbnfAzResourceData",
+      "sha256": "b8c94e5bc32ece181e95585f6e0b9e74d89fa26995a23c0061e67ae5c2493742",
+      "size": 3232
+    },
+    {
+      "name": "rbnf/be.res",
+      "file": "data/icu78/rbnf/be.res",
+      "object": "RbnfBeResourceData",
+      "sha256": "963e910fa976f3b5d4c1bf88fec3ed69621abc4a2ed760d469a02581eeebfc51",
+      "size": 13664
+    },
+    {
+      "name": "rbnf/bg.res",
+      "file": "data/icu78/rbnf/bg.res",
+      "object": "RbnfBgResourceData",
+      "sha256": "3223a26dd0d34b5bf065c8a38a1cce2435a4f5578ac8944a2c6b209983814928",
+      "size": 40864
+    },
+    {
+      "name": "rbnf/bs.res",
+      "file": "data/icu78/rbnf/bs.res",
+      "object": "RbnfBsResourceData",
+      "sha256": "1f91de47c2056d5bd77d426c6233a74c332cacc25f5124ccb6c873ac85b97b3e",
+      "size": 2688
+    },
+    {
+      "name": "rbnf/ca.res",
+      "file": "data/icu78/rbnf/ca.res",
+      "object": "RbnfCaResourceData",
+      "sha256": "d1cc9dffb9130dd8b07bf72ab43469b5c610cf5d857409dd1fb661b0e861f2ab",
+      "size": 12640
+    },
+    {
+      "name": "rbnf/ccp.res",
+      "file": "data/icu78/rbnf/ccp.res",
+      "object": "RbnfCcpResourceData",
+      "sha256": "5251671b29f4c2b5635c5a5f01487cbabcff895c243a5a89c1eccbf90c649ce2",
+      "size": 1984
+    },
+    {
+      "name": "rbnf/chr.res",
+      "file": "data/icu78/rbnf/chr.res",
+      "object": "RbnfChrResourceData",
+      "sha256": "25600dc2281dc0ca1757f6049c3798b68ffb36f831b277bcf0e426439c9320ee",
+      "size": 1808
+    },
+    {
+      "name": "rbnf/cs.res",
+      "file": "data/icu78/rbnf/cs.res",
+      "object": "RbnfCsResourceData",
+      "sha256": "2cac9090b74d61991eadfedde3399c38f170894d5d88ebe1db2f07525f5f1df1",
+      "size": 3776
+    },
+    {
+      "name": "rbnf/cy.res",
+      "file": "data/icu78/rbnf/cy.res",
+      "object": "RbnfCyResourceData",
+      "sha256": "967ff8a24678e00499e203c17312dfac546292492f376701eedac177605d32cc",
+      "size": 2384
+    },
+    {
+      "name": "rbnf/da.res",
+      "file": "data/icu78/rbnf/da.res",
+      "object": "RbnfDaResourceData",
+      "sha256": "c8b0237e51002fa97c8cb7a513cc765e1a4c200718fa40ff2f6d5164a9696bde",
+      "size": 8224
+    },
+    {
+      "name": "rbnf/de.res",
+      "file": "data/icu78/rbnf/de.res",
+      "object": "RbnfDeResourceData",
+      "sha256": "23a971862d4152e2958c67cf9cbcb285ca624ab62b689ce571b71112ba83a669",
+      "size": 5728
+    },
+    {
+      "name": "rbnf/de_CH.res",
+      "file": "data/icu78/rbnf/de_CH.res",
+      "object": "RbnfDeCHResourceData",
+      "sha256": "a65fc3e3bcbd08438f112c9137c3d6d38a0282da458ac70ed3e4e9c031bace46",
+      "size": 5552
+    },
+    {
+      "name": "rbnf/ee.res",
+      "file": "data/icu78/rbnf/ee.res",
+      "object": "RbnfEeResourceData",
+      "sha256": "3bfe380f894fc44f133039fa5d144e3fa4a8f566e6518e516435070242929baf",
+      "size": 3616
+    },
+    {
+      "name": "rbnf/el.res",
+      "file": "data/icu78/rbnf/el.res",
+      "object": "RbnfElResourceData",
+      "sha256": "a08c691bf254f114d708127cabd380c6a4f63547577555ea94ff401863e788e0",
+      "size": 11440
+    },
+    {
+      "name": "rbnf/en.res",
+      "file": "data/icu78/rbnf/en.res",
+      "object": "RbnfEnResourceData",
+      "sha256": "8dfd7c87e25a8f2126a6b73c8248ce4376bbddc594110edff18acbe53af9b2d7",
+      "size": 8960
+    },
+    {
+      "name": "rbnf/en_001.res",
+      "file": "data/icu78/rbnf/en_001.res",
+      "object": "RbnfEn001ResourceData",
+      "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
+      "size": 80
+    },
+    {
+      "name": "rbnf/en_IN.res",
+      "file": "data/icu78/rbnf/en_IN.res",
+      "object": "RbnfEnINResourceData",
+      "sha256": "dfd413934a62c43e04fc90c769238cd1fe55600855d26ac95096971d2a6eb44a",
+      "size": 7712
+    },
+    {
+      "name": "rbnf/eo.res",
+      "file": "data/icu78/rbnf/eo.res",
+      "object": "RbnfEoResourceData",
+      "sha256": "8db87710e7990a9e57ad0c8e31b0114665de38c171dbafb6ae58c23320ecbda9",
+      "size": 1504
+    },
+    {
+      "name": "rbnf/es.res",
+      "file": "data/icu78/rbnf/es.res",
+      "object": "RbnfEsResourceData",
+      "sha256": "3a636d4a63ee4deb5db3386985b35d206fcb532c93f8fb768b9a0f22f0787bb8",
+      "size": 8640
+    },
+    {
+      "name": "rbnf/es_419.res",
+      "file": "data/icu78/rbnf/es_419.res",
+      "object": "RbnfEs419ResourceData",
+      "sha256": "aaa7c6f2bb03072dd54e1f0eb35179877fb3efb87f1d8c4bbdb27b0ac639dbf6",
+      "size": 912
+    },
+    {
+      "name": "rbnf/es_DO.res",
+      "file": "data/icu78/rbnf/es_DO.res",
+      "object": "RbnfEsDOResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_GT.res",
+      "file": "data/icu78/rbnf/es_GT.res",
+      "object": "RbnfEsGTResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_HN.res",
+      "file": "data/icu78/rbnf/es_HN.res",
+      "object": "RbnfEsHNResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_MX.res",
+      "file": "data/icu78/rbnf/es_MX.res",
+      "object": "RbnfEsMXResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_NI.res",
+      "file": "data/icu78/rbnf/es_NI.res",
+      "object": "RbnfEsNIResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_PA.res",
+      "file": "data/icu78/rbnf/es_PA.res",
+      "object": "RbnfEsPAResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_PR.res",
+      "file": "data/icu78/rbnf/es_PR.res",
+      "object": "RbnfEsPRResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_SV.res",
+      "file": "data/icu78/rbnf/es_SV.res",
+      "object": "RbnfEsSVResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/es_US.res",
+      "file": "data/icu78/rbnf/es_US.res",
+      "object": "RbnfEsUSResourceData",
+      "sha256": "35ce30378f181df11eba6fcb1536918ba2c3a68e5373da99fd8e28aab095286a",
+      "size": 112
+    },
+    {
+      "name": "rbnf/et.res",
+      "file": "data/icu78/rbnf/et.res",
+      "object": "RbnfEtResourceData",
+      "sha256": "bf9449e3c4591e38928bc6a5c86e9bf0daaf27d26ec62af5f950f42547b6d561",
+      "size": 1472
+    },
+    {
+      "name": "rbnf/fa.res",
+      "file": "data/icu78/rbnf/fa.res",
+      "object": "RbnfFaResourceData",
+      "sha256": "672c9883b4c2b76f765f5d4310472ceec78932c9cc6e9381b0cc9d1f4a12b286",
+      "size": 1808
+    },
+    {
+      "name": "rbnf/fa_AF.res",
+      "file": "data/icu78/rbnf/fa_AF.res",
+      "object": "RbnfFaAFResourceData",
+      "sha256": "dbfb5729b9d0335b348b8cb5048550baac415c5a18ccb9f4da02396573828d64",
+      "size": 1664
+    },
+    {
+      "name": "rbnf/ff.res",
+      "file": "data/icu78/rbnf/ff.res",
+      "object": "RbnfFfResourceData",
+      "sha256": "2e4d7f933234344b6a9a3d5d2839e976a5ff3e4c418558b327ec780c02d7ac13",
+      "size": 1952
+    },
+    {
+      "name": "rbnf/fi.res",
+      "file": "data/icu78/rbnf/fi.res",
+      "object": "RbnfFiResourceData",
+      "sha256": "7810ab1ea0a0830fcfef921512a8d44c7f2581ac64d213524f89acba732f840a",
+      "size": 63184
+    },
+    {
+      "name": "rbnf/fil.res",
+      "file": "data/icu78/rbnf/fil.res",
+      "object": "RbnfFilResourceData",
+      "sha256": "aaed8e03a640fece13d528d0a3a4f34143587880938b2358d56d2359da2ff41c",
+      "size": 1936
+    },
+    {
+      "name": "rbnf/fo.res",
+      "file": "data/icu78/rbnf/fo.res",
+      "object": "RbnfFoResourceData",
+      "sha256": "89c16032e44c79b70d27f3e946e6974af704af5063597ee8a85e7e441239fc06",
+      "size": 2960
+    },
+    {
+      "name": "rbnf/fr.res",
+      "file": "data/icu78/rbnf/fr.res",
+      "object": "RbnfFrResourceData",
+      "sha256": "75318a6f6e6463c0fbb9cec78bf0a72d18340fe93462addfedac7c09544cda58",
+      "size": 7520
+    },
+    {
+      "name": "rbnf/fr_BE.res",
+      "file": "data/icu78/rbnf/fr_BE.res",
+      "object": "RbnfFrBEResourceData",
+      "sha256": "883c68024dba4cae5152ae3171097f7d13cc4136589db7c55ff4ae173d55dc18",
+      "size": 6784
+    },
+    {
+      "name": "rbnf/fr_CH.res",
+      "file": "data/icu78/rbnf/fr_CH.res",
+      "object": "RbnfFrCHResourceData",
+      "sha256": "03db0ea0c9b9e927768ec5e4286a8e259ed38a1c40d3b74ae79d56084df35d2e",
+      "size": 6800
+    },
+    {
+      "name": "rbnf/ga.res",
+      "file": "data/icu78/rbnf/ga.res",
+      "object": "RbnfGaResourceData",
+      "sha256": "0a923ecb8ceba0ac2571844fde6b35f6894401162f1b7f6a200db24eee65e660",
+      "size": 9312
+    },
+    {
+      "name": "rbnf/gu.res",
+      "file": "data/icu78/rbnf/gu.res",
+      "object": "RbnfGuResourceData",
+      "sha256": "895b2e7712064a7fbda5eaea4c606a82d1351acb08843d09780bd378cfd4d095",
+      "size": 4688
+    },
+    {
+      "name": "rbnf/he.res",
+      "file": "data/icu78/rbnf/he.res",
+      "object": "RbnfHeResourceData",
+      "sha256": "36d62365c294885b583040ec0f5442ba25682aac26c07dfdb68ae7776638b415",
+      "size": 10288
+    },
+    {
+      "name": "rbnf/hi.res",
+      "file": "data/icu78/rbnf/hi.res",
+      "object": "RbnfHiResourceData",
+      "sha256": "0edff7d81e56c85c9ae1025f25acb3f01055ae2ee47047d644a590cf4022fa6d",
+      "size": 4912
+    },
+    {
+      "name": "rbnf/hr.res",
+      "file": "data/icu78/rbnf/hr.res",
+      "object": "RbnfHrResourceData",
+      "sha256": "4685c73a476756c76eb8576615b771f712349823270bd7db8bd8fddeef6b5944",
+      "size": 6672
+    },
+    {
+      "name": "rbnf/hu.res",
+      "file": "data/icu78/rbnf/hu.res",
+      "object": "RbnfHuResourceData",
+      "sha256": "956fb0945f41721c59ac4599f30e2f38b8a7bc0979dcd6a626268556a79abdd8",
+      "size": 5248
+    },
+    {
+      "name": "rbnf/hy.res",
+      "file": "data/icu78/rbnf/hy.res",
+      "object": "RbnfHyResourceData",
+      "sha256": "677a6e8e4b4adb87164e48c48ec47499cebcbf9e1818d5f595982187aeb5e374",
+      "size": 1392
+    },
+    {
+      "name": "rbnf/id.res",
+      "file": "data/icu78/rbnf/id.res",
+      "object": "RbnfIdResourceData",
+      "sha256": "88c2de7132ea5ab7f01b4a51bcdd434eb07876e28bbeba9aa7090c5e1f822849",
+      "size": 1664
+    },
+    {
+      "name": "rbnf/in.res",
+      "file": "data/icu78/rbnf/in.res",
+      "object": "RbnfInResourceData",
+      "sha256": "794563babf62e17d9e01eb4b02a41ad4ea06a30b762730ade3fc6643f7ba759f",
+      "size": 96
+    },
+    {
+      "name": "rbnf/is.res",
+      "file": "data/icu78/rbnf/is.res",
+      "object": "RbnfIsResourceData",
+      "sha256": "a9ee89fcbb51a42b0dcbfab2e530eea521d29d204e26ba584dc9b8301e5d648d",
+      "size": 3104
+    },
+    {
+      "name": "rbnf/it.res",
+      "file": "data/icu78/rbnf/it.res",
+      "object": "RbnfItResourceData",
+      "sha256": "1d12e3375d34809f46c3b786f9ccc393bdfbeda7a739a891846ac7bbf25dd00d",
+      "size": 23056
+    },
+    {
+      "name": "rbnf/iw.res",
+      "file": "data/icu78/rbnf/iw.res",
+      "object": "RbnfIwResourceData",
+      "sha256": "e7cdbd69da50c39f100ba7978256cd5b34832549caf0b30e09c656ce6d4b3dca",
+      "size": 96
+    },
+    {
+      "name": "rbnf/ja.res",
+      "file": "data/icu78/rbnf/ja.res",
+      "object": "RbnfJaResourceData",
+      "sha256": "6ad1b328652fc0f7a18fb82b14b17cdda2c360e78d7be1a136a8dd42c72fbc1d",
+      "size": 2000
+    },
+    {
+      "name": "rbnf/ka.res",
+      "file": "data/icu78/rbnf/ka.res",
+      "object": "RbnfKaResourceData",
+      "sha256": "c59cd04b6848bf91bcff8b2d904f6b9a18b11778e786941d74193495ab2e1f8a",
+      "size": 2208
+    },
+    {
+      "name": "rbnf/kk.res",
+      "file": "data/icu78/rbnf/kk.res",
+      "object": "RbnfKkResourceData",
+      "sha256": "680f2e52df47b414525fd1a768b2a3c3d27376b0eabe11aa44e4d133affa6678",
+      "size": 5328
+    },
+    {
+      "name": "rbnf/kl.res",
+      "file": "data/icu78/rbnf/kl.res",
+      "object": "RbnfKlResourceData",
+      "sha256": "242335bdc6b18afbaea8ddad21dd80649d99099d167b4d6e0e95313267d77f74",
+      "size": 3040
+    },
+    {
+      "name": "rbnf/km.res",
+      "file": "data/icu78/rbnf/km.res",
+      "object": "RbnfKmResourceData",
+      "sha256": "1e42f904920fef0464a19c4a03a7e5b751d1b91170a6831f17490fde53f17b6b",
+      "size": 1584
+    },
+    {
+      "name": "rbnf/ko.res",
+      "file": "data/icu78/rbnf/ko.res",
+      "object": "RbnfKoResourceData",
+      "sha256": "b9ecd01c3d08bec3b619bed08c33fb3bd84726671fe005c9306276e5747b466c",
+      "size": 7152
+    },
+    {
+      "name": "rbnf/ky.res",
+      "file": "data/icu78/rbnf/ky.res",
+      "object": "RbnfKyResourceData",
+      "sha256": "b4ec1bc50dce8387e02d0f27c5a4510f615dec4ae00fe407578748417e69ca83",
+      "size": 7408
+    },
+    {
+      "name": "rbnf/lb.res",
+      "file": "data/icu78/rbnf/lb.res",
+      "object": "RbnfLbResourceData",
+      "sha256": "d97368f7b4adff03b8539284c9c85d10307f319f309460b0fe5a13e6f049db83",
+      "size": 11296
+    },
+    {
+      "name": "rbnf/lo.res",
+      "file": "data/icu78/rbnf/lo.res",
+      "object": "RbnfLoResourceData",
+      "sha256": "ba46cd1e9a278b2d7775f7494168ccb17db5e776d1a7b212a32ccd3a248dd18d",
+      "size": 1440
+    },
+    {
+      "name": "rbnf/lrc.res",
+      "file": "data/icu78/rbnf/lrc.res",
+      "object": "RbnfLrcResourceData",
+      "sha256": "078bd7bc4cbb8c9f7e53840e30865c209de3afad47dab2ef13e4ab090897b2ed",
+      "size": 1824
+    },
+    {
+      "name": "rbnf/lt.res",
+      "file": "data/icu78/rbnf/lt.res",
+      "object": "RbnfLtResourceData",
+      "sha256": "e68cf340c697b7f90ddaa8c37d3b493b3983df6f8173f0c96494504e64055c2e",
+      "size": 21344
+    },
+    {
+      "name": "rbnf/lv.res",
+      "file": "data/icu78/rbnf/lv.res",
+      "object": "RbnfLvResourceData",
+      "sha256": "f9d36a9aa5dd00e6d79db20870b1bb8dc652dbcbd243c199751d48d1c173383c",
+      "size": 2608
+    },
+    {
+      "name": "rbnf/mk.res",
+      "file": "data/icu78/rbnf/mk.res",
+      "object": "RbnfMkResourceData",
+      "sha256": "8ba7441bd64e6b1081378058ad510a1a0ecf2f9931c6b567d7f0adf2744fcbe2",
+      "size": 2592
+    },
+    {
+      "name": "rbnf/ms.res",
+      "file": "data/icu78/rbnf/ms.res",
+      "object": "RbnfMsResourceData",
+      "sha256": "fdd3269bbdf4d50afc75165688a7e67985d85f3858060d652af5e66ccbd38098",
+      "size": 1696
+    },
+    {
+      "name": "rbnf/mt.res",
+      "file": "data/icu78/rbnf/mt.res",
+      "object": "RbnfMtResourceData",
+      "sha256": "9493fbaf6921836b6391a7d548bb9e63a2b66d376c3f45c3e9773266b5adbf82",
+      "size": 15184
+    },
+    {
+      "name": "rbnf/my.res",
+      "file": "data/icu78/rbnf/my.res",
+      "object": "RbnfMyResourceData",
+      "sha256": "2774358b679e4f78f584bd4c637cdf17d66f08f7a8d1dc6c0c97a2789eb7c837",
+      "size": 1456
+    },
+    {
+      "name": "rbnf/nb.res",
+      "file": "data/icu78/rbnf/nb.res",
+      "object": "RbnfNbResourceData",
+      "sha256": "260dbc349abea1332cf4b5d1700f03d9851d92aca91745bdcc34b24cc731a847",
+      "size": 96
+    },
+    {
+      "name": "rbnf/ne.res",
+      "file": "data/icu78/rbnf/ne.res",
+      "object": "RbnfNeResourceData",
+      "sha256": "9a29af7b15b6be3b6f21dd4bfc7dac72c1ef1d2f923aed0e2d9fc60b164914ac",
+      "size": 5552
+    },
+    {
+      "name": "rbnf/nl.res",
+      "file": "data/icu78/rbnf/nl.res",
+      "object": "RbnfNlResourceData",
+      "sha256": "4972c63fecf7c0df1c1b2542cb399d0f669fea028695ccee6d96b4046256e11e",
+      "size": 4752
+    },
+    {
+      "name": "rbnf/nn.res",
+      "file": "data/icu78/rbnf/nn.res",
+      "object": "RbnfNnResourceData",
+      "sha256": "1ee77022e93877e2dde45f6e2a3ce471a05ab0496aedbbe993e1edb16f75d526",
+      "size": 2352
+    },
+    {
+      "name": "rbnf/no.res",
+      "file": "data/icu78/rbnf/no.res",
+      "object": "RbnfNoResourceData",
+      "sha256": "f6f10a758ddb7846ffe387579618765e9e12f2de19b3ea0746d3b0eaa3cc1e66",
+      "size": 12544
+    },
+    {
+      "name": "rbnf/pl.res",
+      "file": "data/icu78/rbnf/pl.res",
+      "object": "RbnfPlResourceData",
+      "sha256": "66f023f7839f80b6b2c5cc35492259ebe640506084c21072e25223c729a6f7f9",
+      "size": 57920
+    },
+    {
+      "name": "rbnf/pt.res",
+      "file": "data/icu78/rbnf/pt.res",
+      "object": "RbnfPtResourceData",
+      "sha256": "0a31c475039328d658b72948cfd8772929d69015ecabd1a4e7337c0e74d95abf",
+      "size": 9488
+    },
+    {
+      "name": "rbnf/pt_PT.res",
+      "file": "data/icu78/rbnf/pt_PT.res",
+      "object": "RbnfPtPTResourceData",
+      "sha256": "e48f21e4e5c481bbc835da5011d68ec9cc139dc8e92d86748ee2485a77d1f076",
+      "size": 8976
+    },
+    {
+      "name": "rbnf/qu.res",
+      "file": "data/icu78/rbnf/qu.res",
+      "object": "RbnfQuResourceData",
+      "sha256": "3b56b68e77cec1d10aff0119aaaeb75e0316c5232951936e428e56e14b1528e6",
+      "size": 1696
+    },
+    {
+      "name": "rbnf/res_index.res",
+      "file": "data/icu78/rbnf/res_index.res",
+      "object": "RbnfResIndexResourceData",
+      "sha256": "e0d60aac1460ecde1efd16021c7c778e1a6c3a6a033e6bea05197226b038184a",
+      "size": 1008
+    },
+    {
+      "name": "rbnf/ro.res",
+      "file": "data/icu78/rbnf/ro.res",
+      "object": "RbnfRoResourceData",
+      "sha256": "b3ecb95105f58ec0f447a20aae3e211f034f93d1f363916b43b1e815930e0790",
+      "size": 2624
+    },
+    {
+      "name": "rbnf/root.res",
+      "file": "data/icu78/rbnf/root.res",
+      "object": "RbnfRootResourceData",
+      "sha256": "4da9c8bb9232eab890e49189d7635411bfc4ad235482c5a61a02f17bb5cc5c24",
+      "size": 17536
+    },
+    {
+      "name": "rbnf/ru.res",
+      "file": "data/icu78/rbnf/ru.res",
+      "object": "RbnfRuResourceData",
+      "sha256": "e43511ddefdb7297d478eace257c2c773573a1ccae17c06f17167e1fd38170ef",
+      "size": 56784
+    },
+    {
+      "name": "rbnf/se.res",
+      "file": "data/icu78/rbnf/se.res",
+      "object": "RbnfSeResourceData",
+      "sha256": "7f0a226001495d8e14f2cff18f3cbaa4b7c812477c20744be376a5714bc4ad55",
+      "size": 1216
+    },
+    {
+      "name": "rbnf/sh.res",
+      "file": "data/icu78/rbnf/sh.res",
+      "object": "RbnfShResourceData",
+      "sha256": "e09700397d3b3b1391ea1712dac2b60c5f23a2e6eb484edc0e6846605434341a",
+      "size": 96
+    },
+    {
+      "name": "rbnf/sk.res",
+      "file": "data/icu78/rbnf/sk.res",
+      "object": "RbnfSkResourceData",
+      "sha256": "60e0e124c8f7785b0068fed1660f53cdf94a0e5718b348417d8f8152055e71ee",
+      "size": 2560
+    },
+    {
+      "name": "rbnf/sl.res",
+      "file": "data/icu78/rbnf/sl.res",
+      "object": "RbnfSlResourceData",
+      "sha256": "d29c7d574a14aa9dac92c3be58eb86b9ce25ee6a3ec2f6f8c4178cebdb426ac4",
+      "size": 3552
+    },
+    {
+      "name": "rbnf/sq.res",
+      "file": "data/icu78/rbnf/sq.res",
+      "object": "RbnfSqResourceData",
+      "sha256": "e139a875cc9beed0de4f052124738902fc1a7a8a7dc5d9d034a0a24ba05b7bbf",
+      "size": 2256
+    },
+    {
+      "name": "rbnf/sr.res",
+      "file": "data/icu78/rbnf/sr.res",
+      "object": "RbnfSrResourceData",
+      "sha256": "dd45cb5fb5efa32987cfdc182526d2433277932901cecc68b34cc71ddba01429",
+      "size": 4224
+    },
+    {
+      "name": "rbnf/sr_Latn.res",
+      "file": "data/icu78/rbnf/sr_Latn.res",
+      "object": "RbnfSrLatnResourceData",
+      "sha256": "42708307c57f651672e031fe12a7fdbb7a69a544db2e18a994048b081487ced4",
+      "size": 4112
+    },
+    {
+      "name": "rbnf/su.res",
+      "file": "data/icu78/rbnf/su.res",
+      "object": "RbnfSuResourceData",
+      "sha256": "1e097c3f86a307fbee36ef504368057690a4cabe76524b6e1d8cf9619aab1df1",
+      "size": 1488
+    },
+    {
+      "name": "rbnf/sv.res",
+      "file": "data/icu78/rbnf/sv.res",
+      "object": "RbnfSvResourceData",
+      "sha256": "6299a77f0e55f81e5cd8521706962695c5e2017077c2476a43b92f4ead0d817f",
+      "size": 8240
+    },
+    {
+      "name": "rbnf/sw.res",
+      "file": "data/icu78/rbnf/sw.res",
+      "object": "RbnfSwResourceData",
+      "sha256": "212afe96f162d5b79e18b5f3074c6e80ca09c4b4763ab94f60552160ab1c923d",
+      "size": 1792
+    },
+    {
+      "name": "rbnf/ta.res",
+      "file": "data/icu78/rbnf/ta.res",
+      "object": "RbnfTaResourceData",
+      "sha256": "989f81f01c6ab74642116d7f82b60b7e90f188b9d630f1f5bf7258eb88739f9a",
+      "size": 2752
+    },
+    {
+      "name": "rbnf/th.res",
+      "file": "data/icu78/rbnf/th.res",
+      "object": "RbnfThResourceData",
+      "sha256": "28602ad83996594db8556e18229e49ce0a9109fa409d5c7156bf29fc1e0fd35b",
+      "size": 1440
+    },
+    {
+      "name": "rbnf/tr.res",
+      "file": "data/icu78/rbnf/tr.res",
+      "object": "RbnfTrResourceData",
+      "sha256": "48990c2cd3a4a0ba04822b5634fb5362a9fd7fb10cf9ad66240c5553023510b4",
+      "size": 3120
+    },
+    {
+      "name": "rbnf/uk.res",
+      "file": "data/icu78/rbnf/uk.res",
+      "object": "RbnfUkResourceData",
+      "sha256": "53b4b5a44b6d77e8a4cfff96846b5667ee27584a741b3f7c41b07542a10dbd7e",
+      "size": 3904
+    },
+    {
+      "name": "rbnf/vec.res",
+      "file": "data/icu78/rbnf/vec.res",
+      "object": "RbnfVecResourceData",
+      "sha256": "93cfc903c26666d47bae29737ecabb45352dded598dafd7ef79672856fb11876",
+      "size": 15184
+    },
+    {
+      "name": "rbnf/vi.res",
+      "file": "data/icu78/rbnf/vi.res",
+      "object": "RbnfViResourceData",
+      "sha256": "49c948da34dd9d4f213f6dec4353897903fbdb012efec4fc040af2c11ec1cb1d",
+      "size": 2032
+    },
+    {
+      "name": "rbnf/yue.res",
+      "file": "data/icu78/rbnf/yue.res",
+      "object": "RbnfYueResourceData",
+      "sha256": "28c4de070cf1882962c5b6f283da69e82a942eceab571021525ccef410d933a1",
+      "size": 5344
+    },
+    {
+      "name": "rbnf/yue_Hans.res",
+      "file": "data/icu78/rbnf/yue_Hans.res",
+      "object": "RbnfYueHansResourceData",
+      "sha256": "e31ed087688e53dfeefe05a7c91aeefaf120ac5035a18e3cbbd1cd53cab3d234",
+      "size": 5376
+    },
+    {
+      "name": "rbnf/zh.res",
+      "file": "data/icu78/rbnf/zh.res",
+      "object": "RbnfZhResourceData",
+      "sha256": "ab0f5dfb3535d04bed6673ee64a505060e62da7b7417c1ffe7800703566fd4ab",
+      "size": 7216
+    },
+    {
+      "name": "rbnf/zh_HK.res",
+      "file": "data/icu78/rbnf/zh_HK.res",
+      "object": "RbnfZhHKResourceData",
+      "sha256": "868ff461adeb4a556c5fc89f5e48e11382e338399e5bf1922aaa9fc5735b3c20",
+      "size": 112
+    },
+    {
+      "name": "rbnf/zh_Hant.res",
+      "file": "data/icu78/rbnf/zh_Hant.res",
+      "object": "RbnfZhHantResourceData",
+      "sha256": "78578d68f9953601c175711d144c42741ac058288773b6e9e9c415bbfeb1d9fa",
+      "size": 7760
+    },
+    {
+      "name": "rbnf/zh_Hant_HK.res",
+      "file": "data/icu78/rbnf/zh_Hant_HK.res",
+      "object": "RbnfZhHantHKResourceData",
+      "sha256": "c91ccd363b8b7c3b797933892688b2ad8c9621bb1180d43ab73699ff9722abee",
+      "size": 96
+    },
+    {
+      "name": "rbnf/zh_Hant_MO.res",
+      "file": "data/icu78/rbnf/zh_Hant_MO.res",
+      "object": "RbnfZhHantMOResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80
+    },
+    {
+      "name": "rbnf/zh_Hant_TW.res",
+      "file": "data/icu78/rbnf/zh_Hant_TW.res",
+      "object": "RbnfZhHantTWResourceData",
+      "sha256": "8546e9f8330da15a30a0a6ec158a1b8bd9b30290244554e26f83adcf859894aa",
+      "size": 80
+    },
+    {
+      "name": "rbnf/zh_MO.res",
+      "file": "data/icu78/rbnf/zh_MO.res",
+      "object": "RbnfZhMOResourceData",
+      "sha256": "0509e8ed87f8f9d433d1a8828f063a384adb0742de4d6df01599e597fd604f51",
+      "size": 112
+    },
+    {
+      "name": "rbnf/zh_TW.res",
+      "file": "data/icu78/rbnf/zh_TW.res",
+      "object": "RbnfZhTWResourceData",
+      "sha256": "3836750eb62a02a3dbdc6690b265d51c395bc256ca1bf558a91bdd6a56a7d2a3",
+      "size": 112
     }
   ]
 }
