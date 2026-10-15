@@ -6817,3 +6817,32 @@ compileTestKotlinLinuxX64 passed on the first full run (3m 19s). Linux tests
 compiled, not executed on macOS. The differential matrix contains 60,000 real
 root/tailoring comparisons and 9,900 synthetic CE comparisons, plus nullable,
 failing-position and aliased-iterator cases.
+
+## Fast Latin runtime
+
+Ported the complete CollationFastLatin format constants, character indexing,
+getOptions primary-cache preparation, UTF-16 comparison and mini-CE helpers.
+The fast path retains source handling of long/short primaries, two-CE expansions,
+single-suffix contractions, implied high secondary CEs, case and tertiary bits,
+shifted quaternaries, merge/end sentinels and unsupported/numeric bailouts.
+Backward-secondary differences request the general comparison, as in ICU4J.
+The comparison uses local scalar indexes/pairs without allocating cursor holders.
+
+Option preparation preserves early unsupported returns, header/array assertion
+order, partial output writes and digit cache disabling when numeric or script
+reordering requires it. Signed Int mini-CE pairs and the negative Long contraction
+consumption marker follow the Java implementation rather than unsigned rewrites.
+Custom CharSequence reads use the existing callback-preserving code-unit helper.
+
+Common tests exercise explicit contraction/expansion mappings and each comparison
+level. JVM differential tests compare constants and all code-unit indexes,
+every single 16-bit mini CE, seeded signed pairs, real root/tailoring tables,
+reordering, supported/unsupported strings and start indexes. Recording sequences
+check length/character callbacks and lazy errors. Oracle collation tables remain
+test-only; the table builder, embedded resources/loaders, public collators,
+tailoring compilation and the default RBNF scanner remain pending.
+
+Verification: the implementation compiled on JVM first; jvmTest, jsNodeTest,
+macosArm64Test and compileTestKotlinLinuxX64 then passed on the first full run
+(3m 1s). Linux tests compiled, not executed on macOS. No production ICU4J
+runtime dependency or embedded fast-Latin collation data is introduced.
