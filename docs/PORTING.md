@@ -5083,3 +5083,39 @@ Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64; the corrected/expanded JVM-only oracle suite passed in
 a subsequent jvmTest run. CurrencyPluralInfo-derived rules, explicit standard/cash
 currency usage and calls without an exported property bag are also covered.
+
+### Public unit conversion boundaries
+
+Ported UnitsConverter, ConversionInfo, symbolic Factor and ConversionRates with
+its public resource sink and rate records. These public boundaries use the common
+BigDecimal API and preserve virtual ConversionRates factor/base-unit/special/offset
+lookups and Factor.copy calls. The older internal UnitConverter/UnitConversionData
+cores remain available to the existing routing implementation; public boundaries
+retain subclass behavior that a direct numeric-core adapter would discard.
+
+Conversion covers direct, reciprocal and inverse mappings, source zero handling,
+temperature offsets and Beaufort scale thresholds. ConversionInfo is a fresh
+mutable container sharing its original immutable decimal values. Factor retains
+all fifteen symbolic constants, prefix/power/multiply/divide behavior, source
+fraction parsing, Java-style splits, signed integer exponent parsing and errors.
+Source copy overrides are preserved, including the original operand numerator or
+denominator replacing the corresponding value on a copied Factor. JVM decimal
+powers use the standard BigDecimal operation; JS/Native use the existing exact
+common decimal power implementation with DECIMAL128 rounding where required.
+
+ConversionRates exposes base-unit/system/factor lookup, protected offset and
+special mapping hooks, sink map identity, conversion-rate records and offset
+fractions. Sink assertions remain lazy on JVM and are not evaluated on JS/Native.
+Offsets retain source DECIMAL128 residuals rather than rounding mathematically
+exact temperature conversions to short decimal values.
+
+JVM oracle coverage compares direct/inverse results, info snapshots, constants,
+all prefixes, factor arithmetic/copy overrides, invalid inputs, every embedded
+conversion-rate identifier, rate record offsets and subclass callback order.
+Common tests exercise decimal boundaries, exact factor results and base units.
+ComplexUnitsConverter/UnitsRouter public adapters and their formatter handlers
+remain pending before complete NumberFormatter unit integration.
+JVM BigDecimal subclass callbacks also receive the standard MathContext.DECIMAL128
+object itself. Base-unit results retain their source unserialized identifier until
+serialize() is called. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64.
