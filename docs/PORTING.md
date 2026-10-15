@@ -6462,3 +6462,35 @@ compileTestKotlinLinuxX64 passed after the nullable dispatch corrections.
 Linux test sources compiled, not executed on macOS. Earlier full runs also
 passed the new casing matrix; the only intermediate compiler failure was the
 String?/CharSequence overload ambiguity resolved by matching nullability.
+
+### Collation foundation: CE and CE32 primitives
+
+The ICU4J collate module has no dependency-free public scanner shortcut:
+RbnfScannerProviderImpl obtains primary weights from a real RuleBasedCollator,
+including canonical decomposition and optional appended tailoring rules. The
+next stages therefore implement the collation data/iterator pipeline rather
+than substituting case folding or a JVM ICU4J production adapter.
+
+The first production layer ports Collation.java in full to common impl.coll:
+CE/CE32 constants, tags, compact primary/secondary and Latin expansion layouts,
+index/length/digit extraction, all 33 static helper overloads, primary weight
+increment/decrement and offset/implicit code-point weights. Arithmetic retains
+Java signed Int overflow, shifts, widening and signed remainder/division,
+including out-of-domain raw values. JVM assertions follow the class's status at
+initialization; JS and Native use the existing assertion-disabled convention.
+This layer introduces no collation resources or formatter facade yet.
+
+Common tests exercise CE layouts, all special tags, compression carry/borrow,
+offset records and ordered implicit primary weights across the Unicode range.
+A JVM oracle enumerates every source Int/Long constant and every helper method,
+checks signature coverage, and compares boundary/random inputs via reflection,
+including malformed values and assertions. CollationData, settings, runtime
+iterators, resource loading, public collators and the default RBNF scanner are
+still pending. This foundation does not claim end-to-end collation support.
+
+Verification: all JVM, JS/Node and macOS arm64 tests passed, and Linux x64 test
+sources compiled (not executed on macOS), 4m 10s. The differential test covers
+all 33 source helper overloads and every Int/Long constant. It also verifies
+that changing class-loader assertion policy after initialization leaves the
+original assertion behavior unchanged. The initial oracle's incorrect expected
+method count (36 instead of 33) was corrected before the final successful run.
