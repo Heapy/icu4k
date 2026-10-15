@@ -353,3 +353,15 @@ println(search.next()) // 3
 After changing a search's shared collator, call `search.reset()` before searching
 again, as required by ICU4J's StringSearch contract. Known source edge cases and
 verification limits are recorded in [the porting log](docs/PORTING.md).
+
+`AlphabeticIndex` groups records using locale-sensitive labels and collation:
+
+```kotlin
+import io.github.heapy.icu4k.text.AlphabeticIndex
+
+val index = AlphabeticIndex<Int>(ULocale.ENGLISH)
+index.addRecord("Alice", 1).addRecord("Bob", 2)
+val snapshot = index.buildImmutableIndex() // labels and boundaries, without records
+val bucket = snapshot.getBucket(snapshot.getBucketIndex("Bob"))!!
+println(bucket.getLabel()) // B
+```

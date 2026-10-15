@@ -7716,3 +7716,40 @@ word boundaries, reset and validation.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 9s. Linux tests compiled only;
 public StringSearch common tests ran on JVM, Node and macOS Arm64.
+
+
+### AlphabeticIndex
+
+Ported the complete locale/collator index algorithm and public Record, Bucket and
+ImmutableIndex types to commonMain. Labels use locale index exemplars with the
+source standard-exemplar fallback, Hangul/Ethiopic reduction, locale casing,
+primary sorting, contraction separation, NFKD tie-breaking and max-label sampling.
+Script-first boundaries come from collator contractions. Chinese labels include
+Pinyin redirects to ASCII buckets and stroke-count display labels. Expansion
+labels create invisible buckets that redirect subsequent names to the preceding
+single-primary bucket; adjacent inflows merge according to the source algorithm.
+
+Records retain the caller's CharSequence references and are stably sorted using
+the original collator, then assigned by the frozen primary clone. getCollator()
+caches a clone of the original, retaining frozen clone identity. Bucket record
+iterators remain mutable, independently of the retained input list. Visible
+bucket iterators reject remove. Immutable snapshots omit records and share built
+buckets only when the source index has no input records. Subsequent invalidation
+replaces lists rather than changing previously returned buckets or snapshots.
+Nullable labels/names retain source lazy failure behavior; arbitrary max-label
+values retain source integer arithmetic rather than adding range validation.
+JVM Locale construction and label additions delegate to the common implementation.
+
+All nine targeted tests passed. JVM oracle checks cover 25 locales (including
+Chinese Pinyin/stroke/Zhuyin/Unihan), visible and invisible boundaries, redirect
+identities, display indices, bucket strings, full record order and classification.
+They also exercise custom contractions/expansions, forced-star labels, normalized
+ties, extreme label limits, 780 mixed operations, old snapshot isolation, original
+collator mutations, mutable names, record iterator removal, cached buckets after
+a failed null-name sort and JVM locale entry points. Common tests cover stable
+duplicates, snapshots, mixed scripts, Chinese redirects/stroke labels, custom
+contractions, collator cloning, null names and retained old bucket iterators.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 21s. Linux tests compiled only;
+AlphabeticIndex common tests ran on JVM, Node and macOS Arm64.
