@@ -10,7 +10,7 @@ import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.util.UResourceBundle
 
-/** Currency's data queries, extracted pending its public MeasureUnit subclass. */
+/** Shared data queries for the public Currency unit. */
 internal object CurrencyMetadata {
     private val lock = createResourceCacheLock()
     private var tenderCodes: CacheReference<List<String>>? = null

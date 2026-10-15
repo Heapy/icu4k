@@ -4,7 +4,7 @@ package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.util.UResourceBundle
 
-/** MeasureUnit's resource enumeration, ready for its instance-cache population. */
+/** MeasureUnit resource enumeration for its instance-cache population. */
 internal object MeasureUnitResourceCatalog {
     fun populate(addUnit: (type: String, subType: String) -> Unit) {
         val units = UResourceBundle.getBundleInstance(ICUData.ICU_UNIT_BASE_NAME, "en") as ICUResourceBundle

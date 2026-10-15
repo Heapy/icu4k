@@ -7,6 +7,8 @@ import io.github.heapy.icu4k.util.MeasurePrefix
 import kotlin.math.abs
 
 open class SingleUnitImpl {
+    open fun build(): io.github.heapy.icu4k.util.MeasureUnit = MeasureUnitImpl(this).build()
+
     private var index = -1
     private var simpleUnitID: String? = ""
     private var dimensionality = 1

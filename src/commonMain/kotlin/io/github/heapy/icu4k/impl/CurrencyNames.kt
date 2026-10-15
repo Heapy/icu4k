@@ -5,7 +5,7 @@ package io.github.heapy.icu4k.impl
 import io.github.heapy.icu4k.text.CurrencyDisplayNames
 import io.github.heapy.icu4k.util.ULocale
 
-/** Currency's display dispatch, extracted pending the public Currency facade. */
+/** Display-name dispatch for the public Currency facade. */
 internal object CurrencyNames {
     fun symbol(code: String?, locale: ULocale? = ULocale.getDefault(ULocale.Category.DISPLAY)): String? = name(code, locale, 0, null)
     fun displayName(code: String?, locale: ULocale? = ULocale.getDefault()): String? = name(code, locale, 1, null)

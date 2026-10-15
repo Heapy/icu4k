@@ -6,8 +6,10 @@ package io.github.heapy.icu4k.impl.units
 import io.github.heapy.icu4k.util.*
 import io.github.heapy.icu4k.impl.units.UnitIdentifierData.Constants
 
-/** Shared identifier model. Public MeasureUnit build bridges are pending. */
+/** Shared identifier model and public MeasureUnit build bridge. */
 open class MeasureUnitImpl {
+    open fun build(): MeasureUnit = MeasureUnit.fromMeasureUnitImpl(this)
+
     private var identifier: String? = null
     private var complexity: UnitComplexity? = UnitComplexity.SINGLE
     private var constantDenominator = 0L

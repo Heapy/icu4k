@@ -6,7 +6,7 @@ import io.github.heapy.icu4k.text.CurrencyDisplayNames
 import io.github.heapy.icu4k.text.ParsePosition
 import io.github.heapy.icu4k.util.ULocale
 
-/** Parsing implementation extracted from ICU4J Currency pending its public facade. */
+/** Shared parsing implementation for the public Currency facade. */
 internal object CurrencyParsing {
     private val cache = SimpleCache<ULocale?, List<TextTrieMap<CurrencyStringInfo>>>()
     fun parse(locale: ULocale?, text: String?, type: Int, position: ParsePosition?): String? {
@@ -54,7 +54,4 @@ internal object CurrencyParsing {
     }
 }
 
-internal class CurrencyStringInfo(private val isoCode: String?, private val currencyString: String?) {
-    fun getISOCode(): String? = isoCode
-    fun getCurrencyString(): String? = currencyString
-}
+internal typealias CurrencyStringInfo = io.github.heapy.icu4k.util.Currency.CurrencyStringInfo

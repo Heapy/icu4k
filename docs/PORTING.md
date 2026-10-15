@@ -4510,3 +4510,38 @@ expansion, endpoint identity/mutation, collection callbacks and status/output
 transitions. Common tests exercise public sample APIs and custom interface inputs
 on JVM, JS and Native. FormattedNumber/FormattedNumberRange selection and remaining
 number formatter APIs are still pending.
+
+
+### Public measure units, time units and currencies
+
+Added the public MeasureUnit/Currency inheritance chain, TimeUnit and NoUnit, and
+all 234 ICU4J 78.3 unit constants. MeasureUnitImpl and SingleUnitImpl now build public
+units through the shared singleton catalog. Prefix/complexity/usage enums live under
+their source API classes; the initially extracted top-level names remain Kotlin
+aliases. Identifier parsing/canonicalization, prefix/power composition, reciprocal,
+products, denominator operations, splitting and source equality/hash behavior use
+the existing Common implementation. Unknown type queries retain the source empty
+set's no-op removals, while known type queries expose live unmodifiable catalog
+views. Cache publication uses a reentrant portable monitor; catalog population avoids
+nested acquisition and retains the source set-before-loading population flag.
+
+Currency now provides ISO/locale factories, region soft caching, currency metadata,
+display names and symbol variants, plural names, parsing tries, availability queries
+and locale service registration. Registration uses ICULocaleService, including
+locale fallback and override precedence. Epoch-millisecond date boundaries are
+available in Common Kotlin; JVM extensions accept java.util.Date/Locale and bridge
+to/from java.util.Currency. No production operation delegates to ICU4J.
+
+JVM unit serialization writes a version/type/subtype proxy and resolves through the
+canonical unit cache. Round trips preserve singleton identity for built-in units,
+currencies and time units. Custom identifier units preserve the source null-type
+serialization failure. Compatibility with historical raw Currency/TimeUnit streams
+is not claimed. Kotlin's companion/outer protected visibility diagnostic is scoped
+out for the source protected static factory bridge; it does not alter execution.
+
+Oracle tests compare all constants and catalog entries, dynamic live views,
+identifier operations and errors, source hash edge cases, serialization, currency
+names/metadata/date queries, trie contents and matches, Java currency conversion,
+service fallback, override ordering and removal. Common tests exercise composition,
+factory identity, catalog access and currency registration on JVM, JS and Native.
+Measure/CurrencyAmount/TimeUnitAmount and the formatter APIs remain pending.
