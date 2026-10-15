@@ -4462,3 +4462,26 @@ Double construction and extreme-scale operations. Common tests exercise the
 actual JS/Native boundary and BCD transfer. Implicit division-by-zero diagnostics
 are normalized across the JDK's compact/BigInteger backends. Public DecimalQuantity,
 BigInteger and the remaining decimal/formatting APIs are still pending.
+
+
+### Public decimal quantity adapter
+
+Added DecimalQuantity, DecimalQuantity_AbstractBCD and DecimalQuantity_DualStorageBCD
+as public Common Kotlin APIs over the existing portable BCD implementation. Typed
+decimal/context rounding, constructors, copy/mutation, decimal conversion, plural
+operands/selection, display bounds, field positions and builder output now use the
+public boundary. Double inputs retain the explicit roundToInfinity transition.
+
+JVM Number dispatch preserves accepted Java numeric classes and rejects unsupported
+Byte/Short/custom Number inputs. JVM BigInteger is available through a Kotlin
+constructor-style factory and setToBigInteger extension; Common BigInteger, the
+legacy ICU math.BigDecimal input branch and the protected custom-storage subclass
+SPI remain pending. The diagnostic exact-double field is exposed as a Kotlin
+property. JVM constructor/field ABI compatibility is not claimed for these adapters.
+JavaScript cannot distinguish all boxed numeric types; typed constructors provide
+the explicit input path on that target.
+
+Common tests exercise typed numeric mutation, copies, operands and output on all
+runnable targets. JVM oracle tests compare public adapter state and behavior with
+ICU4J, including boxed numeric dispatch, rounding, appended output, plural selection
+and source self-copy behavior. Production code does not delegate to ICU4J.

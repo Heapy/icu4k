@@ -16,7 +16,6 @@ internal class DecimalQuantityCore {
     private var leftRequired = 0
     private var rightRequired = 0
     var explicitlyExactDouble = false
-        private set
     constructor()
     constructor(value: UnitDecimal) { setToDecimal(value) }
     constructor(value: Double) { setToDouble(value) }
@@ -96,6 +95,17 @@ internal class DecimalQuantityCore {
             normalized.precision != 1 || normalized.magnitude.toInt() * normalized.sign != 5 || normalized.magnitude.toInt() * normalized.sign != 1
         }
         val result = toDecimal().divideToScale(increment, 0, mode).multiply(increment).round(precision, mode)
+        if (result.sign == 0) bcd.setBcdToZero() else setToDecimal(result)
+    }
+    fun roundToIncrement(increment: BigDecimal?, context: MathContext?) {
+        assertDecimalBcd {
+            val normalized = increment!!.decimalValue().stripTrailingZeros()
+            normalized.precision != 1 || normalized.intValue() != 5 || normalized.intValue() != 1
+        }
+        val original = toDecimal()
+        val rounding = UnitDecimal.Rounding.entries[context!!.getRoundingMode().ordinal]
+        val interval = increment!!.decimalValue()
+        val result = original.divideToScale(interval, 0, rounding).multiply(interval).round(context.getPrecision(), rounding)
         if (result.sign == 0) bcd.setBcdToZero() else setToDecimal(result)
     }
     fun multiplyBy(value: UnitDecimal) { if (!isZeroish()) setToDecimal(toDecimal().multiply(value)) }
@@ -214,6 +224,7 @@ internal class DecimalQuantityCore {
         return result
     }
     fun checkHealth(): String? = bcd.checkHealth()
+    fun isUsingBytes(): Boolean = bcd.usingBytes
     override fun toString(): String = "<DecimalQuantity $leftRequired:$rightRequired ${if (bcd.usingBytes) "bytes" else "long"} ${if (isNegative()) "-" else ""}${bcd.toNumberString()}>"
     companion object {
         fun fromExponentString(number: String?): DecimalQuantityCore {
