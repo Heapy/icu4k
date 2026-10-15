@@ -259,7 +259,7 @@ open class DecimalFormatProperties : ICUCloneableBase() {
     open fun getCurrency(): Currency? = currency
     open fun setCurrency(value: Currency?): DecimalFormatProperties { currency = value; return this }
     open fun getCurrencyPluralInfo(): CurrencyPluralInfo? = currencyPluralInfo
-    open fun setCurrencyPluralInfo(value: CurrencyPluralInfo?): DecimalFormatProperties { currencyPluralInfo = value; return this }
+    open fun setCurrencyPluralInfo(value: CurrencyPluralInfo?): DecimalFormatProperties { currencyPluralInfo = value?.clone(); return this }
     open fun getCurrencyUsage(): CurrencyUsage? = currencyUsage
     open fun setCurrencyUsage(value: CurrencyUsage?): DecimalFormatProperties { currencyUsage = value; return this }
     open fun getDecimalPatternMatchRequired(): Boolean = decimalPatternMatchRequired

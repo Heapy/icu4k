@@ -4683,7 +4683,7 @@ settings; null/empty patterns clear the complete bag. Public PatternStringParser
 parsed-info adapters and the rest of the formatter facade remain pending.
 
 Oracle tests enumerate every field, defaults, extreme primitive values, nullable
-objects/enums, fluent setters, shallow identity, equality/hash, self-copy, clearing,
+objects/enums, fluent setters, shallow copies, equality/hash, self-copy, clearing,
 text, custom stream records, stream round trips, unknown fields, wrong types,
 primitive widening, legacy wrapping and repeated pattern projection. Common tests
 exercise unchecked values, live custom maps, shared invalid-rule objects and pattern
@@ -5879,3 +5879,17 @@ run; jvmTest in the final run (1m 27s) after JVM test-table typing was corrected
 No production changes occurred between these checks. The public inheritance
 facades, their configuration accessors/serialization and number-format service
 factories (including rule-based numbering) still remain to be ported.
+
+### Currency plural property ownership correction
+
+Corrected DecimalFormatProperties.setCurrencyPluralInfo to clone a non-null
+argument, as ICU4J does. This prevents later caller mutations from changing the
+stored plural patterns. copyFrom/clone of the property bag remain shallow and
+share the already-owned plural-info object. JVM comparisons now verify input
+identity and shallow-copy identity against the source for every reference field,
+replacing an old test assumption that all setters retain their input reference.
+
+The correction was verified with the DecimalFormat settings matrix and existing
+property tests. jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed in
+the combined run; final jvmTest passed in 1m 42s after old test assumptions were
+corrected. Production sources were unchanged between these verification runs.

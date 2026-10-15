@@ -87,7 +87,13 @@ class DecimalFormatPropertiesOracleTest {
             val jc = j.clone(); val kc = k.clone()
             assertEquals(snapshot(jc), snapshot(kc)); assertEquals(j == jc, k == kc)
             assertEquals(j.hashCode(), jc.hashCode()); assertEquals(k.hashCode(), kc.hashCode())
-            if (!field.type.isPrimitive && kv != null) assertSame(kv, kc.javaClass.getMethod("get" + field.name.replaceFirstChar { it.uppercaseChar() }).invoke(kc))
+            if (!field.type.isPrimitive && kv != null) {
+                val getter = "get" + field.name.replaceFirstChar { it.uppercaseChar() }
+                val jStored = j.javaClass.getMethod(getter).invoke(j); val kStored = k.javaClass.getMethod(getter).invoke(k)
+                assertEquals(value === jStored, kv === kStored, "$setter/input identity")
+                assertSame(jStored, jc.javaClass.getMethod(getter).invoke(jc), "$setter/source shallow copy")
+                assertSame(kStored, kc.javaClass.getMethod(getter).invoke(kc), "$setter/portable shallow copy")
+            }
             val target = DecimalFormatProperties(); assertSame(target, target.copyFrom(k)); assertEquals(k, target)
             assertSame(j, j.copyFrom(j)); assertSame(k, k.copyFrom(k)); assertEquals(snapshot(j), snapshot(k))
             assertSame(j, j.clear()); assertSame(k, k.clear()); assertEquals(snapshot(j), snapshot(k))
@@ -100,7 +106,9 @@ class DecimalFormatPropertiesOracleTest {
         val ki = CurrencyPluralInfo(ULocale("en")).also { it.setPluralRules("invalid") }
         val j = JProps().setCurrencyPluralInfo(ji); val k = DecimalFormatProperties().setCurrencyPluralInfo(ki)
         assertEquals(outcome { j == j.clone() }, outcome { k == k.clone() })
-        assertSame(ki, k.clone().getCurrencyPluralInfo())
+        assertNotSame(ji, j.getCurrencyPluralInfo()); assertNotSame(ki, k.getCurrencyPluralInfo())
+        assertSame(j.getCurrencyPluralInfo(), j.clone().getCurrencyPluralInfo())
+        assertSame(k.getCurrencyPluralInfo(), k.clone().getCurrencyPluralInfo())
         assertEquals(outcome { j.hashCode() }, outcome { k.hashCode() })
         for (pattern in listOf("#,##0.00", "@@##", "0.05%", "*_0.0;(0.0)", "¤0.00")) {
             val jp = JParser.parseToProperties(pattern); val kp = PatternStringParserCore.parseToDecimalFormatProperties(pattern)
