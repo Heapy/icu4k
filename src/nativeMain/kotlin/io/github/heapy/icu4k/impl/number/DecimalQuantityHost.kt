@@ -2,8 +2,10 @@
 package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.util.BigDecimal
+import io.github.heapy.icu4k.impl.units.MixedUnitIntegerNumber
 
 internal actual fun quantityFromNumber(number: Number?): DecimalQuantityCore = when (number) {
+    is MixedUnitIntegerNumber -> DecimalQuantityCore(number.decimalValue())
     is Long -> DecimalQuantityCore(number)
     is Int -> DecimalQuantityCore(number.toLong())
     is Float -> DecimalQuantityCore(number.toDouble())

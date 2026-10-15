@@ -33,7 +33,7 @@ import kotlin.math.abs
 open class LongNameHandler private constructor(
     private val modifiers: MutableMap<StandardPlural, SimpleModifier>,
     private val rules: PluralRules?, private val parent: MicroPropsGenerator?
-) : MicroPropsGenerator, ModifierStore {
+) : MicroPropsGenerator, ModifierStore, LongNameMultiplexer.ParentlessMicroPropsGenerator {
     private var gender: String? = ""
 
     override fun processQuantity(quantity: DecimalQuantity?): MicroProps {
@@ -44,7 +44,7 @@ open class LongNameHandler private constructor(
         return micros
     }
 
-    open fun processQuantityWithMicros(quantity: DecimalQuantity?, micros: MicroProps?): MicroProps {
+    override fun processQuantityWithMicros(quantity: DecimalQuantity?, micros: MicroProps?): MicroProps {
         val plural = RoundingUtils.getPluralSafe(micros!!.rounder, rules, quantity)
         micros.modOuter = modifiers[plural]
         return micros

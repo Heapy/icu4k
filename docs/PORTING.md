@@ -5261,3 +5261,48 @@ pipeline can use German/Russian numeric conventions and Arabic unit plural data.
 There are now 106 checksum-verified embedded resources. generate-data.py --check
 passed; the complete pipeline differential suite covers these resources against
 ICU4J 78.3, with common JVM/JS/Native coverage for explicit arab numbering.
+
+## NumberFormatterImpl assembly and mixed-unit long names
+
+Ported the complete internal NumberFormatterImpl: safe reusable and unsafe
+one-shot construction, preprocessing/integer width, prefix/suffix extraction
+(which ignores its plural parameter upstream), and the macro-to-micro chain.
+It resolves numbering/symbols/pattern styles, usage/conversion, scale, rounding,
+grouping, padding, integer/sign/decimal policies, scientific/compact notation,
+currency/measure/per-unit names and pattern modifiers in source order. Numeric
+and affix output delegates to the previously ported NumberFormatterOutput.
+Supplied DecimalFormatSymbols are retained by reference. Invalid usage/perUnit
+combinations retain source exceptions; no branch delegates to ICU4J production.
+
+Added MixedUnitLongNameHandler, LongNameMultiplexer and its nested parentless
+interface, now also implemented by LongNameHandler. Mixed handlers preserve
+component order, quantity sign changes, plural selection through the incoming
+rounder, localized integral components, list formatting, modifier metadata and
+source failure paths. Multiplexers copy the input list and select their handler
+after parent processing sets outputUnit; parentless processing preserves gender.
+The default mixed-component formatter uses the shared NumberFormatterExecution
+core extracted from LocalizedNumberFormatter: synchronized atomic count update,
+compilation at the threshold, volatile publication and one-shot fallback. The
+counter lock is released before construction/formatting, preserving source races
+between compilation and one-shot calls. The default threshold is three.
+
+JS/Native DecimalQuantity now recognizes the internal arbitrary-precision integral
+Number used by mixed conversion, taking its UnitDecimal value directly. Common
+tests verify 2^64+1 remains exact through quantity construction and localized
+output; this does not fix the separate generic Number.toLong/toInt Kotlin/JS
+intrinsic-dispatch gap, whose regression remains explicitly skipped. The source
+converter's epsilon and low-64-bit arithmetic quirks remain unchanged.
+
+JVM differential tests compare full pipeline strings, UTF-16 fields, quantities
+and MicroProps state across locales, number notations, currencies, percent/
+permille, built-in/arbitrary/mixed units, all sign/grouping policies, custom
+numbering systems/symbols/old affixes, precision, scale, integer truncation,
+usage routing and perUnit restrictions. Further oracles cover mixed-handler
+indices, large integral components, signs, parentless/parent paths and failures;
+multiplexer list copying, selection, unknown units and uninitialized instances.
+Common tests exercise number/currency/scientific/mixed output, compilation
+threshold crossing and exact oversized integers. Verification passed:
+jvmTest, jsNodeTest, macosArm64Test, compileTestKotlinLinuxX64 and generated data
+checksum checking. Public NumberFormatterSettings/UnlocalizedNumberFormatter/
+LocalizedNumberFormatter/FormattedNumber facades, skeletons and legacy
+NumberFormat/DecimalFormat still remain pending, as do other ICU4J subsystems.

@@ -139,6 +139,7 @@ internal expect class MixedUnitInteger {
 
 /** Arbitrary-precision integral Number for hosts without java.math.BigInteger. */
 internal class MixedUnitIntegerNumber(private val value: UnitDecimal) : Number() {
+    internal fun decimalValue(): UnitDecimal = value
     override fun toByte(): Byte = value.longValue().toByte()
     override fun toShort(): Short = value.longValue().toShort()
     override fun toInt(): Int = value.intValue()
