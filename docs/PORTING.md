@@ -4703,3 +4703,22 @@ Additional property-bag tests cover overridden getters, runtime subclass cloning
 custom map equality with null, asymmetric equality, serialization default filtering
 and text callback evaluation before a null StringBuilder failure. These compare
 source behavior rather than replacing it with generalized object equality rules.
+
+### Property and currency-plural affix providers
+
+Added PropertiesAffixPatternProvider and CurrencyPluralInfoAffixProvider, including
+factory dispatch, independent literal overrides, default negative affixes, escaping,
+pattern-only currency detection and snapshots of all eight plural forms. The plural
+provider projects each pattern into a copied property bag and takes metadata from
+OTHER, matching ICU4J rather than combining metadata across forms.
+
+The source's suffix reference-identity comparison in hasNegativeSubpattern is
+retained. JVM oracle tests explicitly distinguish equal-content string objects.
+JavaScript primitive strings cannot represent that distinction: this source quirk
+therefore remains a platform limitation on JS. No production ICU4J delegation is used.
+
+Oracle tests cover patterns, each independent nullable/empty/special-character
+literal override, UTF-16 indexing, snapshot behavior, suffix identity and currency
+plural dispatch for English, Russian, Arabic and French. Common tests exercise
+literal escaping and plural dispatch on JVM, JS and Native. Verification passed:
+jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64.
