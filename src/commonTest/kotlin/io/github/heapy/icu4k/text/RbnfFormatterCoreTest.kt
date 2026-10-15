@@ -92,7 +92,7 @@ class RbnfFormatterCoreTest {
         val f = RbnfFormatterCore.fromDescription("%%post-process: processor; args; %main: 0: raw;", locale = ULocale.ENGLISH,
             scannerProviderFactory = { error("unused") }, postProcessorFactory = { name ->
                 events.add("create:$name")
-                object : RbnfPostProcessor {
+                object : RbnfCorePostProcessor {
                     var count = 0
                     override fun init(formatter: RbnfFormatterCore, rules: String) { events.add("init:$rules") }
                     override fun process(output: StringBuilder, ruleSet: RbnfRuleSetCore?) { output.append(++count).append(ruleSet!!.getName()) }

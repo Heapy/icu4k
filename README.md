@@ -229,7 +229,28 @@ println(decimal.format(1234.5)) // 1,234.50
 println(decimal.parse("1,234.50")) // 1234.5
 ```
 
-Localized `NumberFormat` factories and rule-based number formatting are still being ported.
+`RuleBasedNumberFormat` exposes the common rule engine and predefined ICU rule data:
+
+```kotlin
+import io.github.heapy.icu4k.text.RuleBasedNumberFormat
+import io.github.heapy.icu4k.util.ULocale
+
+val words = RuleBasedNumberFormat(ULocale.ENGLISH, RuleBasedNumberFormat.SPELLOUT)
+println(words.format(1234L)) // one thousand two hundred thirty-four
+println(words.parse("twenty-one")) // 21
+```
+
+Custom descriptions, named rule sets, localized names, capitalization, rounding,
+large-number dispatch and shallow cloning are supported. JVM object streams use
+the source custom serialization protocol. JVM `Locale` conveniences are Kotlin
+factory functions; Java constructor/typed-overload parity is still incremental.
+Native subclasses follow the existing typed-clone convention.
+
+The default collation-backed lenient scanner is not ported yet. As in ICU4J's
+core module without collate, discovery returns null when that module is absent;
+custom `RbnfLenientScannerProvider` implementations can be supplied. Localized
+`NumberFormat` factory entry points and ICU data outside the embedded subset
+are still being ported.
 
 `MessagePattern` parses message, choice, plural and select patterns in Common Kotlin:
 

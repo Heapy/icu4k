@@ -11,19 +11,19 @@ import io.github.heapy.icu4k.impl.number.javaCompatibleDoubleString
 import io.github.heapy.icu4k.math.BigDecimal
 import io.github.heapy.icu4k.util.ULocale
 
-internal interface RbnfPostProcessor {
+internal interface RbnfCorePostProcessor {
     fun init(formatter: RbnfFormatterCore, rules: String)
     fun process(output: StringBuilder, ruleSet: RbnfRuleSetCore?)
 }
 
 /**
- * The RBNF graph owner. Public NumberFormat dispatch, serialization and
- * the default collation-backed scanner are separate dependencies of the facade port.
+ * Mutable graph state behind RuleBasedNumberFormat. The collation-backed scanner
+ * is discovered separately from the optional collate module.
  */
 internal class RbnfFormatterCore private constructor(
     val locale: ULocale?,
     private val scannerProviderFactory: () -> RbnfLenientScannerProvider,
-    private val postProcessorFactory: (String) -> RbnfPostProcessor,
+    private val postProcessorFactory: (String) -> RbnfCorePostProcessor,
 ) : RbnfSubstitutionOwner {
     private var ruleSets: Array<RbnfRuleSetCore?>? = null
     private var ruleSetsMap: MutableMap<String, RbnfRuleSetCore>? = null
@@ -38,13 +38,19 @@ internal class RbnfFormatterCore private constructor(
     private var lenientParse = false
     private var lenientParseRules: String? = null
     private var postProcessRules: String? = null
-    private var postProcessor: RbnfPostProcessor? = null
+    private var postProcessor: RbnfCorePostProcessor? = null
     private var ruleSetDisplayNames: Map<String?, Array<String>>? = null
     private var publicRuleSetNames: Array<String>? = null
     private var capitalization = RbnfCapitalizationCore(locale)
+    internal var facadeOwner: RuleBasedNumberFormat? = null
 
     /** Allows the eventual facade's virtual rounding-mode query without changing stored mode. */
     var roundingModeReader: () -> Int = { roundingMode }
+    var lenientParseReader: () -> Boolean = { lenientParse }
+    internal fun rawLenientParseEnabled(): Boolean = lenientParse
+    var scannerProviderReader: () -> RbnfLenientScannerProvider? = { getLenientScannerProvider() }
+    var scannerProviderPublisher: (RbnfLenientScannerProvider?) -> Unit = { setLenientScannerProvider(it) }
+    internal fun restoreRoundingMode(mode: Int) { roundingMode = mode }
 
     private fun init(description: String?, localizations: Array<Array<String>>?) {
         initLocalizations(localizations)
@@ -146,6 +152,7 @@ internal class RbnfFormatterCore private constructor(
         }
         return null
     }
+    internal fun localizedDisplayNames(loc: ULocale?): Array<String>? = getNameListForLocale(loc)?.copyOf()
     fun getRuleSetDisplayNames(loc: ULocale?): Array<String> {
         val names = getNameListForLocale(loc)
         if (names != null) return names.copyOf()
@@ -225,21 +232,21 @@ internal class RbnfFormatterCore private constructor(
     }
     override fun getRoundingMode(): Int = roundingModeReader()
     fun setLenientParseMode(enabled: Boolean) { lenientParse = enabled }
-    override fun lenientParseEnabled() = lenientParse
+    override fun lenientParseEnabled(): Boolean = lenientParseReader()
     fun setLenientScannerProvider(provider: RbnfLenientScannerProvider?) { scannerProvider = provider }
     fun getLenientScannerProvider(): RbnfLenientScannerProvider? {
         if (scannerProvider == null && lenientParse && !lookedForScanner) {
             try {
                 lookedForScanner = true
                 val provider = scannerProviderFactory()
-                setLenientScannerProvider(provider)
+                scannerProviderPublisher(provider)
             } catch (_: Exception) { /* Source suppresses provider discovery failure after the first attempt. */ }
         }
         return scannerProvider
     }
     override fun getLenientScanner(): RbnfLenientScanner? {
         if (lenientParse) {
-            val provider = getLenientScannerProvider()
+            val provider = scannerProviderReader()
             if (provider != null) return provider.get(locale, lenientParseRules)
         }
         return null
@@ -332,19 +339,19 @@ internal class RbnfFormatterCore private constructor(
         fun fromDescription(description: String?, localizations: Array<Array<String>>? = null,
                             locale: ULocale? = ULocale.getDefault(ULocale.Category.FORMAT),
                             scannerProviderFactory: () -> RbnfLenientScannerProvider,
-                            postProcessorFactory: (String) -> RbnfPostProcessor = ::builtinPostProcessor): RbnfFormatterCore =
+                            postProcessorFactory: (String) -> RbnfCorePostProcessor = ::builtinPostProcessor): RbnfFormatterCore =
             RbnfFormatterCore(locale, scannerProviderFactory, postProcessorFactory).also { it.init(description, localizations) }
         fun fromLocale(locale: ULocale?, format: Int, scannerProviderFactory: () -> RbnfLenientScannerProvider,
                        loader: ICUResourceLoader? = defaultICUResourceLoader(), onBundleLocale: (ULocale) -> Unit = {},
-                       postProcessorFactory: (String) -> RbnfPostProcessor = ::builtinPostProcessor): RbnfFormatterCore {
+                       postProcessorFactory: (String) -> RbnfCorePostProcessor = ::builtinPostProcessor): RbnfFormatterCore {
             val formatter = RbnfFormatterCore(locale, scannerProviderFactory, postProcessorFactory)
             val data = RbnfRuleData.load(locale, format, loader, onBundleLocale)
             formatter.init(data.description, data.localizations)
             return formatter
         }
-        private fun builtinPostProcessor(name: String): RbnfPostProcessor {
+        internal fun builtinPostProcessor(name: String): RbnfCorePostProcessor {
             if (name != "com.ibm.icu.text.RBNFChinesePostProcessor") throw IllegalArgumentException("No RBNF post processor named $name")
-            return object : RbnfPostProcessor {
+            return object : RbnfCorePostProcessor {
                 private val processor = RbnfChinesePostProcessor()
                 override fun init(formatter: RbnfFormatterCore, rules: String) {}
                 override fun process(output: StringBuilder, ruleSet: RbnfRuleSetCore?) { processor.process(output, ruleSet!!.getName()) }

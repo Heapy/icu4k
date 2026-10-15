@@ -6297,3 +6297,59 @@ Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed, final run 2m 32s (Linux compiled, not executed).
 The public RBNF facade/NumberFormat factory connection, serialization and default
 collation-backed lenient scanner remain unfinished.
+
+### Public RuleBasedNumberFormat facade and JVM streams
+
+Added public common RuleBasedNumberFormat constructors for descriptions,
+localizations, ULocale/style and default-format locale; rule-set/name APIs;
+Long/Double, standard BigInteger/BigDecimal and ICU BigDecimal dispatch;
+parsing, contexts, symbols, rounding, lenient mode/providers, equality/hash,
+text reconstruction and cloning. Empty buffers and named formatting apply
+capitalization; existing buffer contents bypass it. Large decimals route to
+the cached DecimalFormat; in-range decimals preserve the source scale-based
+long/double virtual dispatch. JVM/JS retain generic host cloning; Native uses
+the existing typed-copy convention. JVM Locale conveniences are factory
+functions, not additional Java constructor bytecode; full Java callable
+constructor/typed-overload parity remains incremental.
+
+Bound public virtual rounding/provider/lenient queries and provider publication
+back to the facade, while private mode checks retain their source semantics.
+Display-name fallback invokes the public getRuleSetNames override, including
+in-place mutation of an override's returned array. New oracle cases reproduced
+the initial virtual-getter bypass and verify the corrected paths. Added the
+source package-level RBNFPostProcessor protocol and JVM class-name discovery;
+init receives the invoked public facade, including clones. A preexisting
+processor is shared by clones, while an uninitialized clone initializes its own
+processor with itself. Init/discovery exceptions disable later lookup; process
+exceptions and constructor Errors preserve their source propagation/state.
+The internal engine protocol is named RbnfCorePostProcessor to avoid a
+case-insensitive filesystem collision with RBNFPostProcessor.
+
+JVM serialization has the source UID, eight virtual persistent-field descriptors
+and custom UTF-description/locale/raw-mode order without default subclass data.
+Read restores the source locale fallback, missing-mode zero, unvalidated raw
+mode and temporary graph owner. Source quirks are retained: localized-name
+configuration, lenient mode and special postprocessor rules are reconstructed
+as in readObject rather than round-tripped as ordinary fields; substitutions
+retain the temporary formatter's mode/settings. Tests compare descriptors,
+write/read hooks, malformed/legacy inputs, partial state and real independent
+ICU4J/icu4k roundtrips. They do not claim automatic cross-package stream loading.
+
+The optional default provider lives in ICU4J's collate source module. Discovery
+uses the relocated class name on JVM; until that module is ported, missing
+provider discovery is suppressed exactly at the core policy boundary. Native
+and JS likewise have no default collation scanner yet. This is unfinished
+collation work, not a replacement scanner or a production ICU4J dependency.
+
+Verification includes numeric overload/buffer/field/context matrices against
+ICU4J, subclass dispatch, public Java Format bridges, getters, provider setter
+publication, postprocessor initialization/copy/error behavior and stream tests.
+The full run exposed an older BigDecimal oracle's dependence on HotSpot keeping
+implicit /0 messages. A standalone Java probe produced 294,347 empty messages
+and traces after warmup versus none with fast-throw disabled. Commit 0f83569
+normalizes only a known zero-divisor scaled JDK division with both absent
+message and trace, with a warmup regression; production arithmetic is unchanged.
+Final jvmTest, jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed,
+4m 4s (Linux compiled, not executed). NumberFormat global factory wiring and
+full collation/default lenient scanning remain pending, alongside other ICU
+APIs and resource coverage in the full port.
