@@ -10,13 +10,16 @@ import io.github.heapy.icu4k.impl.UCaseProps
 import io.github.heapy.icu4k.impl.UCharacterProperty
 import io.github.heapy.icu4k.impl.UBiDiProps
 import io.github.heapy.icu4k.text.UTF16
+import io.github.heapy.icu4k.text.BreakIterator
+import io.github.heapy.icu4k.text.CaseMap
+import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.util.VersionInfo
 
 /**
  * Unicode character operations backed by pinned ICU data on every target.
  * Category/numeric/bidi operations, simple case mappings and full case folding
- * are ported. Locale-sensitive string casing, normalization, names and the
- * complete property dispatcher are added in subsequent stages.
+ * and locale-sensitive string casing use the common case-mapping engine.
+ * Remaining API coverage is tracked in the porting notes.
  */
 class UCharacter private constructor() {
     interface NumericType {
@@ -163,6 +166,16 @@ class UCharacter private constructor() {
         }
         const val FOLD_CASE_DEFAULT = 0
         const val FOLD_CASE_EXCLUDE_SPECIAL_I = 1
+        const val TITLECASE_NO_LOWERCASE = 0x100
+        const val TITLECASE_NO_BREAK_ADJUSTMENT = 0x200
+        fun toLowerCase(str: String?): String = toLowerCase(ULocale.getDefault(), str)
+        fun toUpperCase(str: String?): String = toUpperCase(ULocale.getDefault(), str)
+        fun toLowerCase(locale: ULocale?, str: String?): String = CaseMap.toLower().apply(locale, str)
+        fun toUpperCase(locale: ULocale?, str: String?): String = CaseMap.toUpper().apply(locale, str)
+        fun toTitleCase(str: String?, breakiter: BreakIterator?): String = toTitleCase(ULocale.getDefault(), str, breakiter, 0)
+        fun toTitleCase(locale: ULocale?, str: String?, titleIter: BreakIterator?): String = toTitleCase(locale, str, titleIter, 0)
+        fun toTitleCase(locale: ULocale?, str: String?, titleIter: BreakIterator?, options: Int): String =
+            CaseMap.Title.withOptions(options).applyToString(locale, titleIter, str)
         fun toLowerCase(ch: Int): Int = UCaseProps.INSTANCE.tolower(ch)
         fun toUpperCase(ch: Int): Int = UCaseProps.INSTANCE.toupper(ch)
         fun toTitleCase(ch: Int): Int = UCaseProps.INSTANCE.totitle(ch)

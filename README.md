@@ -298,3 +298,12 @@ import io.github.heapy.icu4k.text.PluralFormat
 val files = PluralFormat(ULocale.ENGLISH, "one{# file} other{# files}")
 println(files.format(2.0)) // 2 files
 ```
+
+Locale-sensitive string casing is available through `UCharacter`:
+
+```kotlin
+import io.github.heapy.icu4k.lang.UCharacter
+
+println(UCharacter.toUpperCase(ULocale("tr"), "istanbul")) // İSTANBUL
+println(UCharacter.toTitleCase(ULocale("nl"), "ijsselmeer", null)) // IJsselmeer
+```

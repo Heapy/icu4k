@@ -41,7 +41,7 @@ sealed class CaseMap private constructor(protected val internalOptions: Int) {
         fun noLowercase(): Title = Title(internalOptions or 0x100)
         fun noBreakAdjustment(): Title = Title(CaseMapImpl.addTitleAdjustmentOption(internalOptions, 0x200))
         fun adjustToCased(): Title = Title(CaseMapImpl.addTitleAdjustmentOption(internalOptions, CaseMapImpl.TITLECASE_ADJUST_TO_CASED))
-        private fun prepare(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?): Pair<Int, CaseMapImpl.TitleIterator> {
+        private fun selectIterator(locale: ULocale?, iterator: BreakIterator?): Pair<ULocale?, BreakIterator> {
             val where = if (iterator == null && locale == null) ULocale.getDefault() else locale
             val mode = internalOptions and 0xe0
             if (mode != 0 && iterator != null) throw IllegalArgumentException("titlecasing iterator option together with an explicit iterator")
@@ -51,12 +51,23 @@ sealed class CaseMap private constructor(protected val internalOptions: Int) {
                 CaseMapImpl.TITLECASE_SENTENCES -> BreakIterator.getSentenceInstance(where)
                 else -> throw IllegalArgumentException("unknown titlecasing iterator option")
             }
-            selected.setText(src!!)
+            return where to selected
+        }
+        private fun boundaries(selected: BreakIterator): CaseMapImpl.TitleIterator = object : CaseMapImpl.TitleIterator {
+            override fun first(): Int = selected.first()
+            override fun next(): Int = selected.next()
+        }
+        private fun prepare(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?): Pair<Int, CaseMapImpl.TitleIterator> {
+            val (where, selected) = selectIterator(locale, iterator)
+            selected.setText(src)
+            return caseLocale(where) to boundaries(selected)
+        }
+        /** UCharacter passes nullable String directly to the virtual String overload. */
+        internal fun applyToString(locale: ULocale?, iterator: BreakIterator?, src: String?): String {
+            val (where, selected) = selectIterator(locale, iterator)
+            selected.setText(src)
             val case = caseLocale(where)
-            return case to object : CaseMapImpl.TitleIterator {
-                override fun first(): Int = selected.first()
-                override fun next(): Int = selected.next()
-            }
+            return CaseMapImpl.toTitle(case, internalOptions, boundaries(selected), src!!)
         }
         fun apply(locale: ULocale?, iterator: BreakIterator?, src: CharSequence?): String {
             val (case, boundaries) = prepare(locale, iterator, src)
@@ -67,6 +78,7 @@ sealed class CaseMap private constructor(protected val internalOptions: Int) {
             return mapToDestination(src, dest, edits) { text, output -> CaseMapImpl.toTitle(case, internalOptions, boundaries, text, output, edits) }
         }
         internal companion object {
+            fun withOptions(options: Int): Title = Title(options)
             val DEFAULT = Title(0)
             private val OMIT_UNCHANGED = Title(CaseMapImpl.OMIT_UNCHANGED_TEXT)
         }
@@ -124,6 +136,6 @@ private class WholeStringTitleIterator : BreakIterator() {
     override fun current(): Int = unsupported()
     override fun getText(): CharacterIterator = unsupported()
     override fun setText(newText: CharacterIterator) { length = newText.getEndIndex() }
-    override fun setText(newText: CharSequence) { length = newText.length }
-    override fun setText(newText: String) { length = newText.length }
+    override fun setText(newText: CharSequence?) { length = newText!!.length }
+    override fun setText(newText: String?) { length = newText!!.length }
 }

@@ -6423,3 +6423,42 @@ found ambiguous null literals in JVM tests and an invalid new oracle pattern
 rejected by ICU4J itself; the test calls were typed explicitly and the pattern
 replaced with an existing verified nested/quoted case. Production code did not
 need changes after its initial implementation.
+
+### UCharacter locale-sensitive string casing
+
+UCharacter now exposes full-string lower/upper/title operations, general-default
+and ULocale overloads, raw title options and TITLECASE_NO_LOWERCASE /
+TITLECASE_NO_BREAK_ADJUSTMENT constants. The common CaseMap engine supplies the
+algorithms; no platform casing implementation or production ICU4J dependency is
+used. Internal Title construction accepts the raw ICU option bits without the
+fluent option builder's conflict checks, matching the source UCharacter entry
+point. Iterator option validation, word/sentence/whole-string selection,
+setText, locale resolution and casing retain source order. JVM Locale overloads
+are Kotlin companion extensions, consistent with the current API bridge
+convention; Java static-overload parity remains separate unfinished API work.
+
+BreakIterator's String and CharSequence setText overloads now accept nullable
+arguments so custom overrides can observe them as in Java. Default overloads
+still reject null. Both overloads needed matching nullability to retain
+unambiguous String dispatch; Kotlin subclasses overriding these methods must
+use nullable parameters. UCharacter calls the virtual String overload directly;
+CaseMap.Title uses the CharSequence overload. The latter also no longer rejects
+null before a custom setText callback. Iterator setup failures propagate raw,
+while the already ported mapping engine retains its own exception policy.
+Case locale is resolved after setText, so a callback changing the general default
+locale affects casing when no explicit locale was supplied.
+
+Common tests cover Turkish/Lithuanian/Greek/German/Dutch casing, raw options,
+invalid combinations, nullable callback dispatch, iterator ownership and
+mutable general defaults; locale-category defaults are restored independently.
+JVM oracle tests cover eight locales, short/long text, supplementary/unpaired
+surrogates, raw/reserved option bits, explicit iterators, null validation,
+Locale overloads and a general default distinct from FORMAT. Custom iterators
+verify String versus CharSequence dispatch, callback exception identity and
+locale changes inside setText against ICU4J.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed after the nullable dispatch corrections.
+Linux test sources compiled, not executed on macOS. Earlier full runs also
+passed the new casing matrix; the only intermediate compiler failure was the
+String?/CharSequence overload ambiguity resolved by matching nullability.

@@ -39,8 +39,8 @@ abstract class BreakIterator protected constructor() {
         return 1
     }
     abstract fun getText(): CharacterIterator
-    open fun setText(newText: String) { setText(StringCharacterIterator(newText)) }
-    open fun setText(newText: CharSequence) { setText(CSCharacterIterator(newText)) }
+    open fun setText(newText: String?) { setText(StringCharacterIterator(newText!!)) }
+    open fun setText(newText: CharSequence?) { setText(CSCharacterIterator(newText!!)) }
     abstract fun setText(newText: CharacterIterator)
     companion object {
         private val iteratorCache = BreakIteratorFactoryCache { locale, kind -> BreakIteratorService.create(locale, kind) }
