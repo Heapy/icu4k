@@ -149,7 +149,7 @@ internal class StringSearchCEBuffer(
     comparisonType: SearchIterator.ElementComparisonType?,
     initProcessed: () -> Boolean,
     private val processed: () -> StringSearchPCE?,
-    private val assertionsEnabled: Boolean = collationIteratorClassAssertionsEnabled(StringSearchCEBuffer::class),
+    private val assertionsEnabled: Boolean = collationIteratorClassAssertionsEnabled(StringSearch::class),
 ) {
     class CEI { var ce_ = 0L; var lowIndex_ = 0; var highIndex_ = 0 }
     private var buf_: Array<CEI?>? = null

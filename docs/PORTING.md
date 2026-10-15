@@ -7675,3 +7675,44 @@ Public StringSearch construction and forward/backward search loops remain pendin
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 59s. Linux tests compiled only;
 pattern compilation and boundary/cursor common tests ran on all executed targets.
+
+
+### Public StringSearch
+
+Implemented construction, pattern/target/collator replacement, reset and both
+search directions over processed collation elements. Matching supports overlap,
+canonical mode, wildcard comparison, contractions, expansions, NFD IDENTICAL
+checks and external or internal break boundaries. Java Locale construction is a
+JVM convenience; the search implementation itself resides in commonMain.
+
+The port preserves the source's cached collator attributes and replacement cursor
+semantics, including setCollator constructing its text CE iterator from the
+pattern. Reset refreshes attributes according to the original invalidation rules.
+Circular CE history uses StringSearch's JVM assertion policy, as the original
+nested CEBuffer does. Numeric collation is rejected during construction.
+
+Mixed-history oracle tests call reset after replacing or mutating the shared
+collator. ICU4J documents reset (or setCollator) as required after direct mutations;
+replacement with a different strength can also retain stale cached attributes.
+Unsynchronized histories made the original search cycle for billions of CEs;
+no diagnostic iteration limit is part of the production port. Cached-attribute
+and invalidation behavior is separately checked by the pattern-helper oracle.
+
+The search matrix excludes the isolated combining-acute pattern at IDENTICAL
+strength with ANY_BASE_WEIGHT_IS_WILDCARD: ICU4J repeatedly accepts exhausted CEs
+as a skipped pattern and cycles until its Int index overflows. This behavior was
+reproduced in the source and is retained in the port, without an iteration cap.
+The full-call oracle excludes this pathological combination; processed-CE,
+wildcard and circular-history helpers remain independently compared.
+
+Targeted JVM verification passed all 16 StringSearch tests. The public oracle
+covers 478 rule/strength/comparison/pattern/text combinations in both directions,
+3,500 mixed operations and full match, cursor, flags, cached attributes and pattern
+backing-array state. Constructor validation, locale construction and nonzero-begin
+cursor rejection are compared separately. Common tests cover canonical primary
+matches, bidirectional overlap, contractions, expansions, wildcards, IDENTICAL,
+word boundaries, reset and validation.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 9s. Linux tests compiled only;
+public StringSearch common tests ran on JVM, Node and macOS Arm64.

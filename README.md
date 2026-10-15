@@ -337,3 +337,19 @@ println(numeric.compare("2", "10")) // -1
 `setReorderCodes` accepts both a nullable
 `IntArray` and Kotlin varargs; the JVM vararg convenience is named
 `setReorderCodesValues`, while the array method retains `setReorderCodes`.
+
+Locale-sensitive substring search is available through `StringSearch`:
+
+```kotlin
+import io.github.heapy.icu4k.text.StringSearch
+import io.github.heapy.icu4k.text.StringCharacterIterator
+
+val search = StringSearch("ana", StringCharacterIterator("banana"), german)
+search.setOverlapping(true)
+println(search.first()) // 1
+println(search.next()) // 3
+```
+
+After changing a search's shared collator, call `search.reset()` before searching
+again, as required by ICU4J's StringSearch contract. Known source edge cases and
+verification limits are recorded in [the porting log](docs/PORTING.md).
