@@ -6145,3 +6145,22 @@ Verification passed: scripts/generate-data.py --check (218 resources), jvmTest,
 jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 (final run, 2m 48s).
 The RBNF engine classes, standard collation-backed lenient scanner and public
 factory/facade wiring remain unfinished; other ICU data coverage is incremental.
+
+### RBNF rule-set control flow
+
+Ported NFRuleSet into internal RbnfRuleSetCore: two-phase construction, implicit
+base values, normal binary selection and rollback, special-rule selection,
+fraction denominator selection, formatting dispatch, recursive parse masks,
+longest-match parsing and decimal-symbol propagation. Concrete NFRule and
+NFSubstitution construction remains behind internal contracts and is unfinished;
+this does not yet expose a working public RuleBasedNumberFormat.
+
+RbnfMath preserves Java signed Math.round(double), saturating boundaries,
+wrapped Long arithmetic and division/remainder edge cases across targets.
+Common tests cover names, normal and fraction selection, rollback, special
+rules, long/double dispatch, recursion limits, parse tie order, masks and parse
+position state. JVM tests compare rounding against Math.round for 100,000 raw
+binary values and neighbors of half-integers. Concrete-rule integration and
+full NFRuleSet differential coverage remain pending.
+Verification: jvmTest, jsNodeTest and macosArm64Test passed;
+compileTestKotlinLinuxX64 passed (Linux tests compiled, not executed), 3m 11s.
