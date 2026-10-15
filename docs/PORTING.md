@@ -5992,3 +5992,54 @@ order, monitor ownership, metadata changes and serialization migrations.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (final run, 3m 31s). NumberFormat's localized factory and
 service APIs, rule-based numbering and other unported ICU subsystems remain.
+
+### MessagePattern and SelectFormat
+
+Ported the complete MessagePattern parser to Common Kotlin: indexed syntax parts,
+message/argument limits, nested choice/plural/select/selectordinal styles,
+explicit selectors and offsets, both apostrophe modes and deep auto-quoting.
+Clones copy the part list while sharing immutable parts; frozen clones retain
+identity. Partial state after invalid input follows ICU4J. Argument-number overflow,
+length checks, numeric diagnostics and surrogate-safe error prefixes are retained.
+The host Cloneable marker does not introduce serialization on MessagePattern.
+Common tests and JVM oracle tests cover valid/truncated/randomized patterns,
+syntax parts, values, state transitions, freezing, cloning and public signatures.
+
+Ported SelectFormat's public API, default/duplicate keyword selection, quoting,
+nested argument text, failure reset, Java Format bridge and JVM stream restoration.
+Clones share the mutable MessagePattern, including the source behavior where a
+clone's applyPattern affects the original's formatting but not its toPattern.
+The original UID and serialized pattern field are retained. Tests compare both
+apostrophe modes, errors, field positions, clone behavior and stream round trips.
+Commits: 3e08f30 (parser), b75755e (SelectFormat).
+
+### PluralFormat execution engine and RBNF scanner contracts
+
+Added internal PluralFormatCore for source formatting and RBNF parseType behavior.
+This is execution state with an injected NumberFormat and PluralRules, not a
+replacement default NumberFormat factory or a completed public PluralFormat API.
+Locale constructors, facade serialization and factory wiring remain to be ported
+with the NumberFormat/RBNF dependency cycle.
+
+The engine retains explicit-value precedence, first duplicate keyword selection,
+lazy selector callbacks, offsets, rounded DecimalFormat plural operands, generic
+NumberFormat dispatch, apostrophe modes, top-level number replacement and nested
+argument reduction. It preserves callback-driven rule/pattern changes and shallow
+clone selection through the original owner's rule adapter. Failed patterns clear
+the shared parser and reset the failed owner's pattern/offset as in ICU4J.
+
+Added the deprecated public RbnfLenientScanner and RbnfLenientScannerProvider
+contracts. parseType checks exact text before invoking a scanner, keeps source
+candidate ordering/length rules, returns the matched message text and computes
+positions from pattern length rather than scanner consumption. Invalid/null
+scanner results, negative/out-of-range starts and empty messages follow source
+behavior. The Chinese RBNF postprocessor kernel was previously ported in b5a6247;
+its NFRuleSet adapter remains to be connected with the RBNF engine.
+
+Common tests cover execution, custom Number callbacks, clone ownership, parsing
+and empty-message/out-of-range search on every runtime. JVM oracle tests compare
+six locales, cardinal/ordinal rules, five decimal patterns, explicit/offset/nested
+messages, large numbers, non-finite values, selector call order, both apostrophe
+modes, failure state and lenient scanner interactions.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (final boundary run, 2m 41s).
