@@ -5306,3 +5306,14 @@ jvmTest, jsNodeTest, macosArm64Test, compileTestKotlinLinuxX64 and generated dat
 checksum checking. Public NumberFormatterSettings/UnlocalizedNumberFormatter/
 LocalizedNumberFormatter/FormattedNumber facades, skeletons and legacy
 NumberFormat/DecimalFormat still remain pending, as do other ICU4J subsystems.
+
+## FormattedStringBuilder logical bounds assertions
+
+Restored ICU4J's assertion-only logical bounds checks in char/field access and
+subSequence. JVM uses the FormattedStringBuilder assertion status and evaluates
+conditions lazily; JS/Native do not evaluate the assertion conditions. Explicit
+subString bounds validation and release array behavior remain as before. A JVM
+oracle compares the source for empty/text/supplementary buffers and extreme,
+negative and boundary indices, including field access and subsequences. The
+complete JVM/JS/macOS suites and Linux Native test compilation passed after the
+fix; the final additional JVM boundary oracle also passed.

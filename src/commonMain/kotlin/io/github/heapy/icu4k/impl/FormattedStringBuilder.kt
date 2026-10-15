@@ -18,8 +18,16 @@ open class FormattedStringBuilder(capacity: Int = 40) : CharSequence, Appendable
         chars = source.chars.copyOf(); fields = source.fields.copyOf(); zero = source.zero; size = source.size
     }
     override val length: Int get() = size
-    override fun get(index: Int): Char = fsbCharAt(chars, zero + index)
-    fun fieldAt(index: Int): Any? = fsbFieldAt(fields, zero + index)
+    override fun get(index: Int): Char {
+        assertFormattedStringBuilder { index >= 0 }
+        assertFormattedStringBuilder { index < size }
+        return fsbCharAt(chars, zero + index)
+    }
+    fun fieldAt(index: Int): Any? {
+        assertFormattedStringBuilder { index >= 0 }
+        assertFormattedStringBuilder { index < size }
+        return fsbFieldAt(fields, zero + index)
+    }
     fun codePointCount(): Int {
         var count = 0; var i = 0
         while (i < size) { val c = get(i++); if (c.isHighSurrogate() && i < size && get(i).isLowSurrogate()) i++; count++ }
@@ -120,8 +128,13 @@ open class FormattedStringBuilder(capacity: Int = 40) : CharSequence, Appendable
         return position
     }
     @Deprecated("Use subString when returning publicly.")
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = FormattedStringBuilder(this).also {
-        it.zero = zero + startIndex; it.size = endIndex - startIndex
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
+        assertFormattedStringBuilder { startIndex >= 0 }
+        assertFormattedStringBuilder { endIndex <= size }
+        assertFormattedStringBuilder { endIndex >= startIndex }
+        return FormattedStringBuilder(this).also {
+            it.zero = zero + startIndex; it.size = endIndex - startIndex
+        }
     }
     fun subString(start: Int, end: Int): String {
         if (start < 0 || end > size || end < start) throw IndexOutOfBoundsException()
@@ -173,3 +186,5 @@ internal expect fun fsbFieldAt(values: Array<out Any?>, index: Int): Any?
 
 internal expect fun fsbCodePointAt(values: CharArray, index: Int, limit: Int): Int
 internal expect fun fsbCodePointBefore(values: CharArray, index: Int, start: Int): Int
+
+internal expect fun assertFormattedStringBuilder(condition: () -> Boolean)

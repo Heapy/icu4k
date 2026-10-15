@@ -20,3 +20,5 @@ internal actual fun fsbCodePointBefore(values: CharArray, index: Int, start: Int
     val last = fsbCharAt(values, index - 1)
     return if (last.isLowSurrogate() && index - 1 > start && fsbCharAt(values, index - 2).isHighSurrogate()) pair(fsbCharAt(values, index - 2), last) else last.code
 }
+
+internal actual fun assertFormattedStringBuilder(condition: () -> Boolean) = Unit
