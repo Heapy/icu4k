@@ -4402,3 +4402,27 @@ nulls, arithmetic/assertion short circuits and cache identity. IntegerWidth test
 compare all boundary configurations, messages and return identities. Full locale
 payload embedding remains subject to the manifest's documented subset; this does
 not establish complete CLDR payload coverage on JS/Native or a finished ICU4J port.
+
+### Portable standard math contexts
+
+The util MathContext/RoundingMode boundary now supplies the standard precision
+and eight rounding modes needed by public decimal quantities and formatters.
+JVM actual types alias java.math.MathContext/java.math.RoundingMode directly;
+JS/Native use a portable immutable context and enum. Common MathContexts exposes
+the four canonical presets (returning the actual JDK preset identities on JVM),
+and RoundingModes.valueOf maps legacy integer values. These helper objects are
+necessary because Kotlin expect companions do not match Java static members.
+They are standard-library counterparts, separate from ICU's legacy math package.
+
+The portable value core preserves constructor validation order, default HALF_UP,
+context text parsing/normalization, BMP decimal digits in precision, equality,
+hash behavior and error messages. DecimalQuantityCore now accepts typed contexts
+for magnitude and nickel rounding, while retaining its existing common BCD
+rounding implementation. No ICU4J algorithm is used in production.
+
+Common tests cover constructors, presets, textual round trips, Unicode precision,
+invalid values, legacy modes and quantity rounding. JVM oracle tests compare the
+portable core against the JDK context boundary, verify Java assignability/preset
+identity, and compare typed-context BCD rounding with ICU4J for every rounding
+mode and multiple precisions, including failure state. Public BigDecimal and
+DecimalQuantity bridges and the remaining number formatting API are still pending.

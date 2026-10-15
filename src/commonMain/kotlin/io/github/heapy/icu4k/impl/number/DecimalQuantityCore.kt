@@ -4,6 +4,7 @@ package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.impl.units.UnitDecimal
 import io.github.heapy.icu4k.impl.number.Modifier.Signum
+import io.github.heapy.icu4k.util.MathContext
 
 /** Numeric and display state from DecimalQuantity_AbstractBCD; public plural-rule and number adapters are separate. */
 internal class DecimalQuantityCore {
@@ -79,6 +80,8 @@ internal class DecimalQuantityCore {
     fun getDigit(magnitude: Int): Byte { assertDecimalBcd(!bcd.isApproximate); return bcd.getDigitPos(magnitude - bcd.scale) }
     fun roundToMagnitude(magnitude: Int, precision: Int, mode: UnitDecimal.Rounding) = round(magnitude, precision, mode, false)
     fun roundToNickel(magnitude: Int, precision: Int, mode: UnitDecimal.Rounding) = round(magnitude, precision, mode, true)
+    fun roundToMagnitude(magnitude: Int, context: MathContext?) = roundToMagnitude(magnitude, context!!.getPrecision(), UnitDecimal.Rounding.entries[context.getRoundingMode().ordinal])
+    fun roundToNickel(magnitude: Int, context: MathContext?) = roundToNickel(magnitude, context!!.getPrecision(), UnitDecimal.Rounding.entries[context.getRoundingMode().ordinal])
     private fun round(magnitude: Int, precision: Int, mode: UnitDecimal.Rounding, nickel: Boolean) {
         DecimalBcdRounding.round(bcd, isNegative(), magnitude, precision, mode.ordinal, nickel, this) { accurate() }
     }
