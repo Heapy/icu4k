@@ -6675,3 +6675,32 @@ compileTestKotlinLinuxX64 passed after the final regression additions. Linux
 tests were compiled, not executed on macOS. The preceding full run caught a
 test-only access to an upstream package-private field; fixture preparation now
 uses the existing data converter.
+
+## Incremental FCD UTF-16 collation iterator
+
+Ported FCDUTF16CollationIterator's forward/backward FCD segment checks,
+normalization, direction switching and raw-offset mapping. Canonically ordered
+raw segments remain intact; only failing segments and Tibetan composite vowels
+are decomposed into a reusable buffer. Code-point movement and CE decoding use
+the same incremental boundaries, including supplementary and unpaired UTF-16.
+Reset, partial construction and setText retain source mutation/failure order.
+
+The ICU4J 78.3 equals implementation calls equals virtually on a base-typed
+receiver, recursively dispatching to itself whenever the argument is a
+CollationIterator. This was verified in the pinned source and JAR bytecode.
+The port retains that behavior; a JVM oracle regression checks StackOverflowError
+for self-comparison and the non-iterator early return. Hash assertions remain
+specific to this source class.
+
+Common tests check normalized-segment offsets, direction changes, Tibetan
+normalization, composed FCD text, surrogate handling and CE equivalence with
+ordered input. JVM oracle tests compare root and traditional-Spanish CE streams,
+reverse offset vectors and buffers, plus every segment/cursor field and raw vs
+normalized identity after seeded direction changes and resets. Oracle data is
+still test-only; embedded collation resources, loaders, public collators,
+tailoring compilation, UCharacterIterator variants and the default RBNF scanner
+remain pending.
+
+Verification: the full jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 command passed before and after removing boxed cursor
+results from the hot forward path. Linux tests compiled, not executed on macOS.
