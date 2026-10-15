@@ -6505,3 +6505,17 @@ point or set operation changes. Common and JVM oracle regressions compare
 contains/add/remove/complement diagnostics for negative values including
 Int.MIN_VALUE and values above U+10FFFF. The full JVM/JS/macOS test run and Linux
 test compilation passed together with the collation data stage, 3m 54s.
+
+### Collation UVector32
+
+The collate module's primitive vector is now common: initial capacity 32,
+fourfold growth through capacity 0xFFFF and doubling thereafter, overlapping
+insertion, direct backing-array access, capacity-based indexing and logical
+clear without erasing storage. Insertion grows capacity before validating its
+arraycopy arguments, so a failed insertion can still publish a new backing
+array; this source behavior is retained. Explicit common bounds checks preserve
+failures on JS as well as JVM/Native. Common tests cover aliasing, clear, invalid
+insertion after growth and the 131072-to-262144 capacity boundary. A seeded JVM
+oracle compares mutable backing contents and state through 3000 mixed valid and
+invalid operations and a large growth sequence. All target checks passed in the
+3m 54s collation data verification run (Linux compiled, not run on macOS).
