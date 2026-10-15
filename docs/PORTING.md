@@ -5637,3 +5637,21 @@ DisplayContext enum values. Common tests cover protocol dispatch, metadata,
 copying, parse errors and default attributed iterators.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (2m 49s).
+
+### ICU legacy decimal MathContext
+
+Ported com.ibm.icu.math.MathContext as io.github.heapy.icu4k.math.MathContext,
+distinct from the existing java.math-compatible util.MathContext. All four
+constructors, precision bounds, notation and rounding constants, DEFAULT,
+accessors, diagnostic strings and validation order follow ICU4J. Equality stays
+identity-based. The four source package fields retain their names/types for JVM
+serialization, with the source UID and no added read-time validation. String
+rendering also preserves the source fallback for invalid deserialized state.
+
+JVM differential tests compare boundary/invalid combinations of every argument,
+all overloads, public constants, getters and strings, object-stream field shape,
+UID and round trips including constructor-bypassing state. Common regressions
+cover defaults, identity equality, notation and ordered validation diagnostics.
+Legacy ICU BigDecimal and public NumberFormat/DecimalFormat remain to be ported.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 3s).
