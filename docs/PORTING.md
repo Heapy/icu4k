@@ -6969,3 +6969,35 @@ compileTestKotlinLinuxX64 passed together in 3m 54s (Linux compiled, not execute
 on macOS). A subsequent JVM-only boundary run also passed after expanding the
 short-buffer test capacities to 0..3 bytes, exercising partial writes before
 bounds failures. Production code and common tests were unchanged for that run.
+
+## Public collation key containers
+
+Ported CollationKey and RawCollationKey. CollationKey adopts the supplied bytes,
+compares unsigned bytes up to the first terminator, computes/caches the source
+UTF-16-pair hash, constructs level bounds and merges corresponding levels with
+02 separators. Bound and merged keys have null source strings. Raw-key
+construction transfers the backing array and clears the raw owner before the
+terminator assertion, as in ICU4J. RawCollationKey's typed comparison normalizes
+to -1/0/1; comparison through ByteArrayWrapper keeps its full byte difference.
+
+The port retains lazy length/hash caches and their interaction with externally
+mutated arrays, errors for unterminated/null data, exact explicit error messages,
+and source assertion policy. toByteArray returns a copy but does not repair a
+malformed key. There is no eager validation of caller-supplied key bytes.
+
+Common tests cover ownership, copying, cached values, bounds, unequal-level
+merging and comparison overload dispatch. JVM oracle tests use ICU4J keys from
+seven locales and five strengths, checking all bound modes/level counts and all
+pairs of 13 sample strings; 1,200 malformed/mutated-array histories check lazy
+cache state after each operation, and 1,000 raw-key cases check transfer and
+comparison behavior. Oracle and target keys are constructed identically from
+arrays so their initial lazy-cache state matches.
+
+These containers do not yet expose a common public collator or generate keys;
+CollationKeys and the public collator implementation remain pending.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together. Linux tests compiled, not executed on
+macOS. The initial real-key oracle fixture was corrected to initialize the lazy
+length caches through the same constructor; no production correction was
+needed after the initial comparison.
