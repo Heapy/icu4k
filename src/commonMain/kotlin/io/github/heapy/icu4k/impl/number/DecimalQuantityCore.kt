@@ -3,6 +3,7 @@
 package io.github.heapy.icu4k.impl.number
 
 import io.github.heapy.icu4k.impl.units.UnitDecimal
+import io.github.heapy.icu4k.impl.number.Modifier.Signum
 
 /** Numeric and display state from DecimalQuantity_AbstractBCD; public plural-rule and number adapters are separate. */
 internal class DecimalQuantityCore {
@@ -62,7 +63,6 @@ internal class DecimalQuantityCore {
     fun isInfinite(): Boolean = flags and INFINITE != 0
     fun isNaN(): Boolean = flags and NAN != 0
     fun isZeroish(): Boolean = bcd.precision == 0
-    enum class Signum { NEG, NEG_ZERO, POS_ZERO, POS }
     fun signum(): Signum = if (isZeroish() && !isInfinite()) { if (isNegative()) Signum.NEG_ZERO else Signum.POS_ZERO } else if (isNegative()) Signum.NEG else Signum.POS
     fun getMagnitude(): Int = if (bcd.precision == 0) throw ArithmeticException("Magnitude is not well-defined for zero") else bcd.scale + bcd.precision - 1
     fun adjustMagnitude(delta: Int) {

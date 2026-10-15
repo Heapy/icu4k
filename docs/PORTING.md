@@ -4257,3 +4257,31 @@ nullable inputs, diagnostics, equality/comparison, FixedDecimal and serializatio
 Public DecimalQuantity sample/range/status adapters, formatted number/range
 selection and their numeric/formatting dependencies still remain to be ported;
 this is not yet the complete PluralRules API or the complete ICU4J port.
+
+### Number modifiers and range pattern offsets
+
+The public Modifier/ModifierStore contracts, Signum and mutable Parameters now
+support the number formatting pipeline. ConstantAffixModifier and
+ConstantMultiFieldModifier retain prefix/suffix insertion order, copied field
+arrays, overwrite deltas, field identity tests, code-point counts and strict
+comparison. Semantic comparison follows all sign/plural forms of parameter
+stores instead of comparing only the currently selected form. AdoptingModifierStore
+retains its four-sign and plural-indexed modes, nullable entries and assertion-only
+freeze/mode checks. DecimalQuantityCore now uses Modifier.Signum directly.
+
+SimpleModifier reuses the common compiled SimpleFormatter implementation for
+one-argument affixes and literal replacement. Its two-argument formatter and
+PrefixInfixSuffixLengthHelper retain relative offsets, field annotations and
+partial mutation before failures. The prefix/suffix formatter now permits a null
+output when the compiled pattern performs no writes, matching ICU4J's `{0}` case.
+Source assertions are checked on JVM and remain disabled on JS/Native.
+
+Common tests exercise supplementary/unpaired UTF-16, field preservation, copied
+affixes, overwrite, sign/plural selection and range indexes. JVM oracle tests
+compare affix matrices, insertion subranges, all fields, semantic store call
+traces and null handling. An isolated class loader verifies release behavior with
+assertions disabled, including writes after freeze and deferred failure for a
+null SimpleModifier pattern. Further tests compare two-argument patterns and
+buffer/helper state after failures. Currency-spacing and mutable pattern
+modifiers, public quantity numeric boundaries and complete number formatting
+remain pending.

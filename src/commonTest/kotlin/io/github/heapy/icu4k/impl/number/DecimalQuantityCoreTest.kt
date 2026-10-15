@@ -18,7 +18,7 @@ class DecimalQuantityCoreTest {
         zero.setMinFraction(3)
         assertEquals("-0", zero.toPlainString())
         assertEquals("-0.000", zero.toExponentString())
-        assertEquals(DecimalQuantityCore.Signum.NEG_ZERO, zero.signum())
+        assertEquals(Modifier.Signum.NEG_ZERO, zero.signum())
     }
     @Test fun loadingRoundingAndIncrementShareTheStateMachine() {
         val quantity = DecimalQuantityCore(2.675)
