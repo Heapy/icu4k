@@ -58,7 +58,7 @@ internal class UnitConversionFactor {
     private fun addPoweredEntity(entity: String) {
         val parts = javaSplit(entity, '^')
         assertUnitFactor(parts.size == 1 || parts.size == 2)
-        val power = if (parts.size == 2) parts[1].toInt() else 1
+        val power = if (parts.size == 2) io.github.heapy.icu4k.impl.number.DecimalNumberParsing.int(parts[1]) else 1
         addEntity(parts[0], power)
     }
     private fun addEntity(entity: String, power: Int) {

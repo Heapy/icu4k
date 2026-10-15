@@ -27,7 +27,7 @@ class UnitConversionFactorOracleTest {
         }
     }
     @Test fun compositeExpressionsPreserveSourcePowerAndScaleBehavior() {
-        val expressions = listOf("1", "1.00", "1e-20", " 2 \t* 3 / 4 ", "PI", "PI^2", "ft2_to_m2", "ft3_to_m3", "in3_to_m3^0", "gal_to_m3^2", "in3_to_m3^-1", "G*gravity", "3^-2", "ft_to_m/ft_to_m", "PI*12.0/PI", "AMU*item_per_mole", "meters_per_AU/sec_per_julian_year")
+        val expressions = listOf("٢^٣", "1", "1.00", "1e-20", " 2 \t* 3 / 4 ", "PI", "PI^2", "ft2_to_m2", "ft3_to_m3", "in3_to_m3^0", "gal_to_m3^2", "in3_to_m3^-1", "G*gravity", "3^-2", "ft_to_m/ft_to_m", "PI*12.0/PI", "AMU*item_per_mole", "meters_per_AU/sec_per_julian_year")
         for (a in expressions) {
             val j = JFactor.processFactor(a); val k = UnitConversionFactor.processFactor(a)
             check(j, k, a)

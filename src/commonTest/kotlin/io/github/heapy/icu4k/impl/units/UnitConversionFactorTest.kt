@@ -12,6 +12,7 @@ class UnitConversionFactorTest {
         assertEquals("304.8000", foot.applyPrefix(MeasurePrefix.KILO).getConversionRate().toString())
         assertEquals("0.3048", foot.getConversionRate().toString())
         assertEquals("0.125", UnitConversionFactor.processFactor("2^-3").getConversionRate().toString())
+        assertEquals("8", UnitConversionFactor.processFactor("٢^٣").getConversionRate().toString())
         assertEquals("0.003785411784", UnitConversionFactor.processFactor("gal_to_m3").getConversionRate().toString())
     }
     @Test fun dataFactorsAndTemperatureOffsetUseCommonArithmetic() {
