@@ -4587,3 +4587,36 @@ delegates without attempting to serialize cached locale implementation objects.
 Oracle tests compare stream field descriptors/UID and round-trip locale identity,
 BCP47 conversion, Java Locale conversion and components before/after cache warming.
 The change also enables serialized DecimalFormatSymbols to retain locale metadata.
+
+
+### Public decimal format symbols
+
+Added DecimalFormatSymbols and a cached locale/numbering-system symbols loader.
+Digits, symbol characters/strings, monetary overrides, spacing, locale identity,
+copy-on-write mutation, source equality/hash behavior and JVM locale overloads are
+exposed through the public API. The loader follows NumberElements fallback and
+Latin fallback, retains valid locale metadata, and resolves optional numbering
+systems through the source locale-key route. Currency names and format overrides
+use the existing portable currency provider and public Currency facade.
+
+JVM cloning uses Object.clone and JS cloning copies own property descriptors onto
+the same prototype; both retain unknown subclass type/state and shallow array
+sharing. Native copies the known DecimalFormatSymbols fields. Generic cloning of
+unknown user subclasses is still pending on Native: Kotlin/Native 2.4.21 has no
+supported generic object-clone API, so such subclasses currently override clone()
+to copy their extra state. All public array setters retain the source copy-on-write
+behavior, including cached/default digit arrays and currency spacing arrays.
+
+JVM deserialization implements source stream versions 0 through 10, including
+legacy character/string defaults, locale defaults, spacing defaults, transient
+currency recreation and digit/codePointZero rebuilding. The tests synthesize those
+version states and compare round trips with ICU4J; cross-package reading of old ICU
+streams is not claimed.
+
+Oracle tests cover all available locales, every available numbering system on a
+locale matrix, character/string setters and failures, empty/multi-code-point and
+supplementary digits, array aliasing, source equality omissions/null failures,
+currency overrides and same-currency early return, subclass cloning and all stream
+migration versions. Common tests exercise initialization and copy-on-write behavior
+on JVM, JS and Native; a JS-specific subclass clone test checks prototype/state.
+Full DecimalFormat and NumberFormatter integration remains pending.
