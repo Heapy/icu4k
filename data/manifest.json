@@ -1564,6 +1564,14 @@
       "object": "RbnfZhTWResourceData",
       "sha256": "3836750eb62a02a3dbdc6690b265d51c395bc256ca1bf558a91bdd6a56a7d2a3",
       "size": 112
+    },
+    {
+      "name": "coll/ucadata.icu",
+      "file": "data/icu78/coll/ucadata.icu",
+      "object": "UcaData",
+      "sha256": "e19cc11f62d76380c223aa5a9fa7c2eed1d1f86bb48229a5e8c05d8d1a8b5ae2",
+      "size": 597168,
+      "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/ucadata.icu"
     }
   ]
 }

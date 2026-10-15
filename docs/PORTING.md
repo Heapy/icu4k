@@ -6880,3 +6880,35 @@ literal in a test fixture, jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 44s. Linux tests compiled, not
 executed on macOS. Oracle rebuilds matched eight real root/tailoring data sets,
 six synthetic capacity cases and additional context/failure fixtures.
+
+## Collation data reader, tailoring container and embedded root
+
+Ported CollationDataReader (UCol format 5), CollationTailoring and CollationRoot
+into commonMain. The reader loads mappings, CE arrays, contexts, unsafe-backward
+ranges, fast Latin tables, script groups, compressible bytes and settings; it
+preserves base-data aliases, copy-on-write settings, source assignment order and
+version packing. Tailoring rules remain lazy when supplied as a resource.
+CollationRoot caches its loaded tailoring or its initialization failure.
+
+Embedded the unmodified 597,168-byte coll/ucadata.icu from the pinned ICU4J 78.3
+collate module. Its individual manifest entry records the collate source path;
+the other resources retain their core-module provenance. The generator verifies
+its size and SHA-256. There are now 219 embedded resources.
+
+Common tests exercise real root loading, aliases, frozen unsafe-backward data,
+settings-only tailoring, copy-on-write and invalid indexes. JVM oracle tests
+compare all 1,114,112 code-point CE32 mappings, all loaded data arrays, settings,
+version arithmetic and the exact final cursor against ICU4J. The source leaves
+12 trailing resource bytes unread; the port does too. Version tests cover 2,000
+signed random version pairs and every representable UCA major/minor/milli
+combination used by makeBaseVersion.
+
+Public collators, locale collation resource loading and tailoring compilation
+remain pending. This stage supplies real root data to the existing common
+collation algorithms; it does not complete the ICU4J port.
+
+Verification: generate-data.py --check passed for 219 resources. Final jvmTest,
+jsNodeTest, macosArm64Test and compileTestKotlinLinuxX64 passed. Linux tests were
+compiled, not executed on macOS. The oracle uses reflection for ICU4J's
+package-private version helpers; the first comparison was corrected to match
+the source's trailing-byte cursor rather than requiring complete consumption.
