@@ -96,7 +96,7 @@ resolved unit metadata. `toFormat()` produces a Java `Format` on JVM and a porta
 adapter on JS/Native; the Common append overload uses `StringBuilder`.
 Nested enum names in `NumberFormatter` are Kotlin aliases for the existing
 standalone enums. JVM `java.util.Locale` entry points are Kotlin extensions.
-Legacy NumberFormat/DecimalFormat and the remaining ICU services are still being
+Localized NumberFormat factories and the remaining ICU services are still being
 ported; locale resource coverage is still incremental.
 
 Numeric ranges are available through `NumberRangeFormatter`, including field
@@ -230,3 +230,17 @@ println(decimal.parse("1,234.50")) // 1234.5
 ```
 
 Localized `NumberFormat` factories and rule-based number formatting are still being ported.
+
+`MessagePattern` parses message, choice, plural and select patterns in Common Kotlin:
+
+```kotlin
+import io.github.heapy.icu4k.text.MessagePattern
+
+val message = MessagePattern("{n,plural,one{# file}other{# files}}")
+for (i in 0..<message.countParts()) {
+    println(message.getPart(i))
+}
+```
+
+The parser exposes syntax parts and nested-message boundaries; rendering with
+`MessageFormat`, `PluralFormat` and `SelectFormat` is still being ported.
