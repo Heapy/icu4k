@@ -6189,3 +6189,38 @@ unfinished. Corrected two test-adapter issues after the first run (delegated
 Any.toString and target-specific Double string rendering).
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed, final run 2m 5s. Linux was compiled, not run.
+
+### RBNF concrete substitutions
+
+Ported NFSubstitution and all seven concrete implementations into
+RbnfSubstitutionCore: same-value, multiplier, modulus (including predecessor
+bypass), integral part, fractional part, absolute value and numerator. Uses the
+ported DecimalQuantity_DualStorageBCD for fractional digit formatting/parsing
+and the common DecimalFormat for numeric substitution patterns. Internal
+RbnfSubstitutionOwner supplies graph lookup, default rule set, decimal formatter
+and current rounding mode. Public RuleBasedNumberFormat initialization and
+facade wiring remain unfinished; the default collation-backed lenient scanner
+is also still pending.
+
+Preserved source long-to-double precision loss in multiplier transforms, the
+signed 2^53 formatting branch, infinity dispatch, denominator selection effects,
+zero-padding parse position behavior, constructor/setter failure state,
+asymmetric substitution equality and NaN-denominator equality. JS host helpers
+preserve virtual Number int/long conversions and primitive saturation/truncation.
+The source's unbounded zero-padding loops are not silently changed; tests avoid
+inputs that do not terminate in ICU4J.
+
+Common tests build real common-only graphs through rule sets, rules and concrete
+substitutions. They cover English spellout, fractions, numeric patterns, forced
+predecessor rules, digit spacing, leading zeros, parsing, numeric boundaries and
+virtual conversions. The fixture repeats the outer formatter's whitespace
+preparation before passing text to NFRuleSet; its first version omitted this
+preparation and the initial graph tests correctly failed.
+JVM differential tests cover every concrete substitution's transforms,
+composition, bounds, factory errors, formatting and parsing; numerator padding;
+current rounding modes; failed divisor updates; and entire graphs with compound
+rules and deterministic random values. These tests use actual common
+substitutions, without the ICU substitution adapters used by the earlier NFRule
+isolation tests. Production has no ICU4J dependency.
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed, final run 2m 46s (Linux compiled, not run).
