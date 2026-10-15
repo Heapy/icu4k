@@ -5793,3 +5793,24 @@ Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (4m 58s). Repository exploration confirmed no existing
 Common BigInteger type; UnitDecimal supplies decimal arbitrary precision and
 low-bit arithmetic, but a public integer boundary/radix API remains needed.
+
+### Common arbitrary-integer interchange boundary
+
+Added util.BigInteger as an expect/actual boundary: JVM aliases java.math.BigInteger;
+JS and Native use immutable Common decimal-magnitude storage. The Common contract
+covers String construction with radix, sign, comparison, equality/hash, radix
+output and Number conversions required by ICU decimal interchange. This is a
+subset boundary, not a port of the complete JDK BigInteger arithmetic API.
+
+Radix parsing/output supports bases 2 through 36, Unicode BMP decimal digits,
+leading signs/zeros and JDK invalid-output-radix fallback. Parsing preserves
+JDK validation order and Integer.parseInt group diagnostics. Numeric conversions
+retain signed low bits; Float uses the existing exact midpoint correction.
+Hashing reproduces the JDK unsigned 32-bit word polynomial.
+
+JVM differential tests compare 180 randomized integers plus bounds across valid
+and invalid radices, parsing diagnostics, hash, comparison and primitive values.
+Common regressions exercise radix interchange, Unicode digits, negative zero,
+low bits and Float ties. All checks passed: jvmTest, jsNodeTest, macosArm64Test
+and compileTestKotlinLinuxX64 (3m 58s). The public legacy math.BigDecimal facade
+and remaining legacy formatter integration still remain to be ported.
