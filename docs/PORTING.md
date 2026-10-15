@@ -4182,3 +4182,23 @@ all distinct cardinal and ordinal locale rule sets supplied by the test oracle
 and compares canonical descriptions, sample metadata, limitedness and selection.
 This remains an internal core: public PluralRules/DecimalQuantity adapters,
 locale rule resource loading and the remaining plural APIs still need porting.
+
+### Plural sample queries and keyword status
+
+`PluralRuleSamplesCore` ports sample queries, all-values queries, unique-value
+sentinels and keyword status with explicit-value subtraction and integer offsets.
+Explicit ranges expand into immutable quantity collections; converted double
+sets retain the source's mutability. Quantity collection runtime set/non-set
+shape and iterator mutation rejection are preserved on JVM. The fallback scan
+retains the ICU4J by-value maxCount behavior, the 200 integer / 2000 decimal
+candidates and the additional million-valued candidate. No new sample cap is
+introduced. Missing samples and missing keywords retain source null/empty and
+status failure distinctions.
+
+Common tests cover fallback enumeration, visible zeros, unique values,
+suppression and output clearing. JVM oracle tests compare both sample types,
+all-values results, offsets (including Int.MIN_VALUE), explicit sets, collection
+mutation and all keyword statuses. A locale corpus test additionally compares
+sample expansion, uniqueness and status for every distinct cardinal/ordinal
+rule set from ICU4J. This is still an internal layer; public plural-rule and
+quantity adapters, locale resource loading and remaining APIs are pending.
