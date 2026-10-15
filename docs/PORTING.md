@@ -7107,3 +7107,33 @@ compileTestKotlinLinuxX64 passed together in 4m 22s (Linux compiled, not execute
 on macOS). The boundary oracle found the appendCodePoint error-message mismatch;
 the common helper now reproduces the source message. Surrogate prefix reversal
 passed on all three executed platforms.
+
+## Tailored mapping set comparison
+
+Ported TailoredSet, including indirect CE32 resolution, comparison of copied
+expansion contents at different offsets, prefix/suffix trie merges, offset-base
+comparison and Hangul membership propagation from tailored Jamo. It preserves
+source traversal order, accumulated output across reuse and partially built
+prefix/suffix state on errors, including mutation of the prefix before adding
+its string to the output set.
+
+Exhaustion sentinels use explicit identity state: Java compares sentinel String
+objects by reference, while JavaScript strings would otherwise compare by value.
+The two-U+FFFF suffix sentinel still permits a real single-U+FFFF boundary
+contraction. Prefix reversal follows Java's surrogate-pair behavior on every
+target, as in ContractionsAndExpansions.
+
+Common tests check simple/copied mappings, expansion contents, parallel context
+adds/removals/changes, supplementary/malformed prefix reversal and Hangul/Jamo
+propagation. JVM tests compare every upstream indexed locale plus five rule-built
+tailorings, normal/frozen/null output sets, repeated enumeration and private
+accumulator state. Another 300 synthetic cases cover different CE32 categories,
+array changes and missing metadata. An initial test compilation failure from a
+local variable shadowing the ce32s field was corrected with an explicit receiver.
+Public collator APIs and tailoring compilation remain pending.
+
+Verification: final jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 25s. Linux tests compiled, not
+executed on macOS. The production implementation required no changes after its
+initial JVM compilation and oracle comparison; the parallel-context and
+surrogate-prefix fixtures passed on all three executed platforms.
