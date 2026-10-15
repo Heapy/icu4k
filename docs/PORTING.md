@@ -5423,3 +5423,56 @@ exact Long above 2^53, and Common public-formatter tests cover both number and
 format-adapter entry points. Full JVM/JS/macOS tests and Linux Native test
 compilation passed; the final JS-only regression also passed. This does not fix
 the separately documented Kotlin/JS generic Number.toLong/toInt intrinsic gap.
+
+## Public fluent number formatter and skeleton cache
+
+Added NumberFormatterSettings, NumberFormatter, UnlocalizedNumberFormatter and
+LocalizedNumberFormatter. All fluent settings use immutable linked nodes with
+source-order lazy, volatile MacroProps resolution, seen-key handling, fallback
+nodes, null/empty usage semantics, symbol cloning, display cases, equality and
+hash behavior. Explicit default settings need not compare equal to unset values;
+threshold remains excluded from MacroProps equality, as upstream. Deprecated
+macros/padding/threshold/case entry points remain functional. NumberFormatter's
+nested enum spellings are Kotlin aliases for the maintained standalone enums;
+JVM java.util.Locale entry points follow the existing ULocale Kotlin-extension
+adapter convention.
+
+NumberSkeletonImpl now supplies the source soft cache and create/getOrCreate
+binding, keyed by unnormalized input. Public forSkeleton/toSkeleton use the
+complete parser/generator. NumberPropertyMapper's three create overloads and
+NumberFormatter.fromDecimalFormat now expose the existing legacy validation path.
+Localized formatting supports Long/Double/Number/Measure, FormattedNumber results,
+withoutLocale, affix extraction and the volatile last-unit override cache.
+Objects.equals identity short-circuiting and virtual equals calls are preserved.
+The shared execution core now resolves settings lazily and retains the source's
+extra unsafe-path resolution, atomic count, affix/format shared threshold,
+compilation failure behavior and volatile compiled publication. Mixed-unit integer
+formatting now uses the public NumberFormatter.withLocale path directly.
+
+Added LocalizedNumberFormatterAsFormat with a shared core. JVM instances extend
+java.text.Format, support StringBuffer/FieldPosition, character iterators,
+MessageFormat integration, source equality/hash and the Externalizable proxy
+(version byte, language tag, skeleton, serialVersionUID 1). Portable append calls
+use StringBuilder/FormatFieldPosition; JS/Native offer the same numeric formatting
+and explicit unsupported parse policy without JDK dependencies. The JVM actual
+uses a typealias to its Format subclass implementation. Number validation,
+position reset/offset updates, append order and checked IO wrapping preserve the
+source contract. The adapter retains its supplied formatter reference.
+
+JVM oracles compare public chains, all execution thresholds, full skeletons,
+measure overrides, locale removal, cached macro resolution, cloned symbols,
+display-option/null/fallback behavior, equality relations, affix extraction and
+legacy factory exports. Compilation count and failed-compilation behavior are
+checked against ICU4J fields. Adapter tests cover fields and append offsets,
+validation/null failures, real MessageFormat use, serialization/unsupported
+serialization and wrapped identity. Common tests exercise public formatting,
+precision, mixed units, symbol copies, lazy resolution, portable adapter behavior
+and generic fractional/special Numbers. Full checks passed: jvmTest, jsNodeTest,
+macosArm64Test and compileTestKotlinLinuxX64; final isolated JS regression also
+passed. The prior generic Number.toLong/toInt JS intrinsic regression remains
+explicitly skipped. README now includes executable public API examples.
+
+The fluent number formatter and result/skeleton chain are connected. Full ICU4J
+porting remains incomplete: legacy NumberFormat/DecimalFormat services and
+parsing, number ranges and other ICU subsystems still require work, and locale
+resource coverage remains incremental.

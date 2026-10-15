@@ -9,6 +9,14 @@ import io.github.heapy.icu4k.util.Currency.CurrencyUsage
 
 /** Legacy DecimalFormat property validation and projection into formatter macro settings. */
 internal object NumberPropertyMapper {
+    fun create(properties: DecimalFormatProperties?, symbols: DecimalFormatSymbols?): UnlocalizedNumberFormatter =
+        NumberFormatter.with().macros(oldToNew(properties, symbols, null))
+    fun create(properties: DecimalFormatProperties?, symbols: DecimalFormatSymbols?, exportedProperties: DecimalFormatProperties?): UnlocalizedNumberFormatter =
+        NumberFormatter.with().macros(oldToNew(properties, symbols, exportedProperties))
+    fun create(pattern: String?, symbols: DecimalFormatSymbols?): UnlocalizedNumberFormatter {
+        val properties = PatternStringParser.parseToProperties(pattern)
+        return create(properties, symbols)
+    }
     fun oldToNew(properties: DecimalFormatProperties?, symbols: DecimalFormatSymbols?,
         exportedProperties: DecimalFormatProperties?): MacroProps {
         val macros = MacroProps()

@@ -5,7 +5,8 @@ package io.github.heapy.icu4k.impl.number
 import io.github.heapy.icu4k.impl.FormattedStringBuilder
 import io.github.heapy.icu4k.impl.SimpleFormatterImpl
 import io.github.heapy.icu4k.impl.StandardPlural
-import io.github.heapy.icu4k.number.NumberFormatterExecution
+import io.github.heapy.icu4k.number.NumberFormatter
+import io.github.heapy.icu4k.number.LocalizedNumberFormatter
 import io.github.heapy.icu4k.number.UnitWidth
 import io.github.heapy.icu4k.text.ListFormatter
 import io.github.heapy.icu4k.text.PluralRules
@@ -18,7 +19,7 @@ import kotlin.jvm.JvmStatic
 open class MixedUnitLongNameHandler private constructor(private val rules: PluralRules?, private val parent: MicroPropsGenerator?) :
     MicroPropsGenerator, ModifierStore, LongNameMultiplexer.ParentlessMicroPropsGenerator {
     private var data: MutableList<Array<String?>>? = null
-    private var integerFormatter: NumberFormatterExecution? = null
+    private var integerFormatter: LocalizedNumberFormatter? = null
     private var listFormatter: ListFormatter? = null
     override fun processQuantity(quantity: DecimalQuantity?): MicroProps {
         assertMixedUnitLongNameHandler({ data!!.size > 1 }) { null }
@@ -87,7 +88,7 @@ open class MixedUnitLongNameHandler private constructor(private val rules: Plura
             if (width == UnitWidth.NARROW) listWidth = ListFormatter.Width.NARROW
             else if (width == UnitWidth.FULL_NAME) listWidth = ListFormatter.Width.WIDE
             result.listFormatter = ListFormatter.getInstance(locale, ListFormatter.Type.UNITS, listWidth)
-            result.integerFormatter = NumberFormatterExecution(MacroProps().also { it.loc = locale; it.threshold = 3L })
+            result.integerFormatter = NumberFormatter.withLocale(locale)
             return result
         }
     }

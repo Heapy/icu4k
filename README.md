@@ -73,7 +73,31 @@ val custom = PluralRules.parseDescription("one: n = 1; few: n = 2..4")
 println(custom.select(3.0)) // few
 ```
 
-Decimal-quantity and formatted-number adapters are still in progress.
+Fluent number formatting and formatted-number results are available in Common Kotlin:
+
+```kotlin
+import io.github.heapy.icu4k.number.NumberFormatter
+import io.github.heapy.icu4k.number.Precision
+import io.github.heapy.icu4k.util.BigDecimal
+import io.github.heapy.icu4k.util.ULocale
+
+val formatter = NumberFormatter.with()
+    .precision(Precision.fixedFraction(2))
+    .locale(ULocale.ENGLISH)
+println(formatter.format(BigDecimal("12.345"))) // 12.34
+
+val mixed = NumberFormatter.forSkeleton("unit/foot-and-inch unit-width-full-name")
+    .locale(ULocale.ENGLISH)
+println(mixed.format(1.5)) // 1 foot, 6 inches
+```
+
+`FormattedNumber` exports fields, attributed runs, rounded decimal values and
+resolved unit metadata. `toFormat()` produces a Java `Format` on JVM and a portable
+adapter on JS/Native; the Common append overload uses `StringBuilder`.
+Nested enum names in `NumberFormatter` are Kotlin aliases for the existing
+standalone enums. JVM `java.util.Locale` entry points are Kotlin extensions.
+Legacy NumberFormat/DecimalFormat and the remaining ICU services are still being
+ported; locale resource coverage is still incremental.
 
 ICU binary bundles support typed lookup, aliases and locale/path fallback:
 
