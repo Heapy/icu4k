@@ -243,4 +243,16 @@ for (i in 0..<message.countParts()) {
 ```
 
 The parser exposes syntax parts and nested-message boundaries; rendering with
-`MessageFormat`, `PluralFormat` and `SelectFormat` is still being ported.
+`MessageFormat` and `PluralFormat` is still being ported.
+
+`SelectFormat` selects a message by keyword and falls back to `other`:
+
+```kotlin
+import io.github.heapy.icu4k.text.SelectFormat
+
+val selection = SelectFormat("female{She} male{He} other{They}")
+println(selection.format("female")) // She
+println(selection.format("unknown")) // They
+```
+
+Nested message arguments are returned as pattern text, as in ICU4J.
