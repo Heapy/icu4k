@@ -4,8 +4,19 @@ package io.github.heapy.icu4k.impl
 
 import io.github.heapy.icu4k.text.UTF16
 
-/** ICU utilities; currently the original escape decoder. */
+/** Shared ICU string, escaping and append utilities. */
 internal object Utility {
+    fun charSequenceEquals(a: CharSequence?, b: CharSequence?): Boolean {
+        if (a === b) return true
+        if (a == null || b == null) return false
+        if (a.length != b.length) return false
+        var i = 0
+        while (i < a.length) {
+            if (a[i] != b[i]) return false
+            i++
+        }
+        return true
+    }
     fun <A : Appendable> appendTo(string: CharSequence, appendable: A): A {
         appendUtilityText(appendable, string)
         return appendable

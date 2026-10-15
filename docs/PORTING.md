@@ -5355,3 +5355,21 @@ and LocalizedNumberFormatter facades and skeleton parsing/generation remain
 pending, as do legacy formatters and other ICU4J subsystems. FormattedNumber is
 ready for those facades; its package-level construction is currently used by
 common tests with the complete internal number pipeline.
+
+## StringSegment parser windows
+
+Ported the complete StringSegment wrapper and Utility.charSequenceEquals. Mutable
+offset/length windows, first code point, underlying-string codePointAt, char and
+slice access, code-point advances, simple case folding, prefix matching, UnicodeSet
+matching, exact content equality and debug/asString views follow ICU4J. Logical
+end handling intentionally differs between getCodePoint (bounded) and
+codePointAt/char access (underlying string); a cut surrogate pair exposes that
+source behavior. Bounds are assertion-only where upstream uses assertions, with
+lazy JVM checks and omitted condition evaluation on JS/Native. setOffset only
+checks its upper bound, matching the source's negative-offset behavior.
+
+JVM differential tests compare all operations across empty strings, surrogate
+windows, invalid/failed mutations, folds, sets, null/empty comparisons and
+CharSequence callback order. Common tests cover cut-pair behavior, relative
+access, window reset, code-point advancement and folding versus exact matching.
+The full JVM/JS/macOS suites and Linux Native test compilation passed.
