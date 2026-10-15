@@ -11,6 +11,140 @@ internal class IcuDecimalValue {
     var mant: ByteArray = ZERO
     var exp: Int = 0
     fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.mant = mant; it.exp = exp }
+    fun longValueExact(): Long {
+        if (ind.toInt() == 0) return 0L
+        var lodigit = mant.size - 1
+        val useexp: Int
+        if (exp < 0) {
+            lodigit += exp
+            val cstart = if (lodigit < 0) 0 else lodigit + 1
+            if (!IcuDecimalDigits.allZero(mant, cstart)) throw ArithmeticException("Decimal part non-zero: $this")
+            if (lodigit < 0) return 0L
+            useexp = 0
+        } else {
+            // ICU's source rejects 19-digit exponent-zero values here; preserve this asymmetry.
+            if (exp + mant.size > 18) throw ArithmeticException("Conversion overflow: $this")
+            useexp = exp
+        }
+        var result = 0L
+        for (i in 0..lodigit + useexp) { result *= 10; if (i <= lodigit) result += mant[i] }
+        if (lodigit + useexp == 18 && result / 1000000000000000000L != mant[0].toLong()) {
+            if (result == Long.MIN_VALUE && ind.toInt() == -1 && mant[0].toInt() == 9) return result
+            throw ArithmeticException("Conversion overflow: $this")
+        }
+        return if (ind.toInt() == 1) result else -result
+    }
+    fun byteValueExact(): Byte {
+        val value = intValueExact()
+        if (value > 127 || value < -128) throw ArithmeticException("Conversion overflow: $this")
+        return value.toByte()
+    }
+    fun shortValueExact(): Short {
+        val value = intValueExact()
+        if (value > 32767 || value < -32768) throw ArithmeticException("Conversion overflow: $this")
+        return value.toShort()
+    }
+    fun doubleValue(): Double = toString().toDouble()
+    fun floatValue(): Float = icuDecimalToFloat(toString())
+    fun signum(): Int = ind.toInt()
+    fun movePointLeft(n: Int): IcuDecimalValue = copy().also { it.exp -= n }.finish(PLAIN_CONTEXT, false)
+    fun movePointRight(n: Int): IcuDecimalValue = copy().also { it.exp += n }.finish(PLAIN_CONTEXT, false)
+    /** Equality operation for the eventual immutable facade; working values retain object identity. */
+    fun sameRepresentation(rhs: IcuDecimalValue?): Boolean {
+        if (rhs == null || ind != rhs.ind) return false
+        if ((mant.size == rhs.mant.size) and (exp == rhs.exp) and (form == rhs.form)) return mant.contentEquals(rhs.mant)
+        return layout().contentEquals(rhs.layout())
+    }
+    fun representationHashCode(): Int = toString().hashCode()
+    fun format(before: Int, after: Int): String = format(before, after, -1, -1, MathContext.SCIENTIFIC, MathContext.ROUND_HALF_UP)
+    fun format(before: Int, after: Int, explaces: Int, exdigits: Int, initialForm: Int, initialRound: Int): String {
+        fun badarg(position: Int, value: Int): Nothing = throw IllegalArgumentException("Bad argument $position to format: $value")
+        if (before < -1 || before == 0) badarg(1, before)
+        if (after < -1) badarg(2, after)
+        if (explaces < -1 || explaces == 0) badarg(3, explaces)
+        // This diagnostic uses explaces in ICU4J, rather than exdigits.
+        if (exdigits < -1) badarg(4, explaces)
+        val exform = when (initialForm) {
+            MathContext.SCIENTIFIC, MathContext.ENGINEERING -> initialForm
+            -1 -> MathContext.SCIENTIFIC
+            else -> badarg(5, initialForm)
+        }
+        var exround = initialRound
+        if (exround != MathContext.ROUND_HALF_UP) {
+            try {
+                if (exround == -1) exround = MathContext.ROUND_HALF_UP
+                else MathContext(9, MathContext.SCIENTIFIC, false, exround)
+            } catch (failure: IllegalArgumentException) { badarg(6, exround) }
+        }
+        val num = copy()
+        if (exdigits == -1 || num.ind.toInt() == 0) num.form = MathContext.PLAIN.toByte()
+        else {
+            val mag = num.exp + num.mant.size
+            num.form = if (mag > exdigits || mag < -5) exform.toByte() else MathContext.PLAIN.toByte()
+        }
+        if (after >= 0) {
+            while (true) {
+                val thisafter = when (num.form.toInt()) {
+                    MathContext.PLAIN -> -num.exp
+                    MathContext.SCIENTIFIC -> num.mant.size - 1
+                    else -> {
+                        var lead = (num.exp + num.mant.size - 1) % 3
+                        if (lead < 0) lead += 3
+                        lead++
+                        if (lead >= num.mant.size) 0 else num.mant.size - lead
+                    }
+                }
+                if (thisafter == after) break
+                if (thisafter < after) {
+                    num.mant = IcuDecimalDigits.extend(num.mant, num.mant.size + after - thisafter)
+                    num.exp -= after - thisafter
+                    if (num.exp < MIN_EXP) throw ArithmeticException("Exponent Overflow: ${num.exp}")
+                    break
+                }
+                val chop = thisafter - after
+                if (chop > num.mant.size) { num.mant = ZERO; num.ind = 0; num.exp = 0; continue }
+                val need = num.mant.size - chop
+                val oldexp = num.exp
+                num.round(need, exround)
+                if (num.exp - oldexp == chop) break
+            }
+        }
+        var chars = num.layout()
+        if (before > 0) {
+            var p = 0
+            while (p < chars.size) { if (chars[p] == '.' || chars[p] == 'E') break; p++ }
+            if (p > before) badarg(1, before)
+            if (p < before) {
+                val expanded = CharArray(chars.size + before - p)
+                var i = 0; var remaining = before - p
+                while (remaining > 0) { expanded[i++] = ' '; remaining-- }
+                chars.copyInto(expanded, i); chars = expanded
+            }
+        }
+        if (explaces > 0) {
+            var p = chars.size - 1
+            var remaining = chars.size - 1
+            while (remaining > 0) { if (chars[p] == 'E') break; remaining--; p-- }
+            if (p == 0) {
+                val expanded = CharArray(chars.size + explaces + 2)
+                chars.copyInto(expanded)
+                var i = chars.size; remaining = explaces + 2
+                while (remaining > 0) { expanded[i++] = ' '; remaining-- }
+                chars = expanded
+            } else {
+                val places = chars.size - p - 2
+                if (places > explaces) badarg(3, explaces)
+                if (places < explaces) {
+                    val expanded = CharArray(chars.size + explaces - places)
+                    chars.copyInto(expanded, 0, 0, p + 2)
+                    var i = p + 2; remaining = explaces - places
+                    while (remaining > 0) { expanded[i++] = '0'; remaining-- }
+                    chars.copyInto(expanded, i, p + 2, p + 2 + places); chars = expanded
+                }
+            }
+        }
+        return chars.concatToString()
+    }
     fun scale(): Int = if (exp >= 0) 0 else -exp
     fun setScale(scale: Int, mode: Int = MathContext.ROUND_UNNECESSARY): IcuDecimalValue {
         val ourscale = scale()
@@ -542,4 +676,44 @@ internal class IcuDecimalValue {
             return value
         }
     }
+}
+
+internal expect fun icuDecimalToFloat(text: String): Float
+
+/** Correct a binary64-to-binary32 candidate using exact decimal midpoint comparisons. */
+internal fun icuDecimalFloatFromCandidate(text: String, candidate: Float): Float {
+    val value = IcuDecimalValue.parse(text)
+    val negative = value.ind < 0
+    if (negative) value.ind = 1
+    var bits = candidate.toRawBits() and 0x7fffffff
+    fun midpoint(lowerBits: Int): IcuDecimalValue {
+        val exponent = lowerBits ushr 23
+        val significand = if (exponent == 0) lowerBits and 0x7fffff else (lowerBits and 0x7fffff) or 0x800000
+        val power = (if (exponent == 0) -149 else exponent - 150) - 1
+        var boundary = IcuDecimalValue.parse((significand * 2 + 1).toString())
+        if (power >= 0) boundary = boundary.multiply(IcuDecimalValue.parse("2").pow(IcuDecimalValue.parse(power.toString())))
+        else { boundary = boundary.multiply(IcuDecimalValue.parse("5").pow(IcuDecimalValue.parse((-power).toString()))); boundary.exp += power }
+        return boundary
+    }
+    fun compare(boundary: IcuDecimalValue): Int {
+        if (value.ind.toInt() == 0) return -1
+        val magnitude = value.exp.toLong() + value.mant.size
+        val boundaryMagnitude = boundary.exp.toLong() + boundary.mant.size
+        if (magnitude != boundaryMagnitude) return if (magnitude < boundaryMagnitude) -1 else 1
+        for (i in 0 until maxOf(value.mant.size, boundary.mant.size)) {
+            val a = if (i < value.mant.size) value.mant[i].toInt() else 0
+            val b = if (i < boundary.mant.size) boundary.mant[i].toInt() else 0
+            if (a != b) return if (a < b) -1 else 1
+        }
+        return 0
+    }
+    if (bits > 0) {
+        val comparison = compare(midpoint(bits - 1))
+        if (comparison < 0 || comparison == 0 && bits and 1 != 0) return Float.fromBits((bits - 1) or if (negative) Int.MIN_VALUE else 0)
+    }
+    if (bits < 0x7f800000) {
+        val comparison = compare(midpoint(bits))
+        if (comparison > 0 || comparison == 0 && bits and 1 != 0) bits++
+    }
+    return Float.fromBits(bits or if (negative) Int.MIN_VALUE else 0)
 }

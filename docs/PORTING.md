@@ -5740,3 +5740,30 @@ The legacy public BigDecimal facade, remaining conversions and format methods
 are still incomplete; public NumberFormat/DecimalFormat integration also remains.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 48s).
+
+### Legacy decimal formatting, exact conversions and representation
+
+Added both source format overloads, field/exponent padding, scientific/engineering
+selection, fractional digit adjustment/carry loops and ordered diagnostics to
+IcuDecimalValue. The source argument-4 diagnostic referring to explaces is kept.
+Added exact Long/Byte/Short conversion, floating conversion, signum, point shifts,
+representation equality and layout-based hash operations. Source longValueExact's
+19-digit exponent-zero rejection versus fractional-zero path is preserved.
+Working-state identity remains unchanged; representation comparison is explicit
+for use by the forthcoming immutable public facade.
+
+JVM float conversion uses the platform decimal-to-Float parser. JS and Native
+correct their platform candidates using exact IEEE binary32 midpoint comparisons, avoiding
+decimal-to-Double-to-Float double rounding at ties, zero and overflow. Comparisons
+use decimal magnitudes/virtual digits rather than materializing enormous plain
+values. The Native correction also handles an observed platform rounding error just above
+the zero/subnormal midpoint. JVM parsing is unchanged.
+
+JVM matrices compare valid/invalid formatting policies, exact conversions, point
+motion, equality/hash and difficult Float boundaries against ICU4J. Common tests
+cover padded layouts, carry, diagnostics, Long asymmetry and Float midpoint/
+underflow behavior. Public BigDecimal, constructors and arbitrary-integer-related
+conversions remain incomplete, followed by public legacy number formatters.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (final run, 2m 11s). Native subnormal midpoint regression
+was reproduced, corrected and verified across seven adjacent midpoint cases.
