@@ -4375,3 +4375,30 @@ and partial output are compared for callback failures and null output. These tes
 prove the utility algorithms; they do not yet prove the pending property-affix,
 CurrencyPluralInfo or DecimalFormatSymbols adapters. Complete decimal formatting
 and the full ICU4J port remain unfinished.
+
+### Grouping policies and public integer width
+
+`GrouperCore` ports strategy selection, property short narrowing/normalization,
+canonical Western/Indic instances, locale minimum-grouping lookup, pattern size
+resolution and grouping-position decisions. The source sentinel values and
+conditional resource reads are retained, including OFF's minimum-data read and
+its shared disabled instance. Grouping uses the quantity's displayed upper
+magnitude (including leading zero padding) and preserves short-circuit behavior
+for disabled grouping, zero divisors and null quantities. Resource lookup uses
+the common bundle reader; JVM oracle dependencies supply only extra raw locale
+payloads through the existing classpath resource loader.
+
+Public `number.IntegerWidth` now provides zeroFillTo/truncateAt with source bounds,
+configuration values, same-instance behavior and the shared default. It reuses the
+source 999-digit limit from the common rounding layer. The NumberFormatter setter
+and public Grouper property/quantity/strategy adapters remain pending.
+
+Common tests cover Western/Indic grouping, Spanish minimum digits, aligned
+fallback, leading zeros and width validation. JVM oracle tests compare every
+available locale's minimum-grouping resolution across all five strategies and
+four pattern shapes, then exercise grouping positions for each distinct resolved
+configuration. Additional matrices cover signed-short narrowing, special values,
+nulls, arithmetic/assertion short circuits and cache identity. IntegerWidth tests
+compare all boundary configurations, messages and return identities. Full locale
+payload embedding remains subject to the manifest's documented subset; this does
+not establish complete CLDR payload coverage on JS/Native or a finished ICU4J port.
