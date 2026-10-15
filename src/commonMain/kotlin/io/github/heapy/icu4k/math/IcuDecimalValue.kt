@@ -10,9 +10,12 @@ import io.github.heapy.icu4k.util.BigDecimal as StandardBigDecimal
 internal class IcuDecimalValue {
     var ind: Byte = 0
     var form: Byte = 0
-    var mant: ByteArray = ZERO
+    internal var rawMant: ByteArray? = ZERO
+    var mant: ByteArray
+        get() = rawMant!!
+        set(value) { rawMant = value }
     var exp: Int = 0
-    fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.mant = mant; it.exp = exp }
+    fun copy(): IcuDecimalValue = IcuDecimalValue().also { it.ind = ind; it.form = form; it.rawMant = rawMant; it.exp = exp }
     fun integerText(): String {
         val result: IcuDecimalValue
         if (exp >= 0 && form.toInt() == MathContext.PLAIN) result = this

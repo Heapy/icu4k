@@ -5814,3 +5814,30 @@ Common regressions exercise radix interchange, Unicode digits, negative zero,
 low bits and Float ties. All checks passed: jvmTest, jsNodeTest, macosArm64Test
 and compileTestKotlinLinuxX64 (3m 58s). The public legacy math.BigDecimal facade
 and remaining legacy formatter integration still remain to be ported.
+
+### Public legacy ICU math.BigDecimal
+
+Added the complete public ICU math.BigDecimal facade in commonMain, backed by
+IcuDecimalValue's source algorithms. All source constructors, arithmetic and
+context overloads, formatting, exact/truncating conversions, integer/standard
+decimal interchange, point motion, scale, constants and factories are exposed.
+Representation-sensitive equality/hash, operand/constant result identity and
+mantissa sharing are preserved. JVM reflection verifies that every source
+public method and constructor has a matching signature in the port.
+
+The facade stores exactly the source ind/form/mant/exp fields and source
+serialVersionUID, with java.lang.Number as its JVM superclass. Ephemeral working
+states retain nullable raw mantissas without eager validation, preserving source
+behavior after default deserialization of malformed state. JVM tests verify
+field descriptors, round trips and interchange in both directions using class
+name descriptor substitution; production code has no custom stream hooks.
+
+Number dispatch on JVM, JS and Native now recognizes the legacy decimal and
+passes its standard-decimal conversion into the existing formatting pipeline.
+Common tests exercise public arithmetic, representation, identity, arbitrary
+integers, Float ties and formatter integration. JVM tests compare constructors,
+virtual BigInteger text callbacks, factories, 250 operation/context matrices,
+primitive/exact conversions, formatting, exceptions, sharing and serialization
+against ICU4J. Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (final run, 2m 28s). Public legacy NumberFormat and
+DecimalFormat integration and other unported ICU subsystems remain outstanding.

@@ -11,6 +11,7 @@ internal actual fun quantityFromNumber(number: Number?): DecimalQuantityCore = w
     is Double -> DecimalQuantityCore(number)
     is BigInteger -> DecimalQuantityCore(UnitDecimal(number.toString()))
     is java.math.BigDecimal -> DecimalQuantityCore().also { it.setToBigDecimal(number) }
+    is io.github.heapy.icu4k.math.BigDecimal -> DecimalQuantityCore().also { it.setToBigDecimal(number.toBigDecimal()) }
     else -> throw IllegalArgumentException("Number is of an unsupported type: ${number!!.javaClass.name}")
 }
 

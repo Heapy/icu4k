@@ -203,3 +203,16 @@ Formatted-value span iteration and exports are still being ported.
 `StaticUnicodeSets` loads frozen CLDR parse symbols, separator/digit unions and the
 formatting trim sets from Common resources. These support upcoming span iteration
 and number parsing.
+
+ICU's legacy decimal arithmetic is also available in Common Kotlin:
+
+```kotlin
+import io.github.heapy.icu4k.math.BigDecimal
+import io.github.heapy.icu4k.math.MathContext
+
+val result = BigDecimal("1").divide(BigDecimal("7"), MathContext(9))
+println(result) // 0.142857143
+```
+
+`math.BigDecimal` preserves ICU contexts and representation-sensitive equality;
+`util.BigDecimal` is the separate standard decimal interchange type.
