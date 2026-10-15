@@ -5655,3 +5655,21 @@ cover defaults, identity equality, notation and ordered validation diagnostics.
 Legacy ICU BigDecimal and public NumberFormat/DecimalFormat remain to be ported.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 3s).
+
+### ICU BigDecimal decimal-array kernel
+
+Extracted and ported the legacy BigDecimal private digit-array kernel as
+IcuDecimalDigits for use by the forthcoming Common arithmetic implementation.
+The source carry/borrow tables, A+B*M loop, multiplier fast paths, right-padded
+virtual lengths, leading zero retention, both array-reuse cases and short/long
+carry copying remain. The array extension and trailing-zero predicates retain
+source identity, copying and range behavior. No public partial BigDecimal facade
+is introduced; parsing, layout, rounding and arithmetic still require porting.
+
+JVM differential tests invoke ICU4J's private helpers via reflection and compare
+14,000 randomized cases, virtual widths, all multipliers -9..9, shared A/B input,
+result identity and mutations of both arrays. Further tests cover extension,
+zero ranges and invalid helper inputs. Common regressions cover carry, borrow,
+virtual zeroes, destructive reuse and extension identity.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (3m 17s).
