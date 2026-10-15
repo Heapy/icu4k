@@ -32,6 +32,7 @@ class VersionInfo private constructor(private val packed: UInt) : Comparable<Ver
     companion object {
         val ICU_VERSION: VersionInfo = getInstance(78, 3)
         val UCOL_BUILDER_VERSION: VersionInfo = getInstance(9)
+        val UCOL_RUNTIME_VERSION: VersionInfo = getInstance(9)
         val UNICODE_17_0: VersionInfo = getInstance(17)
 
         fun getInstance(major: Int, minor: Int = 0, milli: Int = 0, micro: Int = 0): VersionInfo {

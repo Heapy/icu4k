@@ -7431,3 +7431,36 @@ Public Collator/RuleBasedCollator wiring and locale service remain pending.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 27s. Linux tests were compiled,
 not run on this macOS host. Caller-array/default-sharing coverage also passed.
+
+### RuleBasedCollator introspection and locale state
+
+Ported the remaining introspection algorithms to RuleBasedCollatorMetadata:
+rules/full root rules, tailored sets, contractions/expansions, internal contraction
+addition, settings/data/rules/tailored-set equality shortcuts and source hashing.
+The future public wrapper must retain object identity and runtime-class checks
+before calling hasSameBehavior. The source equality fallback compares tailored
+sets, not all CE mappings; that behavior is preserved even for distinct orders
+with the same tailored set.
+
+Version decoding now includes UCOL_RUNTIME_VERSION. Unsigned packed-version
+arithmetic, UCA extraction and the explicit overflow error match ICU4J. Locale
+metadata keeps valid locale separate from the shared tailoring's actual locale;
+setLocale updates the overlay flag without changing shared tailoring. Copying
+locale metadata retains that flag without invoking setLocale validation.
+
+Maximum-expansion initialization uses a reentrant lock owned by CollationTailoring,
+matching synchronization on the shared tailoring object. Separate collator clones
+therefore share both the cache and its initialization lock. The lock is portable;
+no Java collation implementation is used in production.
+
+Targeted JVM tests passed for rule-built and locale-loaded collators, pairwise
+source equality, hash values, rules, tailored/expansion/contraction sets, locale
+transitions and 1,504 arbitrary/boundary packed versions. Common tests cover rules,
+locale overlay copying, shared cache identity and root UCA/runtime versions. Final
+coverage adds first-cache initialization racing across six separate metadata owners.
+Public Collator/RuleBasedCollator wrappers, cloning integration and service APIs
+remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 26s, including concurrent initial
+cache publication. Linux tests compiled only; the host is macOS Arm64.

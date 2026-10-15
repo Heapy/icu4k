@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.coll
 
+import io.github.heapy.icu4k.impl.createAvailabilityLock
 import io.github.heapy.icu4k.impl.Norm2AllModes
 import io.github.heapy.icu4k.impl.Trie2_32
 import io.github.heapy.icu4k.text.UnicodeSet
@@ -22,6 +23,7 @@ internal class CollationTailoring(baseSettings: SharedObject.Reference<Collation
     var trie: Trie2_32?=null
     var unsafeBackwardSet: UnicodeSet?=null
     var maxExpansions: MutableMap<Int,Int>?=null
+    internal val maxExpansionsLock = createAvailabilityLock()
     init {
         settings=if (baseSettings != null) {
             checkAssertion { baseSettings.readOnly()!!.reorderCodes!!.isEmpty() }
