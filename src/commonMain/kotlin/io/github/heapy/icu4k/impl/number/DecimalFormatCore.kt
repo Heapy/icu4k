@@ -33,17 +33,24 @@ import kotlin.concurrent.Volatile
  * access follow the source's volatile publication and deliberately permit duplicate parser creation.
  */
 internal class DecimalFormatCore private constructor() {
-    lateinit var properties: DecimalFormatProperties
-    lateinit var symbols: DecimalFormatSymbols
+    internal var rawProperties: DecimalFormatProperties? = null
+    var properties: DecimalFormatProperties
+        get() = rawProperties!!
+        set(value) { rawProperties = value }
+    @Volatile internal var rawSymbols: DecimalFormatSymbols? = null
+    var symbols: DecimalFormatSymbols
+        get() = rawSymbols!!
+        set(value) { rawSymbols = value }
     @Volatile var exportedProperties: DecimalFormatProperties? = null
     @Volatile private var formatter: LocalizedNumberFormatter? = null
     @Volatile private var parser: NumberParserImpl? = null
     @Volatile private var currencyParser: NumberParserImpl? = null
     var actualLocale: ULocale? = null
-    private var icuMathContextForm: Int = IcuMathContext.PLAIN
+    internal var actualLocaleProvider: (() -> ULocale?)? = null
+    internal var icuMathContextForm: Int = IcuMathContext.PLAIN
 
-    fun copy(): DecimalFormatCore = DecimalFormatCore().also {
-        it.actualLocale = actualLocale
+    fun copy(locale: ULocale? = actualLocale): DecimalFormatCore = DecimalFormatCore().also {
+        it.actualLocale = locale
         it.icuMathContextForm = icuMathContextForm
         it.symbols = symbols.clone()
         it.properties = properties.clone()
@@ -249,11 +256,11 @@ internal class DecimalFormatCore private constructor() {
     fun setParseCaseSensitive(value: Boolean) { properties.setParseCaseSensitive(value); refreshFormatter() }
     fun refreshFormatter() {
         if (exportedProperties == null) return
-        var locale = actualLocale
+        var locale = if (actualLocaleProvider != null) actualLocaleProvider!!.invoke() else actualLocale
         if (locale == null) locale = symbols.getLocale(ULocale.ACTUAL_LOCALE)
         if (locale == null) locale = symbols.getULocale()
         assertDecimalFormatCore { locale != null }
-        formatter = NumberFormatter.fromDecimalFormat(properties, symbols, exportedProperties).locale(locale)
+        formatter = NumberFormatter.fromDecimalFormat(rawProperties, rawSymbols, exportedProperties).locale(locale)
         parser = null
         currencyParser = null
     }
@@ -366,6 +373,7 @@ internal class DecimalFormatCore private constructor() {
         const val PAD_AFTER_SUFFIX = 3
         const val MINIMUM_GROUPING_DIGITS_AUTO = -2
         const val MINIMUM_GROUPING_DIGITS_MIN2 = -3
+        internal fun empty(): DecimalFormatCore = DecimalFormatCore()
         fun createDefault(): DecimalFormatCore {
             val locale = ULocale.getDefault(ULocale.Category.FORMAT)
             val pattern = NumberFormatPatternData.getPatternForStyle(locale, NumberFormatPatternData.NUMBERSTYLE)

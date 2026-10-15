@@ -216,3 +216,17 @@ println(result) // 0.142857143
 
 `math.BigDecimal` preserves ICU contexts and representation-sensitive equality;
 `util.BigDecimal` is the separate standard decimal interchange type.
+
+The legacy `DecimalFormat` API is available with explicit symbols:
+
+```kotlin
+import io.github.heapy.icu4k.text.DecimalFormat
+import io.github.heapy.icu4k.text.DecimalFormatSymbols
+import io.github.heapy.icu4k.util.ULocale
+
+val decimal = DecimalFormat("#,##0.00", DecimalFormatSymbols(ULocale("en_US")))
+println(decimal.format(1234.5)) // 1,234.50
+println(decimal.parse("1,234.50")) // 1234.5
+```
+
+Localized `NumberFormat` factories and rule-based number formatting are still being ported.

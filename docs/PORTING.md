@@ -5958,3 +5958,37 @@ updates, equality callbacks and parsing wrappers. JVM tests compare settings,
 exceptions, identity, monitor ownership, serialization and callback order.
 Verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (final run, 6m 28s).
+
+### Public DecimalFormat hierarchy and stream migration
+
+Added public DecimalFormat extending NumberFormat, exposing all source-declared
+public methods and constructors through the Common StringBuilder/ParsePosition
+boundaries. The facade uses DecimalFormatCore for the previously verified numeric
+algorithms/settings and shares NumberFormat's owner monitor for synchronized
+configuration. Formatting, parsing, snapshot access and source no-op methods keep
+their source locking policy. Compound methods preserve virtual calls through
+applyPattern, toPattern, standard rounding-increment and math-context overloads.
+JVM/JS clones retain unknown subclass state; Native subclasses use the existing
+typed-copy convention. Copies rebuild independent properties/symbols/runtime,
+carry base locale state and retain ICU context form.
+
+Added source-compatible JVM custom stream hooks with the original UID and sole
+non-transient version field: modern property/symbol streams, the ICU 59 Properties
+wrapper and pre-59 field migration. Legacy affix precedence, parent-field recovery,
+ignored old fields, version/field-count diagnostics, reserved-word consumption,
+setter failure ordering and formatter reconstruction follow ICU4J. Null transient
+working fields retain source NPE ordering rather than lateinit diagnostics.
+Symbols now publish through a volatile backing field. Stream tests compare real
+round trips (including a second round trip) and synthetic historical/invalid
+layouts directly with ICU4J private stream hooks.
+
+Locale metadata is queried at refresh time after property callbacks, matching the
+source even when a callback changes locale. Clone providers bind to the new owner;
+subsequent locale/configuration changes do not affect the original formatter.
+JVM reflection verifies coverage of all source-declared public signatures,
+constructors and constants. Common and JVM tests cover formatting, parser result
+types, symbols, snapshot/clone isolation, currency overrides, virtual callback
+order, monitor ownership, metadata changes and serialization migrations.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (final run, 3m 31s). NumberFormat's localized factory and
+service APIs, rule-based numbering and other unported ICU subsystems remain.
