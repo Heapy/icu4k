@@ -5565,3 +5565,25 @@ NumberParserImpl integration remain to be ported.
 Final verification passed: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 (3m 3s). Separator getter/null-check order follows
 upstream even for subclassed DecimalFormatSymbols.
+
+### Currency and affix token matching
+
+Ported CombinedCurrencyMatcher, AffixTokenMatcherFactory and AffixPatternMatcher.
+Currency matching preserves local-symbol and ISO-code precedence, the distinct
+case-sensitive symbol/case-folded long-name trie behavior, no-foreign-currency
+plural names, source short-circuiting, partial matches and weak prefix/suffix
+spacing. Local plural names use the DecimalFormatSymbols requested locale,
+equivalent to the upstream Java Locale path. Affix construction keeps token
+factory dispatch, exact versus ignorable-aware matching, literal Unicode code
+points, shared currency token matching, pattern equality/hash and SeriesMatcher
+rollback/flexible-token behavior.
+
+JVM differential tests compare all prefixes of currency inputs in four locales,
+three currencies, two spacing strings, foreign/local-only policies, prefix/
+suffix placement and folding modes. Affix tests cover all currency token widths,
+signs, percent/permille, quoted literals/quotes, supplementary characters,
+whitespace, exact matching, flags and rollback. Common regressions cover local
+currency names and weak spacing plus affix rollback and exact whitespace.
+AffixMatcher pairing and NumberParserImpl integration remain incomplete.
+Verification passed: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 (2m 35s).
