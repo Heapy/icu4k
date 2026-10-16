@@ -48,6 +48,7 @@ class CalendarWeekendCoreOracleTest {
         }
         val source=GregorianCalendarCoreOracleTest.Probe()
         val target=GregorianCalendarCoreOracleTest.Probe().apply { common=true }
+        for(p in listOf(source,target)) p.timeInMillis=0
         for(value in listOf(null,Calendar.WeekData(8,4,1,0,7,0),Calendar.WeekData(3,-100,9,-1,-1,Int.MAX_VALUE))) {
             assertEquals(outcome { source.setWeekData(value); true },outcome { target.setWeekData(value); true })
             assertEquals(source.weekData.toString(),target.weekData.toString())

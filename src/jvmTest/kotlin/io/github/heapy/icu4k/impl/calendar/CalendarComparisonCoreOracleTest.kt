@@ -35,7 +35,7 @@ class CalendarComparisonCoreOracleTest {
             val target=GregorianCalendarCoreOracleTest.Probe().apply { common=true }
             val sourceOther=GregorianCalendarCoreOracleTest.Probe()
             val targetOther=GregorianCalendarCoreOracleTest.Probe().apply { common=true }
-            for(p in listOf(source,target,sourceOther,targetOther)) { p.clearFields(); p.setDateFields(2024,1,29) }
+            for(p in listOf(source,target,sourceOther,targetOther)) { p.timeInMillis=0; p.clearFields(); p.setDateFields(2024,1,29) }
             for(p in listOf(sourceOther,targetOther)) when(mode) {
                 1 -> p.setField(5,28)
                 2 -> p.isLenient=false
