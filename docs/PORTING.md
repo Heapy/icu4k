@@ -9343,3 +9343,73 @@ seven common groups). Full JVM/macOS Native tests and Linux x64 test compilation
 passed in 4m43s; the separate full JavaScript Node suite passed in 1m13s. All
 seven new common groups passed on JVM, JavaScript and macOS Native. Linux tests
 were compiled, not executed on this macOS host.
+
+### Calendar date/time pattern resources and format construction (2026-10-16)
+
+Added CalendarPatternDataCore and CalendarFormatCore for Calendar's previously
+unported style-format pipeline. Resource lookup reads the actual common ICU
+bundles, falls back from the requested calendar to Gregorian, handles both string
+and [pattern, numbering-override] entries, and loads separate DateTimePatterns%atTime
+resources. Glue selection preserves the source 9-entry/13-entry rules, nullable
+entries, array aliases and bounds failures. MissingResourceException alone selects
+the final root-style defaults; other loader/generator failures propagate.
+
+The shared SimpleCache uses the source base-locale-plus-calendar key and bypasses
+both reads and writes for rg/hours keywords. Time pattern synthesis is selected
+with the source likely-subtag region/language checks and requests the four exact
+jmm* skeletons. DateTimePatternGenerator.getInstanceNoStdPat remains a mandatory
+factory boundary: no default generator, fixed hour cycle, fallback skeleton or
+unchanged resource-pattern substitute is supplied. Its common implementation is
+still pending; JVM oracles bind the actual ICU4J generator to this boundary.
+
+Style validation, date/time merging with SimpleFormatterImpl, numbering-override
+expansion/merging and virtual format construction order are ported. The override
+scanner deliberately preserves source behavior for quotes, punctuation, repeated
+spaces and StringCharacterIterator's U+FFFF termination. Format creation dispatches
+the calendar-specific hook before setting the calendar on the returned format.
+The default hook builds a FormatConfiguration with the exact symbols/calendar/
+locale aliases and calls mandatory DateFormatSymbols/SimpleDateFormat factories.
+Those factories are not replaced by mock or no-op production implementations.
+
+Five JVM oracle groups compare resource arrays and overrides across 19 locales
+and seven calendar types (including unknown/null), real generated hour-cycle
+patterns, all date/time style combinations, both glue APIs, null/invalid style
+ordering, randomized override grammar, malformed PatternData arrays and malformed
+cached style data. Test spies observe the source formatting hook and calendar
+assignment; they do not claim the formatter implementation is common. Seven common
+groups include independently captured root/English/French/Hebrew/Arabic/Persian
+patterns, Hebrew numbering overrides, cache/hour-cycle policy, final fallback,
+callback/factory failures, configuration aliases and JS-safe bounds checks.
+
+Public Calendar/DateFormat/SimpleDateFormat/DateFormatSymbols facades, the common
+DateTimePatternGenerator algorithm, formatter parsing/rendering, service
+registration and serialization remain pending. These cores port the resource and
+construction policies needed for that integration, not the full formatting stack.
+
+The first Native run of the pattern snapshots exposed missing core locale data:
+fa_IR fell back to root and correctly required the generator, while JVM's ICU4J
+classpath overlay supplied fa.res and hid the omission. Imported the complete
+pinned top-level core .res catalog: 982 files, 3,839,088 binary bytes, including
+957 newly embedded files (2,686,160 bytes). The full manifest now has 2,438
+resources. The existing generator now supports a root-directory registry (empty
+prefix, excluding subdirectories), with partitioned dispatch like zone/region.
+
+Reproduce/verify with `python3 scripts/import-core-locales.py <pinned-checkout>`
+(or `--check`), followed by `python3 scripts/generate-data.py --check`. The importer
+requires the exact manifest commit and verifies existing files rather than
+silently replacing differing data. The JVM byte oracle compares every one of the
+982 top-level .res files with the ICU4J jar, disk copies, manifest hashes and the
+embedded inventory. Pattern-resource JVM oracles now explicitly use the embedded
+loader so the classpath overlay cannot conceal missing common data. A common
+catalog/Persian-pattern test verifies the same path on JS and Native. Completion
+of this core catalog does not imply complete lang/curr/unit catalogs or completion
+of the remaining formatter algorithms.
+
+Verification after completing the embedded core catalog: the focused JVM run
+passed in 1m13s (five pattern oracles, seven common pattern groups, the complete
+core byte oracle and the common catalog test). Full JVM/macOS Native tests and
+Linux x64 test compilation passed in 4m50s; the separate full JavaScript Node
+suite passed in 58s. All eight new common groups passed on JVM, JS and macOS
+Native. Linux tests were compiled, not executed on this macOS host. The earlier
+Native missing-fa failure was resolved by embedding the full catalog, without
+changing the generator policy or weakening the snapshot tests.
