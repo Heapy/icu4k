@@ -9787,3 +9787,28 @@ suites and Linux x64 test compilation in 5m26s. The separate full JS Node suite
 passed in 57s. All five common groups passed on JVM, JS and macOS Native and all
 five factory JVM oracle groups passed. Linux tests were compiled only on this
 macOS host.
+
+### DateFormatSymbols lazy zone-name table (2026-10-17)
+
+DateFormatSymbolsZoneStringsCore ports lazy getZoneStrings generation using all
+available IDs, retaining aliases in column zero and canonicalizing only the
+display-name lookup. It loads all display names before reading the owner clock,
+uses one timestamp and one four-type array for the complete table, and publishes
+the table only after every row succeeds. Custom stored tables bypass all owners.
+The first generated return is the stored matrix itself; later returns deep-copy
+it, preserving ICU4J's observable mutation behavior.
+
+withCommonNames binds real TimeZoneMetadataCore and TimeZoneNamesDataCore data,
+with a SoftCache keyed by locale base name as in TimeZoneNames.getInstance. Clock
+and default canonical zone remain mandatory owner inputs. Public factory/provider
+selection and DateFormatSymbols facade integration are still pending; this is
+an internal common implementation, not completion of the public date API.
+
+Two common groups cover callback order, alias fallback, shared type-array
+identity, first-return mutation, later defensive copies, failed generation retry
+and custom table bypass. Two JVM oracle groups compare every available ICU4J
+zone in six locales at three timestamps, and reproduce the source first-return
+mutation behavior. Full JVM/macOS Native suites and Linux x64 test compilation
+passed in 4m46s; the separate full JS Node suite passed in 50s. Both common groups
+passed on JVM, JS and macOS Native; both JVM oracle groups passed. Linux tests
+were compiled only on this macOS host.
