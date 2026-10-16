@@ -7837,3 +7837,43 @@ remain pending.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 29s. Linux tests compiled only;
 time-zone rule and mutable Date common tests ran on JVM, Node and macOS Arm64.
+
+
+### BasicTimeZone transition algorithms
+
+Ported BasicTimeZone's transition equivalence, start-date rule filtering and
+simplified annual-rule extraction into BasicTimeZoneCore. The core queries the
+owning zone for virtual ID, offsets, transitions and rules. This separates the
+complete algorithms from the still-pending public TimeZone/BasicTimeZone hierarchy
+and its formatter/resource dependencies; there is no replacement zone engine.
+
+Equivalence retains initial-offset checks, inclusive interval endpoints,
+Int offset sums and the ignoreDstAmount option, which skips nonzero-DST
+redistributions with unchanged total offset but still distinguishes standard
+from daylight time. Identical owners return true before querying offsets.
+Filtering returns the original rule array when no previous transition exists,
+otherwise constructs a new initial rule and trims or retains array/annual rules.
+It preserves the original WALL filter's DST-only adjustment, STANDARD raw-offset
+adjustment, original whole-rule references and shared DateTimeRule references
+when rebuilding annual rules. Missing transition rules throw the source error.
+Null rule-array failure precedes transition attribute access, as in ICU4J.
+
+Simple-rule extraction retains the 365-day window, local-wall conversion,
+next/next-next/previous transition fallback and initial-rule selection. It does
+not add raw-offset-change support or replace the source's previous-start/next-start
+checks. Source Long/Int overflow, lazy failures and callback order are retained.
+
+Targeted JVM verification passed against 18 actual ICU4J RuleBasedTimeZone
+configurations over historic, modern and extreme dates. Another 350 finite
+histories compare full filtered/simplified rule descriptions and virtual query
+traces, including malformed rule arrays. Transition equivalence is checked for
+900 pairs in exact and ignore-DST modes, with both owners' query traces compared.
+Common tests cover skipped DST redistributions, standard/DST distinctions,
+original-array and whole-rule identity, trimmed arrays, copied annual rules with
+shared date-rule identity, missing-rule errors, US wall-time annual extraction
+and fixed-zone fallback. The public BasicTimeZone/TimeZone classes, LocalOption
+API and concrete rule/resource-backed zone engines remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 34s. Linux tests compiled only;
+BasicTimeZoneCore common tests ran on JVM, Node and macOS Arm64.
