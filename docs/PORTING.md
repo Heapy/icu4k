@@ -8505,3 +8505,32 @@ ICU4J generic-name service with this common engine, the same task selection
 passed in 3m 31s (JVM rerun, unchanged platform checks up to date). Common tests
 ran on JVM, Node and macOS Arm64; Linux tests compiled only. Data generation
 checks all 1,481 embedded resources.
+
+## Timezone factory and default ownership policy
+
+`TimeZoneRuntimeCore` ports the TimeZone factory selection, implementation-type
+configuration and default cache/host synchronization policy to commonMain.
+Platform timezone construction, identity, cloning, freezing, logging and host
+default access remain mandatory owner services; this internal engine does not
+introduce a public TimeZone facade or substitute a fixed default zone.
+
+JDK construction returns its mutable instance directly, while ICU factories
+clone frozen prototypes. A failed JDK lookup tries custom ICU offsets only.
+Invalid explicit factory types select ICU; the type setter validates its input.
+Changing the implementation type retains the cached default. Initialization
+acquires the host default monitor before the ICU monitor, rechecks the cache,
+and returns a thawed clone outside both monitors. Explicit defaults preserve
+frozen identity or defensively clone and freeze mutable input. Clearing the ICU
+default does not clear the host default. Host updates use the original input,
+try Olson canonical IDs when necessary and occur after the ICU cache update.
+
+JVM differential tests compare all system IDs, explicit implementation types,
+custom/unknown IDs, frozen factories, host/cache changes, Java/Olson/custom
+bridges and independent mutable clones against ICU4J 78.3.
+Common tests additionally cover failed clone/host updates, frozen identity,
+defensive copies, mutable JDK default initialization and a reentrant clone that
+changes the cache while the caller retains its original snapshot.
+
+Verification: jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 passed
+in 4m 47s after adding the common ownership/failure tests. Common tests executed
+on JVM, Node and macOS Arm64; Linux tests compiled only.
