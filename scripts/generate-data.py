@@ -41,7 +41,9 @@ for resource in manifest['resources']:
         path.write_text(text)
 # Partition directory dispatch to keep platform methods small as locale data grows.
 for prefix, registry in manifest.get('registries', {}).items():
-    resources = [r for r in manifest['resources'] if r['name'].startswith(prefix)]
+    # The empty prefix selects the root directory, excluding subdirectories.
+    resources = [r for r in manifest['resources']
+                 if r['name'].startswith(prefix) and (prefix or '/' not in r['name'])]
     groups = [resources[i:i + 32] for i in range(0, len(resources), 32)]
     lines = [
         '// © 2016 and later: Unicode, Inc. and others.',
