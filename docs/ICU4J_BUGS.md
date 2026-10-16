@@ -7,6 +7,7 @@ alone. Reproduced behavior is distinguished from an accepted upstream defect.
 ## Baseline and verification
 
 - Local verification: entries 001–004 on 2026-10-15; entry 005 on 2026-10-16.
+- Entry 008 was independently reproduced on 2026-10-17 against the same binary.
 - Artifact: `com.ibm.icu:icu4j:78.3`; reported ICU version: `78.3.0.0`.
 - Binary SHA-256: `e962c1758d9659ea1e1fbab99c58683f654d304e1126ace19aaabfe39e0edb25`.
 - Environment: macOS arm64, OpenJDK `25.0.4+9-LTS`.
@@ -14,7 +15,7 @@ alone. Reproduced behavior is distinguished from an accepted upstream defect.
 - Port baseline: `unicode-org/icu`, `release-78.3`, commit
   `21d1eb0f306e1141c10931e914dfc038c06121da`, as recorded in [PORTING.md](PORTING.md).
 
-All five Java examples were run locally against the binary above. Current ICU
+The original five Java examples (001–005) were run locally against the binary above. Current ICU
 releases and upstream HEAD still need checking. Duplicate searches and upstream
 submission are pending; no upstream acceptance is implied. Owners are unassigned.
 
@@ -46,6 +47,7 @@ Priority is local triage priority, not an upstream severity assignment.
 | [ICU4J-005](#icu4j-005-setting-the-existing-gregorian-cutover-changes-historical-dates) | Setting the existing Gregorian cutover changes historical dates | Reproduced defect | Medium | Not submitted |
 | [ICU4J-006](#icu4j-006-calendarcache-negative-key-probing-can-loop-forever) | A negative CalendarCache key can make collision probing loop forever | Reproduced defect | High | Not submitted |
 | [ICU4J-007](#icu4j-007-cloneasthawed-unfreezes-the-original-pattern-generator) | DateTimePatternGenerator.cloneAsThawed unfreezes its receiver | Reproduced defect | Medium | Not submitted |
+| [ICU4J-008](#icu4j-008-standalone-abbreviated-leap-pattern-overwrites-format) | Standalone abbreviated leap-month customization overwrites the format pattern | Reproduced defect | Medium | Not submitted |
 
 ## ICU4J 001 Region overrides depend on the host locale
 
@@ -416,6 +418,44 @@ source reproduction, not a claim about current upstream versions.
 **ICU4K compatibility.** The internal generator core retains this receiver-side
 mutation. JVM and common tests explicitly verify both frozen flags and clone
 aliases. A behavior fix requires a separate compatibility decision.
+
+## ICU4J 008 Standalone abbreviated leap pattern overwrites format
+
+Suggested upstream title: **DateFormatSymbols uses the format slot for standalone
+abbreviated leap-month patterns**.
+
+**Status.** Reproduced on ICU4J 78.3, macOS arm64 and OpenJDK 25.0.4+9-LTS on
+2026-10-17. Local priority: medium. Owner unassigned; not submitted. Latest
+release/HEAD verification and duplicate search remain pending.
+
+**Standalone reproduction.** Save as `StandaloneLeapPatternRepro.java` and run
+`java --class-path /tmp/icu4j-78.3.jar StandaloneLeapPatternRepro.java`:
+
+```java
+import com.ibm.icu.text.DateFormatSymbols;
+import com.ibm.icu.util.ULocale;
+
+public class StandaloneLeapPatternRepro {
+    public static void main(String[] args) {
+        DateFormatSymbols symbols = new DateFormatSymbols(new ULocale("zh@calendar=chinese"));
+        symbols.setLeapMonthPattern("format", DateFormatSymbols.FORMAT, DateFormatSymbols.ABBREVIATED);
+        symbols.setLeapMonthPattern("standalone", DateFormatSymbols.STANDALONE, DateFormatSymbols.ABBREVIATED);
+        System.out.println("format=" + symbols.getLeapMonthPattern(DateFormatSymbols.FORMAT, DateFormatSymbols.ABBREVIATED));
+        System.out.println("standalone=" + symbols.getLeapMonthPattern(DateFormatSymbols.STANDALONE, DateFormatSymbols.ABBREVIATED));
+    }
+}
+```
+
+Actual output is `format=standalone` and `standalone=standalone`; the FORMAT
+pattern should retain `format`. Both getter and setter select
+DT_LEAP_MONTH_PATTERN_FORMAT_ABBREV (slot 1) for STANDALONE/ABBREVIATED, leaving
+the initialized standalone slot 4 unreachable through these methods. The
+standalone getter's SHORT fallback also selects slot 1. A possible fix is to use
+DT_LEAP_MONTH_PATTERN_STANDALONE_ABBREV for those standalone branches.
+
+**ICU4K compatibility.** Keep slot 1 for the pinned baseline. JVM context/width
+oracles and common tests cover the cross-context overwrite and untouched slot 4.
+An upstream correction needs a separate port compatibility decision.
 
 ## Upstream handoff
 

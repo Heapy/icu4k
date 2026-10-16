@@ -9717,3 +9717,38 @@ JS Node suite passed in 1m2s. All four new common groups passed on JVM, JS and
 macOS Native. Linux tests were compiled, not executed on this macOS host.
 Nullable setter-call fixtures needed explicit List<String?> expectations for
 Kotlin's test type inference; production behavior was unaffected by that fix.
+
+### DateFormatSymbols mutable access and state comparison (2026-10-17)
+
+DateFormatSymbolsStateCore ports era, month, weekday, quarter, cyclic year/zodiac,
+leap-month and AM/PM accessors/setters, local pattern characters and time
+separators. Array accessors/setters defensively copy, preserving null entries,
+getter/setter width asymmetries, ignored invalid setter contexts, legacy SHORT
+weekday fallback, ignored cyclic-name getter options and numeric leap widths.
+Default AM/PM methods retain virtual dispatch to their overloaded methods.
+
+State copying shares source arrays, capitalization and custom zone matrices but
+keeps independent field slots, matching initializeData(dfs)/shallow clone state.
+Custom zone setters/getter-copy logic duplicates both dimensions and preserves
+old state on null-row failures. Dynamic zone-name loading is still separate.
+Hashing uses the requested locale string; equality preserves source field order,
+runtime-class/identity checks and locale display-name callbacks, including the
+source omissions of quarters, cyclic names, leap patterns and capitalization.
+Public runtime cloning, factories/cache and facade binding remain pending.
+
+Four JVM oracle groups cover the context/width matrix, null inputs and missing
+fields, malformed leap arrays, mutation isolation, copy aliases, custom zones,
+independent per-field equality changes and deprecated locale aliases. Six common
+groups cover portable snapshots, copy/alias policies, comparison dispatch and
+AM/PM overriding. ICU4J 008 records an independently reproduced standalone
+abbreviated leap-pattern overwrite; the port deliberately retains slot 1 rather
+than silently changing source behavior. Initial compilation also caught generic
+return-type token spacing and a raw-zone-property JVM setter collision; the raw
+property is now named storedZoneStrings.
+
+Verification: focused JVM checks passed in 22s (six common groups and four JVM
+oracle groups). Full JVM/macOS Native suites and Linux x64 test compilation
+passed in 4m52s; the separate full JS Node suite passed in 1m2s. All six new
+common groups passed on JVM, JS and macOS Native. Linux tests were compiled,
+not executed on this macOS host. ICU4J 008's standalone Java example reproduced
+the overwrite against the pinned SHA-256 artifact and JDK 25.0.4+9-LTS.
