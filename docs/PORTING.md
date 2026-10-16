@@ -7877,3 +7877,49 @@ API and concrete rule/resource-backed zone engines remain pending.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 34s. Linux tests compiled only;
 BasicTimeZoneCore common tests ran on JVM, Node and macOS Arm64.
+
+
+### RuleBasedTimeZone transition engine
+
+Ported RuleBasedTimeZone's state and algorithms into RuleBasedTimeZoneCore:
+transition-rule addition, lazy historic completion, final recurring-rule pairs,
+UTC/local/field-based offsets, next/previous transitions, raw/DST queries,
+rule equivalence, freezing and clone state. The owner can supply virtual query
+callbacks for current-time methods and recursive name-only transition skipping,
+and override the frozen check used by add/clone. The core does not supply a
+partial public TimeZone class; the full front end and its display/resource
+services remain pending.
+
+The engine preserves first-insertion tie resolution, rule identity checks,
+initial/final rule validation and the source's treatment of name-only transitions.
+Local gap/overlap resolution retains the standard/daylight and former/latter bit
+masks, including full-width Int sum/subtraction overflow. UTC conversion retains
+Long overflow. Field offsets ignore the supplied dayOfWeek and use DST/STD local
+options as the source does. Offset output arrays receive the raw value before a
+short second slot fails; completion precedes output validation.
+
+Dirty completion appends rebuilt transitions without clearing the previous list.
+Thawed clones copy rule containers while sharing individual rules, completed
+transition lists and the upToDate value. Frozen clone returns the same engine.
+These source quirks, including cross-clone cache mutation, are retained. Null
+initial rules and names preserve late exceptions and partially initialized cache
+state. A rule callback can append another historic rule during completion; the
+same build pass observes the enlarged list and tracks processed rules dynamically.
+
+Targeted JVM comparisons passed for 65 historic/final configurations with UTC,
+wall and all 36 public local-option pairs, transition edges, extreme milliseconds,
+current-time queries and private cache snapshots. Another 1,375 mixed operations
+check add/query/freeze/clone histories, shared caches and source same-rule matching.
+A private oracle covers 12,000 full-width getLocalDelta inputs. Focused cases check
+nullable rules, incomplete/extra final rules, partial output writes, reentrant
+rule addition, owner clock/offset/next queries, recursive name skipping and frozen
+check overrides. Integration tests combine this engine with BasicTimeZoneCore's
+filtering and simplified-rule algorithms. Common tests cover US DST transitions,
+local gaps, dirty clone aliasing, validation, current-time callbacks and the
+combined transition/rule-extraction path.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 34s. Linux tests compiled only;
+RuleBasedTimeZoneCore and combined BasicTimeZoneCore tests ran on JVM, Node and
+macOS Arm64. Public zone classes, their serialization layer and resource/display
+services remain pending.
