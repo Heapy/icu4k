@@ -8937,3 +8937,46 @@ The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 4m 52s. All four new common tests passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. Both new JVM week-data/weekend oracle groups and the
 existing combined-calendar suites passed.
+
+### Calendar locale selection and factory policy (2026-10-16)
+
+CalType ports the public source enum and its 18 identifiers/order. CalendarUtil
+ports explicit calendar-keyword case conversion, locale canonicalization and
+regional defaults. Its lazily initialized resource sink reads the embedded
+calendarPreferenceData through the common fallback pipeline and retains only
+non-Gregorian defaults, including source missing-resource recovery.
+
+CalendarLocaleCore ports supplemental region resolution, type lookup,
+first-day overrides, valid/actual locale filtering and keyword-value preference
+ordering. The key argument remains ignored as in ICU4J. Preferred arrays are
+fresh, and all-calendar results append enum identifiers without duplication.
+Locale metadata retains object identity when no filtering is needed and keeps
+only the calendar keyword when rebuilding a locale.
+
+CalendarFactoryCore ports getInstance/createInstance dispatch and callback
+ordering through mandatory constructor/timezone/clock boundaries. It performs
+the constructor's timezone lookup even with an explicit outer timezone, maps
+ISO8601 to Gregorian and related Islamic identifiers to the Islamic constructor,
+sets Amete Alem explicitly and preserves ISO week-rule overrides. The outer
+factory assigns the requested timezone before reading the clock and setting
+the final timestamp; failed callbacks do not roll back prior operations.
+
+JVM oracle groups compare enum order, all regional preferences, explicit/unknown
+keywords, canonicalization, locale metadata, every calendar constructor family,
+ISO overrides and final calendar fields. Subclass construction in this oracle
+uses ICU4J as an explicit test boundary; the common factory does not depend on
+ICU4J. Common tests cover real data, locale identity/filtering, fresh arrays,
+Unicode keyword case conversion, factory order, special types and setter failure.
+
+Public Calendar/TimeZone facade integration and non-Gregorian subclass algorithms
+remain pending, along with date-format factories and serialization. The factory
+core requires real subclass implementations and supplies no substitute calendars.
+
+Verification: focused locale/factory JVM oracle tests passed in 24s. The first
+complete run exposed an incorrect common-test expectation: ICU4J 78.3 selects
+Gregorian for ja_JP_TRADITIONAL. A standalone ICU4J probe confirmed this behavior;
+the implementation already matched the oracle and only the expectation changed.
+The final jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 4m 24s. All three new common groups, including non-ASCII case conversion,
+passed on JVM, Node and macOS Arm64; Linux tests compiled only. Both new JVM
+locale/factory oracle groups and the existing suites passed.
