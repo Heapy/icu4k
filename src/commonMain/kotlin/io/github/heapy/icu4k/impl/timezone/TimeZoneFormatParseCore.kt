@@ -21,7 +21,13 @@ internal class TimeZoneFormatParseCore<Z>(private val locale: ULocale, private v
     }
     enum class TimeType { UNKNOWN, STANDARD, DAYLIGHT }
     enum class ParseOption { ALL_STYLES, TZ_DATABASE_ABBREVIATIONS }
-    enum class GenericNameType { LOCATION, LONG, SHORT }
+    enum class GenericNameType {
+        LOCATION, LONG, SHORT;
+        fun isFallbackTypeOf(type: GenericNameType?): Boolean {
+            val name = type!!.toString()
+            return this == LOCATION && (name == "LONG" || name == "SHORT")
+        }
+    }
     open class GenericMatchInfo(private val zoneID: String?, private val length: Int, private val type: TimeType?) {
         open fun tzID(): String? = zoneID
         open fun matchLength(): Int = length

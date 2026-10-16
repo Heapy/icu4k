@@ -3,7 +3,6 @@ package io.github.heapy.icu4k.impl.timezone
 
 import com.ibm.icu.text.TimeZoneFormat as Source
 import com.ibm.icu.text.TimeZoneNames as SNames
-import com.ibm.icu.impl.TimeZoneGenericNames as SGeneric
 import io.github.heapy.icu4k.impl.timezone.TimeZoneFormatParseCore.*
 import io.github.heapy.icu4k.impl.timezone.TimeZoneNamesDataCore.NameType
 import io.github.heapy.icu4k.impl.timezone.TimeZoneNamesDataCore.MatchInfo
@@ -14,7 +13,6 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class TimeZoneFormatParseCoreOracleTest {
-    private val genericGetter = Source::class.java.getDeclaredMethod("getTimeZoneGenericNames").also { it.isAccessible = true }
     private fun source(locale: String): Source = object : Source(com.ibm.icu.util.ULocale(locale)) { }
     private fun outcome(block: () -> Any?): Any? = try { block() } catch(e: Throwable) {
         when(e) { is NullPointerException -> "null"; is IndexOutOfBoundsException -> "bounds"; is AssertionError -> "assertion"; else -> e.javaClass.simpleName+":"+e.message }
@@ -30,14 +28,13 @@ class TimeZoneFormatParseCoreOracleTest {
         sourceNames.find("a definitely missing name",0,null)
         names.find("a definitely missing name",0,null)
         val tzdb = TZDBTimeZoneNamesCore(ULocale(locale))
+        val genericNames = GenericNamesOracleSupport.names(names)
+        val generic = TimeZoneGenericNamesCore(ULocale(locale),genericNames,GenericNamesOracleSupport.Owner(genericNames))
         val owner = object : OwnerQueries<com.ibm.icu.util.TimeZone> {
             override fun findNames(text: String,start: Int,types: Set<NameType>) = names.find(text,start,types)
             override fun findTZDBNames(text: String,start: Int,types: Set<NameType>) = tzdb.find(text,start,types)
             override fun findBestGenericMatch(text: String,start: Int,types: Set<GenericNameType>): GenericMatchInfo? {
-                val filter = EnumSet.noneOf(SGeneric.GenericNameType::class.java)
-                types.forEach { filter.add(SGeneric.GenericNameType.valueOf(it.name)) }
-                val match = (genericGetter.invoke(a) as SGeneric).findBestMatch(text,start,filter) ?: return null
-                return GenericMatchInfo(match.tzID(),match.matchLength(),match.timeType()?.let { TimeType.valueOf(it.name) })
+                return generic.findBestMatch(text,start,types)
             }
             override fun getReferenceZoneID(metaZone: String?,region: String) = names.getReferenceZoneID(metaZone,region)
             override fun getTimeZone(id: String?) = com.ibm.icu.util.TimeZone.getTimeZone(id)

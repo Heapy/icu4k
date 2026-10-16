@@ -2,7 +2,6 @@
 package io.github.heapy.icu4k.impl.timezone
 
 import com.ibm.icu.text.TimeZoneFormat as Source
-import com.ibm.icu.impl.TimeZoneGenericNames as SGeneric
 import io.github.heapy.icu4k.impl.timezone.TimeZoneFormatParseCore.Style
 import io.github.heapy.icu4k.impl.timezone.TimeZoneFormatParseCore.TimeType
 import io.github.heapy.icu4k.impl.timezone.TimeZoneFormatParseCore.GenericNameType
@@ -12,7 +11,6 @@ import io.github.heapy.icu4k.util.*
 import kotlin.test.*
 
 class TimeZoneFormatDisplayCoreOracleTest {
-    private val genericGetter = Source::class.java.getDeclaredMethod("getTimeZoneGenericNames").also { it.isAccessible = true }
     private fun outcome(block: () -> Any?): Any? = try { block() } catch(e: Throwable) {
         when(e) { is VirtualMachineError -> throw e; is NullPointerException -> "null"; is IndexOutOfBoundsException -> "bounds"; is AssertionError -> "assertion"; else -> e.javaClass.simpleName+":"+e.message }
     }
@@ -20,6 +18,8 @@ class TimeZoneFormatDisplayCoreOracleTest {
     private fun pair(locale: String): Pairing {
         val a = object : Source(com.ibm.icu.util.ULocale(locale)) { }
         val names = TimeZoneNamesDataCore(ULocale(locale),{ com.ibm.icu.impl.ZoneMeta.getCanonicalCLDRID(com.ibm.icu.util.TimeZone.getDefault()) })
+        val genericNames = GenericNamesOracleSupport.names(names)
+        val generic = TimeZoneGenericNamesCore(ULocale(locale),genericNames,GenericNamesOracleSupport.Owner(genericNames))
         val nameService = object : TimeZoneFormatDisplayCore.Names {
             override fun getDisplayName(id: String?,type: NameType,date: Long) = names.getDisplayName(id,type,date)
             override fun getExemplarLocationName(id: String?) = names.getExemplarLocationName(id)
@@ -32,10 +32,9 @@ class TimeZoneFormatDisplayCoreOracleTest {
             override fun getOffset(zone: com.ibm.icu.util.TimeZone?,date: Long,local: Boolean,offsets: IntArray) = zone!!.getOffset(date,local,offsets)
             override fun getNames() = nameService
             override fun getGenericNames(): TimeZoneFormatDisplayCore.GenericNames<com.ibm.icu.util.TimeZone> {
-                val service = genericGetter.invoke(a) as SGeneric
                 return object : TimeZoneFormatDisplayCore.GenericNames<com.ibm.icu.util.TimeZone> {
-                    override fun getGenericLocationName(id: String?) = service.getGenericLocationName(id)
-                    override fun getDisplayName(zone: com.ibm.icu.util.TimeZone?,type: GenericNameType,date: Long) = service.getDisplayName(zone,SGeneric.GenericNameType.valueOf(type.name),date)
+                    override fun getGenericLocationName(id: String?) = generic.getGenericLocationName(id)
+                    override fun getDisplayName(zone: com.ibm.icu.util.TimeZone?,type: GenericNameType,date: Long) = generic.getDisplayName(zone,type,date)
                 }
             }
         }

@@ -8382,9 +8382,9 @@ JVM tests compare every available full ID, canonical short ID, aliases, all
 proper prefixes, mixed case, trailing text and invalid ranges against the
 private ICU4J ID parsers. Main parser integration compares all styles and option
 combinations in seven locales using real names, abbreviation and numeric
-engines. Generic names and timezone objects in this integration test are supplied
-by ICU4J at the required owner boundary; their public Kotlin implementations
-remain pending. Separate callback tests compare invocation traces, match getter
+engines. Generic names in this integration test now use TimeZoneGenericNamesCore.
+Timezone objects and the JDK pattern service remain supplied at their required
+owner boundaries; the public timezone and common JDK-pattern services are pending. Separate callback tests compare invocation traces, match getter
 order, ties, late reference-zone failures, virtual numeric overrides and changing
 default options. Common tests cover selection, offset fallback, regional mapping,
 ID parsing and result/error state. This adds the actual selection engine without
@@ -8420,8 +8420,8 @@ uses the existing concrete engine; localized formatting remains virtual.
 JVM integration compares all available system IDs, aliases, custom/unknown IDs,
 all styles and three dates in seven locales. Further cases cover extreme dates,
 null style/zone, missing output arguments and numeric range/precision boundaries.
-Names use the common localized engine; generic services and timezone objects at
-the required owner boundary use ICU4J only in the oracle tests. The common
+Names and generic services use the common engines. Timezone objects and the
+JDK pattern service at the required owner boundaries remain test-only host services. The common
 public TimeZone/TimeZoneFormat and generic-name implementations remain pending.
 Callback comparisons exercise custom name services, getter order, exceptions,
 null getters/IDs/results, virtual formatting and captured-offset mutation.
@@ -8450,3 +8450,58 @@ resource with ICU4J 78.3 and verified that callers receive private byte-array
 copies. Source-equivalent generic location names were also compared across all
 region locale bundle IDs. `scripts/generate-data.py --check` verifies all 1,481
 embedded resources and both directory registries.
+
+### Generic timezone name engine
+
+`TimeZoneGenericNamesCore` ports location, partial-location and non-location name
+generation, cache/trie loading, find/findBestMatch and pattern/freeze/clone state.
+It uses canonical country/primary-zone metadata, localized region names and
+exemplar cities. Non-location formatting checks the 184-day DST window using
+actual transitions for BasicTimeZone, or offset sampling for other zones. Golden
+zone comparison uses wall time and compares raw/daylight components separately.
+Standard names equal to the metazone generic name ignoring case are discarded
+before generic/partial fallback. Long arithmetic and strict window boundaries
+retain source overflow and edge behavior.
+
+The local trie loads on demand; best-match lookup checks TimeZoneNames first,
+while find checks local names first. Standard-name full matches still evaluate
+local names, which win equal-length ties. Missing result collections remain
+null. GenericMatchInfo retains identity equality, name type, zone ID, UTF-16
+length and time type. Filters and MatchInfo getter calls follow source order.
+The region cache uses locale country/likely subtags and ignores rg overrides.
+
+Location/partial maps use atomic putIfAbsent (ConcurrentHashMap on JVM and
+locked common maps on JS/Native). IDs and cached names use source interning on
+JVM. LocaleDisplayNames uses a weak reference on all supported targets. Recursive
+locks coordinate cache/trie changes and pattern use. Clone copies share maps,
+trie, weak reference and existing formatter arrays; the clone gets a new monitor
+and an unfrozen flag. Source setFormatPattern clears caches and sets the trie to
+null without rebuilding it, including before invalid-pattern failures. The
+resulting NPE and cache/clone side effects are retained and oracle-tested.
+
+Timezone object/default ownership and JDK MessageFormat construction are required
+owner services. No default timezone or reduced pattern formatter is substituted.
+String-only arguments still require complete MessageFormat construction-time
+validation and quoting, so SimpleFormatter is used only for known simple English
+patterns in common test fixtures. The JVM oracle uses real JDK MessageFormat.
+Public factories/serialization and a common JDK-compatible pattern service remain
+pending alongside the public timezone classes.
+
+Oracle coverage compares location names across all region locale bundles, every
+system zone/alias over four dates and all three generic name types in seven
+locales. Parsing covers all type subsets, prefix offsets, case variants, null
+filters, invalid text/ranges and cache/trie state. Pattern mutation tests include
+quoting, number/date/choice syntax, malformed patterns, shared clones and frozen
+failures. Additional scripted zones compare callback traces for BasicTimeZone
+transition boundaries and non-BasicTimeZone offset sampling, signed DST, extreme
+dates, standard/generic equality and virtual location fallback. Common tests run
+against the actual Olson/names engines and cover names, lazy parsing, cloning,
+source invalidation behavior and validation.
+
+Verification: the complete jvmTest/jsNodeTest/macosArm64Test/
+compileTestKotlinLinuxX64 task selection passed in 6m 14s with the transition
+boundary and non-basic-zone tests. After replacing the parser/display oracle's
+ICU4J generic-name service with this common engine, the same task selection
+passed in 3m 31s (JVM rerun, unchanged platform checks up to date). Common tests
+ran on JVM, Node and macOS Arm64; Linux tests compiled only. Data generation
+checks all 1,481 embedded resources.
