@@ -9984,3 +9984,34 @@ factories remain pending alongside the remaining public calendar families.
 Verification completed: full JVM (2,079 tests), macOS Native (990 tests) and
 JS/Node (992 tests, one existing skip) passed without failures; Linux x64 test
 compilation passed. Combined Gradle verification completed in 7m 23s.
+
+### Public Hebrew calendar (2026-10-17)
+
+Public common HebrewCalendar now binds HebrewCalendarCore to Calendar's actual
+field/stamp storage, date computation, validation, mutation and zone lifecycle.
+Explicit-zone/ULocale and explicit-zone constructors initialize the current time
+after the base constructor, as ICU4J does. The class remains extensible and its
+protected copy constructor supports Native subclass copy hooks. Stateless adapters
+are created on demand so overrides work during base construction and a clone
+never retains an adapter bound to the original calendar. The shared source year
+cache remains shared. The source's final related-year difference is retained.
+
+The facade includes the thirteen named month constants, the deprecated internal
+isLeapYear helper, month/ordinal-month add and roll, strict Adar I validation,
+field-stamp precedence, lunisolar month/year lengths and Temporal month codes
+(including M05L). The ordinal-month override uses the existing resolution table
+and preserves the source's exact conversion policy instead of applying a new
+normalization rule. No default-zone constructor or factory is substituted with a
+fixed zone; those entry points remain pending with the real default-zone runtime.
+
+Four common tests cover leap-month arithmetic, strict validation, independent
+clones and metadata callbacks during base construction. Three JVM integration
+oracles compare all fields across a full 19-year cycle, explicit offsets, actual
+month/year/week limits, month and ordinal-month resolution, locale week policies,
+add/roll, stamps, clones, validation errors, Temporal codes and leap-helper integer
+overflow against pinned ICU4J 78.3. Negative-year arithmetic that could trigger the
+known source CalendarCache nontermination is not invoked in-process.
+
+Verification: the focused JVM run passed in 1m 17s. Full JVM (2,086 tests), macOS
+Native (994 tests) and JS/Node (996 tests, one existing skip) passed without
+failures; Linux x64 test compilation passed. Combined verification took 5m 53s.
