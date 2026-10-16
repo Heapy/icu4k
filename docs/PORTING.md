@@ -9130,3 +9130,40 @@ The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 3m 59s. All five new common tests passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. All three new JVM oracle groups and the existing
 calendar suites passed.
+
+### Era rules and Japanese calendar algorithms (2026-10-16)
+
+EraRulesCore ports supplementalData/calendarData era parsing, validation, sparse
+codes and holes, tentative-era trimming, end-only minimum-date sentinels, forward/
+reverse date lookup, start-date fill arrays and cached current-era calculation.
+The current era reads the clock once, then acquires the default-zone offset at
+that instant through a mandatory host boundary. No default UTC or fixed clock is
+supplied in production. Encoded dates, extreme years, source errors and resource
+iteration order are preserved. Decimal Unicode key digits are normalized before
+integer parsing to retain Java parseInt behavior on JS/Native as well as JVM.
+
+JapaneseCalendarCore ports all Japanese-specific Gregorian overrides: extended
+year precedence and era offsets, accession month/day defaults, field conversion,
+era/year limits, actual year maxima, type, century and counting policies. The
+current-era code is supplied explicitly, matching JapaneseCalendar's static era
+snapshot. Tentative-era configuration preserves system-property/environment/JDK
+property precedence, case-insensitive true, short circuits and failures through
+mandatory host callbacks.
+
+JVM oracles compare every embedded calendar's eras with ICU4J, including sparse
+codes, fill-array identity, invalid dates and current era. A JapaneseCalendar
+probe replaces its subclass algorithms, with inherited Gregorian machinery as
+the explicit oracle boundary; clones rebind their owners. It covers all era
+boundaries, accession defaults, malformed eras/limits, arithmetic, precedence and
+clones. Nine common groups cover synthetic sparse/tentative/reverse eras, sentinel
+and Unicode parsing, malformed resources, cached local current time, real
+Japanese resources, Gregorian overrides, partial writes and configuration order.
+
+Public EraRules/JapaneseCalendar and Calendar/TimeZone facade integration remain
+pending, as do other calendar families, formatting factories and serialization.
+
+Verification: focused era/Japanese JVM common/oracle tests passed in 42s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 5m 1s. All nine new common groups passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. The all-calendar era oracle and both Japanese oracle
+groups passed with the existing suites.
