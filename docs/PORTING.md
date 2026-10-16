@@ -9953,3 +9953,34 @@ six JVM oracle groups passed. Linux tests were compiled only on this macOS host.
 No-argument/default-zone and date-field constructors, Java Locale adapters,
 calendar factories, formatting and serialization remain pending. Other public
 calendar subclasses are still being ported; this is not completion of Calendar.
+
+### Public Coptic and Ethiopic calendars (2026-10-17)
+
+Public common CopticCalendar and EthiopicCalendar now share CECalendar and bind
+existing arithmetic cores to the actual Calendar field, stamp, time and zone
+lifecycle. Explicit-zone/ULocale and explicit-zone constructors are available;
+construction initializes current time in the CE superclass before Ethiopic locale
+mode selection, matching ICU4J. CECalendar is public with internal constructors:
+Kotlin requires a public superclass for public subclasses, while the source's
+package-private base must remain unavailable for external subclass construction.
+Both concrete classes remain final. Public month constants and conversion helpers
+retain source names, including EthiopicToJD's capital E. Private source era
+constants are not exported.
+
+The thirteen-month Temporal override, short final month, negative-year arithmetic,
+mode-specific epochs and limits retain ICU4J behavior. Changing Ethiopic era mode
+does not invalidate cached fields. Cloning copies Calendar storage, zones and the
+Ethiopic mode engine with a new owner, including Native copies without invoking
+clock/locale constructors. Inherited static CE conversions have companion forwards
+on both concrete classes because Kotlin companion functions are not inherited.
+
+Five new tests cover common thirteen-month/year boundaries and independent clones,
+plus JVM comparison against pinned ICU4J 78.3 for every calendar field, limits,
+add/roll, explicit offsets, three locale modes, era switching, negative years and
+static conversion overflow. The focused JVM run passed. Full backend verification
+is recorded below when complete. Default-zone constructors and global calendar
+factories remain pending alongside the remaining public calendar families.
+
+Verification completed: full JVM (2,079 tests), macOS Native (990 tests) and
+JS/Node (992 tests, one existing skip) passed without failures; Linux x64 test
+compilation passed. Combined Gradle verification completed in 7m 23s.
