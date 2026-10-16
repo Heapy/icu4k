@@ -8434,3 +8434,19 @@ Node and macOS Arm64 in the 3m 32s full build; Linux tests compiled only.
 After correcting the callback fixture's qualified ID reference and making
 VirtualMachineError fatal to oracle comparisons, the same task selection passed
 in 1m 52s with JVM tests rerun and unchanged platform results up to date.
+
+### Complete region display-name resources
+
+Generic timezone location names need localized country names. The complete
+ICU 78.3 regiondata catalog is now embedded: 544 region resources totaling
+1,269,824 bytes, including the six previously supplied files. All files come
+from the pinned commit's `icu4j/main/regiondata` module. The manifest records this
+module override in `source_directories`; raw byte sizes and SHA-256 values remain
+checked by the generator. A partitioned RegionResourceRegistry extends resource
+lookup and enumeration without enlarging the legacy dispatch method.
+
+The full task selection passed in 5m 14s. JVM oracle checks compared every region
+resource with ICU4J 78.3 and verified that callers receive private byte-array
+copies. Source-equivalent generic location names were also compared across all
+region locale bundle IDs. `scripts/generate-data.py --check` verifies all 1,481
+embedded resources and both directory registries.

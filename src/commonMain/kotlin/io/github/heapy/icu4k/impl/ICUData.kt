@@ -7,6 +7,7 @@ import io.github.heapy.icu4k.impl.data.ZoneInfoResourceData
 import io.github.heapy.icu4k.impl.data.MetaZonesResourceData
 import io.github.heapy.icu4k.impl.data.WindowsZonesResourceData
 import io.github.heapy.icu4k.impl.data.ZoneResourceRegistry
+import io.github.heapy.icu4k.impl.data.RegionResourceRegistry
 import io.github.heapy.icu4k.impl.data.UcaData
 import io.github.heapy.icu4k.impl.data.CollationAfResourceData
 import io.github.heapy.icu4k.impl.data.CollationAmResourceData
@@ -542,7 +543,7 @@ object ICUData {
         "rbnf/zh_Hant_TW.res",
         "rbnf/zh_MO.res",
         "rbnf/zh_TW.res",
-    ) + ZoneResourceRegistry.names
+    ) + ZoneResourceRegistry.names + RegionResourceRegistry.names
     internal fun visitResources(directory: String, visitor: (String) -> Unit) {
         val prefix = directory.removePrefix("/")
         if (!prefix.startsWith("$ICU_BASE_NAME/")) return
@@ -955,6 +956,6 @@ object ICUData {
         "rbnf/zh_Hant_TW.res" -> RbnfZhHantTWResourceData.copy()
         "rbnf/zh_MO.res" -> RbnfZhMOResourceData.copy()
         "rbnf/zh_TW.res" -> RbnfZhTWResourceData.copy()
-        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName))
+        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName)) ?: RegionResourceRegistry.getBytes(itemPath(resourceName))
     }
 }

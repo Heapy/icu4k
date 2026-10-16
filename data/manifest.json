@@ -6816,9 +6816,3779 @@
       "object": "ZoneResource_zu",
       "sha256": "b8568105eca13c0461593757618972e47aebf1bcdc1362ed95b617953aafddd5",
       "size": 33376
+    },
+    {
+      "name": "region/af.res",
+      "file": "data/icu78/region/af.res",
+      "object": "RegionResource_af",
+      "sha256": "cc210dcd66bdd29bf9749de33ef8c124b495de73612fe454a7b4a48f414fb211",
+      "size": 5168
+    },
+    {
+      "name": "region/agq.res",
+      "file": "data/icu78/region/agq.res",
+      "object": "RegionResource_agq",
+      "sha256": "985cb51b2f15613eb1cc82d43ce5057bb738dc404692f994ca82fee69332b56f",
+      "size": 5600
+    },
+    {
+      "name": "region/ak.res",
+      "file": "data/icu78/region/ak.res",
+      "object": "RegionResource_ak",
+      "sha256": "c0ee77894eadf48e330239760c4390bc0cd309b9e88b9839ca4a3fdcbfe8c812",
+      "size": 6480
+    },
+    {
+      "name": "region/am.res",
+      "file": "data/icu78/region/am.res",
+      "object": "RegionResource_am",
+      "sha256": "9bc0a3ae5637d615cb281ded58ae50358f272bae3b7f9576148aeb9025843b9b",
+      "size": 5984
+    },
+    {
+      "name": "region/ar_AE.res",
+      "file": "data/icu78/region/ar_AE.res",
+      "object": "RegionResource_ar_AE",
+      "sha256": "eba2130162f17903659237307751181b08667a0f472a6113521cd973d002e287",
+      "size": 96
+    },
+    {
+      "name": "region/ar_LY.res",
+      "file": "data/icu78/region/ar_LY.res",
+      "object": "RegionResource_ar_LY",
+      "sha256": "eaec2b886b5bbd38c90e76b261d57fc1000c82f8c99967d2cff16ea1acf679e0",
+      "size": 112
+    },
+    {
+      "name": "region/ar_SA.res",
+      "file": "data/icu78/region/ar_SA.res",
+      "object": "RegionResource_ar_SA",
+      "sha256": "34c049288d0fe4cccc8a33d3956ac360c1024ddee511e26c766ab157ed6c34b9",
+      "size": 272
+    },
+    {
+      "name": "region/ars.res",
+      "file": "data/icu78/region/ars.res",
+      "object": "RegionResource_ars",
+      "sha256": "e7a8327ce9b62c8de67ee85fd2d01f6af0bf93f1dbdb684508fb99f4a3fa93d0",
+      "size": 96
+    },
+    {
+      "name": "region/as.res",
+      "file": "data/icu78/region/as.res",
+      "object": "RegionResource_as",
+      "sha256": "dd48a381df16185a0fd95380b415663965b2dea94135eb83980407abbb3aefd5",
+      "size": 8112
+    },
+    {
+      "name": "region/asa.res",
+      "file": "data/icu78/region/asa.res",
+      "object": "RegionResource_asa",
+      "sha256": "507f2b77ff45bc62d999dc1546a3f385ad71746bb6e64f3a95697b87601ba329",
+      "size": 3232
+    },
+    {
+      "name": "region/ast.res",
+      "file": "data/icu78/region/ast.res",
+      "object": "RegionResource_ast",
+      "sha256": "5cf7f350768ed67c1ac06eb758200bb700df78bc0c84361bf58c1ac294bd3644",
+      "size": 4000
+    },
+    {
+      "name": "region/az.res",
+      "file": "data/icu78/region/az.res",
+      "object": "RegionResource_az",
+      "sha256": "aced915c09c75fa90d47a935ae903e134dde99aa24954932a881852dc89887d9",
+      "size": 6688
+    },
+    {
+      "name": "region/az_AZ.res",
+      "file": "data/icu78/region/az_AZ.res",
+      "object": "RegionResource_az_AZ",
+      "sha256": "878780b50b953008bfb2154a1a4eb90309c29a704e03ee7a820863f06bce695b",
+      "size": 112
+    },
+    {
+      "name": "region/az_Cyrl.res",
+      "file": "data/icu78/region/az_Cyrl.res",
+      "object": "RegionResource_az_Cyrl",
+      "sha256": "51c557ee312ea83a96482cfae6250dec4cfd73935608aaa9a4a623f0d7b5e241",
+      "size": 5584
+    },
+    {
+      "name": "region/az_Latn.res",
+      "file": "data/icu78/region/az_Latn.res",
+      "object": "RegionResource_az_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/az_Latn_AZ.res",
+      "file": "data/icu78/region/az_Latn_AZ.res",
+      "object": "RegionResource_az_Latn_AZ",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ba.res",
+      "file": "data/icu78/region/ba.res",
+      "object": "RegionResource_ba",
+      "sha256": "17df80ecdf3c26ca8516d38799e243dd9b0526df589f81bc16d3098c51b455e2",
+      "size": 4576
+    },
+    {
+      "name": "region/bas.res",
+      "file": "data/icu78/region/bas.res",
+      "object": "RegionResource_bas",
+      "sha256": "b032ab1a9d78d72cbf42f9831e43a7db78ab2cc0076301f6d5d2bc9591322adc",
+      "size": 5136
+    },
+    {
+      "name": "region/be.res",
+      "file": "data/icu78/region/be.res",
+      "object": "RegionResource_be",
+      "sha256": "9c04cf061458bf408ba8f40621ab639bf773804638b704e67601031b3b4cfea2",
+      "size": 7808
+    },
+    {
+      "name": "region/bem.res",
+      "file": "data/icu78/region/bem.res",
+      "object": "RegionResource_bem",
+      "sha256": "3fa99cfd84ebf933c9cd50beb8eb5c1ccd3135a30eb76f51fd48eb64547ea343",
+      "size": 96
+    },
+    {
+      "name": "region/bez.res",
+      "file": "data/icu78/region/bez.res",
+      "object": "RegionResource_bez",
+      "sha256": "c1c943536a5897d252da4dcb8a6e8edcd45779738085788e8d3b6fa2cf0188a4",
+      "size": 6192
+    },
+    {
+      "name": "region/bg.res",
+      "file": "data/icu78/region/bg.res",
+      "object": "RegionResource_bg",
+      "sha256": "bfe1c953a3fa3d7d22b42a529b6455a2a5ee4a31f60886d5f0c001c26e0c1ed4",
+      "size": 5024
+    },
+    {
+      "name": "region/bgc.res",
+      "file": "data/icu78/region/bgc.res",
+      "object": "RegionResource_bgc",
+      "sha256": "1fc442fc73876f9aed4c82e8c7fd4f50d8f1cf83287d0f2a445fbfa7415e86e9",
+      "size": 112
+    },
+    {
+      "name": "region/bho.res",
+      "file": "data/icu78/region/bho.res",
+      "object": "RegionResource_bho",
+      "sha256": "283d8c28a95a7491c4d246f3b4031aa6c0f24dd4081744dd045a984816850e05",
+      "size": 112
+    },
+    {
+      "name": "region/blo.res",
+      "file": "data/icu78/region/blo.res",
+      "object": "RegionResource_blo",
+      "sha256": "13a7bc4413682b7db37770202694b3f6336ad76c680a74b609286dd83bd1c042",
+      "size": 9072
+    },
+    {
+      "name": "region/bm.res",
+      "file": "data/icu78/region/bm.res",
+      "object": "RegionResource_bm",
+      "sha256": "428ee436694b1b49dca2ac6b2723cbea20d48220881d6c1cb01ffca008ce5890",
+      "size": 4144
+    },
+    {
+      "name": "region/bn.res",
+      "file": "data/icu78/region/bn.res",
+      "object": "RegionResource_bn",
+      "sha256": "f0b5c891d4c24142f7d5b0b1bcdeaadecdb012c70e7be83f4a8918d03dbb45e7",
+      "size": 8208
+    },
+    {
+      "name": "region/bn_IN.res",
+      "file": "data/icu78/region/bn_IN.res",
+      "object": "RegionResource_bn_IN",
+      "sha256": "51e72fc871ac71124c960f79944662bee39074a14510f7117ebbbdc08fffcc44",
+      "size": 400
+    },
+    {
+      "name": "region/bo.res",
+      "file": "data/icu78/region/bo.res",
+      "object": "RegionResource_bo",
+      "sha256": "d84951d82d7bb779c618759a39f925d14149aab4dcd4422ecfc4ad6c0646d385",
+      "size": 416
+    },
+    {
+      "name": "region/bo_IN.res",
+      "file": "data/icu78/region/bo_IN.res",
+      "object": "RegionResource_bo_IN",
+      "sha256": "e5a18f6bd793bee757c02808d6a5ca0e513ef62a18686b92080d2e3b9bf11236",
+      "size": 112
+    },
+    {
+      "name": "region/br.res",
+      "file": "data/icu78/region/br.res",
+      "object": "RegionResource_br",
+      "sha256": "19d0061fc44717dda46b4669af5a2be77a0e1da9bd8816f2111a44de9f51b6c9",
+      "size": 5136
+    },
+    {
+      "name": "region/brx.res",
+      "file": "data/icu78/region/brx.res",
+      "object": "RegionResource_brx",
+      "sha256": "7ad75b6bbcef7d1c40c62000664b9e963bf3bebf8856c4c377b197346e59a3fa",
+      "size": 7392
+    },
+    {
+      "name": "region/bs.res",
+      "file": "data/icu78/region/bs.res",
+      "object": "RegionResource_bs",
+      "sha256": "c32adba481f6c446128dee336538efe10f6fc03d80fafc2f5dba9dcb15efd6da",
+      "size": 2656
+    },
+    {
+      "name": "region/bs_BA.res",
+      "file": "data/icu78/region/bs_BA.res",
+      "object": "RegionResource_bs_BA",
+      "sha256": "5cb70b537baed073dc20dbbea8925d33a77ca1088acf011dabc7dd46dc1431dc",
+      "size": 112
+    },
+    {
+      "name": "region/bs_Cyrl.res",
+      "file": "data/icu78/region/bs_Cyrl.res",
+      "object": "RegionResource_bs_Cyrl",
+      "sha256": "837c4256563960428c2b024661d784591351aa261ebabdcb8e42999e39dab57d",
+      "size": 2560
+    },
+    {
+      "name": "region/bs_Latn.res",
+      "file": "data/icu78/region/bs_Latn.res",
+      "object": "RegionResource_bs_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/bs_Latn_BA.res",
+      "file": "data/icu78/region/bs_Latn_BA.res",
+      "object": "RegionResource_bs_Latn_BA",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/bua.res",
+      "file": "data/icu78/region/bua.res",
+      "object": "RegionResource_bua",
+      "sha256": "2924e44f2e1c50a1bb48fae19b02bac4fe77d965795b7bfeab6b4b478a56645e",
+      "size": 112
+    },
+    {
+      "name": "region/ca.res",
+      "file": "data/icu78/region/ca.res",
+      "object": "RegionResource_ca",
+      "sha256": "665fdac43abf48a4ad7db9c0a008d834b0760d8dae230f7df591317c369ea527",
+      "size": 4864
+    },
+    {
+      "name": "region/ccp.res",
+      "file": "data/icu78/region/ccp.res",
+      "object": "RegionResource_ccp",
+      "sha256": "a10c0e6a9edb6a145fcb7e26c3378b129e88e8132dfb6115a1415ba621ef823f",
+      "size": 14272
+    },
+    {
+      "name": "region/ce.res",
+      "file": "data/icu78/region/ce.res",
+      "object": "RegionResource_ce",
+      "sha256": "33a7316bc18209e9ef308c662077dee2b137628f4aaea29e4bf8b0ca896c6058",
+      "size": 5792
+    },
+    {
+      "name": "region/ceb.res",
+      "file": "data/icu78/region/ceb.res",
+      "object": "RegionResource_ceb",
+      "sha256": "47d32f8559b2574301770b8e51924dd0337902777f8fe0158cb0a3f72b652ff3",
+      "size": 1520
+    },
+    {
+      "name": "region/cgg.res",
+      "file": "data/icu78/region/cgg.res",
+      "object": "RegionResource_cgg",
+      "sha256": "04810d023306cc5ed348c76989c08afea84b2f8c0b8642af188b37e5dac58d6e",
+      "size": 1568
+    },
+    {
+      "name": "region/chr.res",
+      "file": "data/icu78/region/chr.res",
+      "object": "RegionResource_chr",
+      "sha256": "c97c0240359b29943fa8a48677b2c19ec0efff30cf4b09b7f0684613760d3e44",
+      "size": 6144
+    },
+    {
+      "name": "region/ckb.res",
+      "file": "data/icu78/region/ckb.res",
+      "object": "RegionResource_ckb",
+      "sha256": "5f86047124a89235834cb6a4014fb6cd0efc732013c5da0dc3e2959f918b943d",
+      "size": 7360
+    },
+    {
+      "name": "region/cs.res",
+      "file": "data/icu78/region/cs.res",
+      "object": "RegionResource_cs",
+      "sha256": "de5e6204a057f4d54771f3fc0c256bdfcd1fc9b725b41d88a23df233ae34118d",
+      "size": 5232
+    },
+    {
+      "name": "region/csw.res",
+      "file": "data/icu78/region/csw.res",
+      "object": "RegionResource_csw",
+      "sha256": "eb3eded8c482b53329071c38cb21ddafdd94f422a8db1697fc6f040b3b2127ca",
+      "size": 320
+    },
+    {
+      "name": "region/cv.res",
+      "file": "data/icu78/region/cv.res",
+      "object": "RegionResource_cv",
+      "sha256": "76689e09616b0899af9f30fcb9984a8a8d8d3716e737f7c87dc267c26c336361",
+      "size": 5232
+    },
+    {
+      "name": "region/cy.res",
+      "file": "data/icu78/region/cy.res",
+      "object": "RegionResource_cy",
+      "sha256": "1397b01ff470b1dcf95ed039136860f5cd67e2d51ee8cfa8dfefb31223f1da93",
+      "size": 5792
+    },
+    {
+      "name": "region/da.res",
+      "file": "data/icu78/region/da.res",
+      "object": "RegionResource_da",
+      "sha256": "f4320c2daa5af64ae01f0262a48f9061a26ec071e2ee4e0654799c188b9cef99",
+      "size": 3952
+    },
+    {
+      "name": "region/dav.res",
+      "file": "data/icu78/region/dav.res",
+      "object": "RegionResource_dav",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/de.res",
+      "file": "data/icu78/region/de.res",
+      "object": "RegionResource_de",
+      "sha256": "fae78c96c9e89837e8f9e6ac77c17cf9b58ffab4ec535b459857708502ff989f",
+      "size": 4016
+    },
+    {
+      "name": "region/de_AT.res",
+      "file": "data/icu78/region/de_AT.res",
+      "object": "RegionResource_de_AT",
+      "sha256": "c11344b57123d00ed2d84eea014d8ed2bbc02357d8fcc6a375bf5349bf58694f",
+      "size": 96
+    },
+    {
+      "name": "region/de_CH.res",
+      "file": "data/icu78/region/de_CH.res",
+      "object": "RegionResource_de_CH",
+      "sha256": "1355e645cf64380915960587515bb3ffce7204732157877d061f89705a606d8e",
+      "size": 208
+    },
+    {
+      "name": "region/dje.res",
+      "file": "data/icu78/region/dje.res",
+      "object": "RegionResource_dje",
+      "sha256": "f3437301c2ead14d4de5087ae3f4940519981e6efe50ff727f730b8ed5d06379",
+      "size": 1056
+    },
+    {
+      "name": "region/doi.res",
+      "file": "data/icu78/region/doi.res",
+      "object": "RegionResource_doi",
+      "sha256": "6a28ae1d2e4ce621d99b597163d75f79590e37cb1606ce1ec52286609b50c009",
+      "size": 192
+    },
+    {
+      "name": "region/dsb.res",
+      "file": "data/icu78/region/dsb.res",
+      "object": "RegionResource_dsb",
+      "sha256": "e2ada7762e56a33e2a02a7662394a6eb7b482bf826688bcd9834c66a4f26421d",
+      "size": 4256
+    },
+    {
+      "name": "region/dua.res",
+      "file": "data/icu78/region/dua.res",
+      "object": "RegionResource_dua",
+      "sha256": "07b841092a8604e491d7c70c949e2ebfb63b9d90d25f3a6e35f18cb31ec599e2",
+      "size": 96
+    },
+    {
+      "name": "region/dyo.res",
+      "file": "data/icu78/region/dyo.res",
+      "object": "RegionResource_dyo",
+      "sha256": "99948f8b66bdf3ba7115e74af13bc8773a85b59b514ff0726317c6b0aef085df",
+      "size": 1344
+    },
+    {
+      "name": "region/dz.res",
+      "file": "data/icu78/region/dz.res",
+      "object": "RegionResource_dz",
+      "sha256": "a4e97823bc326e1345f5cb47a5d36fd11a07439f782be95c5b81319c6368c382",
+      "size": 9136
+    },
+    {
+      "name": "region/ebu.res",
+      "file": "data/icu78/region/ebu.res",
+      "object": "RegionResource_ebu",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/ee.res",
+      "file": "data/icu78/region/ee.res",
+      "object": "RegionResource_ee",
+      "sha256": "cda01ed3188894d972eca888904ce8f4bcc731505d2f9208db1e178ca8208e75",
+      "size": 11472
+    },
+    {
+      "name": "region/el.res",
+      "file": "data/icu78/region/el.res",
+      "object": "RegionResource_el",
+      "sha256": "121beaad603d45365de3e360e3c0005454b1f30a9edade82be960b1410f5266a",
+      "size": 8576
+    },
+    {
+      "name": "region/en_001.res",
+      "file": "data/icu78/region/en_001.res",
+      "object": "RegionResource_en_001",
+      "sha256": "86f0d899801e23f1a469bf0b2f50336aac481962be55bc47995c0b68a61d2662",
+      "size": 336
+    },
+    {
+      "name": "region/en_150.res",
+      "file": "data/icu78/region/en_150.res",
+      "object": "RegionResource_en_150",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_AG.res",
+      "file": "data/icu78/region/en_AG.res",
+      "object": "RegionResource_en_AG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_AI.res",
+      "file": "data/icu78/region/en_AI.res",
+      "object": "RegionResource_en_AI",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_AT.res",
+      "file": "data/icu78/region/en_AT.res",
+      "object": "RegionResource_en_AT",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_AU.res",
+      "file": "data/icu78/region/en_AU.res",
+      "object": "RegionResource_en_AU",
+      "sha256": "f9eaaafacb11de3c4473d719b0925df03ad3e5ebd3fe58382305d0cb0aee5130",
+      "size": 368
+    },
+    {
+      "name": "region/en_BB.res",
+      "file": "data/icu78/region/en_BB.res",
+      "object": "RegionResource_en_BB",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_BE.res",
+      "file": "data/icu78/region/en_BE.res",
+      "object": "RegionResource_en_BE",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_BM.res",
+      "file": "data/icu78/region/en_BM.res",
+      "object": "RegionResource_en_BM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_BS.res",
+      "file": "data/icu78/region/en_BS.res",
+      "object": "RegionResource_en_BS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_BW.res",
+      "file": "data/icu78/region/en_BW.res",
+      "object": "RegionResource_en_BW",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_BZ.res",
+      "file": "data/icu78/region/en_BZ.res",
+      "object": "RegionResource_en_BZ",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CA.res",
+      "file": "data/icu78/region/en_CA.res",
+      "object": "RegionResource_en_CA",
+      "sha256": "ff016e753795249964e092f079d76619890fb2f2ac510e46f847c4719e3a7c21",
+      "size": 320
+    },
+    {
+      "name": "region/en_CC.res",
+      "file": "data/icu78/region/en_CC.res",
+      "object": "RegionResource_en_CC",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CH.res",
+      "file": "data/icu78/region/en_CH.res",
+      "object": "RegionResource_en_CH",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_CK.res",
+      "file": "data/icu78/region/en_CK.res",
+      "object": "RegionResource_en_CK",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CM.res",
+      "file": "data/icu78/region/en_CM.res",
+      "object": "RegionResource_en_CM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CX.res",
+      "file": "data/icu78/region/en_CX.res",
+      "object": "RegionResource_en_CX",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CY.res",
+      "file": "data/icu78/region/en_CY.res",
+      "object": "RegionResource_en_CY",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_CZ.res",
+      "file": "data/icu78/region/en_CZ.res",
+      "object": "RegionResource_en_CZ",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_DE.res",
+      "file": "data/icu78/region/en_DE.res",
+      "object": "RegionResource_en_DE",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_DG.res",
+      "file": "data/icu78/region/en_DG.res",
+      "object": "RegionResource_en_DG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_DK.res",
+      "file": "data/icu78/region/en_DK.res",
+      "object": "RegionResource_en_DK",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_DM.res",
+      "file": "data/icu78/region/en_DM.res",
+      "object": "RegionResource_en_DM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_EE.res",
+      "file": "data/icu78/region/en_EE.res",
+      "object": "RegionResource_en_EE",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_ER.res",
+      "file": "data/icu78/region/en_ER.res",
+      "object": "RegionResource_en_ER",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_ES.res",
+      "file": "data/icu78/region/en_ES.res",
+      "object": "RegionResource_en_ES",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_FI.res",
+      "file": "data/icu78/region/en_FI.res",
+      "object": "RegionResource_en_FI",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_FJ.res",
+      "file": "data/icu78/region/en_FJ.res",
+      "object": "RegionResource_en_FJ",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_FK.res",
+      "file": "data/icu78/region/en_FK.res",
+      "object": "RegionResource_en_FK",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_FM.res",
+      "file": "data/icu78/region/en_FM.res",
+      "object": "RegionResource_en_FM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_FR.res",
+      "file": "data/icu78/region/en_FR.res",
+      "object": "RegionResource_en_FR",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_GB.res",
+      "file": "data/icu78/region/en_GB.res",
+      "object": "RegionResource_en_GB",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GD.res",
+      "file": "data/icu78/region/en_GD.res",
+      "object": "RegionResource_en_GD",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GE.res",
+      "file": "data/icu78/region/en_GE.res",
+      "object": "RegionResource_en_GE",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_GG.res",
+      "file": "data/icu78/region/en_GG.res",
+      "object": "RegionResource_en_GG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GH.res",
+      "file": "data/icu78/region/en_GH.res",
+      "object": "RegionResource_en_GH",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GI.res",
+      "file": "data/icu78/region/en_GI.res",
+      "object": "RegionResource_en_GI",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GM.res",
+      "file": "data/icu78/region/en_GM.res",
+      "object": "RegionResource_en_GM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GS.res",
+      "file": "data/icu78/region/en_GS.res",
+      "object": "RegionResource_en_GS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_GY.res",
+      "file": "data/icu78/region/en_GY.res",
+      "object": "RegionResource_en_GY",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_HK.res",
+      "file": "data/icu78/region/en_HK.res",
+      "object": "RegionResource_en_HK",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_HU.res",
+      "file": "data/icu78/region/en_HU.res",
+      "object": "RegionResource_en_HU",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_ID.res",
+      "file": "data/icu78/region/en_ID.res",
+      "object": "RegionResource_en_ID",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IE.res",
+      "file": "data/icu78/region/en_IE.res",
+      "object": "RegionResource_en_IE",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IL.res",
+      "file": "data/icu78/region/en_IL.res",
+      "object": "RegionResource_en_IL",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IM.res",
+      "file": "data/icu78/region/en_IM.res",
+      "object": "RegionResource_en_IM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IN.res",
+      "file": "data/icu78/region/en_IN.res",
+      "object": "RegionResource_en_IN",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IO.res",
+      "file": "data/icu78/region/en_IO.res",
+      "object": "RegionResource_en_IO",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_IT.res",
+      "file": "data/icu78/region/en_IT.res",
+      "object": "RegionResource_en_IT",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_JE.res",
+      "file": "data/icu78/region/en_JE.res",
+      "object": "RegionResource_en_JE",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_JM.res",
+      "file": "data/icu78/region/en_JM.res",
+      "object": "RegionResource_en_JM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_KE.res",
+      "file": "data/icu78/region/en_KE.res",
+      "object": "RegionResource_en_KE",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_KI.res",
+      "file": "data/icu78/region/en_KI.res",
+      "object": "RegionResource_en_KI",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_KN.res",
+      "file": "data/icu78/region/en_KN.res",
+      "object": "RegionResource_en_KN",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_KY.res",
+      "file": "data/icu78/region/en_KY.res",
+      "object": "RegionResource_en_KY",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_LC.res",
+      "file": "data/icu78/region/en_LC.res",
+      "object": "RegionResource_en_LC",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_LR.res",
+      "file": "data/icu78/region/en_LR.res",
+      "object": "RegionResource_en_LR",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_LS.res",
+      "file": "data/icu78/region/en_LS.res",
+      "object": "RegionResource_en_LS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_LT.res",
+      "file": "data/icu78/region/en_LT.res",
+      "object": "RegionResource_en_LT",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_LV.res",
+      "file": "data/icu78/region/en_LV.res",
+      "object": "RegionResource_en_LV",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_MG.res",
+      "file": "data/icu78/region/en_MG.res",
+      "object": "RegionResource_en_MG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MO.res",
+      "file": "data/icu78/region/en_MO.res",
+      "object": "RegionResource_en_MO",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MS.res",
+      "file": "data/icu78/region/en_MS.res",
+      "object": "RegionResource_en_MS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MT.res",
+      "file": "data/icu78/region/en_MT.res",
+      "object": "RegionResource_en_MT",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MU.res",
+      "file": "data/icu78/region/en_MU.res",
+      "object": "RegionResource_en_MU",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MV.res",
+      "file": "data/icu78/region/en_MV.res",
+      "object": "RegionResource_en_MV",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MW.res",
+      "file": "data/icu78/region/en_MW.res",
+      "object": "RegionResource_en_MW",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_MY.res",
+      "file": "data/icu78/region/en_MY.res",
+      "object": "RegionResource_en_MY",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NA.res",
+      "file": "data/icu78/region/en_NA.res",
+      "object": "RegionResource_en_NA",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NF.res",
+      "file": "data/icu78/region/en_NF.res",
+      "object": "RegionResource_en_NF",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NG.res",
+      "file": "data/icu78/region/en_NG.res",
+      "object": "RegionResource_en_NG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NH.res",
+      "file": "data/icu78/region/en_NH.res",
+      "object": "RegionResource_en_NH",
+      "sha256": "76cab351987d72b9a9335f79e9d1b5eab7ae6376d57be4d28198563703e04040",
+      "size": 96
+    },
+    {
+      "name": "region/en_NL.res",
+      "file": "data/icu78/region/en_NL.res",
+      "object": "RegionResource_en_NL",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_NO.res",
+      "file": "data/icu78/region/en_NO.res",
+      "object": "RegionResource_en_NO",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_NR.res",
+      "file": "data/icu78/region/en_NR.res",
+      "object": "RegionResource_en_NR",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NU.res",
+      "file": "data/icu78/region/en_NU.res",
+      "object": "RegionResource_en_NU",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_NZ.res",
+      "file": "data/icu78/region/en_NZ.res",
+      "object": "RegionResource_en_NZ",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_PG.res",
+      "file": "data/icu78/region/en_PG.res",
+      "object": "RegionResource_en_PG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_PK.res",
+      "file": "data/icu78/region/en_PK.res",
+      "object": "RegionResource_en_PK",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_PL.res",
+      "file": "data/icu78/region/en_PL.res",
+      "object": "RegionResource_en_PL",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_PN.res",
+      "file": "data/icu78/region/en_PN.res",
+      "object": "RegionResource_en_PN",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_PT.res",
+      "file": "data/icu78/region/en_PT.res",
+      "object": "RegionResource_en_PT",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_PW.res",
+      "file": "data/icu78/region/en_PW.res",
+      "object": "RegionResource_en_PW",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_RH.res",
+      "file": "data/icu78/region/en_RH.res",
+      "object": "RegionResource_en_RH",
+      "sha256": "353920bee27cf747e09886f40547974d5f691be0a69801cf5eaa34532f3888d9",
+      "size": 96
+    },
+    {
+      "name": "region/en_RO.res",
+      "file": "data/icu78/region/en_RO.res",
+      "object": "RegionResource_en_RO",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_RW.res",
+      "file": "data/icu78/region/en_RW.res",
+      "object": "RegionResource_en_RW",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SB.res",
+      "file": "data/icu78/region/en_SB.res",
+      "object": "RegionResource_en_SB",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SC.res",
+      "file": "data/icu78/region/en_SC.res",
+      "object": "RegionResource_en_SC",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SD.res",
+      "file": "data/icu78/region/en_SD.res",
+      "object": "RegionResource_en_SD",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SE.res",
+      "file": "data/icu78/region/en_SE.res",
+      "object": "RegionResource_en_SE",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_SG.res",
+      "file": "data/icu78/region/en_SG.res",
+      "object": "RegionResource_en_SG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SH.res",
+      "file": "data/icu78/region/en_SH.res",
+      "object": "RegionResource_en_SH",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SI.res",
+      "file": "data/icu78/region/en_SI.res",
+      "object": "RegionResource_en_SI",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_SK.res",
+      "file": "data/icu78/region/en_SK.res",
+      "object": "RegionResource_en_SK",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_SL.res",
+      "file": "data/icu78/region/en_SL.res",
+      "object": "RegionResource_en_SL",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SS.res",
+      "file": "data/icu78/region/en_SS.res",
+      "object": "RegionResource_en_SS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SX.res",
+      "file": "data/icu78/region/en_SX.res",
+      "object": "RegionResource_en_SX",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_SZ.res",
+      "file": "data/icu78/region/en_SZ.res",
+      "object": "RegionResource_en_SZ",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TC.res",
+      "file": "data/icu78/region/en_TC.res",
+      "object": "RegionResource_en_TC",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TK.res",
+      "file": "data/icu78/region/en_TK.res",
+      "object": "RegionResource_en_TK",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TO.res",
+      "file": "data/icu78/region/en_TO.res",
+      "object": "RegionResource_en_TO",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TT.res",
+      "file": "data/icu78/region/en_TT.res",
+      "object": "RegionResource_en_TT",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TV.res",
+      "file": "data/icu78/region/en_TV.res",
+      "object": "RegionResource_en_TV",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_TZ.res",
+      "file": "data/icu78/region/en_TZ.res",
+      "object": "RegionResource_en_TZ",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_UA.res",
+      "file": "data/icu78/region/en_UA.res",
+      "object": "RegionResource_en_UA",
+      "sha256": "78a4003c5c9a1e573167498b76597a7ae2ce2408c8f294a2c15c14aa5dc13909",
+      "size": 80
+    },
+    {
+      "name": "region/en_UG.res",
+      "file": "data/icu78/region/en_UG.res",
+      "object": "RegionResource_en_UG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_VC.res",
+      "file": "data/icu78/region/en_VC.res",
+      "object": "RegionResource_en_VC",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_VG.res",
+      "file": "data/icu78/region/en_VG.res",
+      "object": "RegionResource_en_VG",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_VU.res",
+      "file": "data/icu78/region/en_VU.res",
+      "object": "RegionResource_en_VU",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_WS.res",
+      "file": "data/icu78/region/en_WS.res",
+      "object": "RegionResource_en_WS",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_ZA.res",
+      "file": "data/icu78/region/en_ZA.res",
+      "object": "RegionResource_en_ZA",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_ZM.res",
+      "file": "data/icu78/region/en_ZM.res",
+      "object": "RegionResource_en_ZM",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/en_ZW.res",
+      "file": "data/icu78/region/en_ZW.res",
+      "object": "RegionResource_en_ZW",
+      "sha256": "17a766f3a7ee5c3e00024a30fb6c4df6b0621dd77c377d962b9dd7dc85457ded",
+      "size": 80
+    },
+    {
+      "name": "region/eo.res",
+      "file": "data/icu78/region/eo.res",
+      "object": "RegionResource_eo",
+      "sha256": "c68de683864323d4a5f7488015a9812442fea13eda1535fa9b6c141b3a8dd5b7",
+      "size": 7552
+    },
+    {
+      "name": "region/es.res",
+      "file": "data/icu78/region/es.res",
+      "object": "RegionResource_es",
+      "sha256": "678c3d9389c62a87eb0584d8545d5bceb9e541fa55145091ad423c65f779f127",
+      "size": 2320
+    },
+    {
+      "name": "region/es_419.res",
+      "file": "data/icu78/region/es_419.res",
+      "object": "RegionResource_es_419",
+      "sha256": "c07003be16f8e174e8ea4d7b11eeb2e93bb7057d713c0d49710802454f954796",
+      "size": 736
+    },
+    {
+      "name": "region/es_AR.res",
+      "file": "data/icu78/region/es_AR.res",
+      "object": "RegionResource_es_AR",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_BO.res",
+      "file": "data/icu78/region/es_BO.res",
+      "object": "RegionResource_es_BO",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_BR.res",
+      "file": "data/icu78/region/es_BR.res",
+      "object": "RegionResource_es_BR",
+      "sha256": "4b4b0c5149854700d814a2e30e657a220c750cbe9bf40be39abf6a62938bddff",
+      "size": 80
+    },
+    {
+      "name": "region/es_BZ.res",
+      "file": "data/icu78/region/es_BZ.res",
+      "object": "RegionResource_es_BZ",
+      "sha256": "4b4b0c5149854700d814a2e30e657a220c750cbe9bf40be39abf6a62938bddff",
+      "size": 80
+    },
+    {
+      "name": "region/es_CL.res",
+      "file": "data/icu78/region/es_CL.res",
+      "object": "RegionResource_es_CL",
+      "sha256": "0fbd446950679bf6c74b9489883f22c98ce6a4b8e01b47c5d923ce78df092af0",
+      "size": 128
+    },
+    {
+      "name": "region/es_CO.res",
+      "file": "data/icu78/region/es_CO.res",
+      "object": "RegionResource_es_CO",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_CR.res",
+      "file": "data/icu78/region/es_CR.res",
+      "object": "RegionResource_es_CR",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_CU.res",
+      "file": "data/icu78/region/es_CU.res",
+      "object": "RegionResource_es_CU",
+      "sha256": "4b4b0c5149854700d814a2e30e657a220c750cbe9bf40be39abf6a62938bddff",
+      "size": 80
+    },
+    {
+      "name": "region/es_DO.res",
+      "file": "data/icu78/region/es_DO.res",
+      "object": "RegionResource_es_DO",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_EC.res",
+      "file": "data/icu78/region/es_EC.res",
+      "object": "RegionResource_es_EC",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_GT.res",
+      "file": "data/icu78/region/es_GT.res",
+      "object": "RegionResource_es_GT",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_HN.res",
+      "file": "data/icu78/region/es_HN.res",
+      "object": "RegionResource_es_HN",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_MX.res",
+      "file": "data/icu78/region/es_MX.res",
+      "object": "RegionResource_es_MX",
+      "sha256": "1564b26c329282740cc8183b263e85c32bec8959eeb0dcd55a86b3e2ed803aa6",
+      "size": 192
+    },
+    {
+      "name": "region/es_NI.res",
+      "file": "data/icu78/region/es_NI.res",
+      "object": "RegionResource_es_NI",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_PA.res",
+      "file": "data/icu78/region/es_PA.res",
+      "object": "RegionResource_es_PA",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_PE.res",
+      "file": "data/icu78/region/es_PE.res",
+      "object": "RegionResource_es_PE",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_PR.res",
+      "file": "data/icu78/region/es_PR.res",
+      "object": "RegionResource_es_PR",
+      "sha256": "e75f4d627ffdbc5d6f7771019cb4ac50fc0f97d6a6e0ced073834dff82010408",
+      "size": 96
+    },
+    {
+      "name": "region/es_PY.res",
+      "file": "data/icu78/region/es_PY.res",
+      "object": "RegionResource_es_PY",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/es_SV.res",
+      "file": "data/icu78/region/es_SV.res",
+      "object": "RegionResource_es_SV",
+      "sha256": "e75f4d627ffdbc5d6f7771019cb4ac50fc0f97d6a6e0ced073834dff82010408",
+      "size": 96
+    },
+    {
+      "name": "region/es_US.res",
+      "file": "data/icu78/region/es_US.res",
+      "object": "RegionResource_es_US",
+      "sha256": "29a55fddec0b3a5c69fb5ca33f0fc7ca02866b5d252675eddd086352e04bb6b9",
+      "size": 176
+    },
+    {
+      "name": "region/es_UY.res",
+      "file": "data/icu78/region/es_UY.res",
+      "object": "RegionResource_es_UY",
+      "sha256": "4b4b0c5149854700d814a2e30e657a220c750cbe9bf40be39abf6a62938bddff",
+      "size": 80
+    },
+    {
+      "name": "region/es_VE.res",
+      "file": "data/icu78/region/es_VE.res",
+      "object": "RegionResource_es_VE",
+      "sha256": "b76de588170b22747393516b6265d17e29aafe91c565c23ee910073bc4406de0",
+      "size": 112
+    },
+    {
+      "name": "region/et.res",
+      "file": "data/icu78/region/et.res",
+      "object": "RegionResource_et",
+      "sha256": "02159fa6f1a9dfd40a53f1888ce13b08585b90661a7dd0ef9325569c63582b0b",
+      "size": 5536
+    },
+    {
+      "name": "region/eu.res",
+      "file": "data/icu78/region/eu.res",
+      "object": "RegionResource_eu",
+      "sha256": "f896bed2c53255c801236f2b831c4d580d454506bae7290e28c99982736df798",
+      "size": 5408
+    },
+    {
+      "name": "region/ewo.res",
+      "file": "data/icu78/region/ewo.res",
+      "object": "RegionResource_ewo",
+      "sha256": "c98befd758f7d6bdbb8574218798a194ad44718b75b648ae05c3a9eccf48c8d9",
+      "size": 5072
+    },
+    {
+      "name": "region/fa.res",
+      "file": "data/icu78/region/fa.res",
+      "object": "RegionResource_fa",
+      "sha256": "e317d4301e0bb057e5598f3aa114157b703f9e8be77d5775e17af628c88c5d00",
+      "size": 6000
+    },
+    {
+      "name": "region/fa_AF.res",
+      "file": "data/icu78/region/fa_AF.res",
+      "object": "RegionResource_fa_AF",
+      "sha256": "ae007ef6fa1f7a4b1a1afb3179d7eb069ababe08e0cc4f8bc308a79fff05df95",
+      "size": 1696
+    },
+    {
+      "name": "region/ff.res",
+      "file": "data/icu78/region/ff.res",
+      "object": "RegionResource_ff",
+      "sha256": "84128a31b4451a73b8f9f199f1c253e24769e05cc2f31ec5b0a433cfa417af35",
+      "size": 4944
+    },
+    {
+      "name": "region/ff_Adlm.res",
+      "file": "data/icu78/region/ff_Adlm.res",
+      "object": "RegionResource_ff_Adlm",
+      "sha256": "008e0d942ed134dd30eea1d77aa1ce2e4f6f3b2e5942bf69302abdcf50157248",
+      "size": 14848
+    },
+    {
+      "name": "region/ff_CM.res",
+      "file": "data/icu78/region/ff_CM.res",
+      "object": "RegionResource_ff_CM",
+      "sha256": "cf2b2e6caa5bd8d999f24079b271e1a7135a0e339f77b2969726972c79c9b74c",
+      "size": 112
+    },
+    {
+      "name": "region/ff_GN.res",
+      "file": "data/icu78/region/ff_GN.res",
+      "object": "RegionResource_ff_GN",
+      "sha256": "ed6c53b294dc794f8e64ed58501a93fab026eae5ac620f700bd06b20b965fb20",
+      "size": 112
+    },
+    {
+      "name": "region/ff_Latn.res",
+      "file": "data/icu78/region/ff_Latn.res",
+      "object": "RegionResource_ff_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/ff_Latn_CM.res",
+      "file": "data/icu78/region/ff_Latn_CM.res",
+      "object": "RegionResource_ff_Latn_CM",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ff_Latn_GN.res",
+      "file": "data/icu78/region/ff_Latn_GN.res",
+      "object": "RegionResource_ff_Latn_GN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ff_Latn_MR.res",
+      "file": "data/icu78/region/ff_Latn_MR.res",
+      "object": "RegionResource_ff_Latn_MR",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ff_Latn_SN.res",
+      "file": "data/icu78/region/ff_Latn_SN.res",
+      "object": "RegionResource_ff_Latn_SN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ff_MR.res",
+      "file": "data/icu78/region/ff_MR.res",
+      "object": "RegionResource_ff_MR",
+      "sha256": "7e5ea43632108eaddd25ad25bc34a43d9a267da1d0e2f2bbc1ece15a5d2d1fa6",
+      "size": 112
+    },
+    {
+      "name": "region/ff_SN.res",
+      "file": "data/icu78/region/ff_SN.res",
+      "object": "RegionResource_ff_SN",
+      "sha256": "86a3506b6e19a18c35f2291673fa9f762b4debe64067fde2353180011a2c366d",
+      "size": 112
+    },
+    {
+      "name": "region/fi.res",
+      "file": "data/icu78/region/fi.res",
+      "object": "RegionResource_fi",
+      "sha256": "561624a4e34a2da1b1a74572a967d131cc11943c94a245e2e8e24d19b46b5f0b",
+      "size": 5008
+    },
+    {
+      "name": "region/fil.res",
+      "file": "data/icu78/region/fil.res",
+      "object": "RegionResource_fil",
+      "sha256": "4fb9fd691898b36591ed5b3831e09056996bb552595a1607fa755355eb9c2fe9",
+      "size": 2240
+    },
+    {
+      "name": "region/fil_PH.res",
+      "file": "data/icu78/region/fil_PH.res",
+      "object": "RegionResource_fil_PH",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/fo.res",
+      "file": "data/icu78/region/fo.res",
+      "object": "RegionResource_fo",
+      "sha256": "a18d7eab35e176444ddeee71ba1f27315623630aa43584c297ad432b7ba05267",
+      "size": 4928
+    },
+    {
+      "name": "region/fr_BE.res",
+      "file": "data/icu78/region/fr_BE.res",
+      "object": "RegionResource_fr_BE",
+      "sha256": "2b87501517e53e082185cfd1433cd4d994fa0454b0db996019e5efa737c96978",
+      "size": 176
+    },
+    {
+      "name": "region/fr_CA.res",
+      "file": "data/icu78/region/fr_CA.res",
+      "object": "RegionResource_fr_CA",
+      "sha256": "e2d1e56e80e96c2e8d09e221d0e0cf4182130fca0403d3acc60532a30fb96964",
+      "size": 1360
+    },
+    {
+      "name": "region/fur.res",
+      "file": "data/icu78/region/fur.res",
+      "object": "RegionResource_fur",
+      "sha256": "69a895e818c0a4643e6da5eae8c98849841c8498921e1f393f5399361c5e85ab",
+      "size": 5584
+    },
+    {
+      "name": "region/fy.res",
+      "file": "data/icu78/region/fy.res",
+      "object": "RegionResource_fy",
+      "sha256": "087d8f33a6f69329170b1c1d1432345b562d9b51820047706be2291f1ad317e5",
+      "size": 3984
+    },
+    {
+      "name": "region/ga.res",
+      "file": "data/icu78/region/ga.res",
+      "object": "RegionResource_ga",
+      "sha256": "b560d438c9157dc83cc3f8a6d40093fd32224747a22244988a9cbc23541030e2",
+      "size": 9360
+    },
+    {
+      "name": "region/gaa.res",
+      "file": "data/icu78/region/gaa.res",
+      "object": "RegionResource_gaa",
+      "sha256": "a120831522c95e63ea3e115852013d9d362128b45758e1026f70fa9edf3d25be",
+      "size": 96
+    },
+    {
+      "name": "region/gd.res",
+      "file": "data/icu78/region/gd.res",
+      "object": "RegionResource_gd",
+      "sha256": "6b38e951861300520b56ffc33563eb0896f5c77a5fe55bb29f1c08f799a588e8",
+      "size": 9328
+    },
+    {
+      "name": "region/gl.res",
+      "file": "data/icu78/region/gl.res",
+      "object": "RegionResource_gl",
+      "sha256": "53d32d47385915cd90bb95f590b75802b259bf3f24383085bed1643cb2542c1c",
+      "size": 3536
+    },
+    {
+      "name": "region/gsw.res",
+      "file": "data/icu78/region/gsw.res",
+      "object": "RegionResource_gsw",
+      "sha256": "1ca59dd1443218b5a182e2b79d515af2df26c27d891a78f20e28feed7d827728",
+      "size": 6144
+    },
+    {
+      "name": "region/gu.res",
+      "file": "data/icu78/region/gu.res",
+      "object": "RegionResource_gu",
+      "sha256": "85cac3baa750d6c1a79ed4e820941ec671df9b0d888191f1e1ccffb48a8ba317",
+      "size": 8400
+    },
+    {
+      "name": "region/guz.res",
+      "file": "data/icu78/region/guz.res",
+      "object": "RegionResource_guz",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/gv.res",
+      "file": "data/icu78/region/gv.res",
+      "object": "RegionResource_gv",
+      "sha256": "2c3d6561a9fca5ff0e1c3876a87009d37d8d57d7a6ea431e4d3b27045fadc801",
+      "size": 128
+    },
+    {
+      "name": "region/ha.res",
+      "file": "data/icu78/region/ha.res",
+      "object": "RegionResource_ha",
+      "sha256": "db8af1864cc1e5b11ba412d399c49a96ef9538982a689d611675742c81dea7be",
+      "size": 6720
+    },
+    {
+      "name": "region/haw.res",
+      "file": "data/icu78/region/haw.res",
+      "object": "RegionResource_haw",
+      "sha256": "dfb69d74fa96baa3e11b4686a66b7943ad4215a0dfdd9bdde83e3c57c41ff666",
+      "size": 512
+    },
+    {
+      "name": "region/he.res",
+      "file": "data/icu78/region/he.res",
+      "object": "RegionResource_he",
+      "sha256": "b640f9837587727a4467a43a0223a3e01c5705188f1388fe41d4d673dc7c3119",
+      "size": 7408
+    },
+    {
+      "name": "region/he_IL.res",
+      "file": "data/icu78/region/he_IL.res",
+      "object": "RegionResource_he_IL",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/hi.res",
+      "file": "data/icu78/region/hi.res",
+      "object": "RegionResource_hi",
+      "sha256": "dadb5faf2934ac1157671506af9e034bb1e012c3d07eb9552e2006b5c5ca263d",
+      "size": 2992
+    },
+    {
+      "name": "region/hi_Latn.res",
+      "file": "data/icu78/region/hi_Latn.res",
+      "object": "RegionResource_hi_Latn",
+      "sha256": "f6ad69cb272f59c30982758f7c57c33a131984c230ce907e161497620eebcfa2",
+      "size": 256
+    },
+    {
+      "name": "region/hr.res",
+      "file": "data/icu78/region/hr.res",
+      "object": "RegionResource_hr",
+      "sha256": "bd8b56544d62df574b49f868b9311a66f78dda689b117d43ee5b4474ef6dc1f2",
+      "size": 3648
+    },
+    {
+      "name": "region/hsb.res",
+      "file": "data/icu78/region/hsb.res",
+      "object": "RegionResource_hsb",
+      "sha256": "cdf6de0b19bb6eecde65f7ed17a02bf6e412a191ad824307b305b867e83bd193",
+      "size": 3840
+    },
+    {
+      "name": "region/hu.res",
+      "file": "data/icu78/region/hu.res",
+      "object": "RegionResource_hu",
+      "sha256": "f9c8efdfa182af72ded6a236efbf469e3845c6d6b8e4af61131ee9a91f1bfbf0",
+      "size": 6448
+    },
+    {
+      "name": "region/hy.res",
+      "file": "data/icu78/region/hy.res",
+      "object": "RegionResource_hy",
+      "sha256": "ea4d594c3c48273526de9a5d06b0ade970fdf0da43d015a052c0068883b94840",
+      "size": 8752
+    },
+    {
+      "name": "region/ia.res",
+      "file": "data/icu78/region/ia.res",
+      "object": "RegionResource_ia",
+      "sha256": "822ef10ddf4f9dab5b4bc94da4175b624d85ce1e01c5962879ec9c2fc51c8ee6",
+      "size": 4400
+    },
+    {
+      "name": "region/id.res",
+      "file": "data/icu78/region/id.res",
+      "object": "RegionResource_id",
+      "sha256": "04ed2ac99817ae1ab49d6e4b4c4cdeab4ff1d4e96dc6b419942bb461be7df081",
+      "size": 3424
+    },
+    {
+      "name": "region/id_ID.res",
+      "file": "data/icu78/region/id_ID.res",
+      "object": "RegionResource_id_ID",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ie.res",
+      "file": "data/icu78/region/ie.res",
+      "object": "RegionResource_ie",
+      "sha256": "9cb5c36ad3e21b07f72ab7b2f007e7637d83356e1a989ecc3a5784414198e2dc",
+      "size": 1408
+    },
+    {
+      "name": "region/ig.res",
+      "file": "data/icu78/region/ig.res",
+      "object": "RegionResource_ig",
+      "sha256": "642ad0e57fa42c5575044e7445c1d1941d8442d611f49e8d0baf1097de56670c",
+      "size": 3344
+    },
+    {
+      "name": "region/ii.res",
+      "file": "data/icu78/region/ii.res",
+      "object": "RegionResource_ii",
+      "sha256": "018725280d52221ffcaa279ae4db70f4d2aa9572a143573fd23058142b940580",
+      "size": 304
+    },
+    {
+      "name": "region/in.res",
+      "file": "data/icu78/region/in.res",
+      "object": "RegionResource_in",
+      "sha256": "8afe6d8b02c3e6c2267d2aefff57342f498b73ccc6afd0a2a2e47702a27cf99b",
+      "size": 96
+    },
+    {
+      "name": "region/in_ID.res",
+      "file": "data/icu78/region/in_ID.res",
+      "object": "RegionResource_in_ID",
+      "sha256": "0e432ecf35dc0506fca3ded703b1eef7d4db3166b2886d45d58b07f2291d9c71",
+      "size": 96
+    },
+    {
+      "name": "region/is.res",
+      "file": "data/icu78/region/is.res",
+      "object": "RegionResource_is",
+      "sha256": "bfc51285ce521ed7749643756db3ec5c40099064b208eecdaa40ee7773325d82",
+      "size": 7184
+    },
+    {
+      "name": "region/it.res",
+      "file": "data/icu78/region/it.res",
+      "object": "RegionResource_it",
+      "sha256": "11b0ff990763f69058fb374688ac205cd074d1f794a8719b9b9db6de243fd42a",
+      "size": 4528
+    },
+    {
+      "name": "region/iw.res",
+      "file": "data/icu78/region/iw.res",
+      "object": "RegionResource_iw",
+      "sha256": "76f9ebbc9eeb30cc78e6794d778f4281b52b2dccd90a39dbb05b3bd8eab17864",
+      "size": 96
+    },
+    {
+      "name": "region/iw_IL.res",
+      "file": "data/icu78/region/iw_IL.res",
+      "object": "RegionResource_iw_IL",
+      "sha256": "89b3faac8155f87d1cca5a6e7dd8c2e77d80ea0418b164bc5df78d5f8889fbe2",
+      "size": 96
+    },
+    {
+      "name": "region/jgo.res",
+      "file": "data/icu78/region/jgo.res",
+      "object": "RegionResource_jgo",
+      "sha256": "2237d547515cb98363f27a56c86f01cfdf12117b3ab3f7a52b70a23bae630d11",
+      "size": 1824
+    },
+    {
+      "name": "region/jmc.res",
+      "file": "data/icu78/region/jmc.res",
+      "object": "RegionResource_jmc",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/jv.res",
+      "file": "data/icu78/region/jv.res",
+      "object": "RegionResource_jv",
+      "sha256": "183cb47d5ec2c5fc0e82a0d3a77bc3e428e4c1bd2ee3c0daebd79cc831635af9",
+      "size": 5840
+    },
+    {
+      "name": "region/ka.res",
+      "file": "data/icu78/region/ka.res",
+      "object": "RegionResource_ka",
+      "sha256": "c75986ad7e161df0a729d2057e6547839a2ea6fbf223908da44a7a73be42e1e4",
+      "size": 8880
+    },
+    {
+      "name": "region/kab.res",
+      "file": "data/icu78/region/kab.res",
+      "object": "RegionResource_kab",
+      "sha256": "378fcefaee32ef23da2d6f942830f79012eac4846f6125508d30026e067065d0",
+      "size": 4432
+    },
+    {
+      "name": "region/kam.res",
+      "file": "data/icu78/region/kam.res",
+      "object": "RegionResource_kam",
+      "sha256": "03e24f82b6b57819c4504034080447d1a961a5edb1fd40fde15800b0f1f54f94",
+      "size": 1200
+    },
+    {
+      "name": "region/kde.res",
+      "file": "data/icu78/region/kde.res",
+      "object": "RegionResource_kde",
+      "sha256": "22fb2917a238b2c6e5e826ff3f90f3c737df42601575fe304e5bc426403f407a",
+      "size": 2752
+    },
+    {
+      "name": "region/kea.res",
+      "file": "data/icu78/region/kea.res",
+      "object": "RegionResource_kea",
+      "sha256": "62d3595fb34e7537610fce137d2c31e9e50139ebad88f79184d12a7766ee1f6d",
+      "size": 5920
+    },
+    {
+      "name": "region/kgp.res",
+      "file": "data/icu78/region/kgp.res",
+      "object": "RegionResource_kgp",
+      "sha256": "65223f5b3a26ec673015a4c3bd3d0c4a6efc1b887394103b230d0b62e63e5b6f",
+      "size": 7952
+    },
+    {
+      "name": "region/khq.res",
+      "file": "data/icu78/region/khq.res",
+      "object": "RegionResource_khq",
+      "sha256": "9cd00e10f5d9602e54b49dc697c6092ce6870dc7fab83a51251bf8fb4dc0083e",
+      "size": 1008
+    },
+    {
+      "name": "region/ki.res",
+      "file": "data/icu78/region/ki.res",
+      "object": "RegionResource_ki",
+      "sha256": "65e0a123d4985940c8ad2f318428784db2ae39c88d0840ec3afe5943b6646339",
+      "size": 1184
+    },
+    {
+      "name": "region/kk.res",
+      "file": "data/icu78/region/kk.res",
+      "object": "RegionResource_kk",
+      "sha256": "1e95b64e56c28112a6d0cfb6562113f6fcdc1f0a5b708586d3dd3d44c7685c1d",
+      "size": 4800
+    },
+    {
+      "name": "region/kk_Arab.res",
+      "file": "data/icu78/region/kk_Arab.res",
+      "object": "RegionResource_kk_Arab",
+      "sha256": "66cf08d46d4f3658a7ad2ea2d863b87a37813901d7ab2cfecaa6af1d8724da3c",
+      "size": 8176
+    },
+    {
+      "name": "region/kkj.res",
+      "file": "data/icu78/region/kkj.res",
+      "object": "RegionResource_kkj",
+      "sha256": "ae3fa45302be8fe77c23f39f89fd972ea5e3a73e69b9ac7d9dbe46313f2f30f9",
+      "size": 112
+    },
+    {
+      "name": "region/kl.res",
+      "file": "data/icu78/region/kl.res",
+      "object": "RegionResource_kl",
+      "sha256": "36b5608129d93f542b80e781cf027b67fd2c0f57b8b33639704f48a96106a608",
+      "size": 96
+    },
+    {
+      "name": "region/kln.res",
+      "file": "data/icu78/region/kln.res",
+      "object": "RegionResource_kln",
+      "sha256": "60dbdf18d59dd645e1089c18be61eae95a3e6ed44ea5309e01aa5adef6a4b238",
+      "size": 8416
+    },
+    {
+      "name": "region/km.res",
+      "file": "data/icu78/region/km.res",
+      "object": "RegionResource_km",
+      "sha256": "ad82c70cb9d8fbb208f7b952550fe836fde1291a6bb666b77a251f331a9a70a2",
+      "size": 8240
+    },
+    {
+      "name": "region/kn.res",
+      "file": "data/icu78/region/kn.res",
+      "object": "RegionResource_kn",
+      "sha256": "c5c32098d534370b9da6948df76cc2ef2415f0ae54fca2a3a950e239b73cb940",
+      "size": 8816
+    },
+    {
+      "name": "region/ko.res",
+      "file": "data/icu78/region/ko.res",
+      "object": "RegionResource_ko",
+      "sha256": "810f5b38f46ad118ceb38cb5fe845a8ec8ca5517b92ff341a49317233f78aca7",
+      "size": 4768
+    },
+    {
+      "name": "region/ko_KP.res",
+      "file": "data/icu78/region/ko_KP.res",
+      "object": "RegionResource_ko_KP",
+      "sha256": "3f3f5170641da6fe6de64203f91b36928d9d623fb206a14388e30410d725ad72",
+      "size": 112
+    },
+    {
+      "name": "region/kok.res",
+      "file": "data/icu78/region/kok.res",
+      "object": "RegionResource_kok",
+      "sha256": "515609ab7653eb7ea845b35be2265809671deddde7f7901668f48325504f2023",
+      "size": 5680
+    },
+    {
+      "name": "region/kok_Latn.res",
+      "file": "data/icu78/region/kok_Latn.res",
+      "object": "RegionResource_kok_Latn",
+      "sha256": "899aa3e70f6ac2ab4dfdd5495ac7d077f783719196271353f34f9a723f893468",
+      "size": 4992
+    },
+    {
+      "name": "region/ks.res",
+      "file": "data/icu78/region/ks.res",
+      "object": "RegionResource_ks",
+      "sha256": "361162231272f1fa89384afe508ef4837dba05fbf3288d1cef177ccc497923a6",
+      "size": 7472
+    },
+    {
+      "name": "region/ks_Arab.res",
+      "file": "data/icu78/region/ks_Arab.res",
+      "object": "RegionResource_ks_Arab",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/ks_Arab_IN.res",
+      "file": "data/icu78/region/ks_Arab_IN.res",
+      "object": "RegionResource_ks_Arab_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ks_Deva.res",
+      "file": "data/icu78/region/ks_Deva.res",
+      "object": "RegionResource_ks_Deva",
+      "sha256": "69f830d5cd48165b7e3120d5c2de88fc0647df2efa6c1c2ecee09aa98946aecd",
+      "size": 272
+    },
+    {
+      "name": "region/ks_IN.res",
+      "file": "data/icu78/region/ks_IN.res",
+      "object": "RegionResource_ks_IN",
+      "sha256": "7cfaf4fbfe81d952c23e02a424636e999bba982d97bafdf49418c26a74180447",
+      "size": 112
+    },
+    {
+      "name": "region/ksb.res",
+      "file": "data/icu78/region/ksb.res",
+      "object": "RegionResource_ksb",
+      "sha256": "f29fc19f84f4f76b136c9e9ff3d232f9e1bd16c452a142622ab91825b3e2443f",
+      "size": 2416
+    },
+    {
+      "name": "region/ksf.res",
+      "file": "data/icu78/region/ksf.res",
+      "object": "RegionResource_ksf",
+      "sha256": "778bfa8fe0fc9ebee2a874b468f45b2f5d2c10cda3a4585991660a23d3da9c0d",
+      "size": 4768
+    },
+    {
+      "name": "region/ksh.res",
+      "file": "data/icu78/region/ksh.res",
+      "object": "RegionResource_ksh",
+      "sha256": "21706e6680ae183873158bd2b6300d3d1c99098d972cecfb460db8b380e1a275",
+      "size": 8048
+    },
+    {
+      "name": "region/ku.res",
+      "file": "data/icu78/region/ku.res",
+      "object": "RegionResource_ku",
+      "sha256": "66fc971c5905c33b72e26b2e8b40cc78582ce85f4c356fa19d282b23f177cf76",
+      "size": 7168
+    },
+    {
+      "name": "region/ku_Latn.res",
+      "file": "data/icu78/region/ku_Latn.res",
+      "object": "RegionResource_ku_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/ku_Latn_SY.res",
+      "file": "data/icu78/region/ku_Latn_SY.res",
+      "object": "RegionResource_ku_Latn_SY",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/ku_SY.res",
+      "file": "data/icu78/region/ku_SY.res",
+      "object": "RegionResource_ku_SY",
+      "sha256": "7f4727c4d0ca76cff2e801c7ef50629732a1fc90e3ba054ecea9a9e0d59574e3",
+      "size": 112
+    },
+    {
+      "name": "region/kw.res",
+      "file": "data/icu78/region/kw.res",
+      "object": "RegionResource_kw",
+      "sha256": "d5c33b096373da66f5d0d13ab9a41b22ea6b3d8458c17fafd4f48657d91666fd",
+      "size": 96
+    },
+    {
+      "name": "region/kxv.res",
+      "file": "data/icu78/region/kxv.res",
+      "object": "RegionResource_kxv",
+      "sha256": "138b7498a463c7f4aa3db6bc308a4315f1189c3db9d8dba23677e3ed280efe69",
+      "size": 6496
+    },
+    {
+      "name": "region/kxv_Deva.res",
+      "file": "data/icu78/region/kxv_Deva.res",
+      "object": "RegionResource_kxv_Deva",
+      "sha256": "1fea4f4e7701b1d4ddb3a2b13a74ba0f1bde279b749c1f5a8e9b9860ca9c547d",
+      "size": 3968
+    },
+    {
+      "name": "region/kxv_IN.res",
+      "file": "data/icu78/region/kxv_IN.res",
+      "object": "RegionResource_kxv_IN",
+      "sha256": "5009cac2d047302dc60aaf6e7ef4968797739566d57466c03fb91c63dc292215",
+      "size": 112
+    },
+    {
+      "name": "region/kxv_Latn.res",
+      "file": "data/icu78/region/kxv_Latn.res",
+      "object": "RegionResource_kxv_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/kxv_Latn_IN.res",
+      "file": "data/icu78/region/kxv_Latn_IN.res",
+      "object": "RegionResource_kxv_Latn_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/kxv_Orya.res",
+      "file": "data/icu78/region/kxv_Orya.res",
+      "object": "RegionResource_kxv_Orya",
+      "sha256": "0f91bb3bf01d317ba996354f7478c3ae6f5adb5264f7ee28ae9cbdf7427e7656",
+      "size": 6592
+    },
+    {
+      "name": "region/kxv_Telu.res",
+      "file": "data/icu78/region/kxv_Telu.res",
+      "object": "RegionResource_kxv_Telu",
+      "sha256": "cdf042b4416254c6ec3a07ba6d64dd5a5832b6cb3eb7bc64fb189b5966f1b0cf",
+      "size": 5024
+    },
+    {
+      "name": "region/ky.res",
+      "file": "data/icu78/region/ky.res",
+      "object": "RegionResource_ky",
+      "sha256": "198271afe021d54159983a75b37d122e15b9b810a217c66b22a9936471073e92",
+      "size": 4336
+    },
+    {
+      "name": "region/lag.res",
+      "file": "data/icu78/region/lag.res",
+      "object": "RegionResource_lag",
+      "sha256": "d6d2094af8c5c3e4ecc39d18cf62d624eb831f708829c1d91a6790fd1341e3b4",
+      "size": 5632
+    },
+    {
+      "name": "region/lb.res",
+      "file": "data/icu78/region/lb.res",
+      "object": "RegionResource_lb",
+      "sha256": "6d68d8afbd1ccde954e5ea0cb314790c4089d1f89f13b75fe0c5c636bfa93b91",
+      "size": 3680
+    },
+    {
+      "name": "region/lg.res",
+      "file": "data/icu78/region/lg.res",
+      "object": "RegionResource_lg",
+      "sha256": "d2f8ae37112e302547b1d84f845140c89b196a51ddbfeb9338679c3bc317c0d5",
+      "size": 2704
+    },
+    {
+      "name": "region/lij.res",
+      "file": "data/icu78/region/lij.res",
+      "object": "RegionResource_lij",
+      "sha256": "2e9ef32e2aa2da7d8091b866005d0c0fc3f5cf89f77b895a21b3cc38e42aed74",
+      "size": 112
+    },
+    {
+      "name": "region/lkt.res",
+      "file": "data/icu78/region/lkt.res",
+      "object": "RegionResource_lkt",
+      "sha256": "28bde08d206d9e6b0476f992ef476be84839090b157ded5a726840b8938b22bb",
+      "size": 560
+    },
+    {
+      "name": "region/lmo.res",
+      "file": "data/icu78/region/lmo.res",
+      "object": "RegionResource_lmo",
+      "sha256": "b8d587872db9d8517d0c88a8b870a569d765ab6fade98d612b6406539b635c85",
+      "size": 96
+    },
+    {
+      "name": "region/ln.res",
+      "file": "data/icu78/region/ln.res",
+      "object": "RegionResource_ln",
+      "sha256": "9a3e70f201d0e852e825be31e0da44178af405088c1d7bac12992294af25effa",
+      "size": 4832
+    },
+    {
+      "name": "region/lo.res",
+      "file": "data/icu78/region/lo.res",
+      "object": "RegionResource_lo",
+      "sha256": "820b5ea63655d96760185490bab672b39033eee2a1b39440a079a15a2b93f4c3",
+      "size": 7840
+    },
+    {
+      "name": "region/lrc.res",
+      "file": "data/icu78/region/lrc.res",
+      "object": "RegionResource_lrc",
+      "sha256": "d4fd2548224f513c3e401cbc5a9ace4aad7abe4345069e2d666c7c6be0e63140",
+      "size": 560
+    },
+    {
+      "name": "region/lt.res",
+      "file": "data/icu78/region/lt.res",
+      "object": "RegionResource_lt",
+      "sha256": "de462a7c0f03414edcb3b7f529f5c47a8c75feee85c63d0ecd7ac346b77999d7",
+      "size": 7456
+    },
+    {
+      "name": "region/lu.res",
+      "file": "data/icu78/region/lu.res",
+      "object": "RegionResource_lu",
+      "sha256": "fbbf70aa9ffe877df201be73838579ebe088b7efb983ec4a1a64aed9a5842ef7",
+      "size": 4352
+    },
+    {
+      "name": "region/luo.res",
+      "file": "data/icu78/region/luo.res",
+      "object": "RegionResource_luo",
+      "sha256": "f91ebd19f04e79fb06d2e66e738779403683dd851d62c48175e5e0ccfd02983b",
+      "size": 1600
+    },
+    {
+      "name": "region/luy.res",
+      "file": "data/icu78/region/luy.res",
+      "object": "RegionResource_luy",
+      "sha256": "b565cb36b45267dd3e1a16cf3c89cda2db25ac87d1a6a28bc41b0b8967cbfdbd",
+      "size": 1008
+    },
+    {
+      "name": "region/lv.res",
+      "file": "data/icu78/region/lv.res",
+      "object": "RegionResource_lv",
+      "sha256": "2e145a6ea79673ea4ca24d21fe269b2f8e5ccb0e708d9fbb8d1535525272bb91",
+      "size": 7632
+    },
+    {
+      "name": "region/mai.res",
+      "file": "data/icu78/region/mai.res",
+      "object": "RegionResource_mai",
+      "sha256": "8a49ae33428e74c2c0c8cbbdb8225c20899ac358bb6b337f1d2f464eaa9558c6",
+      "size": 4496
+    },
+    {
+      "name": "region/mas.res",
+      "file": "data/icu78/region/mas.res",
+      "object": "RegionResource_mas",
+      "sha256": "925a0dfb8e3d3d2eebd19590e87199294063122bffd9054df14547516e6056b8",
+      "size": 976
+    },
+    {
+      "name": "region/mer.res",
+      "file": "data/icu78/region/mer.res",
+      "object": "RegionResource_mer",
+      "sha256": "f6d6728dcec80dc7bede8dd7ef77041a2026ce4c8e8f65ffca259dbc703bf193",
+      "size": 2720
+    },
+    {
+      "name": "region/mfe.res",
+      "file": "data/icu78/region/mfe.res",
+      "object": "RegionResource_mfe",
+      "sha256": "7b16f414cbe629bfd44b074611c5bf590965de674438bfa4ca298d65536fd5d6",
+      "size": 3104
+    },
+    {
+      "name": "region/mg.res",
+      "file": "data/icu78/region/mg.res",
+      "object": "RegionResource_mg",
+      "sha256": "5bc9a7f920d2b09933fb2cac72a5c1e4618f7da2e94dbca85ea6ecbbc64d2e16",
+      "size": 3744
+    },
+    {
+      "name": "region/mgh.res",
+      "file": "data/icu78/region/mgh.res",
+      "object": "RegionResource_mgh",
+      "sha256": "6f7eed3fddb0ee02a099bb0524b58850071b55b44ef2d9477d83c5e095e9f090",
+      "size": 3104
+    },
+    {
+      "name": "region/mgo.res",
+      "file": "data/icu78/region/mgo.res",
+      "object": "RegionResource_mgo",
+      "sha256": "6db89471e35f14311bf9223bbe6423bce9df2810ba0a92e1b2b15a6b892d6396",
+      "size": 144
+    },
+    {
+      "name": "region/mi.res",
+      "file": "data/icu78/region/mi.res",
+      "object": "RegionResource_mi",
+      "sha256": "12670a66f363914c173619f723c0cc8c24fbe1598744319b0172882e98106b8b",
+      "size": 8384
+    },
+    {
+      "name": "region/mk.res",
+      "file": "data/icu78/region/mk.res",
+      "object": "RegionResource_mk",
+      "sha256": "5b241e26a4685b91f642884b12eaa72fe3c00519dbd010cdc5f596290b0af40e",
+      "size": 4080
+    },
+    {
+      "name": "region/ml.res",
+      "file": "data/icu78/region/ml.res",
+      "object": "RegionResource_ml",
+      "sha256": "18a0e049df239f83ee2f10138a422c061b30afba823dae8ef5c9233e34f03e64",
+      "size": 8640
+    },
+    {
+      "name": "region/mn.res",
+      "file": "data/icu78/region/mn.res",
+      "object": "RegionResource_mn",
+      "sha256": "27d4e51d1d3611ba168672c3314ae91a429eca4d0bedebd629b299f67c5e2704",
+      "size": 5872
+    },
+    {
+      "name": "region/mni.res",
+      "file": "data/icu78/region/mni.res",
+      "object": "RegionResource_mni",
+      "sha256": "bd89430a16a30ea3005bc58a98bbd54b527e66bc7d435fcf026e0bd60500ada4",
+      "size": 400
+    },
+    {
+      "name": "region/mni_Beng.res",
+      "file": "data/icu78/region/mni_Beng.res",
+      "object": "RegionResource_mni_Beng",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/mni_Beng_IN.res",
+      "file": "data/icu78/region/mni_Beng_IN.res",
+      "object": "RegionResource_mni_Beng_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/mni_IN.res",
+      "file": "data/icu78/region/mni_IN.res",
+      "object": "RegionResource_mni_IN",
+      "sha256": "c497999308d0b208c349e98d6400f957f107460b9a08557d93a90df24aa9a618",
+      "size": 112
+    },
+    {
+      "name": "region/mo.res",
+      "file": "data/icu78/region/mo.res",
+      "object": "RegionResource_mo",
+      "sha256": "c1b2a9421e9e63e3909da928872e05d3af87ae200a85e16cae93604a8c4bb038",
+      "size": 80
+    },
+    {
+      "name": "region/mr.res",
+      "file": "data/icu78/region/mr.res",
+      "object": "RegionResource_mr",
+      "sha256": "0c6828475e08ce2bcb74ccd5e7a8364e00acc915329e8b955429aca2615290aa",
+      "size": 5792
+    },
+    {
+      "name": "region/ms.res",
+      "file": "data/icu78/region/ms.res",
+      "object": "RegionResource_ms",
+      "sha256": "2b4ea252872954004499928cb3e0d0cd4d2d08be73149f240b0272dd0a65625f",
+      "size": 3008
+    },
+    {
+      "name": "region/mt.res",
+      "file": "data/icu78/region/mt.res",
+      "object": "RegionResource_mt",
+      "sha256": "195c8b1de9249ee6d9fdf1f0b1669124811eb23500a0b29b3bd792ae4901a68d",
+      "size": 7648
+    },
+    {
+      "name": "region/mua.res",
+      "file": "data/icu78/region/mua.res",
+      "object": "RegionResource_mua",
+      "sha256": "cd18301259bdaf65ec2e6eecaf36bfedf2c2b089807c08c0d013b82836b4b00d",
+      "size": 4432
+    },
+    {
+      "name": "region/my.res",
+      "file": "data/icu78/region/my.res",
+      "object": "RegionResource_my",
+      "sha256": "5ed0409346ca78322031d626ad7f9bad6bfbbbf346b3e20b1dfae3aed8dd4dd8",
+      "size": 8864
+    },
+    {
+      "name": "region/mzn.res",
+      "file": "data/icu78/region/mzn.res",
+      "object": "RegionResource_mzn",
+      "sha256": "feb885334d803ef321ccdcd8cc3d33131729ad380ee49ce3016bbe8caa769293",
+      "size": 5616
+    },
+    {
+      "name": "region/naq.res",
+      "file": "data/icu78/region/naq.res",
+      "object": "RegionResource_naq",
+      "sha256": "e86cc37de27c7fadf4de8693d94ae6d7501c1cc42efe30e577f3bf7f3e236345",
+      "size": 3264
+    },
+    {
+      "name": "region/nb.res",
+      "file": "data/icu78/region/nb.res",
+      "object": "RegionResource_nb",
+      "sha256": "d4d30993935ae2b81e0afb8f1d46e8ed7085342f5ae24c481e66ba8aedc9eb94",
+      "size": 80
+    },
+    {
+      "name": "region/nd.res",
+      "file": "data/icu78/region/nd.res",
+      "object": "RegionResource_nd",
+      "sha256": "4fa5083e3b9294d30cd590677f68a124eef4975128b71a2d257b1176722e16fd",
+      "size": 2192
+    },
+    {
+      "name": "region/nds.res",
+      "file": "data/icu78/region/nds.res",
+      "object": "RegionResource_nds",
+      "sha256": "44ebca450d3607351acf50d6a640c8218e5512911d075cfe64de40a30b38a27d",
+      "size": 144
+    },
+    {
+      "name": "region/ne.res",
+      "file": "data/icu78/region/ne.res",
+      "object": "RegionResource_ne",
+      "sha256": "6bef562a63119aa8097d546ffca12a03634198a858dcfd39bf5da05f07e19f9b",
+      "size": 6720
+    },
+    {
+      "name": "region/nl.res",
+      "file": "data/icu78/region/nl.res",
+      "object": "RegionResource_nl",
+      "sha256": "5d4ee4dad701608c09f66dacbd907f39304e2fdbb55d4ca4ac3cee8cd558a9d4",
+      "size": 4144
+    },
+    {
+      "name": "region/nmg.res",
+      "file": "data/icu78/region/nmg.res",
+      "object": "RegionResource_nmg",
+      "sha256": "a38121dd4e4334eef907c7d80855ee4f3626dc170d734f5d6ecc23023fd74798",
+      "size": 3616
+    },
+    {
+      "name": "region/nn.res",
+      "file": "data/icu78/region/nn.res",
+      "object": "RegionResource_nn",
+      "sha256": "08c171f5af3e783b3caf3fd1723096829ac92c8ff8b0465d1709196efdd13ff0",
+      "size": 1792
+    },
+    {
+      "name": "region/nn_NO.res",
+      "file": "data/icu78/region/nn_NO.res",
+      "object": "RegionResource_nn_NO",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/nnh.res",
+      "file": "data/icu78/region/nnh.res",
+      "object": "RegionResource_nnh",
+      "sha256": "73d0ce91965aa38e7f91c02947cb98d1611ed6915ccfc6391dd83ac1a61756bf",
+      "size": 112
+    },
+    {
+      "name": "region/no.res",
+      "file": "data/icu78/region/no.res",
+      "object": "RegionResource_no",
+      "sha256": "9b6f1604b52d1254fa4dfeabfb1a8da5d9460bcdc60ab9bcdcc61c87fecb57f7",
+      "size": 3936
+    },
+    {
+      "name": "region/no_NO.res",
+      "file": "data/icu78/region/no_NO.res",
+      "object": "RegionResource_no_NO",
+      "sha256": "40c2b80393f877f46f99dd6d1f84108ec59014269a47f99ff35e0e3790c8494c",
+      "size": 80
+    },
+    {
+      "name": "region/no_NO_NY.res",
+      "file": "data/icu78/region/no_NO_NY.res",
+      "object": "RegionResource_no_NO_NY",
+      "sha256": "329c5bcc9d0e830e73bace45c99b48ec2568c0144c40cd3172811f7a57680d56",
+      "size": 96
+    },
+    {
+      "name": "region/nqo.res",
+      "file": "data/icu78/region/nqo.res",
+      "object": "RegionResource_nqo",
+      "sha256": "9a52b6e0341d783132653ad2214495424ec614c69574ba3393b2f21b9a9fe412",
+      "size": 8656
+    },
+    {
+      "name": "region/nso.res",
+      "file": "data/icu78/region/nso.res",
+      "object": "RegionResource_nso",
+      "sha256": "6873ba073b56d94679e7adefd4bc6ce9292f1218a414d6019caba81e8ae73426",
+      "size": 96
+    },
+    {
+      "name": "region/nus.res",
+      "file": "data/icu78/region/nus.res",
+      "object": "RegionResource_nus",
+      "sha256": "efd4f0a3b874682299df2b35188e904b580880b5651655ce469fe3b774e0ada3",
+      "size": 1248
+    },
+    {
+      "name": "region/nyn.res",
+      "file": "data/icu78/region/nyn.res",
+      "object": "RegionResource_nyn",
+      "sha256": "8ecfdb04241d06b4f5e59df534270a4d1c4ec264ab88ab4e8a4868c379c50591",
+      "size": 1616
+    },
+    {
+      "name": "region/oc.res",
+      "file": "data/icu78/region/oc.res",
+      "object": "RegionResource_oc",
+      "sha256": "85a4a7ae4fc1aa1ebd26e6fbf986802dea873ed353925e3c160aa60ddcdc0d7e",
+      "size": 96
+    },
+    {
+      "name": "region/oc_ES.res",
+      "file": "data/icu78/region/oc_ES.res",
+      "object": "RegionResource_oc_ES",
+      "sha256": "10d0b68ad737d8e5d4b9516f69f25e4c94d2511ab5cc45fc95eb340f4aec419c",
+      "size": 96
+    },
+    {
+      "name": "region/om.res",
+      "file": "data/icu78/region/om.res",
+      "object": "RegionResource_om",
+      "sha256": "4f984ae720feb4c05f356f9eced8c0f2d8a4a5be0fde7b991716cb4f8bc54703",
+      "size": 9136
+    },
+    {
+      "name": "region/or.res",
+      "file": "data/icu78/region/or.res",
+      "object": "RegionResource_or",
+      "sha256": "65287fca839f431717266c362622293e4500de49b8c762f87bee620a523f3db6",
+      "size": 8432
+    },
+    {
+      "name": "region/os.res",
+      "file": "data/icu78/region/os.res",
+      "object": "RegionResource_os",
+      "sha256": "dc6c99868af36f13fc5de49edbe2b6204a0dd93cf20c5a31028ee25cba6ea339",
+      "size": 384
+    },
+    {
+      "name": "region/pa.res",
+      "file": "data/icu78/region/pa.res",
+      "object": "RegionResource_pa",
+      "sha256": "e2f17d640baf46011c5b2c937c5d02e2aa4da7315b6aa63c0d75a38334725f72",
+      "size": 7616
+    },
+    {
+      "name": "region/pa_Arab.res",
+      "file": "data/icu78/region/pa_Arab.res",
+      "object": "RegionResource_pa_Arab",
+      "sha256": "91a50d6bb6de9534c30d114db7eac5fcfbf1f8ad8b792eac67fe4387650c4762",
+      "size": 96
+    },
+    {
+      "name": "region/pa_Arab_PK.res",
+      "file": "data/icu78/region/pa_Arab_PK.res",
+      "object": "RegionResource_pa_Arab_PK",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/pa_Guru.res",
+      "file": "data/icu78/region/pa_Guru.res",
+      "object": "RegionResource_pa_Guru",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/pa_Guru_IN.res",
+      "file": "data/icu78/region/pa_Guru_IN.res",
+      "object": "RegionResource_pa_Guru_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/pa_IN.res",
+      "file": "data/icu78/region/pa_IN.res",
+      "object": "RegionResource_pa_IN",
+      "sha256": "7b3a7eb704923973bd96417b2d8779861471154ceec1fc5bb308351712ae002f",
+      "size": 112
+    },
+    {
+      "name": "region/pa_PK.res",
+      "file": "data/icu78/region/pa_PK.res",
+      "object": "RegionResource_pa_PK",
+      "sha256": "687fe77d50faf88b73b7a48f1e6c154a3a1dfe7790afc1c3ea69d85bf484eca4",
+      "size": 112
+    },
+    {
+      "name": "region/pcm.res",
+      "file": "data/icu78/region/pcm.res",
+      "object": "RegionResource_pcm",
+      "sha256": "8d3be6f29ff6a4a3756a171301da982ed86c06d30e49e7952a265c20aa85df69",
+      "size": 7744
+    },
+    {
+      "name": "region/pl.res",
+      "file": "data/icu78/region/pl.res",
+      "object": "RegionResource_pl",
+      "sha256": "8e318ce691cf608cd6632c3a4472f7ee11d3ad1a80b9dbea4e374c00c83206c9",
+      "size": 6016
+    },
+    {
+      "name": "region/pms.res",
+      "file": "data/icu78/region/pms.res",
+      "object": "RegionResource_pms",
+      "sha256": "b8d587872db9d8517d0c88a8b870a569d765ab6fade98d612b6406539b635c85",
+      "size": 96
+    },
+    {
+      "name": "region/prg.res",
+      "file": "data/icu78/region/prg.res",
+      "object": "RegionResource_prg",
+      "sha256": "672e51e2d32d5c9fc2b4caa5fc7387381e717756854843e4f2476f6cae0ae5e3",
+      "size": 112
+    },
+    {
+      "name": "region/ps.res",
+      "file": "data/icu78/region/ps.res",
+      "object": "RegionResource_ps",
+      "sha256": "e955175f6484aee68181ab6db19608013d32ef9332b0b808e0948a521e9e4699",
+      "size": 6560
+    },
+    {
+      "name": "region/ps_PK.res",
+      "file": "data/icu78/region/ps_PK.res",
+      "object": "RegionResource_ps_PK",
+      "sha256": "f13457af45dba9a670f3cc4e0144898ca0af99c75156839c9151615afb3004fe",
+      "size": 224
+    },
+    {
+      "name": "region/pt.res",
+      "file": "data/icu78/region/pt.res",
+      "object": "RegionResource_pt",
+      "sha256": "9b5a9186ef1dc1d645debdc3a9baa68e554d868fd811f0f1dc70a7a0aeb7635a",
+      "size": 4144
+    },
+    {
+      "name": "region/pt_AO.res",
+      "file": "data/icu78/region/pt_AO.res",
+      "object": "RegionResource_pt_AO",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_CH.res",
+      "file": "data/icu78/region/pt_CH.res",
+      "object": "RegionResource_pt_CH",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_CV.res",
+      "file": "data/icu78/region/pt_CV.res",
+      "object": "RegionResource_pt_CV",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_GQ.res",
+      "file": "data/icu78/region/pt_GQ.res",
+      "object": "RegionResource_pt_GQ",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_GW.res",
+      "file": "data/icu78/region/pt_GW.res",
+      "object": "RegionResource_pt_GW",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_LU.res",
+      "file": "data/icu78/region/pt_LU.res",
+      "object": "RegionResource_pt_LU",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_MO.res",
+      "file": "data/icu78/region/pt_MO.res",
+      "object": "RegionResource_pt_MO",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_MZ.res",
+      "file": "data/icu78/region/pt_MZ.res",
+      "object": "RegionResource_pt_MZ",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_PT.res",
+      "file": "data/icu78/region/pt_PT.res",
+      "object": "RegionResource_pt_PT",
+      "sha256": "de674f76898be9162328340c4f2ef75eed1b1e056e839ad2580d424754d57378",
+      "size": 1952
+    },
+    {
+      "name": "region/pt_ST.res",
+      "file": "data/icu78/region/pt_ST.res",
+      "object": "RegionResource_pt_ST",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/pt_TL.res",
+      "file": "data/icu78/region/pt_TL.res",
+      "object": "RegionResource_pt_TL",
+      "sha256": "ccc407785085f35a07494f36fdbdfea94748833cf6db74da11c8378837664f51",
+      "size": 80
+    },
+    {
+      "name": "region/qu.res",
+      "file": "data/icu78/region/qu.res",
+      "object": "RegionResource_qu",
+      "sha256": "50665db3b1bf75b5916bd3c973415a86ab16ff9d7ee9432a1c139cc056739b63",
+      "size": 2528
+    },
+    {
+      "name": "region/raj.res",
+      "file": "data/icu78/region/raj.res",
+      "object": "RegionResource_raj",
+      "sha256": "a30fa1bf96136fd8af216b8cc44e8573014bfa671081c62510d33a036d4a391a",
+      "size": 112
+    },
+    {
+      "name": "region/res_index.res",
+      "file": "data/icu78/region/res_index.res",
+      "object": "RegionResource_res_index",
+      "sha256": "e27d0237f5fb8134f49f51168abe08ee7710787d211ae05e21721a078f8fe6f1",
+      "size": 5104
+    },
+    {
+      "name": "region/rm.res",
+      "file": "data/icu78/region/rm.res",
+      "object": "RegionResource_rm",
+      "sha256": "95b9db7e92bc2cbb9daff27214a7fc45f263ab9c01304c5a72783701fd3d0e6f",
+      "size": 5072
+    },
+    {
+      "name": "region/rn.res",
+      "file": "data/icu78/region/rn.res",
+      "object": "RegionResource_rn",
+      "sha256": "bbefde56a9cd1efcb83f70e83fddb0ba0c2593dd77523881ddb9485af694a43c",
+      "size": 4608
+    },
+    {
+      "name": "region/ro.res",
+      "file": "data/icu78/region/ro.res",
+      "object": "RegionResource_ro",
+      "sha256": "1e4e472a30d57e9635b7b1f1ce5b4fde6e2df0d1e5d5d12340ab095a8eaef1f9",
+      "size": 5568
+    },
+    {
+      "name": "region/ro_MD.res",
+      "file": "data/icu78/region/ro_MD.res",
+      "object": "RegionResource_ro_MD",
+      "sha256": "5bfcadb0976d8974e99bbe6580c6ef40cad630c8345410c3c7bcd3dd907a5032",
+      "size": 96
+    },
+    {
+      "name": "region/rof.res",
+      "file": "data/icu78/region/rof.res",
+      "object": "RegionResource_rof",
+      "sha256": "9718a60e4a0a6cb97d7553bb3a1e74485d9a4fd0a7c4bf2b0ebf226557acea5e",
+      "size": 1088
+    },
+    {
+      "name": "region/ru.res",
+      "file": "data/icu78/region/ru.res",
+      "object": "RegionResource_ru",
+      "sha256": "845d264fa7b89106655da629d79a9e6bbeb5e2796772fbc7fb8454d5e55db379",
+      "size": 4768
+    },
+    {
+      "name": "region/ru_UA.res",
+      "file": "data/icu78/region/ru_UA.res",
+      "object": "RegionResource_ru_UA",
+      "sha256": "60f1c213781d0a93518f89b7910aa49af9cf8133effab9ee6b7a7ae3ce8dc2f8",
+      "size": 464
+    },
+    {
+      "name": "region/rw.res",
+      "file": "data/icu78/region/rw.res",
+      "object": "RegionResource_rw",
+      "sha256": "36ade96cbe3dbbbd0d7941e188b6adf7ff9c5ee950116a1bcc4ff43c3795c923",
+      "size": 176
+    },
+    {
+      "name": "region/rwk.res",
+      "file": "data/icu78/region/rwk.res",
+      "object": "RegionResource_rwk",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/sa.res",
+      "file": "data/icu78/region/sa.res",
+      "object": "RegionResource_sa",
+      "sha256": "d68ca56f8e2db6ad726fc0a794e5ba7d854cd1d0a60de567038e60262d8f187a",
+      "size": 336
+    },
+    {
+      "name": "region/sah.res",
+      "file": "data/icu78/region/sah.res",
+      "object": "RegionResource_sah",
+      "sha256": "a2463be08ff7f18fdf63d597df745591df781248381a84760d6788ffb86385c0",
+      "size": 528
+    },
+    {
+      "name": "region/saq.res",
+      "file": "data/icu78/region/saq.res",
+      "object": "RegionResource_saq",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/sat.res",
+      "file": "data/icu78/region/sat.res",
+      "object": "RegionResource_sat",
+      "sha256": "b3fd901772c4d178790ff0139693a76699c537b4b5ef035ef94696d62cecae53",
+      "size": 320
+    },
+    {
+      "name": "region/sat_IN.res",
+      "file": "data/icu78/region/sat_IN.res",
+      "object": "RegionResource_sat_IN",
+      "sha256": "dd8e03b81bb296a55e2dfa8e46f4bba462d7fef0dc5b440dfdfffe71e07da8a4",
+      "size": 112
+    },
+    {
+      "name": "region/sat_Olck.res",
+      "file": "data/icu78/region/sat_Olck.res",
+      "object": "RegionResource_sat_Olck",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/sat_Olck_IN.res",
+      "file": "data/icu78/region/sat_Olck_IN.res",
+      "object": "RegionResource_sat_Olck_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sbp.res",
+      "file": "data/icu78/region/sbp.res",
+      "object": "RegionResource_sbp",
+      "sha256": "3de150120044e3e58f28cffd14e9d29d65560e77c439d0d027f71dac1a9f3ccb",
+      "size": 3920
+    },
+    {
+      "name": "region/sc.res",
+      "file": "data/icu78/region/sc.res",
+      "object": "RegionResource_sc",
+      "sha256": "98c24b2dcf887f87ed93b30c225329a668e57f5820885ef7f512d53b65704e4f",
+      "size": 6208
+    },
+    {
+      "name": "region/scn.res",
+      "file": "data/icu78/region/scn.res",
+      "object": "RegionResource_scn",
+      "sha256": "9540d80ec124254ed2fcfa933acbc83e53659beb68ac7427c651f7260925778b",
+      "size": 6560
+    },
+    {
+      "name": "region/sd.res",
+      "file": "data/icu78/region/sd.res",
+      "object": "RegionResource_sd",
+      "sha256": "4353c9e7c6356c65aee145c06251de09f522ee1a6c1fdf2682a66dfdfcb2a4ee",
+      "size": 6640
+    },
+    {
+      "name": "region/sd_Arab.res",
+      "file": "data/icu78/region/sd_Arab.res",
+      "object": "RegionResource_sd_Arab",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/sd_Arab_PK.res",
+      "file": "data/icu78/region/sd_Arab_PK.res",
+      "object": "RegionResource_sd_Arab_PK",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sd_Deva.res",
+      "file": "data/icu78/region/sd_Deva.res",
+      "object": "RegionResource_sd_Deva",
+      "sha256": "5f5152ef5bae87e16a73a91a4fdd8485a7373a53742e8c4d8dfffcf43c9d0862",
+      "size": 192
+    },
+    {
+      "name": "region/sd_Deva_IN.res",
+      "file": "data/icu78/region/sd_Deva_IN.res",
+      "object": "RegionResource_sd_Deva_IN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sd_IN.res",
+      "file": "data/icu78/region/sd_IN.res",
+      "object": "RegionResource_sd_IN",
+      "sha256": "87d5f729b22cf3e83604b9b5032470e2ee5d78fdae508a67bec65659e220736c",
+      "size": 112
+    },
+    {
+      "name": "region/sd_PK.res",
+      "file": "data/icu78/region/sd_PK.res",
+      "object": "RegionResource_sd_PK",
+      "sha256": "7efa3692badbda41c77f95dad94d71a970c964e9edeb1cc4bcb40c63e88a04e3",
+      "size": 112
+    },
+    {
+      "name": "region/se.res",
+      "file": "data/icu78/region/se.res",
+      "object": "RegionResource_se",
+      "sha256": "bb9520d72499b299e16a6fd5bdac20201fb31e79da7d6670b4e1cc13bd68cc9e",
+      "size": 4304
+    },
+    {
+      "name": "region/se_FI.res",
+      "file": "data/icu78/region/se_FI.res",
+      "object": "RegionResource_se_FI",
+      "sha256": "c5fe0757aadf3c86f5ef68ddab4080cbbcce332f2b45e017a2cc4fb04c54d847",
+      "size": 704
+    },
+    {
+      "name": "region/seh.res",
+      "file": "data/icu78/region/seh.res",
+      "object": "RegionResource_seh",
+      "sha256": "9dd0f65e68f5cba6b351736e03ac14d9e1392bb2c46764f50053ad8682f80339",
+      "size": 1968
+    },
+    {
+      "name": "region/ses.res",
+      "file": "data/icu78/region/ses.res",
+      "object": "RegionResource_ses",
+      "sha256": "9cd00e10f5d9602e54b49dc697c6092ce6870dc7fab83a51251bf8fb4dc0083e",
+      "size": 1008
+    },
+    {
+      "name": "region/sg.res",
+      "file": "data/icu78/region/sg.res",
+      "object": "RegionResource_sg",
+      "sha256": "2c040452f89013496c8a44d90796c21b8157634cef7c04cb3872dc5e2c6c903f",
+      "size": 5504
+    },
+    {
+      "name": "region/sh.res",
+      "file": "data/icu78/region/sh.res",
+      "object": "RegionResource_sh",
+      "sha256": "4e5c9a01ebb19b76011e9cd6061b7a2fe7302ecc66e90e9b5053031359b3eadf",
+      "size": 96
+    },
+    {
+      "name": "region/sh_BA.res",
+      "file": "data/icu78/region/sh_BA.res",
+      "object": "RegionResource_sh_BA",
+      "sha256": "c496577f0f64f09ced29721ff9b571e10ff040e2d4c00adf97abc01321647764",
+      "size": 112
+    },
+    {
+      "name": "region/sh_CS.res",
+      "file": "data/icu78/region/sh_CS.res",
+      "object": "RegionResource_sh_CS",
+      "sha256": "20800c84a022a44ed2bdbe3485d7f663f462d57a7fc3fa97207057ea6e7b7805",
+      "size": 80
+    },
+    {
+      "name": "region/sh_YU.res",
+      "file": "data/icu78/region/sh_YU.res",
+      "object": "RegionResource_sh_YU",
+      "sha256": "20800c84a022a44ed2bdbe3485d7f663f462d57a7fc3fa97207057ea6e7b7805",
+      "size": 80
+    },
+    {
+      "name": "region/shi.res",
+      "file": "data/icu78/region/shi.res",
+      "object": "RegionResource_shi",
+      "sha256": "8317ba22faf9a1b487108c8b0a3c444b15c61d0e0eec7a54c2f7754459bac71f",
+      "size": 3184
+    },
+    {
+      "name": "region/shi_Latn.res",
+      "file": "data/icu78/region/shi_Latn.res",
+      "object": "RegionResource_shi_Latn",
+      "sha256": "e5cf50b2b599db95f39ca14c0087c5803da7b711541ebc5f5b9aa38f22bffcdb",
+      "size": 5120
+    },
+    {
+      "name": "region/shi_MA.res",
+      "file": "data/icu78/region/shi_MA.res",
+      "object": "RegionResource_shi_MA",
+      "sha256": "6dcafa0299cd0f32b3026c0c16e409974d945bd7d024f792bcaf52c6e4860cf5",
+      "size": 112
+    },
+    {
+      "name": "region/shi_Tfng.res",
+      "file": "data/icu78/region/shi_Tfng.res",
+      "object": "RegionResource_shi_Tfng",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/shi_Tfng_MA.res",
+      "file": "data/icu78/region/shi_Tfng_MA.res",
+      "object": "RegionResource_shi_Tfng_MA",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/shn.res",
+      "file": "data/icu78/region/shn.res",
+      "object": "RegionResource_shn",
+      "sha256": "1c69967e0dd48f6b52deb7d0de4bd569d3cd289e0d3da8524f99b664cedd2a04",
+      "size": 10896
+    },
+    {
+      "name": "region/si.res",
+      "file": "data/icu78/region/si.res",
+      "object": "RegionResource_si",
+      "sha256": "e29c0639d95a61e5484fea38cf3b9e1d5bdaaf2a6aa07f876918107a8bedace8",
+      "size": 8672
+    },
+    {
+      "name": "region/sk.res",
+      "file": "data/icu78/region/sk.res",
+      "object": "RegionResource_sk",
+      "sha256": "92e31331e979f55660cccb43ae3f0b333d889ad5cf71eeea0841055c9fbcd99a",
+      "size": 5072
+    },
+    {
+      "name": "region/sl.res",
+      "file": "data/icu78/region/sl.res",
+      "object": "RegionResource_sl",
+      "sha256": "55ef1da485eadd4bd597f1677812dfd674c65c6fab2c4fff7fcd35464ad46c78",
+      "size": 4976
+    },
+    {
+      "name": "region/smn.res",
+      "file": "data/icu78/region/smn.res",
+      "object": "RegionResource_smn",
+      "sha256": "e1bcd8f3e2aea4c4ad7ea79b4ea620186a02c42f982598bbc3c76b292f81ab14",
+      "size": 3776
+    },
+    {
+      "name": "region/sn.res",
+      "file": "data/icu78/region/sn.res",
+      "object": "RegionResource_sn",
+      "sha256": "bcd8950f6bf3bbfcbba142b4135cbb584435bbbf8f8c58c7de075c0e6c605080",
+      "size": 1584
+    },
+    {
+      "name": "region/so.res",
+      "file": "data/icu78/region/so.res",
+      "object": "RegionResource_so",
+      "sha256": "656f0254541daa854879aa25ff152aed39c9565baa07fcfb7bc5676ef193ba79",
+      "size": 8016
+    },
+    {
+      "name": "region/sq.res",
+      "file": "data/icu78/region/sq.res",
+      "object": "RegionResource_sq",
+      "sha256": "076173acba49fedba06e6e5c8dbfae21a4e9a126f36c96e8e377ac39b660c04d",
+      "size": 6336
+    },
+    {
+      "name": "region/sr.res",
+      "file": "data/icu78/region/sr.res",
+      "object": "RegionResource_sr",
+      "sha256": "3894fe294227bdf0e3be3d685faaa88ff56b2103ad5154ec6d6fc6f8ad0e444d",
+      "size": 2928
+    },
+    {
+      "name": "region/sr_BA.res",
+      "file": "data/icu78/region/sr_BA.res",
+      "object": "RegionResource_sr_BA",
+      "sha256": "6f0bee3aa6bbdb890d9f8cde0d2abad783cf842b4fa8c0f4b73e1591f74bf391",
+      "size": 112
+    },
+    {
+      "name": "region/sr_CS.res",
+      "file": "data/icu78/region/sr_CS.res",
+      "object": "RegionResource_sr_CS",
+      "sha256": "9e3ac811bdcc8a27c3f85815331dccbcf9394e1e6d2c8f415156bd0e13db678e",
+      "size": 96
+    },
+    {
+      "name": "region/sr_Cyrl.res",
+      "file": "data/icu78/region/sr_Cyrl.res",
+      "object": "RegionResource_sr_Cyrl",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Cyrl_BA.res",
+      "file": "data/icu78/region/sr_Cyrl_BA.res",
+      "object": "RegionResource_sr_Cyrl_BA",
+      "sha256": "b77137f6a7ff59b2c3a6077f571e00ec3a05a79d72308f342c15c4681e14bf94",
+      "size": 944
+    },
+    {
+      "name": "region/sr_Cyrl_CS.res",
+      "file": "data/icu78/region/sr_Cyrl_CS.res",
+      "object": "RegionResource_sr_Cyrl_CS",
+      "sha256": "cf2f05568c7125267e359bfffae2974dfae8458bfda357b415b48dc0f67d7f14",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Cyrl_ME.res",
+      "file": "data/icu78/region/sr_Cyrl_ME.res",
+      "object": "RegionResource_sr_Cyrl_ME",
+      "sha256": "6ea28c45e39baf76cd7f7ba48cb95bb54e55195f9a3df72f3ade619d68f1d6ab",
+      "size": 240
+    },
+    {
+      "name": "region/sr_Cyrl_RS.res",
+      "file": "data/icu78/region/sr_Cyrl_RS.res",
+      "object": "RegionResource_sr_Cyrl_RS",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Cyrl_XK.res",
+      "file": "data/icu78/region/sr_Cyrl_XK.res",
+      "object": "RegionResource_sr_Cyrl_XK",
+      "sha256": "c9d4d957ac4b281420d31f3f63c2c60fc725f4ffa5534cbe3a4a2819435e848e",
+      "size": 144
+    },
+    {
+      "name": "region/sr_Cyrl_YU.res",
+      "file": "data/icu78/region/sr_Cyrl_YU.res",
+      "object": "RegionResource_sr_Cyrl_YU",
+      "sha256": "cf2f05568c7125267e359bfffae2974dfae8458bfda357b415b48dc0f67d7f14",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Latn.res",
+      "file": "data/icu78/region/sr_Latn.res",
+      "object": "RegionResource_sr_Latn",
+      "sha256": "e3aa5007579024a3f56bda34a7194b69309ef6ad2f29b459e56c55c06dd1ec19",
+      "size": 3568
+    },
+    {
+      "name": "region/sr_Latn_BA.res",
+      "file": "data/icu78/region/sr_Latn_BA.res",
+      "object": "RegionResource_sr_Latn_BA",
+      "sha256": "9066cdcebe8178ec897607c9350e93b4e9c509b8ec63d54c5ac4a0c22fb9581d",
+      "size": 848
+    },
+    {
+      "name": "region/sr_Latn_CS.res",
+      "file": "data/icu78/region/sr_Latn_CS.res",
+      "object": "RegionResource_sr_Latn_CS",
+      "sha256": "20800c84a022a44ed2bdbe3485d7f663f462d57a7fc3fa97207057ea6e7b7805",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Latn_ME.res",
+      "file": "data/icu78/region/sr_Latn_ME.res",
+      "object": "RegionResource_sr_Latn_ME",
+      "sha256": "735336ace13b1218d0eae71786b1447227675cb3922ec083064b45b3281550a9",
+      "size": 240
+    },
+    {
+      "name": "region/sr_Latn_RS.res",
+      "file": "data/icu78/region/sr_Latn_RS.res",
+      "object": "RegionResource_sr_Latn_RS",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sr_Latn_XK.res",
+      "file": "data/icu78/region/sr_Latn_XK.res",
+      "object": "RegionResource_sr_Latn_XK",
+      "sha256": "0fda2fc6473355484eae94aefbec63584da21da636244a62ff192bbfe3c84d8a",
+      "size": 176
+    },
+    {
+      "name": "region/sr_Latn_YU.res",
+      "file": "data/icu78/region/sr_Latn_YU.res",
+      "object": "RegionResource_sr_Latn_YU",
+      "sha256": "20800c84a022a44ed2bdbe3485d7f663f462d57a7fc3fa97207057ea6e7b7805",
+      "size": 80
+    },
+    {
+      "name": "region/sr_ME.res",
+      "file": "data/icu78/region/sr_ME.res",
+      "object": "RegionResource_sr_ME",
+      "sha256": "c6717ac233cca3bac0a0b9fbd979693585ea54d912e3c328a20b0aa21740cf10",
+      "size": 112
+    },
+    {
+      "name": "region/sr_RS.res",
+      "file": "data/icu78/region/sr_RS.res",
+      "object": "RegionResource_sr_RS",
+      "sha256": "cf2f05568c7125267e359bfffae2974dfae8458bfda357b415b48dc0f67d7f14",
+      "size": 80
+    },
+    {
+      "name": "region/sr_XK.res",
+      "file": "data/icu78/region/sr_XK.res",
+      "object": "RegionResource_sr_XK",
+      "sha256": "df2cca760ea0c0c99f5d22ad0ea56851c80dde770a90bd0d78dea2858446630f",
+      "size": 112
+    },
+    {
+      "name": "region/sr_YU.res",
+      "file": "data/icu78/region/sr_YU.res",
+      "object": "RegionResource_sr_YU",
+      "sha256": "9e3ac811bdcc8a27c3f85815331dccbcf9394e1e6d2c8f415156bd0e13db678e",
+      "size": 96
+    },
+    {
+      "name": "region/st.res",
+      "file": "data/icu78/region/st.res",
+      "object": "RegionResource_st",
+      "sha256": "a9ea3304c8343c873d0cb585e3e7db21595f8e6cd640cf2c4b866e8252a5e977",
+      "size": 96
+    },
+    {
+      "name": "region/su.res",
+      "file": "data/icu78/region/su.res",
+      "object": "RegionResource_su",
+      "sha256": "aa1284c7620bee6565de4447bb152b28ac2a5ac65c41b3f66a9bc9bb2ccf0b05",
+      "size": 240
+    },
+    {
+      "name": "region/su_ID.res",
+      "file": "data/icu78/region/su_ID.res",
+      "object": "RegionResource_su_ID",
+      "sha256": "c97f023ee0eb336fdbb42aa488ae0f8cc579e18b8c6a1b1a646b2883df0c119f",
+      "size": 112
+    },
+    {
+      "name": "region/su_Latn.res",
+      "file": "data/icu78/region/su_Latn.res",
+      "object": "RegionResource_su_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/su_Latn_ID.res",
+      "file": "data/icu78/region/su_Latn_ID.res",
+      "object": "RegionResource_su_Latn_ID",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/sv.res",
+      "file": "data/icu78/region/sv.res",
+      "object": "RegionResource_sv",
+      "sha256": "77b4a17230cba008b0d1c92e9d2290eb73e564d8d3096ec72309fec53e86da52",
+      "size": 4400
+    },
+    {
+      "name": "region/sw.res",
+      "file": "data/icu78/region/sw.res",
+      "object": "RegionResource_sw",
+      "sha256": "3be89132894e436fe7e372e5e57bf8160fedb6dd9aae5fc3070eae1f00539bcc",
+      "size": 4224
+    },
+    {
+      "name": "region/sw_CD.res",
+      "file": "data/icu78/region/sw_CD.res",
+      "object": "RegionResource_sw_CD",
+      "sha256": "b69f3f2eeb2a7f411a03b49755672c640370ffe394e80877a84b618bda166efa",
+      "size": 272
+    },
+    {
+      "name": "region/sw_KE.res",
+      "file": "data/icu78/region/sw_KE.res",
+      "object": "RegionResource_sw_KE",
+      "sha256": "38a85be283c15b420fb3bb789cfc228b7c5a73664a13f9854f3752825502490d",
+      "size": 1488
+    },
+    {
+      "name": "region/syr.res",
+      "file": "data/icu78/region/syr.res",
+      "object": "RegionResource_syr",
+      "sha256": "534dee3907bba9430c6617cea91cfc224dd855afcea76da360be506da0336e9b",
+      "size": 7312
+    },
+    {
+      "name": "region/szl.res",
+      "file": "data/icu78/region/szl.res",
+      "object": "RegionResource_szl",
+      "sha256": "078146c8c9d6cac8a28f472de5dc5bd082b622610dcbdeaa79f1a5d3680137d1",
+      "size": 112
+    },
+    {
+      "name": "region/ta.res",
+      "file": "data/icu78/region/ta.res",
+      "object": "RegionResource_ta",
+      "sha256": "e63a216c80c7149347af955e5edbc7bf5a98927ba664375a3c7536cdcda26cd5",
+      "size": 8832
+    },
+    {
+      "name": "region/te.res",
+      "file": "data/icu78/region/te.res",
+      "object": "RegionResource_te",
+      "sha256": "72c87ad89acf9aad9aae622c5ed96377365a6d72aca87a63c938464830e78233",
+      "size": 6336
+    },
+    {
+      "name": "region/teo.res",
+      "file": "data/icu78/region/teo.res",
+      "object": "RegionResource_teo",
+      "sha256": "b33cbedb25c309391f5e6a178371723205728c485368823b73c11dac738615de",
+      "size": 976
+    },
+    {
+      "name": "region/tg.res",
+      "file": "data/icu78/region/tg.res",
+      "object": "RegionResource_tg",
+      "sha256": "1f298aa584fbecbcac2cc7f2f0e3277d4ef80ea2c60e454cd27fddc26151d0ce",
+      "size": 5408
+    },
+    {
+      "name": "region/th.res",
+      "file": "data/icu78/region/th.res",
+      "object": "RegionResource_th",
+      "sha256": "a0a50d11975bf5ecc54f15910b0e88e0adf3d358ed52b1a08ff666476d880df3",
+      "size": 8256
+    },
+    {
+      "name": "region/ti.res",
+      "file": "data/icu78/region/ti.res",
+      "object": "RegionResource_ti",
+      "sha256": "efeec11d54c8a1c99a179bfd89a855f1fbc530b547ca1057db7daadde0a118a4",
+      "size": 5776
+    },
+    {
+      "name": "region/tk.res",
+      "file": "data/icu78/region/tk.res",
+      "object": "RegionResource_tk",
+      "sha256": "7192908293b7cfa193bc14bffbbf9558182ed3aca0bd18d1d74f61047840c3a5",
+      "size": 6992
+    },
+    {
+      "name": "region/tl.res",
+      "file": "data/icu78/region/tl.res",
+      "object": "RegionResource_tl",
+      "sha256": "867e0f8b2fdeae7ddc7f157ead11f09bba9594c9ac38d7f16f9673c25a44633b",
+      "size": 80
+    },
+    {
+      "name": "region/tl_PH.res",
+      "file": "data/icu78/region/tl_PH.res",
+      "object": "RegionResource_tl_PH",
+      "sha256": "3f8ef0ceb54f62322dc9cc292263ee44b176973fcb6d1d4ee1fc84beaf995124",
+      "size": 96
+    },
+    {
+      "name": "region/tn.res",
+      "file": "data/icu78/region/tn.res",
+      "object": "RegionResource_tn",
+      "sha256": "9a0322f9f80920f495a660d2d5cca8a78dd26c4c7abadb5e8a553b5a5451c926",
+      "size": 128
+    },
+    {
+      "name": "region/to.res",
+      "file": "data/icu78/region/to.res",
+      "object": "RegionResource_to",
+      "sha256": "edf1478afb9d17c5ff04ca1e6348d236e12a615477ad7c7b73f666b3361f48fc",
+      "size": 8416
+    },
+    {
+      "name": "region/tok.res",
+      "file": "data/icu78/region/tok.res",
+      "object": "RegionResource_tok",
+      "sha256": "447123fa9e4d1dad7fcbab5c4b9883ca9e7efb5a73a8a3f1d3be6e20c3022956",
+      "size": 1936
+    },
+    {
+      "name": "region/tr.res",
+      "file": "data/icu78/region/tr.res",
+      "object": "RegionResource_tr",
+      "sha256": "11b373767a9b87d01f33082e7bcf20f9c027573fccbe00c87d2f8371c4e8ea3e",
+      "size": 5824
+    },
+    {
+      "name": "region/tt.res",
+      "file": "data/icu78/region/tt.res",
+      "object": "RegionResource_tt",
+      "sha256": "7cedf4c180884b13ae4c764d4833ed8e2c3427f44ecd457b8cf5209a54184da8",
+      "size": 4496
+    },
+    {
+      "name": "region/twq.res",
+      "file": "data/icu78/region/twq.res",
+      "object": "RegionResource_twq",
+      "sha256": "4d4960610365c80cf62bb64386f777afd185d2a453d15eb10f5df7b4d82f45af",
+      "size": 1008
+    },
+    {
+      "name": "region/tyv.res",
+      "file": "data/icu78/region/tyv.res",
+      "object": "RegionResource_tyv",
+      "sha256": "6cc62ec3e653b23b6a02f5c505130ef8c6286061008f13dc0b0b7f120cf6c431",
+      "size": 2816
+    },
+    {
+      "name": "region/tzm.res",
+      "file": "data/icu78/region/tzm.res",
+      "object": "RegionResource_tzm",
+      "sha256": "fc1b12a5d85eeb61e936e300a699d54d3a49ef30b4172865ffc32967d2379b7a",
+      "size": 4800
+    },
+    {
+      "name": "region/ug.res",
+      "file": "data/icu78/region/ug.res",
+      "object": "RegionResource_ug",
+      "sha256": "425a6d42ba09fcaa948dd301f358dcdd1b5587464628eb83fe39fe4fea1f5da6",
+      "size": 8224
+    },
+    {
+      "name": "region/uk.res",
+      "file": "data/icu78/region/uk.res",
+      "object": "RegionResource_uk",
+      "sha256": "637989eebf44d183f07b29b8d53ac38e2f0770c4f315fbdd5ed74b0f29702181",
+      "size": 7088
+    },
+    {
+      "name": "region/ur.res",
+      "file": "data/icu78/region/ur.res",
+      "object": "RegionResource_ur",
+      "sha256": "cfab6b42334141ec0fa52fdffc41dac53bfe14b8ea3c60bb3743a1422e7a5163",
+      "size": 6512
+    },
+    {
+      "name": "region/ur_IN.res",
+      "file": "data/icu78/region/ur_IN.res",
+      "object": "RegionResource_ur_IN",
+      "sha256": "420462612b5a154be29b1c65bc03f91fc57791bdb5016e26ca3ed22e67d7b14e",
+      "size": 896
+    },
+    {
+      "name": "region/uz.res",
+      "file": "data/icu78/region/uz.res",
+      "object": "RegionResource_uz",
+      "sha256": "7d0dcafe491d4f53de5da3531618adf23df466c604960021c4152c5d7611495d",
+      "size": 6576
+    },
+    {
+      "name": "region/uz_AF.res",
+      "file": "data/icu78/region/uz_AF.res",
+      "object": "RegionResource_uz_AF",
+      "sha256": "ccc4e3b155aeb2203a997ee1c238dba85c36dda3e86ad7e1abc271ecf980d909",
+      "size": 112
+    },
+    {
+      "name": "region/uz_Arab.res",
+      "file": "data/icu78/region/uz_Arab.res",
+      "object": "RegionResource_uz_Arab",
+      "sha256": "4c9803863f48158aec93ec75885f6cb9f9a58ebfa83ac0f78a223483b80696eb",
+      "size": 96
+    },
+    {
+      "name": "region/uz_Arab_AF.res",
+      "file": "data/icu78/region/uz_Arab_AF.res",
+      "object": "RegionResource_uz_Arab_AF",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/uz_Cyrl.res",
+      "file": "data/icu78/region/uz_Cyrl.res",
+      "object": "RegionResource_uz_Cyrl",
+      "sha256": "afd51cd399768fcc10f7d0ccced5c914b5901c2b235b308c41ab22cf4aeb21ca",
+      "size": 4832
+    },
+    {
+      "name": "region/uz_Latn.res",
+      "file": "data/icu78/region/uz_Latn.res",
+      "object": "RegionResource_uz_Latn",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/uz_Latn_UZ.res",
+      "file": "data/icu78/region/uz_Latn_UZ.res",
+      "object": "RegionResource_uz_Latn_UZ",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/uz_UZ.res",
+      "file": "data/icu78/region/uz_UZ.res",
+      "object": "RegionResource_uz_UZ",
+      "sha256": "fc246695698f0cda40e22b94bd79de5f02f71ee94e9cad580133b2034d9d7ddb",
+      "size": 112
+    },
+    {
+      "name": "region/vai.res",
+      "file": "data/icu78/region/vai.res",
+      "object": "RegionResource_vai",
+      "sha256": "b2614f30c2b23a437b15efd1e2b41f74cf75f2a0b8871f3ec946c44e99ff475b",
+      "size": 4464
+    },
+    {
+      "name": "region/vai_LR.res",
+      "file": "data/icu78/region/vai_LR.res",
+      "object": "RegionResource_vai_LR",
+      "sha256": "5601dec673fb0c38c9d10a7794ce0fff3d186247758451ffe79703a1a01b3ec7",
+      "size": 112
+    },
+    {
+      "name": "region/vai_Latn.res",
+      "file": "data/icu78/region/vai_Latn.res",
+      "object": "RegionResource_vai_Latn",
+      "sha256": "ff06d3d4e936aa2f43f687d8727da71cc94730dac726e5a13e3282d9732e70ab",
+      "size": 5024
+    },
+    {
+      "name": "region/vai_Vaii.res",
+      "file": "data/icu78/region/vai_Vaii.res",
+      "object": "RegionResource_vai_Vaii",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/vai_Vaii_LR.res",
+      "file": "data/icu78/region/vai_Vaii_LR.res",
+      "object": "RegionResource_vai_Vaii_LR",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/vec.res",
+      "file": "data/icu78/region/vec.res",
+      "object": "RegionResource_vec",
+      "sha256": "f836d80b066ca0369d9d617453ad4b93a4f050ad0da9543fcb101a7e51613495",
+      "size": 5568
+    },
+    {
+      "name": "region/vi.res",
+      "file": "data/icu78/region/vi.res",
+      "object": "RegionResource_vi",
+      "sha256": "e682de8e5fa0edb71a6d6a601b854aa7f85e98bd4d3ac24de8629a0580b682df",
+      "size": 4816
+    },
+    {
+      "name": "region/vmw.res",
+      "file": "data/icu78/region/vmw.res",
+      "object": "RegionResource_vmw",
+      "sha256": "44b0fb5bd86e42c5db4500e7a57989004ea468affb326bad1503bacfe1200b26",
+      "size": 112
+    },
+    {
+      "name": "region/vun.res",
+      "file": "data/icu78/region/vun.res",
+      "object": "RegionResource_vun",
+      "sha256": "6b4da197abb6367170b03384702ac70bf71874b6b4d8aa59d977d293d847e703",
+      "size": 976
+    },
+    {
+      "name": "region/wae.res",
+      "file": "data/icu78/region/wae.res",
+      "object": "RegionResource_wae",
+      "sha256": "d004e71542d14d4612b9fcb58db11a1f024021b2c3172a171ab8320b43dd25f7",
+      "size": 4384
+    },
+    {
+      "name": "region/wo.res",
+      "file": "data/icu78/region/wo.res",
+      "object": "RegionResource_wo",
+      "sha256": "694ad678d1cf88f952a184afd2f23ae5d787c300a7cc37397d5e617e463040ee",
+      "size": 6032
+    },
+    {
+      "name": "region/xh.res",
+      "file": "data/icu78/region/xh.res",
+      "object": "RegionResource_xh",
+      "sha256": "59e48791912d1e5163b91cc071464c0e4775850a98d2f98bab2391ea391247d9",
+      "size": 3760
+    },
+    {
+      "name": "region/xnr.res",
+      "file": "data/icu78/region/xnr.res",
+      "object": "RegionResource_xnr",
+      "sha256": "8671b76674dd7c438acdc2b17a3f201717a59f6a3cad728dc2641b4fa661ee4b",
+      "size": 3712
+    },
+    {
+      "name": "region/xog.res",
+      "file": "data/icu78/region/xog.res",
+      "object": "RegionResource_xog",
+      "sha256": "98de019deeb770c27febb69313947c9464a8485e3b1fe446ed67b561ab4e9ea7",
+      "size": 2592
+    },
+    {
+      "name": "region/yav.res",
+      "file": "data/icu78/region/yav.res",
+      "object": "RegionResource_yav",
+      "sha256": "37d7212c90d6b4f5af0541bc799c18bc48ae8bec5ab0a4e54f9b5ddf664592e4",
+      "size": 5136
+    },
+    {
+      "name": "region/yi.res",
+      "file": "data/icu78/region/yi.res",
+      "object": "RegionResource_yi",
+      "sha256": "9efcfe7725a1b8fa253a9f745e5af88013faec14775cfc198cb2d156d9258993",
+      "size": 5648
+    },
+    {
+      "name": "region/yo.res",
+      "file": "data/icu78/region/yo.res",
+      "object": "RegionResource_yo",
+      "sha256": "0056f7abc135ceb8a3ada310c5347238bd287aa05e9f9feb0c6e1a0c4ba91571",
+      "size": 7744
+    },
+    {
+      "name": "region/yo_BJ.res",
+      "file": "data/icu78/region/yo_BJ.res",
+      "object": "RegionResource_yo_BJ",
+      "sha256": "812e28dd783a6041e68d2999d7331afb0b7f5b0591ce7011005901975870e322",
+      "size": 3824
+    },
+    {
+      "name": "region/yrl.res",
+      "file": "data/icu78/region/yrl.res",
+      "object": "RegionResource_yrl",
+      "sha256": "b6fb1a6be6a90d0b9cd9cda76d30eb139c1733a1eefd63188f148f9ed5033e11",
+      "size": 8368
+    },
+    {
+      "name": "region/yrl_CO.res",
+      "file": "data/icu78/region/yrl_CO.res",
+      "object": "RegionResource_yrl_CO",
+      "sha256": "7a0ccbd4d0c18ade222075ae4189f0d534c8dd5d2562ce8c1d6af286a4218ff6",
+      "size": 128
+    },
+    {
+      "name": "region/yrl_VE.res",
+      "file": "data/icu78/region/yrl_VE.res",
+      "object": "RegionResource_yrl_VE",
+      "sha256": "7a0ccbd4d0c18ade222075ae4189f0d534c8dd5d2562ce8c1d6af286a4218ff6",
+      "size": 128
+    },
+    {
+      "name": "region/yue.res",
+      "file": "data/icu78/region/yue.res",
+      "object": "RegionResource_yue",
+      "sha256": "e697dfec07b6f883f66e0ff92356cf5c5a77bc9c56580af0d0a06edb631ccc27",
+      "size": 3664
+    },
+    {
+      "name": "region/yue_CN.res",
+      "file": "data/icu78/region/yue_CN.res",
+      "object": "RegionResource_yue_CN",
+      "sha256": "2a8e0d57ca1a6a83155a0b0bd1fd9cfdc1b5a684d35072f761b24125c4e19fb0",
+      "size": 112
+    },
+    {
+      "name": "region/yue_HK.res",
+      "file": "data/icu78/region/yue_HK.res",
+      "object": "RegionResource_yue_HK",
+      "sha256": "047b16e42d1687b0aeee7d7d515a258c923d19de4eca2fc9eff548dcdeade492",
+      "size": 112
+    },
+    {
+      "name": "region/yue_Hans.res",
+      "file": "data/icu78/region/yue_Hans.res",
+      "object": "RegionResource_yue_Hans",
+      "sha256": "de62a75ee67c45c427758e76f2df8836850278c34d78f95dc755073bbb96aa80",
+      "size": 3712
+    },
+    {
+      "name": "region/yue_Hans_CN.res",
+      "file": "data/icu78/region/yue_Hans_CN.res",
+      "object": "RegionResource_yue_Hans_CN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/yue_Hant.res",
+      "file": "data/icu78/region/yue_Hant.res",
+      "object": "RegionResource_yue_Hant",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/yue_Hant_HK.res",
+      "file": "data/icu78/region/yue_Hant_HK.res",
+      "object": "RegionResource_yue_Hant_HK",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/za.res",
+      "file": "data/icu78/region/za.res",
+      "object": "RegionResource_za",
+      "sha256": "b32b02dd2c074ca17575d502af4db45239ab1a981ded9001589c7ffe9b3d8d5b",
+      "size": 112
+    },
+    {
+      "name": "region/zgh.res",
+      "file": "data/icu78/region/zgh.res",
+      "object": "RegionResource_zgh",
+      "sha256": "4af18bb9cd35fcd09934abf38286a8f93e17b2307bbc3479f42843a66f0405b8",
+      "size": 3248
+    },
+    {
+      "name": "region/zh.res",
+      "file": "data/icu78/region/zh.res",
+      "object": "RegionResource_zh",
+      "sha256": "dae46471f224f9ca10d135994adfb2f5e50bc36c3c6153f17ad4d4bd560c771f",
+      "size": 3824
+    },
+    {
+      "name": "region/zh_CN.res",
+      "file": "data/icu78/region/zh_CN.res",
+      "object": "RegionResource_zh_CN",
+      "sha256": "fe0af1f69303859c1f1ff669aef9a73c8d8c5bf2b22189d70b4a5e5044fc711f",
+      "size": 112
+    },
+    {
+      "name": "region/zh_HK.res",
+      "file": "data/icu78/region/zh_HK.res",
+      "object": "RegionResource_zh_HK",
+      "sha256": "6ea34fcf5fc158d5e6fa09b9f60d203ea5b8308856a6f6585aa6265e7a1fb744",
+      "size": 80
+    },
+    {
+      "name": "region/zh_Hans.res",
+      "file": "data/icu78/region/zh_Hans.res",
+      "object": "RegionResource_zh_Hans",
+      "sha256": "81b2b6c3aaf8ab8ef4a5ead2920e36b04fba8c1c24a0bff638f05879e0e36970",
+      "size": 80
+    },
+    {
+      "name": "region/zh_Hans_CN.res",
+      "file": "data/icu78/region/zh_Hans_CN.res",
+      "object": "RegionResource_zh_Hans_CN",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/zh_Hans_SG.res",
+      "file": "data/icu78/region/zh_Hans_SG.res",
+      "object": "RegionResource_zh_Hans_SG",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/zh_Hant.res",
+      "file": "data/icu78/region/zh_Hant.res",
+      "object": "RegionResource_zh_Hant",
+      "sha256": "7c3795f96a177c23aa2715b8d61a6f101556d1b4835928a68466ef2856b0e2ee",
+      "size": 3696
+    },
+    {
+      "name": "region/zh_Hant_HK.res",
+      "file": "data/icu78/region/zh_Hant_HK.res",
+      "object": "RegionResource_zh_Hant_HK",
+      "sha256": "c564242edb11c8afe897c728bc04d8b2bd5e9c113adc33aa39b9978a9b734c88",
+      "size": 1456
+    },
+    {
+      "name": "region/zh_Hant_MO.res",
+      "file": "data/icu78/region/zh_Hant_MO.res",
+      "object": "RegionResource_zh_Hant_MO",
+      "sha256": "817409163645815ab86dbf2a9bfe2335adfde6cdfa6050288516975632b7517d",
+      "size": 96
+    },
+    {
+      "name": "region/zh_Hant_TW.res",
+      "file": "data/icu78/region/zh_Hant_TW.res",
+      "object": "RegionResource_zh_Hant_TW",
+      "sha256": "592e447837ad26b7ed39a4821c3d2969772b7f3e4d98c771a462f73c888761a9",
+      "size": 80
+    },
+    {
+      "name": "region/zh_MO.res",
+      "file": "data/icu78/region/zh_MO.res",
+      "object": "RegionResource_zh_MO",
+      "sha256": "ffe431327614705f6ff497c36779668cd0076f1c78bc9fedfb15f849223639b7",
+      "size": 112
+    },
+    {
+      "name": "region/zh_SG.res",
+      "file": "data/icu78/region/zh_SG.res",
+      "object": "RegionResource_zh_SG",
+      "sha256": "e6af41b6852e6e9dce132639a77dad0a09045f30196765f61c463f11cbd5ebe3",
+      "size": 112
+    },
+    {
+      "name": "region/zh_TW.res",
+      "file": "data/icu78/region/zh_TW.res",
+      "object": "RegionResource_zh_TW",
+      "sha256": "541eed7d281c7fcf1a5c8002c16d991244b47477134c296fb8c9327555e80ebf",
+      "size": 112
+    },
+    {
+      "name": "region/zu.res",
+      "file": "data/icu78/region/zu.res",
+      "object": "RegionResource_zu",
+      "sha256": "2d6c09ff15a1855d023803266bb42c8ba0b049089b79280892ba6e946be5645c",
+      "size": 7136
     }
   ],
   "registries": {
-    "zone/": "ZoneResourceRegistry"
+    "zone/": "ZoneResourceRegistry",
+    "region/": "RegionResourceRegistry"
+  },
+  "source_directories": {
+    "region/": "icu4j/main/regiondata/src/main/resources/com/ibm/icu/impl/data/icudata"
   }
 }
