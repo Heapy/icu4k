@@ -9294,3 +9294,52 @@ and six common groups). Full JVM/macOS Native tests plus Linux x64 test
 compilation passed in 4m18s; the separate full JavaScript Node suite passed in
 42s. All six new common groups passed on JVM, JavaScript and macOS Native.
 Linux tests were compiled, not executed on this macOS host.
+
+### Chinese/Dangi lunisolar engines and leap-month operations (2026-10-16)
+
+Added ChineseCalendarCore with the complete source lunisolar calculation path:
+local-day/UTC conversion, cached winter solstices and new years, lunar events,
+major solar terms, recursive leap-month detection, month/ordinal-month geometry,
+cycle and extended-year fields, month lengths and normalized month starts. The
+core retains the ICU4J 78.3 extended-year epoch (1 CE) and the separate -2636
+cycle epoch. Astronomical calculations use the actual CalendarAstronomer port;
+Java Math.round behavior reuses the existing common RbnfMath numeric boundary.
+
+Leap-aware month add/roll includes source pinning, explicit completion, zero
+amount behavior, Int overflow and the source solstice-span flag (which differs
+from a calendar year's leap status in years such as 1813 and 2033). The owner
+boundary also covers IS_LEAP_MONTH field precedence, month resolution through a
+clone and roll, actual month maxima, Temporal month codes and leap-year queries.
+Callbacks retain source ordering and partial writes on failure. Cloned cores
+rebind the owner and retain the flag while sharing the two caches, as the source
+Calendar.clone implementation does for ChineseCalendar.
+
+DangiCalendarCore supplies the source frozen Korean astronomical zone using the
+existing RuleBasedTimeZoneCore and three STANDARD_TIME TimeArrayTimeZoneRules:
+GMT+8 before the source approximate 1897 transition, GMT+7 for the 1897 correction,
+GMT+8 through the approximate 1912 transition, then GMT+9. The approximate
+transition instants intentionally use the source's `(year - 1970) * 365` formula;
+they are not substituted with IANA historical dates. Dangi shares the Chinese
+calculation/epoch rules in this ICU version and reports its own calendar type.
+
+Four JVM oracle groups compare solstices/new years for 1600–2200, independent
+cold-cache signed years, new moons and solar terms, signed-rounding and conversion
+boundaries, Korean offsets around every exact transition, month geometry and
+fields around 1813/1897/1912/2023/2024/2033/2034, and integrated add/roll/ordinal
+months/Temporal/clone operations in GMT, Shanghai and New York. Field arrays,
+stamps and Gregorian metadata are compared after each integrated operation.
+MethodHandle calls target Calendar's actual superclass implementations for the
+owner's base operations. Seven common groups include standalone ICU4J snapshots,
+rare leap-eleventh-month dates, the Chinese/Dangi difference on 1897-07-30,
+scripted callback failures and pinning, ordinal clone ordering, and cache sharing.
+
+The JVM integration still uses ICU4J's inherited Calendar framework as its test
+owner. Public ChineseCalendar/DangiCalendar construction, Calendar/TimeZone facade
+integration, date-format factories and serialization remain pending, alongside
+the remaining full ICU4J port.
+
+Verification: final focused JVM tests passed in 21s (four oracle groups and
+seven common groups). Full JVM/macOS Native tests and Linux x64 test compilation
+passed in 4m43s; the separate full JavaScript Node suite passed in 1m13s. All
+seven new common groups passed on JVM, JavaScript and macOS Native. Linux tests
+were compiled, not executed on this macOS host.
