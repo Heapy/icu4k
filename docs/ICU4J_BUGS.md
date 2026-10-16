@@ -6,7 +6,7 @@ alone. Reproduced behavior is distinguished from an accepted upstream defect.
 
 ## Baseline and verification
 
-- Last local verification: 2026-10-15.
+- Local verification: entries 001–004 on 2026-10-15; entry 005 on 2026-10-16.
 - Artifact: `com.ibm.icu:icu4j:78.3`; reported ICU version: `78.3.0.0`.
 - Binary SHA-256: `e962c1758d9659ea1e1fbab99c58683f654d304e1126ace19aaabfe39e0edb25`.
 - Environment: macOS arm64, OpenJDK `25.0.4+9-LTS`.
@@ -14,7 +14,7 @@ alone. Reproduced behavior is distinguished from an accepted upstream defect.
 - Port baseline: `unicode-org/icu`, `release-78.3`, commit
   `21d1eb0f306e1141c10931e914dfc038c06121da`, as recorded in [PORTING.md](PORTING.md).
 
-All four Java examples were run locally against the binary above. Current ICU
+All five Java examples were run locally against the binary above. Current ICU
 releases and upstream HEAD still need checking. Duplicate searches and upstream
 submission are pending; no upstream acceptance is implied. Owners are unassigned.
 
@@ -26,6 +26,7 @@ java --class-path /tmp/icu4j-78.3.jar RegionOverrideRepro.java
 java --class-path /tmp/icu4j-78.3.jar CurrencyMapRepro.java
 java -Dcom.ibm.icu.impl.breakiter.useMLPhraseBreaking=false --class-path /tmp/icu4j-78.3.jar CjkPhraseRepro.java
 java --class-path /tmp/icu4j-78.3.jar CurrencyNullCacheRepro.java
+java --class-path /tmp/icu4j-78.3.jar GregorianCutoverRepro.java
 ```
 
 The examples change process defaults or cached data; use disposable processes.
@@ -42,6 +43,7 @@ Priority is local triage priority, not an upstream severity assignment.
 | [ICU4J-002](#icu4j-002-currency-maps-violate-the-unmodifiable-contract) | Currency parsing maps are mutable despite their API contract | Reproduced contract violation | Medium | Not submitted |
 | [ICU4J-003](#icu4j-003-cjk-phrase-breaking-fails-with-a-nonzero-text-begin-index) | CJK phrase breaking throws on a valid bounded iterator | Reproduced defect | High | Not submitted |
 | [ICU4J-004](#icu4j-004-a-null-currency-code-poisons-the-formatting-cache) | A null currency lookup breaks subsequent valid lookups | Reproduced behavior; contract review pending | Low | Not submitted |
+| [ICU4J-005](#icu4j-005-setting-the-existing-gregorian-cutover-changes-historical-dates) | Setting the existing Gregorian cutover changes historical dates | Reproduced defect | Medium | Not submitted |
 
 ## ICU4J 001 Region overrides depend on the host locale
 
@@ -264,6 +266,69 @@ above isolates formatting-cache poisoning through the public API.
 **Before filing.** Establish the null-input contract, check current releases/HEAD
 and duplicates, then decide whether to file separately or discard as unsupported
 input. Do not present this as a confirmed public contract violation yet.
+
+## ICU4J 005 Setting the existing Gregorian cutover changes historical dates
+
+**Suggested title.** GregorianCalendar.setGregorianChange uses an epoch day as a Julian day.
+
+**Status.** Reproduced locally against ICU4J 78.3 on 2026-10-16, OpenJDK
+25.0.4+9-LTS, macOS arm64. Local priority: medium. Owner unassigned. No report
+submitted; current releases, upstream HEAD and duplicate searches remain pending.
+
+**Trigger and impact.** Calling `setGregorianChange(getGregorianChange())`
+should retain the calendar's cutover. After clearing cached fields and setting
+the same instant, the calendar instead reports a different historical date.
+For the default transition, Julian October 4, 1582 becomes Gregorian October 14.
+The expected result is October 4 both times, since neither the cutover date nor
+the instant changes.
+
+Save as `GregorianCutoverRepro.java` and run with the command above:
+
+```java
+import com.ibm.icu.util.GregorianCalendar;
+import com.ibm.icu.util.TimeZone;
+import com.ibm.icu.util.ULocale;
+
+public class GregorianCutoverRepro {
+    public static void main(String[] args) {
+        GregorianCalendar cal = new GregorianCalendar(
+            TimeZone.getTimeZone("Etc/GMT"), ULocale.US);
+        long instant = -12219379200000L;
+        cal.setTimeInMillis(instant);
+        print("before", cal);
+        cal.setGregorianChange(cal.getGregorianChange());
+        cal.clear();
+        cal.setTimeInMillis(instant);
+        print("after", cal);
+    }
+    private static void print(String label, GregorianCalendar cal) {
+        System.out.println(label + ": " + cal.get(GregorianCalendar.YEAR) + "-" +
+            (cal.get(GregorianCalendar.MONTH) + 1) + "-" +
+            cal.get(GregorianCalendar.DAY_OF_MONTH));
+    }
+}
+```
+
+Actual output:
+
+```text
+before: 1582-10-4
+after: 1582-10-14
+```
+
+**Source finding.** In the pinned GregorianCalendar.java, the default
+`cutoverJulianDay` is 2299161. The setter replaces it with
+`floorDivide(gregorianCutover, ONE_DAY)` without adding `EPOCH_JULIAN_DAY`.
+For the default cutover it becomes -141427. `handleComputeFields` subsequently
+compares an absolute Julian day against this epoch-day value. A possible fix
+direction is to include the epoch-to-Julian-day offset, with corresponding
+boundary and non-UTC-zone tests. This is source analysis, not an upstream verdict.
+
+**ICU4K evidence.** `GregorianCalendarCoreOracleTest` compares original and common
+field calculations before/after cutover updates, including the original cutover
+value, extreme values and multiple calendar states. `GregorianCalendarCoreTest`
+has an explicit regression for October 4 becoming October 14 after the setter.
+The port preserves ICU4J 78.3 behavior pending a baseline compatibility decision.
 
 ## Upstream handoff
 

@@ -8598,3 +8598,40 @@ date creation, short circuits, ID state and clone/freeze contracts.
 Verification: jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 passed
 in 4m 45s. All four new common tests executed on JVM, Node and macOS Arm64;
 Linux tests compiled only. All three JVM differential test groups passed.
+
+## GregorianCalendar hybrid-calendar engine
+
+`GregorianCalendarCore` ports GregorianCalendar's cutover state, Julian and
+Gregorian leap/month/year arithmetic, Gregorian/Julian field computation,
+extended-year field precedence and two-pass Julian-day selection. It also
+implements ISO-year-aware WEEK_OF_YEAR roll, year actual-maximum binary search,
+actual-minimum/base fallbacks, daylight short circuits and independent copies
+of Gregorian-specific primitive state.
+
+The engine retains source Int overflow before Long promotion, month/year
+normalization, BC/AD conversion, virtual leap-year/year-length queries and
+field writes in source order. The cutover setter preserves the source's epoch
+day calculation without adding EPOCH_JULIAN_DAY, partial state updates if its
+calendar query throws, extreme-value pure-calendar selection and fresh Date
+results. Calendar state, stamps, Gregorian base fields, timezone, cloning and
+base implementations remain required owner services. This is a dependency for
+the pending public Calendar/GregorianCalendar APIs, not a replacement facade.
+
+The JVM oracle routes the same real ICU4J Calendar base state through either
+the original Gregorian methods or this common engine. Special method handles
+invoke Calendar base implementations without accidentally dispatching back to
+GregorianCalendar. Clones rebind the common engine to the clone. Comparisons
+cover all limit slots, extreme years/months/Julian days and cutovers, extended
+year precedence, real field-resolution retries, week rolls across localized
+week rules and timezone transitions, actual minima/maxima and base roll.
+Common fixtures additionally cover known historical fields, the setter's
+epoch-day quirk, failed cutover queries, copy independence, array bounds,
+retry flags, daylight short circuits and week-roll callback order.
+
+Verification: the focused JVM suite passed in 2m 12s; the complete
+jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection subsequently
+passed in 5m 24s after disk space became available. The four common tests ran
+on JVM, Node and macOS Arm64; Linux tests compiled only. All three differential
+test groups passed. A standalone ICU4J Java process reproduced the cutover
+setter issue; its source, output and compatibility decision are tracked as
+ICU4J-005 in ICU4J_BUGS.md.
