@@ -8534,3 +8534,34 @@ changes the cache while the caller retains its original snapshot.
 Verification: jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 passed
 in 4m 47s after adding the common ownership/failure tests. Common tests executed
 on JVM, Node and macOS Arm64; Linux tests compiled only.
+
+## TimeZone display-name selection
+
+`TimeZoneDisplayNameCore` ports all eight TimeZone display-name styles, distinct
+from the twenty TimeZoneFormat styles. Generic styles request the corresponding
+generic format and replace a standard/daylight mismatch with the requested
+localized offset. This path does not query useDaylightTime. Numeric styles and
+specific-name fallbacks do query it before adding DST savings. SHORT_GMT uses
+basic ISO offsets with all three formatting flags false; SHORT_GENERIC and
+short specific-name fallbacks use short localized GMT. LONG uses long specific
+names; SHORT_COMMONLY_USED follows SHORT.
+
+The engine preserves style-before-locale validation, clock/factory/getter order,
+canonical-ID evaluation before a null names receiver fails, signed Int offset
+overflow, nullable virtual formatter results and the owner's assertion policy.
+Timezone objects, actual name/format factories and the clock are explicit owner
+services. Public TimeZone construction and its facade remain pending.
+
+JVM differential tests connect this engine to common localized/numeric
+formatters, generic names and localized timezone names and compare every system
+zone/alias, both requested seasons and all eight styles in seven locales against
+ICU4J. Custom offsets cover extreme values and style/null-locale error precedence.
+Common tests cover complete callback traces, generic time-type combinations,
+signed overflow, null service receivers and assertion-enabled/disabled results.
+
+Verification: jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 passed
+in 3m 58s. The new common tests ran on JVM, Node and macOS Arm64; Linux tests
+compiled only. The JVM oracle uses ICU4J timezone objects and JDK pattern
+construction at their existing explicit boundaries; display-name selection,
+localized/numeric formatting, generic names and localized name data use the
+common engines.
