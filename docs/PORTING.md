@@ -8199,3 +8199,52 @@ compileTestKotlinLinuxX64 passed together in 3m 13s. Linux tests compiled only;
 localized-name and mapping common tests ran on JVM, Node and macOS Arm64. ICU4J
 locale/name/interval/byte comparisons ran on JVM. All 943 generated resources and
 the partitioned zone registry passed generate-data.py --check.
+
+### Time-zone name parsing trie
+
+Added TimeZoneNamesImpl's parsing path to TimeZoneNamesDataCore: case-folded
+TextTrieMap, per-name insertion flags, type-filtered prefix matches and the
+three-pass lazy search. A complete match can stop after searching the existing
+trie or after inserting cached formatting names. Otherwise the engine bulk-loads
+names, adds programmatic locations for missing canonical zones, inserts pending
+names and marks the trie fully loaded. Public bulk formatting load alone does not
+set the trie flag. Flags are set at the source points, including insertion flags
+before trie writes. Once fully loaded, find does not revisit later formatting-only
+cache additions, preserving the source's early-return behavior.
+
+MatchInfo retains validation order/messages, nullable zone/metazone IDs, positive
+UTF-16 match length and identity equality. Positive result collections are fresh
+and mutable; the empty result allows no-op removal/clear but rejects insertion.
+The type filter remains live during text callbacks. Recursive availability locks
+permit text reads to reenter formatting while find is active. Source invalid
+text/range failures occur before trie work, including zero-length and null text.
+
+JVM caches use ConcurrentHashMap and the bulk loader uses HashMap<UResource.Key>
+with the source initial capacity, preserving its key-hash behavior and match
+iteration order. JVM matches use LinkedList/Collections.emptyList. JS/Native use
+common maps and portable mutable/empty match collections; collection iteration
+follows the platform map order rather than defining a new portable ordering
+contract. Search content, prefix lengths and type filtering use the common trie
+and Unicode case-folding data on all targets.
+
+Targeted JVM comparisons passed for all 543 locale bundles with localized names,
+ASCII abbreviations, prefix offsets and trailing text. Ordered match results and
+private cache/trie flags are compared. Another test exercises all 128 subsets of
+seven name types in five locales. Four hundred mixed format/load/find operations
+compare cache insertion state and per-name flags. Match construction covers null
+IDs/types and extreme lengths; invalid text/ranges and result mutation are checked.
+CharSequence callbacks test live filter changes, reentrant name loading and exact
+text-read traces. Supplementary, Greek, sharp-s and dotted-I cases compare simple
+case folding and UTF-16 lengths. Common tests cover cached/full parsing, localized
+cities, filters, independent collections, validation, reentrant formatting and a
+supplementary case-folded city with a two-unit match length.
+
+The public TimeZoneNames/MatchInfo facade, factory/configuration hooks, TZDB names,
+serialization and TimeZoneGenericNames/TimeZoneFormat integration remain pending.
+This adds the concrete engine path without claiming the full public service.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 44s. Linux tests compiled only;
+parsing common tests, including reentrant callbacks and supplementary UTF-16
+lengths, ran on JVM, Node and macOS Arm64. ICU4J ordered-result/state comparisons
+ran on JVM.

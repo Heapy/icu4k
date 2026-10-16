@@ -8,3 +8,8 @@ internal actual fun immutableMetaZoneIDSet(values: Collection<String>): Set<Stri
 @Suppress("UNCHECKED_CAST")
 internal actual fun immutableAllMetaZoneIDSet(values: Set<String>): Set<String> =
     ReadOnlyMetaZoneIDSet(values, rejectNull = true) as Set<String>
+internal actual fun <V> createTimeZoneNamesMap(): MutableMap<String,V> = HashMap()
+internal actual fun <V> createTimeZoneNamesLoaderMap(): MutableMap<io.github.heapy.icu4k.impl.UResource.Key,V> = HashMap(300)
+internal actual fun <T> createTimeZoneNameMatches(): MutableCollection<T> = ArrayList()
+@Suppress("UNCHECKED_CAST")
+internal actual fun <T> emptyTimeZoneNameMatches(): MutableCollection<T> = EmptyTimeZoneNameMatches as MutableCollection<T>

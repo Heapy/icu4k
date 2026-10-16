@@ -6,7 +6,7 @@ package io.github.heapy.icu4k.impl.timezone
 import io.github.heapy.icu4k.impl.*
 import io.github.heapy.icu4k.util.*
 
-/** Localized TimeZoneNamesImpl formatting data; parsing trie and public factories are separate. */
+/** Localized TimeZoneNamesImpl formatting and parsing engine; public factories are separate. */
 internal class TimeZoneNamesDataCore(
     locale: ULocale?,
     defaultCanonicalZoneID: () -> String?,
@@ -15,9 +15,11 @@ internal class TimeZoneNamesDataCore(
     enum class NameType { LONG_GENERIC, LONG_STANDARD, LONG_DAYLIGHT, SHORT_GENERIC, SHORT_STANDARD, SHORT_DAYLIGHT, EXEMPLAR_LOCATION }
     private val zoneStrings = UResourceBundle.getBundleInstance(ICUData.ICU_ZONE_BASE_NAME, locale).get("zoneStrings") as ICUResourceBundle
     private val lock = createAvailabilityLock()
-    private val metaNames = mutableMapOf<String, Names>()
-    private val zoneNames = mutableMapOf<String, Names>()
+    private val metaNames = createTimeZoneNamesMap<Names>()
+    private val zoneNames = createTimeZoneNamesMap<Names>()
     private var namesFullyLoaded = false
+    private val namesTrie = TextTrieMap<NameInfo>(true)
+    private var namesTrieFullyLoaded = false
     init {
         val id = defaultCanonicalZoneID()
         if (!id.isNullOrEmpty()) lock.withLock {
@@ -58,10 +60,66 @@ internal class TimeZoneNamesDataCore(
             target[index] = name
         }
     }
+    open class MatchInfo(type: NameType?, private val zoneID: String?, private val metaID: String?, private val length: Int) {
+        private val type: NameType
+        init {
+            if (type == null) throw IllegalArgumentException("nameType is null")
+            if (zoneID == null && metaID == null) throw IllegalArgumentException("Either tzID or mzID must be available")
+            if (length <= 0) throw IllegalArgumentException("matchLength must be positive value")
+            this.type = type
+        }
+        open fun tzID(): String? = zoneID
+        open fun mzID(): String? = metaID
+        open fun nameType(): NameType = type
+        open fun matchLength(): Int = length
+    }
+    private class NameInfo(val zoneID: String?, val metaID: String?, val type: NameType)
+    private class NameSearchHandler(private val types: Set<NameType>?) : TextTrieMap.ResultHandler<NameInfo> {
+        var maxMatchLength = 0
+        private var matches: MutableCollection<MatchInfo>? = null
+        override fun handlePrefixMatch(matchLength: Int, values: MutableIterator<NameInfo>): Boolean {
+            while (values.hasNext()) {
+                val info = values.next()
+                if (types != null && info.type !in types) continue
+                if (info.zoneID == null && assertionsEnabled && info.metaID == null) throw AssertionError()
+                val match = if (info.zoneID != null) MatchInfo(info.type,info.zoneID,null,matchLength)
+                    else MatchInfo(info.type,null,info.metaID,matchLength)
+                if (matches == null) matches = createTimeZoneNameMatches()
+                matches!!.add(match)
+                if (matchLength > maxMatchLength) maxMatchLength = matchLength
+            }
+            return true
+        }
+        fun resetResults() { matches = null; maxMatchLength = 0 }
+        fun getMatches(): Collection<MatchInfo> = matches ?: emptyTimeZoneNameMatches()
+    }
+    fun find(text: CharSequence?, start: Int, types: Set<NameType>?): Collection<MatchInfo> = lock.withLock {
+        if (text == null || text.length == 0 || start < 0 || start >= text.length) throw IllegalArgumentException("bad input text or range")
+        val handler = NameSearchHandler(types)
+        doFind(handler,text,start)?.let { return@withLock it }
+        addAllNamesIntoTrie()
+        doFind(handler,text,start)?.let { return@withLock it }
+        loadAllDisplayNames()
+        for (id in ZoneMetaCore.getAvailableIDs(ZoneMetaCore.SystemTimeZoneType.CANONICAL)) {
+            if (!zoneNames.containsKey(id)) storeZone(id,null)
+        }
+        addAllNamesIntoTrie()
+        namesTrieFullyLoaded = true
+        doFind(handler,text,start)!!
+    }
+    private fun doFind(handler: NameSearchHandler, text: CharSequence, start: Int): Collection<MatchInfo>? {
+        handler.resetResults()
+        namesTrie.find(text,start,handler)
+        return if (handler.maxMatchLength == text.length - start || namesTrieFullyLoaded) handler.getMatches() else null
+    }
+    private fun addAllNamesIntoTrie() {
+        for ((id,names) in zoneNames) names.addIntoTrie(null,id,namesTrie)
+        for ((id,names) in metaNames) names.addIntoTrie(id,null,namesTrie)
+    }
     fun loadAllDisplayNames() = lock.withLock {
         if (!namesFullyLoaded) {
             namesFullyLoaded = true
-            val loaders = mutableMapOf<String, NamesLoader?>()
+            val loaders = createTimeZoneNamesLoaderMap<NamesLoader?>()
             zoneStrings.getAllItemsWithFallback("", object : UResource.Sink() {
                 override fun put(key: UResource.Key, value: UResource.Value, noFallback: Boolean) {
                     val table = value.getTable()
@@ -70,10 +128,10 @@ internal class TimeZoneNamesDataCore(
                         if (assertionsEnabled && value.isNoInheritanceMarker()) throw AssertionError()
                         if (value.getType() != UResourceBundle.TABLE) continue
                         val savedKey = key.toString()
-                        val loader = if (loaders.containsKey(savedKey)) loaders[savedKey] else {
+                        val loader = if (loaders.containsKey(key)) loaders[key] else {
                             val present = if (savedKey.startsWith("meta:")) metaNames.containsKey(savedKey.substring(5))
                                 else zoneNames.containsKey(savedKey.replace(':','/'))
-                            (if (present) null else NamesLoader()).also { loaders[savedKey] = it }
+                            (if (present) null else NamesLoader()).also { loaders[key.clone()] = it }
                         }
                         loader?.put(key,value,noFallback)
                     }
@@ -82,8 +140,9 @@ internal class TimeZoneNamesDataCore(
             for ((key,loader) in loaders) {
                 if (loader == null) continue
                 val names = loader.getNames()
-                if (key.startsWith("meta:")) storeMeta(key.substring(5),names)
-                else storeZone(key.replace(':','/'),names)
+                val nameKey = key.toString()
+                if (nameKey.startsWith("meta:")) storeMeta(nameKey.substring(5),names)
+                else storeZone(nameKey.replace(':','/'),names)
             }
         }
     }
@@ -108,6 +167,15 @@ internal class TimeZoneNamesDataCore(
         return Names(actual).also { zoneNames[internTimeZoneNameID(id)] = it }
     }
     private class Names(private val names: Array<String?>?) {
+        private var didAddIntoTrie = names == null
+        fun addIntoTrie(metaID: String?, zoneID: String?, trie: TextTrieMap<NameInfo>) {
+            if (names == null || didAddIntoTrie) return
+            didAddIntoTrie = true
+            for (i in names.indices) {
+                val name = names[i] ?: continue
+                trie.put(name,NameInfo(zoneID,metaID,indexTypes[i]))
+            }
+        }
         fun get(type: NameType?): String? {
             val index = when(type!!) {
                 NameType.EXEMPLAR_LOCATION -> 0
@@ -155,6 +223,8 @@ internal class TimeZoneNamesDataCore(
         }
     }
     companion object {
+        private val indexTypes = arrayOf(NameType.EXEMPLAR_LOCATION,NameType.LONG_GENERIC,NameType.LONG_STANDARD,
+            NameType.LONG_DAYLIGHT,NameType.SHORT_GENERIC,NameType.SHORT_STANDARD,NameType.SHORT_DAYLIGHT)
         private val EMPTY = Names(null)
         private val assertionsEnabled = timeZoneNamesAssertionsEnabled()
         fun getDefaultExemplarLocationName(id: String?): String? {
@@ -171,3 +241,17 @@ internal class TimeZoneNamesDataCore(
 internal expect fun timeZoneNamesAssertionsEnabled(): Boolean
 
 internal expect fun internTimeZoneNameID(value: String): String
+
+internal expect fun <V> createTimeZoneNamesMap(): MutableMap<String,V>
+internal expect fun <V> createTimeZoneNamesLoaderMap(): MutableMap<UResource.Key,V>
+internal expect fun <T> createTimeZoneNameMatches(): MutableCollection<T>
+internal expect fun <T> emptyTimeZoneNameMatches(): MutableCollection<T>
+
+internal object EmptyTimeZoneNameMatches : AbstractMutableList<Any?>() {
+    override val size: Int get() = 0
+    override fun get(index: Int): Nothing = throw IndexOutOfBoundsException()
+    override fun set(index: Int, element: Any?): Nothing = throw UnsupportedOperationException()
+    override fun add(index: Int, element: Any?): Nothing = throw UnsupportedOperationException()
+    override fun removeAt(index: Int): Nothing = throw UnsupportedOperationException()
+    override fun clear() {}
+}
