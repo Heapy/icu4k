@@ -9062,3 +9062,37 @@ the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 4m 44s. All five new common tests passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. All three new JVM oracle groups and the existing
 comparison/weekend suites passed.
+
+### Indian/Saka calendar algorithms (2026-10-16)
+
+IndianCalendarCore ports all IndianCalendar algorithm overrides: extended-year
+selection ignoring era, Gregorian year-length delegation, normalized month
+lengths, Saka field computation, source limits, Julian month starts, related-year
+difference and type. Its Gregorian helpers use the already common date core;
+virtual Gregorian month starts and cached Gregorian year remain owner boundaries.
+
+The implementation preserves the source's different negative-month rules:
+month-length uses floor division, while month-start uses truncating division and
+signed remainder. Integer additions/multiplications wrap before conversion to
+Double, Julian dates retain their half-day fraction, and Double-to-Int casts
+truncate/saturate as in Java. Field computation reads cached Gregorian year,
+then writes ERA before EXTENDED_YEAR/YEAR and the month/day fields; callbacks
+retain their order and partial writes on failure.
+
+A JVM IndianCalendar probe replaces the subclass algorithms and Gregorian month
+math with common implementations, preserving inherited Calendar machinery as
+an explicit oracle boundary. Clones rebind their core owner. Three oracle groups
+compare limits, year precedence, extreme years/months, cached Gregorian-year and
+Julian-day combinations, random arithmetic/Temporal/related-year/clone operations
+in GMT, Kolkata and New York. Five common groups check Saka new-year/month
+boundaries, defaults, negative-month normalization, integer/Double behavior,
+limit errors and callback/failure state.
+
+Public IndianCalendar constructors/facade integration, other calendar families,
+Calendar/TimeZone facades, formatting factories and serialization remain pending.
+
+Verification: focused IndianCalendar JVM common/oracle tests passed in 14s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 4m 27s. All five new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. All three new JVM oracle groups and the existing
+calendar suites passed.
