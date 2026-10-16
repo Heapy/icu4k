@@ -9167,3 +9167,51 @@ The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 5m 1s. All nine new common groups passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. The all-calendar era oracle and both Japanese oracle
 groups passed with the existing suites.
+
+### Hebrew calendar and CalendarCache (2026-10-16)
+
+CalendarCache ports the public long-key table with the source sentinel, signed
+hashes, double-hash probing, replacement-count increments and prime growth.
+The common recursive lock preserves synchronized get/put, including put calls
+from rehash. The mutable EMPTY field remains mutable as in ICU4J.
+
+HebrewCalendarCore ports all Hebrew-specific algorithms: molad/postponement
+calculation and cached year starts, year types, month geometry and normalization,
+field conversion, Adar-aware add/roll, validation, ordinal-month resolution,
+Temporal codes, extended-year defaults, type and related-year difference.
+Integer overflow before widening, signed remainders, strict postponement
+thresholds and virtual year-length dispatch match source behavior. Zero monthly
+add/roll still writes fields and pins the day. The source ordinal-month > ADAR_1
+condition is retained rather than changing it to >=. Partial writes and errors
+preserve original order.
+
+A HebrewCalendar JVM probe replaces its subclass algorithms with common code,
+rebinds cloned owners, and keeps inherited Calendar machinery as the explicit
+oracle boundary. Three groups compare thousands of year/month geometries,
+extreme signed year arithmetic with isolated cold caches, Adar transitions,
+zero operations, Temporal/ordinal fields, arithmetic and clones in GMT,
+Jerusalem and New York. The cache oracle compares complete layouts and growth,
+including signed-long keys and sentinel values. Four Hebrew common groups and a
+cache group cover cycles, round trips, gap policies, delegation and failure state.
+
+A standalone child-process probe also confirmed the upstream negative-key cache
+cycle, tracked as ICU4J-006 in ICU4J_BUGS.md. The source cache behavior is preserved;
+tests isolate signed-year arithmetic instead of executing a hanging lookup.
+Public HebrewCalendar integration, remaining calendar families, Calendar/TimeZone
+facades, formatting factories and serialization remain pending.
+
+Cache API verification additionally preserves subclassability and virtual get/put.
+The JVM lock uses the cache receiver's monitor, so rehash invokes overridden put
+while Thread.holdsLock(cache) is true, matching ICU4J. Native uses the common
+recursive monitor boundary; JS uses its existing single-thread lock boundary.
+A JVM subclass oracle compares nested callback lock ownership with source.
+The first full run hit the unchanged JS CollationKeysTest 2-second timeout under
+concurrent compilation; final JVM/Native and JS runs are separated without changing
+assertions or timeout settings.
+
+Verification: focused Hebrew/cache JVM common/oracle tests passed after the
+receiver-monitor API check in 2m 7s. Final jvmTest/macosArm64Test/
+compileTestKotlinLinuxX64 passed in 4m 52s, then the unchanged full jsNodeTest suite
+passed separately in 59s, including CollationKeysTest. All five new common groups
+passed on JVM, Node and macOS Arm64; Linux tests compiled only. All three Hebrew
+and both cache JVM oracle groups passed.
