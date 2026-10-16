@@ -9843,3 +9843,43 @@ nearby simple rules over 100 seeded dates. Focused JVM checks passed, followed b
 full JVM/macOS Native suites and Linux x64 test compilation in 4m5s. The separate
 full JS Node suite passed in 54s. All three common groups passed on JVM, JS and
 macOS Native; all three JVM oracle groups passed. Linux tests were compiled only.
+
+### Public Calendar lifecycle and explicit-zone GregorianCalendar (2026-10-17)
+
+Public common Calendar now binds the existing state, field-resolution, date,
+wall-time, limits, arithmetic, comparison and weekend cores to real virtual
+calendar/timezone queries. Its explicit TimeZone/ULocale constructor preserves
+week-data initialization, fw overrides, locale normalization, virtual field
+allocation and the 24..32 field storage rules. GregorianCalendar supplies the
+hybrid Gregorian/Julian algorithms, current-clock initialization, historical
+cutover, leap years, era direction, roll and actual-year limits. Both explicit
+zone/locale and explicit zone/default FORMAT locale construction are available.
+
+Clones copy fields/stamps/time state, clone the zone and rebind cached Gregorian
+field data and algorithm owners. Protected copy constructors and cloneNative
+allow Native subclasses to preserve their runtime type and shallow user fields
+without repeating locale/clock/virtual constructor effects. JVM/JS retain host
+shallow subclass cloning. Native subclasses with extra state must implement the
+typed copy hook; the standard GregorianCalendar already does so.
+
+Gregorian callbacks from Calendar's superclass constructor see Java's zero
+cutover state. A lazy pre-initialization engine then receives only the three
+explicit numeric field initializers, retaining mutations of isGregorian and
+invertGregorian, which have no Java field initializers. Nullable Comparable
+input preserves source compareTo(null) ordering: the receiver is resolved before
+the argument is dereferenced. A failing oracle first reproduced the incorrect
+Kotlin parameter-null check, then passed after the signature was corrected.
+The pinned cutover setter behavior documented in bug 005 remains unchanged.
+
+Six common and six JVM oracle groups cover timezone/locale ownership, all fields
+at boundary and seeded instants, stamp precedence, leniency, add/roll, limits,
+clones, constructor callback order, pre-initializer state/flag mutations and null
+comparison. All six common groups passed on JVM, macOS Native and JS; all six
+JVM oracle groups passed. Combined final verification with the public
+SimpleTimeZone binding passed full JVM/macOS suites and Linux x64 test
+compilation in 4m18s, followed by the separate full JS Node suite in 1m9s. Linux
+tests were compiled only on this macOS host.
+
+Global factories/default-zone constructors, other public calendar subclasses,
+formatting integration, Java Locale adapters, debug formatting and serialization
+compatibility are still pending; this does not complete the public Calendar API.

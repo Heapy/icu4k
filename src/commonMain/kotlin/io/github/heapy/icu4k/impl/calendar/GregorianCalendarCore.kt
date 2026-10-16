@@ -46,6 +46,13 @@ internal class GregorianCalendarCore<C : Any>(private val owner: Owner<C>) {
     var isGregorian = false
     var invertGregorian = false
 
+    /** The three Java field initializers run after the Calendar superclass constructor. */
+    fun initializeCutoverDefaults() {
+        gregorianCutover = -12219292800000L
+        cutoverJulianDay = 2299161
+        gregorianCutoverYear = 1582
+    }
+
     fun setGregorianChange(date: Date?) {
         gregorianCutover = date!!.getTime()
         when {
@@ -193,6 +200,9 @@ internal class GregorianCalendarCore<C : Any>(private val owner: Owner<C>) {
     }
 
     companion object {
+        fun <C : Any> beforeFieldInitialization(owner: Owner<C>): GregorianCalendarCore<C> = GregorianCalendarCore(owner).also {
+            it.gregorianCutover = 0L; it.cutoverJulianDay = 0; it.gregorianCutoverYear = 0
+        }
         const val BC = 0; const val AD = 1
         private const val ERA = 0; private const val YEAR = 1; private const val MONTH = 2
         private const val WEEK_OF_YEAR = 3; private const val DAY_OF_MONTH = 5; private const val DAY_OF_YEAR = 6
