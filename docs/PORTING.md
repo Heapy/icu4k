@@ -8308,3 +8308,42 @@ public TimeZoneFormat service remain pending.
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 9s. Linux tests compiled only;
 every-second common round trips executed on JVM, Node and macOS Arm64.
+
+### Localized GMT offset engine
+
+`LocalizedGMTOffsetCore` ports TimeZoneFormat's locale-driven GMT pattern,
+positive/negative hour-minute-second patterns, localized digits and GMT-zero
+configuration. It loads zoneStrings with source fallback and resolves numeric
+numbering systems through NumberingSystem. Algorithmic systems keep ASCII
+fallback digits. Quoting, field-width validation, pattern expansion/truncation,
+required fields and mutation failure ordering follow the pinned source.
+
+Formatting chooses hour, hour-minute or hour-minute-second patterns using the
+source precision policy. Parsing handles configured prefix/suffix and patterns,
+alternative GMT/UTC/UT forms, separated/abutting fields and Unicode decimal digit
+fallback. Supplementary digits retain UTF-16 consumed lengths; custom ten-code-
+point digit sets need not be unique or Unicode decimal digits. Initial pattern
+whitespace includes bidi controls from PatternProps. Abutting patterns retry
+single-digit hours and use a longer result. The short/long parsing flag is
+currently ignored by ICU4J and by this engine.
+
+Freeze checks precede argument validation. Clone/cloneAsThawed retain source
+shallow sharing of both pattern arrays, while replacing digits, prefix/suffix
+or zero text affects only that copy. The per-instance abutting flag is copied,
+not recomputed on another clone's mutation. Explicit string/array checks keep
+malformed indices and overflow behavior consistent on JavaScript. JVM case-
+insensitive region matching uses the host String implementation; JS/Native use
+common code-point comparison backed by the embedded Unicode case data.
+
+Oracle tests cover all 543 zone bundle IDs plus numbering-system overrides,
+all six pattern types with seeded malformed/quoted patterns, supplementary and
+duplicate digits, Unicode fallback, invalid input positions, stale error state,
+output mutation, freeze failures and shared-array clone histories. Common tests
+exercise supplementary digits/case, bidi whitespace, custom GMT wrappers,
+abutting-field backtracking and clone mutation. Public TimeZoneFormat factories,
+named-zone parsing/formatting and serialization remain pending.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together after the final volatile-freeze change
+in 3m 26s. Linux tests compiled only. The four new common tests ran on JVM,
+Node and macOS Arm64; five new JVM oracle groups passed against ICU4J 78.3.
