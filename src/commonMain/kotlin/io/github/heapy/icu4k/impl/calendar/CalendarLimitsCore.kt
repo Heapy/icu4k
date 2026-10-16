@@ -4,7 +4,7 @@
 package io.github.heapy.icu4k.impl.calendar
 
 /** Calendar limits and the clone-based search for limits at the current date. */
-internal class CalendarLimitsCore(private val fields: IntArray, private val owner: Owner) {
+internal class CalendarLimitsCore(private val fields: IntArray?, private val owner: Owner) {
     interface Owner {
         fun handleGetLimit(field: Int, type: Int): Int
         fun getLimit(field: Int, type: Int): Int
@@ -89,7 +89,7 @@ internal class CalendarLimitsCore(private val fields: IntArray, private val owne
     fun pinField(field: Int) {
         val max = owner.getActualMaximum(field)
         val min = owner.getActualMinimum(field)
-        if (fields[field] > max) owner.set(field, max)
+        if (fields!![field] > max) owner.set(field, max)
         else if (fields[field] < min) owner.set(field, min)
     }
 

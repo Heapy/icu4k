@@ -7,10 +7,13 @@ import io.github.heapy.icu4k.impl.Grego
 
 /** Calendar's time-to-fields, week numbering and field-stamp resolution algorithms. */
 internal class CalendarFieldsCore<Z>(
-    private val fields: IntArray,
-    private val stamp: ByteArray,
+    private val fieldsProvider: () -> IntArray,
+    private val stampProvider: () -> ByteArray,
     private val owner: Owner<Z>,
 ) {
+    constructor(fields: IntArray, stamp: ByteArray, owner: Owner<Z>) : this({ fields }, { stamp }, owner)
+    private val fields: IntArray get() = fieldsProvider()
+    private val stamp: ByteArray get() = stampProvider()
     interface Owner<Z> {
         fun getTimeZone(): Z?
         fun getOffset(zone: Z?, date: Long, local: Boolean, offsets: IntArray)

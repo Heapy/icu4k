@@ -36,11 +36,11 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
         weekendOnset = other.weekendOnset; weekendOnsetMillis = other.weekendOnsetMillis
         weekendCease = other.weekendCease; weekendCeaseMillis = other.weekendCeaseMillis
     }
-    private fun state(): CalendarStateCore<TimeZone> = CalendarStateCore(fields!!, stamps!!, values, StateOwner(), false)
-    private fun fieldCore(): CalendarFieldsCore<TimeZone> = fieldPort ?: CalendarFieldsCore(fields!!, stamps!!, FieldsOwner()).also { fieldPort = it }
-    private fun date(): CalendarDateCore = CalendarDateCore(fields!!, stamps!!, DateOwner())
-    private fun time(): CalendarTimeCore<TimeZone> = CalendarTimeCore(stamps!!, TimeOwner(), false)
-    private fun limits(): CalendarLimitsCore = CalendarLimitsCore(fields!!, LimitsOwner())
+    private fun state(): CalendarStateCore<TimeZone> = CalendarStateCore({ fields!! }, { stamps!! }, values, StateOwner(), false)
+    private fun fieldCore(): CalendarFieldsCore<TimeZone> = fieldPort ?: CalendarFieldsCore({ fields!! }, { stamps!! }, FieldsOwner()).also { fieldPort = it }
+    private fun date(): CalendarDateCore = CalendarDateCore({ fields!! }, { stamps!! }, DateOwner())
+    private fun time(): CalendarTimeCore<TimeZone> = CalendarTimeCore({ stamps!! }, TimeOwner(), false)
+    private fun limits(): CalendarLimitsCore = CalendarLimitsCore(fields, LimitsOwner())
     private fun weekend(): CalendarWeekendCore<Calendar> = CalendarWeekendCore(WeekendState(), WeekendOwner())
     private fun comparison(): CalendarComparisonCore<Calendar> = CalendarComparisonCore(ComparisonOwner())
 
@@ -129,6 +129,7 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
     protected fun getGregorianDayOfMonth(): Int = fieldCore().gregorianDayOfMonth
     protected fun getGregorianDayOfYear(): Int = fieldCore().gregorianDayOfYear
     protected fun computeGregorianFields(julianDay: Int) = fieldCore().computeGregorianFields(julianDay)
+    protected open fun computeGregorianMonthStart(year: Int, month: Int): Int = CalendarDateCore.computeGregorianMonthStart(year, month)
     protected open fun weekNumber(desiredDay: Int, dayOfPeriod: Int, dayOfWeek: Int): Int = fieldCore().weekNumber(desiredDay, dayOfPeriod, dayOfWeek)
     protected fun weekNumber(dayOfPeriod: Int, dayOfWeek: Int): Int = fieldCore().weekNumber(dayOfPeriod, dayOfWeek)
     protected open fun isEra0CountingBackward(): Boolean = false

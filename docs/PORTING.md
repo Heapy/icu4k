@@ -9911,3 +9911,45 @@ passed separately in 1m9s. Linux tests were compiled only on this macOS host.
 README now demonstrates public explicit-zone Gregorian arithmetic. Host zone
 factories/default ownership, localized display names and serialization remain
 pending in the wider TimeZone API.
+
+### Public Buddhist, Taiwan, Persian and Indian calendars (2026-10-17)
+
+Public common BuddhistCalendar and TaiwanCalendar now bind their existing cores
+through GregorianCalendar's real hybrid-calendar hooks. Era numbering, extended
+year precedence, year offsets and Buddhist forward counting in era zero retain
+the pinned source behavior. PersianCalendar and IndianCalendar bind directly to
+Calendar, including their month/year conversion, limits and related-year rules.
+PersianCalendar retains its source internal/deprecated API status. Indian month
+and era constants and the Buddhist/Minguo era constants are exposed.
+
+All four provide explicit TimeZone/ULocale and explicit TimeZone/default FORMAT
+locale constructors. Gregorian subclasses inherit their one current-time setup;
+Persian/Indian perform the source current-time call themselves. Stateless core
+adapters are available during superclass callbacks and always target the current
+calendar. Protected copy paths preserve standard Native runtime types and
+inherited state without rerunning constructors; extra-state Native subclasses
+can override the typed copy hook. Buddhist/Taiwan retain Gregorian cutover state.
+
+Constructor probes exposed eager array checks in the public Calendar adapters:
+source era limits, field names, Gregorian scalar calculations and week numbers
+can run before initInternal allocates fields/stamps. State/date/field/time cores
+now also accept deferred access to the actual owner arrays; existing array-based
+constructors remain available. Limits only dereference fields when pinning them.
+This preserves source error ordering (including internalSet's mask check), keeps
+pre-allocation Gregorian caches, and switches to the real allocated arrays for
+later complete/computeFields calls. Indian's inherited virtual
+computeGregorianMonthStart hook is now exposed and used by its owner binding.
+
+Five common and six JVM oracle groups compare public construction, epochs and
+new-year/era boundaries, all fields over seeded/boundary instants, regional week
+metadata, field stamps, strict validation, limits, add/roll, equality/hash and
+warm clones for all four types. Additional probes compare constructor-time era
+limits/scalar cache behavior and Indian Gregorian-helper virtual dispatch.
+Focused checks plus existing calendar core oracles passed. Final full JVM/macOS
+Native suites and Linux x64 test compilation passed in 5m2s; full JS Node passed
+separately in 1m5s. All five common groups passed on JVM/JS/macOS Native and all
+six JVM oracle groups passed. Linux tests were compiled only on this macOS host.
+
+No-argument/default-zone and date-field constructors, Java Locale adapters,
+calendar factories, formatting and serialization remain pending. Other public
+calendar subclasses are still being ported; this is not completion of Calendar.

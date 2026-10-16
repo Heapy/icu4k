@@ -6,7 +6,9 @@ package io.github.heapy.icu4k.impl.calendar
 import kotlin.math.abs
 
 /** Calendar's wall-time conversion, timezone disambiguation and nearby-transition search. */
-internal class CalendarTimeCore<Z>(private val stamps: ByteArray, private val owner: Owner<Z>, private val assertionsEnabled: Boolean) {
+internal class CalendarTimeCore<Z>(private val stampsProvider: () -> ByteArray, private val owner: Owner<Z>, private val assertionsEnabled: Boolean) {
+    constructor(stamps: ByteArray, owner: Owner<Z>, assertionsEnabled: Boolean) : this({ stamps }, owner, assertionsEnabled)
+    private val stamps: ByteArray get() = stampsProvider()
     fun interface Transition { fun getTime(): Long }
     interface Owner<Z> {
         fun isLenient(): Boolean

@@ -4,7 +4,10 @@
 package io.github.heapy.icu4k.impl.calendar
 
 /** Calendar's date-field selection, Julian-day framework, validation and arithmetic helpers. */
-internal class CalendarDateCore(private val fields: IntArray, private val stamps: ByteArray, private val owner: Owner) {
+internal class CalendarDateCore(private val fieldsProvider: () -> IntArray, private val stampsProvider: () -> ByteArray, private val owner: Owner) {
+    constructor(fields: IntArray, stamps: ByteArray, owner: Owner) : this({ fields }, { stamps }, owner)
+    private val fields: IntArray get() = fieldsProvider()
+    private val stamps: ByteArray get() = stampsProvider()
     interface Owner {
         fun newestStamp(first: Int, last: Int, best: Int): Int
         fun resolveFields(table: Array<Array<IntArray>>?): Int

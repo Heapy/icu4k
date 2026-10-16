@@ -8,9 +8,13 @@ import io.github.heapy.icu4k.util.Date
 
 /** Calendar's mutable field/time lifecycle, configuration and base Temporal accessors. */
 internal class CalendarStateCore<Z>(
-    private val fields: IntArray, private val stamps: ByteArray, private val state: State<Z>,
+    private val fieldsProvider: () -> IntArray, private val stampsProvider: () -> ByteArray, private val state: State<Z>,
     private val owner: Owner, private val assertionsEnabled: Boolean,
 ) {
+    constructor(fields: IntArray, stamps: ByteArray, state: State<Z>, owner: Owner, assertionsEnabled: Boolean) :
+        this({ fields }, { stamps }, state, owner, assertionsEnabled)
+    private val fields: IntArray get() = fieldsProvider()
+    private val stamps: ByteArray get() = stampsProvider()
     interface State<Z> {
         var time: Long
         var isTimeSet: Boolean

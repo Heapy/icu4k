@@ -404,6 +404,10 @@ calendar.add(Calendar.MONTH, 1)
 println(calendar.get(Calendar.DATE)) // 29
 ```
 
+`BuddhistCalendar`, `TaiwanCalendar`, `IndianCalendar` and the ICU-internal,
+deprecated `PersianCalendar` also support explicit zones, field resolution,
+date arithmetic and typed Native copies.
+
 `SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
 local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
 retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. System-zone
