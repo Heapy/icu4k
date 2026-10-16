@@ -9752,3 +9752,38 @@ passed in 4m52s; the separate full JS Node suite passed in 1m2s. All six new
 common groups passed on JVM, JS and macOS Native. Linux tests were compiled,
 not executed on this macOS host. ICU4J 008's standalone Java example reproduced
 the overwrite against the pinned SHA-256 artifact and JDK 25.0.4+9-LTS.
+
+### DateFormatSymbols constructors and template cache (2026-10-17)
+
+DateFormatSymbolsFactoryCore ports the soft template cache, default/explicit
+locale factories, protected calendar-type initialization, calendar-class name
+mapping and direct resource-bundle construction. Keys use base locale + type
+and a nonempty numbers keyword; unrelated keywords are not added. The creator
+extracts the type between the first two plus signs, retaining null-type string
+conversion and embedded-plus behavior. The first published template retains its
+requested locale, and every result gets fresh field slots with shared source
+arrays/capitalization. The uncached bundle path still initializes directly.
+
+Template and result creation are separate boundaries: cached copying does not
+invoke result resource initialization, its clock/default-zone effects or its
+overridable separator setter. Eleven known calendar class names map explicitly;
+other names strip Calendar and use invariant lowercase as in the English source
+mapping. Locale availability delegates to the existing ICU bundle service.
+Public Java Locale/Class adapters and shared public facade/cache ownership are
+still pending, along with dynamic zone strings and serialization.
+
+Five common and five JVM oracle groups cover keys, numbers/case/legacy locale
+variants, requested-locale retention, shared leap-pattern mutation, uncached
+constructors, class mapping, failed/null cache reads and creation retry. The JVM
+oracle delegates template creation to a fresh instance of ICU4J's original
+private creator and restores DFSCACHE in finally. An intervening publication
+test verifies that SoftCache's winner supplies both results. Identity fixtures
+retain templates strongly so GC cannot turn that schedule into a different
+soft-reference reclamation case. Source shared leap-pattern mutations remain
+visible across later factory results, preserving the pinned behavior.
+
+Verification: focused JVM checks passed, followed by full JVM/macOS Native
+suites and Linux x64 test compilation in 5m26s. The separate full JS Node suite
+passed in 57s. All five common groups passed on JVM, JS and macOS Native and all
+five factory JVM oracle groups passed. Linux tests were compiled only on this
+macOS host.
