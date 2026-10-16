@@ -7923,3 +7923,24 @@ compileTestKotlinLinuxX64 passed together in 2m 34s. Linux tests compiled only;
 RuleBasedTimeZoneCore and combined BasicTimeZoneCore tests ran on JVM, Node and
 macOS Arm64. Public zone classes, their serialization layer and resource/display
 services remain pending.
+
+### System time-zone resource data
+
+Embedded the pinned ICU 78.3 zoneinfo64.res (148,944 bytes) and metaZones.res
+(43,488 bytes) through the existing common ICUData loader. The manifest records
+SHA-256 and byte lengths, and generate-data.py reproduces both common Base64
+objects. The resource registry now contains 397 entries. No host time-zone API,
+network lookup or ICU4J production dependency is involved.
+
+Common tests validate sorted IDs, parallel regions/zone tables, integer alias
+links, transition type indexes and counts, final-rule vectors and primary-zone
+references. A JVM oracle walks every node of both resource trees against ICU4J
+78.3, comparing keys, types, sizes and scalar payloads; it also checks exact binary
+identity and defensive copies from ICUData. ZoneMeta's metadata algorithms and
+OlsonTimeZone's engine/public front end remain pending; embedding data alone does
+not expose a public TimeZone implementation.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
+common resource-schema tests ran on JVM, Node and macOS Arm64. The full-tree
+ICU4J comparison ran on JVM. generate-data.py --check passed for all 397 entries.

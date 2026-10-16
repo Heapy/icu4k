@@ -2980,6 +2980,20 @@
       "sha256": "63538acd38582e5b46e111e0249049cf6fedb51565c5d4652886e2da9ad64a3f",
       "size": 80,
       "source_path": "icu4j/main/collate/src/main/resources/com/ibm/icu/impl/data/icudata/coll/zu.res"
+    },
+    {
+      "name": "zoneinfo64.res",
+      "file": "data/icu78/zoneinfo64.res",
+      "object": "ZoneInfoResourceData",
+      "sha256": "775a235c4ed7c4bf999b570ba4ada7c1ad5e63baf92b596b7b4ad0da109c914a",
+      "size": 148944
+    },
+    {
+      "name": "metaZones.res",
+      "file": "data/icu78/metaZones.res",
+      "object": "MetaZonesResourceData",
+      "sha256": "49e15327d83905e096e265bc402171409da2ba999a811ef0d7d119fd92ff8a96",
+      "size": 43488
     }
   ]
 }
