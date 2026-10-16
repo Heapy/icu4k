@@ -7987,3 +7987,53 @@ supplementary-digit advancement rule.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 43s. Linux tests compiled only;
 ZoneMetaCore common tests ran on JVM, Node and macOS Arm64.
+
+### SimpleTimeZone rule and offset engine
+
+Ported the SimpleTimeZone engine required by Olson's final recurring rules into
+SimpleTimeZoneCore: encoded-rule construction/validation, all public rule setter
+forms, start year, raw/DST changes, Gregorian field offsets, inherited UTC/local
+millisecond offsets, local gap/overlap options, annual transition/rule extraction,
+rule equivalence, equality/hash, freezing and clone state. DOM, weekday-in-month,
+weekday-on/after and weekday-on/before rules retain wall/standard/UTC time modes,
+February clamping, southern-hemisphere handling, negative DST and Int/Long overflow.
+The seven-field offset overload still ignores its supplied month length.
+
+The core retains partial setter mutations on decode failures and the old cached
+transition rules when invalidation is not reached. Clones share cached rule and
+transition identities and the mutable STZInfo record, while subsequent successful
+mutations rebuild only the modified clone's cache. STZInfo replay is ported too,
+including the fixed-date end setter's second public-overload call and overwritten
+record fields. Frozen clone returns the original; thawed clone clears freezing.
+The source hash formula, including its inverted daylight flag guard and XOR/add
+precedence, is retained rather than repaired.
+
+An optional owner provides virtual ID/raw/DST, frozen and six/seven-field offset
+queries. Local-array writes evaluate offset queries before null/bounds failures,
+retaining partial first-slot writes. Explicit checks preserve these failures on
+JS, whose IntArray writes otherwise silently ignore out-of-range indexes.
+Rule creation preserves query order and
+creates DateTimeRule before invoking owner getters. setID performs the subclass
+frozen check, null check and parent frozen check in source order. Private setter
+assertions follow JVM assertion policy; JS/Native disable them. The full public
+TimeZone/SimpleTimeZone hierarchy, Calendar-backed inDaylightTime, serialization
+and public-overload dispatch through subclass setters remain pending with the
+public front end. This internal engine does not substitute a Calendar facade.
+
+Targeted JVM tests passed against ICU4J using every final rule vector in
+zoneinfo64 at three raw offsets plus 120 generated four-mode configurations,
+including full-width raw offsets and negative/extreme DST. Tests compare UTC and
+local offsets, all 36 public gap/overlap option pairs, next/previous transitions,
+transition edges, extreme milliseconds and invalid field arguments. Another
+1,500 invalid constructors and 1,500 mixed mutation/freeze/clone/query operations
+compare outcomes, private state, cached rules, shared STZInfo, equality and hash.
+Ninety STZInfo replays cover setter forms. Owner tests check getter order, short
+arrays, six-to-seven-field virtual dispatch, assertions and parent frozen checks.
+Common tests cover US transitions and first-rule identity, gaps/overlaps, negative
+DST, clone cache sharing, freezing, invalid mutations, ignored month length,
+southern UTC rules and non-leap February clamping.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 7s after correcting JS array bounds
+behavior. Linux tests compiled only; SimpleTimeZoneCore common tests ran on JVM,
+Node and macOS Arm64. The ICU4J oracle ran on JVM. OlsonTimeZone remains pending.
