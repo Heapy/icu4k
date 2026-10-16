@@ -374,3 +374,20 @@ import io.github.heapy.icu4k.util.LocalePriorityList
 val priorities = LocalePriorityList.add("en, fr;q=0.7, de;q=0.5").build(true)
 println(priorities.getWeight(ULocale.FRENCH)) // 0.7
 ```
+
+Time-zone rules and transitions are available in Common Kotlin:
+
+```kotlin
+import io.github.heapy.icu4k.util.AnnualTimeZoneRule
+import io.github.heapy.icu4k.util.DateTimeRule
+
+val dst = AnnualTimeZoneRule(
+    "DST", -18_000_000, 3_600_000,
+    DateTimeRule(2, 2, 1, 7_200_000, DateTimeRule.WALL_TIME),
+    2007, AnnualTimeZoneRule.MAX_YEAR,
+)
+println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
+```
+
+The `Date` boundary retains mutable epoch milliseconds and aliases `java.util.Date`
+on JVM. Full time-zone lookup and calendar/date formatting are still pending.

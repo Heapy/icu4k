@@ -7792,3 +7792,48 @@ invalid fields and subclass getter dispatch.
 Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
 LocalePriorityList and DateTimeRule common tests ran on JVM, Node and macOS Arm64.
+
+
+### Time-zone rule hierarchy and Date boundary
+
+Ported TimeZoneRule, InitialTimeZoneRule, AnnualTimeZoneRule,
+TimeArrayTimeZoneRule and TimeZoneTransition. Annual rules retain all four date
+forms, negative/positive week ordinals, February <=29 adjustment, Gregorian year
+zero/BCE arithmetic, wall/standard/UTC conversions and adjacent-year lookup.
+Year/offset arithmetic retains Java Int and Long overflow order. Array rules copy
+and sort inputs, preserve duplicates, return copied arrays and scan from the end
+for next/previous lookup. This scan is retained even when offset conversion
+wraps Long values and the converted times are no longer sorted.
+
+Equivalence ignores names, checks the original subtype and private offset fields,
+and retains DateTimeRule object equality (normally identity) for annual rules.
+Initial rules have no starts. Annual rules with MAX_YEAR have no final start.
+Null names, rules and transition endpoints retain source lazy handling rather
+than new constructor validation. Annual lookup still dispatches through virtual
+getStartInYear/getFirstStart/getFinalStart; source strings use stored fields.
+Transition endpoints keep their original identities. Rule serialization UIDs
+and fields are retained on the JVM.
+
+Added a Date expect/actual boundary: JVM uses java.util.Date itself; JS/Native
+retain all signed 64-bit epoch milliseconds in mutable values, with ordering,
+equality, Java hash codes, clock construction and cloning. The portable boundary
+covers these value operations. Deprecated JDK calendar-field constructors and
+host-local Date debug formatting are JVM APIs, not part of this boundary.
+Native custom Date subclasses must override clone to copy their additional state,
+as with the project's existing explicit Native clone paths. JavaScript uses the
+existing shallow host clone and retains subclass fields and prototype. Rules themselves
+return fresh base Date values, so mutating a returned start never changes a rule.
+
+Targeted tests passed against ICU4J for 2,400 annual configurations and 1,400
+transition arrays, including invalid fields, extreme years/offsets/millisecond
+values, duplicates, inclusive boundaries and overflow. Further tests cover
+nullable inputs and equivalence, mutable output isolation, virtual dispatch,
+transition aliases, JVM Date signatures, serialization and serial UIDs. Common
+tests exercise a real US DST start, leap-day adjustment, identity equivalence,
+array isolation and Date precision beyond the JavaScript safe-integer range.
+Full TimeZone implementations, zone-resource loading, Calendar and date formatting
+remain pending.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 29s. Linux tests compiled only;
+time-zone rule and mutable Date common tests ran on JVM, Node and macOS Arm64.
