@@ -6,6 +6,25 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** Shared ICU string, escaping and append utilities. */
 internal object Utility {
+    /** Source parser advances one UTF-16 unit, including after supplementary digits. */
+    fun parseNumber(text: String, pos: IntArray, radix: Int): Int {
+        var number = 0
+        var p = pos[0]
+        while (p < text.length) {
+            val first = text[p]
+            val cp = if (first.isHighSurrogate() && p + 1 < text.length && text[p + 1].isLowSurrogate())
+                0x10000 + ((first.code - 0xd800) shl 10) + text[p + 1].code - 0xdc00 else first.code
+            val digit = io.github.heapy.icu4k.lang.UCharacter.digit(cp, radix)
+            if (digit < 0) break
+            number = radix * number + digit
+            if (number < 0) return -1
+            ++p
+        }
+        if (p == pos[0]) return -1
+        pos[0] = p
+        return number
+    }
+
     fun charSequenceEquals(a: CharSequence?, b: CharSequence?): Boolean {
         if (a === b) return true
         if (a == null || b == null) return false

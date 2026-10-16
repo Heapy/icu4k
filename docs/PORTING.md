@@ -7944,3 +7944,46 @@ Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
 common resource-schema tests ran on JVM, Node and macOS Arm64. The full-tree
 ICU4J comparison ran on JVM. generate-data.py --check passed for all 397 entries.
+
+### ZoneMeta ID and resource algorithms
+
+Ported ZoneMeta's string-ID metadata into the internal common ZoneMetaCore:
+sorted system/canonical/location ID sets, region filtering, CLDR/IANA/short IDs,
+canonical and primary country lookup, equivalent IDs and one-hop Olson resource
+link resolution. System sets exclude Etc/Unknown, while individual metadata
+queries still support it. Cached base-set identity, sorted iteration and mutation
+rejection are retained, including Collections.emptySet's no-op removals/clear on
+empty filtered results. Common caches use a recursive availability lock and
+strong references; their reclamation policy differs from Java SoftReference.
+
+Raw-offset filtering takes a system-zone lookup callback supplied by its owner.
+The callback is invoked in sorted order only after a region matches, and is not
+called when the raw-offset filter is null. No placeholder zone engine or host
+zone lookup is used. Concrete frozen system/custom zone construction and the
+TimeZone-taking overloads remain pending with OlsonTimeZone/SimpleTimeZone and
+the public TimeZone hierarchy.
+
+The custom GMT parser, formatter and millisecond-offset ID calculation preserve
+short/null output arrays, unchanged outputs on failed parses, Unicode digits,
+compact and colon-separated forms, Int overflow and source zero-hour/minute
+formatting (seconds alone are omitted). The shared Utility.parseNumber now ports
+the source's per-UTF-16-unit advancement even after reading a supplementary digit,
+and its sign-based overflow detection rather than adding a stricter numeric bound.
+Canonical lookup retains the source's changed cache key after Olson link
+resolution. Negative equivalent-ID indexes return before validating the ID;
+country lookup writes the primary flag before later lookup failures.
+
+Targeted JVM tests passed against ICU4J for every embedded zone ID, invalid/null
+IDs, full equivalence groups and Olson offset resources. Every region is checked
+for all three system-ID types, and every distinct current raw offset is filtered
+with global, US, BY and world-region cases; callback order is compared too.
+Private parser/formatter oracles cover generated boundary forms, 4,000 malformed
+or Unicode-rich IDs, partial output sizes, 2,000 arbitrary formatter inputs and
+2,000 arbitrary millisecond offsets. Number parsing compares radix, start-position,
+Unicode and overflow behavior over another 1,000 generated strings. Common tests
+exercise metadata, mutable casts/iterators, callback ordering, GMT quirks and the
+supplementary-digit advancement rule.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 43s. Linux tests compiled only;
+ZoneMetaCore common tests ran on JVM, Node and macOS Arm64.
