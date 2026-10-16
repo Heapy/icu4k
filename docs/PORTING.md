@@ -8142,3 +8142,60 @@ Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 28s. Linux tests compiled only;
 metadata and Windows-mapping common tests ran on JVM, Node and macOS Arm64.
 ICU4J API and full-resource comparisons ran on JVM.
+
+### Localized time-zone name data and metazone mappings
+
+Embedded all 545 pinned zone/*.res files (3,403,952 bytes), including locale
+aliases, root, pool and res_index. The manifest now contains 943 resources.
+generate-data.py also generates a directory registry partitioned into 32-resource
+dispatch methods; ICUData registers the directory without adding hundreds of
+branches to its existing byte-loader method. Registry and binary outputs are
+covered by --check. The installed-locale index is preserved separately from the
+larger set of bundle files, which also contains aliases.
+
+Ported TimeZoneNamesImpl's formatting data path into TimeZoneNamesDataCore:
+locale zoneStrings loading, required owner-supplied default-zone preload, seven
+name types, metazone/time-zone/exemplar names, date-dependent concrete display
+lookup, optimized name batches and bulk loading. NamesLoader retains leaf-first
+fallback, no-inheritance markers, unknown-key handling and minimal stored arrays.
+Bulk loading skips already-loaded cache entries and sets its fully-loaded flag
+before loading. A missing metazone is cached as an empty names object, so batches
+do not repeat the callback for subsequent types. Null IDs return before validating
+types/destination; successful early writes survive later failures. Batch input
+arrays remain live if the metazone callback changes following types.
+
+Ported locale-independent metazone mappings into TimeZoneNamesMappings: available
+IDs, half-open mapping intervals, default 1970/9999 boundaries, regional reference
+zones and world fallback. Its date parser keeps fixed character positions,
+ignored separators and source Gregorian arithmetic without extra date validation.
+The exemplar-location fallback preserves Java regex exclusions, including its
+five line terminators, without relying on platform-specific regex dot semantics.
+Cached data is protected by recursive locks and strong common references. JVM
+name IDs/reference-zone strings use String.intern; JS/Native use cached strings.
+The all-metazone sorted set rejects null membership, while nonempty per-zone hash
+sets return false; unmodifiable mutations and empty-set no-op behavior are kept.
+
+Targeted JVM comparisons passed for all 543 locale bundle IDs (including aliases),
+using representative time-zone/metazone names and all name types before/after
+bulk loading. Every system zone and every metazone is checked in 12 representative
+locale configurations. Mapping tests cover every system zone at all stored
+interval edges and regional reference fallbacks. Private date-parser comparisons
+include 600 generated numeric dates and 100 altered strings; another 1,000 IDs
+check exemplar extraction and Unicode/line boundaries. Batch tests compare null,
+short and partially written outputs, live type mutation and missing-metazone
+callback caching. Every one of the 545 zone resource byte arrays matches ICU4J,
+including private copies after caller mutation. Common tests cover locale
+fallback, bulk stability, New York/Los Angeles names, mappings, partial outputs,
+set behavior and portable line/date handling.
+
+This stage provides localized formatting data and mappings, not a reduced public
+TimeZoneNames facade. The parsing trie, MatchInfo API, public factories/TZDB names,
+serialization, TimeZoneGenericNames and full TimeZoneFormat remain pending with
+the public TimeZone integration. The owner's callback supplies default-zone
+selection rather than introducing a host-dependent fallback into the data core.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 13s. Linux tests compiled only;
+localized-name and mapping common tests ran on JVM, Node and macOS Arm64. ICU4J
+locale/name/interval/byte comparisons ran on JVM. All 943 generated resources and
+the partitioned zone registry passed generate-data.py --check.

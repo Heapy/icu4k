@@ -3001,6 +3001,3824 @@
       "object": "WindowsZonesResourceData",
       "sha256": "719a5891db89233e4fbe9b15727f8f5b803f4a6769b58975ae7f91b1506a08d9",
       "size": 22064
+    },
+    {
+      "name": "zone/af.res",
+      "file": "data/icu78/zone/af.res",
+      "object": "ZoneResource_af",
+      "sha256": "0ca8f3c30cfa4026603f4dc07710fda560705513d949ccd62d4565100b9a4461",
+      "size": 16608
+    },
+    {
+      "name": "zone/agq.res",
+      "file": "data/icu78/zone/agq.res",
+      "object": "ZoneResource_agq",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ak.res",
+      "file": "data/icu78/zone/ak.res",
+      "object": "ZoneResource_ak",
+      "sha256": "1ba06a8d6f845e8738fe84d6cd783147bf30b33608145bb0cf9fa9367de8ed2c",
+      "size": 19296
+    },
+    {
+      "name": "zone/am.res",
+      "file": "data/icu78/zone/am.res",
+      "object": "ZoneResource_am",
+      "sha256": "8dc4fc5c855a31b708ea167e64a134a77f2b64617c5df68fe051542505eb0057",
+      "size": 23056
+    },
+    {
+      "name": "zone/ar.res",
+      "file": "data/icu78/zone/ar.res",
+      "object": "ZoneResource_ar",
+      "sha256": "dc62b967bff876da0aa231adab295e9b96a02ed3a99e77b4c3d97f53a7f8684d",
+      "size": 25968
+    },
+    {
+      "name": "zone/ar_SA.res",
+      "file": "data/icu78/zone/ar_SA.res",
+      "object": "ZoneResource_ar_SA",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ars.res",
+      "file": "data/icu78/zone/ars.res",
+      "object": "ZoneResource_ars",
+      "sha256": "d4aedfa94ab7ff9aa38d984cd7ad2c47269067f889acfef5db9c58673729c492",
+      "size": 96
+    },
+    {
+      "name": "zone/as.res",
+      "file": "data/icu78/zone/as.res",
+      "object": "ZoneResource_as",
+      "sha256": "5c86658fdd769c5aefbe4da97c3daf34aa464e6336d209bcbfd8beede80c91e6",
+      "size": 28192
+    },
+    {
+      "name": "zone/asa.res",
+      "file": "data/icu78/zone/asa.res",
+      "object": "ZoneResource_asa",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ast.res",
+      "file": "data/icu78/zone/ast.res",
+      "object": "ZoneResource_ast",
+      "sha256": "79988117b4a02fb1b88eb9793dbd004e2ee796481e26a126144c4ed98038a764",
+      "size": 19248
+    },
+    {
+      "name": "zone/az.res",
+      "file": "data/icu78/zone/az.res",
+      "object": "ZoneResource_az",
+      "sha256": "ec9cec7666fbf2fb751c0cd2d9712798fc588c496dfbca3d995db33dda2f6010",
+      "size": 22160
+    },
+    {
+      "name": "zone/az_AZ.res",
+      "file": "data/icu78/zone/az_AZ.res",
+      "object": "ZoneResource_az_AZ",
+      "sha256": "24623ddc87af546500c76cae586cc02fb5735e97a2cab4376f6df0d073d5f995",
+      "size": 112
+    },
+    {
+      "name": "zone/az_Cyrl.res",
+      "file": "data/icu78/zone/az_Cyrl.res",
+      "object": "ZoneResource_az_Cyrl",
+      "sha256": "758f2839886fbb87f6c77473f1538e380ec9b67263bd15b989cdf3e171b3c3e1",
+      "size": 80
+    },
+    {
+      "name": "zone/az_Latn.res",
+      "file": "data/icu78/zone/az_Latn.res",
+      "object": "ZoneResource_az_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/az_Latn_AZ.res",
+      "file": "data/icu78/zone/az_Latn_AZ.res",
+      "object": "ZoneResource_az_Latn_AZ",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ba.res",
+      "file": "data/icu78/zone/ba.res",
+      "object": "ZoneResource_ba",
+      "sha256": "29c67f66fb1a6e918f6aab77071a684312cf67a76fde2ab51aa2b937d01df90e",
+      "size": 23536
+    },
+    {
+      "name": "zone/bas.res",
+      "file": "data/icu78/zone/bas.res",
+      "object": "ZoneResource_bas",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/be.res",
+      "file": "data/icu78/zone/be.res",
+      "object": "ZoneResource_be",
+      "sha256": "26032bbd64e93876c92565f34fa17ffc9a14742eed41ede4179048119b5e425a",
+      "size": 25984
+    },
+    {
+      "name": "zone/bem.res",
+      "file": "data/icu78/zone/bem.res",
+      "object": "ZoneResource_bem",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/bez.res",
+      "file": "data/icu78/zone/bez.res",
+      "object": "ZoneResource_bez",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/bg.res",
+      "file": "data/icu78/zone/bg.res",
+      "object": "ZoneResource_bg",
+      "sha256": "b945fc0b34e641d990065029d1a66289030c4e717206086d4d42b3169021471f",
+      "size": 24672
+    },
+    {
+      "name": "zone/bgc.res",
+      "file": "data/icu78/zone/bgc.res",
+      "object": "ZoneResource_bgc",
+      "sha256": "024de7cae93bf35af0d73295bcacde16292d2ec1a1d457944cff0baeff47a552",
+      "size": 160
+    },
+    {
+      "name": "zone/bho.res",
+      "file": "data/icu78/zone/bho.res",
+      "object": "ZoneResource_bho",
+      "sha256": "cf909c26bbcf9a71e6e23881c3f5ce6f12b6bf14c2da6d70c00d606916763290",
+      "size": 144
+    },
+    {
+      "name": "zone/blo.res",
+      "file": "data/icu78/zone/blo.res",
+      "object": "ZoneResource_blo",
+      "sha256": "6f16366a155f7bde2f13ba02793f7a666db9eba126bb2806cae9b83ab1a84459",
+      "size": 33024
+    },
+    {
+      "name": "zone/bm.res",
+      "file": "data/icu78/zone/bm.res",
+      "object": "ZoneResource_bm",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/bn.res",
+      "file": "data/icu78/zone/bn.res",
+      "object": "ZoneResource_bn",
+      "sha256": "019cc45fd25b0e8488dc99234a941502c374ad6de5595255a7c6b57810b251bd",
+      "size": 28672
+    },
+    {
+      "name": "zone/bo.res",
+      "file": "data/icu78/zone/bo.res",
+      "object": "ZoneResource_bo",
+      "sha256": "3feb810bf99bc5a09d11648f9e73c219e9ef4f29ca44b0d50e341ea2e5b4b37c",
+      "size": 112
+    },
+    {
+      "name": "zone/br.res",
+      "file": "data/icu78/zone/br.res",
+      "object": "ZoneResource_br",
+      "sha256": "e8c7590744f153502fe84f33529c847418450a3f6be0b763c7dd947054c2aa21",
+      "size": 16208
+    },
+    {
+      "name": "zone/brx.res",
+      "file": "data/icu78/zone/brx.res",
+      "object": "ZoneResource_brx",
+      "sha256": "06ad02a2070a648ef662a5ff03f9921efa64fa129b639caf18c2a4c424a91cf8",
+      "size": 26688
+    },
+    {
+      "name": "zone/bs.res",
+      "file": "data/icu78/zone/bs.res",
+      "object": "ZoneResource_bs",
+      "sha256": "5a6ee024a201047d3347cdae4d16ff05145e9da0c017047fd23699ee0dc0eeac",
+      "size": 19008
+    },
+    {
+      "name": "zone/bs_BA.res",
+      "file": "data/icu78/zone/bs_BA.res",
+      "object": "ZoneResource_bs_BA",
+      "sha256": "2f21851d53c659e8cbb7e710137e29d03c4577abbb33bc03d634796c8e09f7b0",
+      "size": 112
+    },
+    {
+      "name": "zone/bs_Cyrl.res",
+      "file": "data/icu78/zone/bs_Cyrl.res",
+      "object": "ZoneResource_bs_Cyrl",
+      "sha256": "63c265f718ac3f018a65ede29fb35dd6f0bd71925ec4c0dc4499ff8169a4877c",
+      "size": 19376
+    },
+    {
+      "name": "zone/bs_Latn.res",
+      "file": "data/icu78/zone/bs_Latn.res",
+      "object": "ZoneResource_bs_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/bs_Latn_BA.res",
+      "file": "data/icu78/zone/bs_Latn_BA.res",
+      "object": "ZoneResource_bs_Latn_BA",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/bua.res",
+      "file": "data/icu78/zone/bua.res",
+      "object": "ZoneResource_bua",
+      "sha256": "da9cef239cfd05b208f1b0b49a643db2729eee5c42c184452a4618662a12c1df",
+      "size": 128
+    },
+    {
+      "name": "zone/ca.res",
+      "file": "data/icu78/zone/ca.res",
+      "object": "ZoneResource_ca",
+      "sha256": "969d2f316a9100fb27e3fe52fa04c00313e2b407dccfee67dcba29c1d0c303be",
+      "size": 18800
+    },
+    {
+      "name": "zone/ccp.res",
+      "file": "data/icu78/zone/ccp.res",
+      "object": "ZoneResource_ccp",
+      "sha256": "869dfff259dc887007d349d8d3218123d64243d46c1766cda98445bac95b70a0",
+      "size": 50048
+    },
+    {
+      "name": "zone/ce.res",
+      "file": "data/icu78/zone/ce.res",
+      "object": "ZoneResource_ce",
+      "sha256": "bb3437be898d00057109a6a706cc08f92db0714bce520e82897e2acea9e15d23",
+      "size": 19200
+    },
+    {
+      "name": "zone/ceb.res",
+      "file": "data/icu78/zone/ceb.res",
+      "object": "ZoneResource_ceb",
+      "sha256": "80a7701b7ff64fe34c25d689b95a17c527ae06ae59b4bfbff114fd6f746c2d97",
+      "size": 4384
+    },
+    {
+      "name": "zone/cgg.res",
+      "file": "data/icu78/zone/cgg.res",
+      "object": "ZoneResource_cgg",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/chr.res",
+      "file": "data/icu78/zone/chr.res",
+      "object": "ZoneResource_chr",
+      "sha256": "39fb26c911346d0277781ca718795112757832a3a205980de9e6fea0480518a5",
+      "size": 21616
+    },
+    {
+      "name": "zone/ckb.res",
+      "file": "data/icu78/zone/ckb.res",
+      "object": "ZoneResource_ckb",
+      "sha256": "aadcce52bbfe3705261dfc846a9ba3e85e8c1ead26f97857ec7a0cdff6b5aafd",
+      "size": 224
+    },
+    {
+      "name": "zone/cs.res",
+      "file": "data/icu78/zone/cs.res",
+      "object": "ZoneResource_cs",
+      "sha256": "c2c6e1d847d217b1a31bf3e0f97fd2612a779bc8c9aa2cdcdffdcaf818208a05",
+      "size": 18016
+    },
+    {
+      "name": "zone/csw.res",
+      "file": "data/icu78/zone/csw.res",
+      "object": "ZoneResource_csw",
+      "sha256": "6a63eae1dda659ec5406cd59080848a1eefc1f61cb88c5028e6e75f40cc7e228",
+      "size": 448
+    },
+    {
+      "name": "zone/cv.res",
+      "file": "data/icu78/zone/cv.res",
+      "object": "ZoneResource_cv",
+      "sha256": "4df538a561acdd88901f22e35bb9c94af10d2ecc149d1824202237c47024107c",
+      "size": 26832
+    },
+    {
+      "name": "zone/cy.res",
+      "file": "data/icu78/zone/cy.res",
+      "object": "ZoneResource_cy",
+      "sha256": "71b11f886a5e28afec32be114d90aa01e69f56cd60af6728e7d5a4fc4ad0b037",
+      "size": 16576
+    },
+    {
+      "name": "zone/da.res",
+      "file": "data/icu78/zone/da.res",
+      "object": "ZoneResource_da",
+      "sha256": "1eca792346ba7e121efb02df14183630adcc5bdc60875bad15ab1a1a3eb944a4",
+      "size": 15456
+    },
+    {
+      "name": "zone/dav.res",
+      "file": "data/icu78/zone/dav.res",
+      "object": "ZoneResource_dav",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/de.res",
+      "file": "data/icu78/zone/de.res",
+      "object": "ZoneResource_de",
+      "sha256": "36ec1350785e1f89910aef44826f8ba490b7ee5050b4b80dd8a5b6abcf24ce95",
+      "size": 17616
+    },
+    {
+      "name": "zone/de_CH.res",
+      "file": "data/icu78/zone/de_CH.res",
+      "object": "ZoneResource_de_CH",
+      "sha256": "50a5526cfa96892761a0d352e944c6bcb5c0c3fc96a87033b5ffbe52b71081ce",
+      "size": 224
+    },
+    {
+      "name": "zone/dje.res",
+      "file": "data/icu78/zone/dje.res",
+      "object": "ZoneResource_dje",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/doi.res",
+      "file": "data/icu78/zone/doi.res",
+      "object": "ZoneResource_doi",
+      "sha256": "5296fe81f5471ffe86dceedfeef9b563798e6b581a93bdfd1ed75f681660437f",
+      "size": 1840
+    },
+    {
+      "name": "zone/dsb.res",
+      "file": "data/icu78/zone/dsb.res",
+      "object": "ZoneResource_dsb",
+      "sha256": "79bec5cc0f5ec8196505b2f6d2d5b9257bfd00f6d0e611fd62104217c1cd5a97",
+      "size": 17552
+    },
+    {
+      "name": "zone/dua.res",
+      "file": "data/icu78/zone/dua.res",
+      "object": "ZoneResource_dua",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/dyo.res",
+      "file": "data/icu78/zone/dyo.res",
+      "object": "ZoneResource_dyo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/dz.res",
+      "file": "data/icu78/zone/dz.res",
+      "object": "ZoneResource_dz",
+      "sha256": "1c22cff27391ff83687c7a8375956861133245b4eb90b488f96387910657d01f",
+      "size": 13360
+    },
+    {
+      "name": "zone/ebu.res",
+      "file": "data/icu78/zone/ebu.res",
+      "object": "ZoneResource_ebu",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ee.res",
+      "file": "data/icu78/zone/ee.res",
+      "object": "ZoneResource_ee",
+      "sha256": "a178d848ec02f2cb65f2ee82b6148a4aaca3580685e66a623e0e059a5b854bc1",
+      "size": 17056
+    },
+    {
+      "name": "zone/el.res",
+      "file": "data/icu78/zone/el.res",
+      "object": "ZoneResource_el",
+      "sha256": "3ad7f77b1b5771e55118720816892d7d7fa39902096ec4ad62059c5208d66ef3",
+      "size": 28352
+    },
+    {
+      "name": "zone/en.res",
+      "file": "data/icu78/zone/en.res",
+      "object": "ZoneResource_en",
+      "sha256": "36347dda0c05f5704391e8f28e6ec5d80730a52564ba02c6b4e0f8a7898f7a33",
+      "size": 5168
+    },
+    {
+      "name": "zone/en_001.res",
+      "file": "data/icu78/zone/en_001.res",
+      "object": "ZoneResource_en_001",
+      "sha256": "126629d1a77249fdeda16c6c919aa9ecb54a5e0a28d9049b2a8ff65505521f54",
+      "size": 688
+    },
+    {
+      "name": "zone/en_150.res",
+      "file": "data/icu78/zone/en_150.res",
+      "object": "ZoneResource_en_150",
+      "sha256": "51abb486ed14dc732881d8b5363b507b05c111a09c12433d1d0b9723634fa3b3",
+      "size": 160
+    },
+    {
+      "name": "zone/en_AE.res",
+      "file": "data/icu78/zone/en_AE.res",
+      "object": "ZoneResource_en_AE",
+      "sha256": "ce56833a25f95cce06d686dd13bd8db4ff2bc706f51dfa068bd6076a5354769b",
+      "size": 256
+    },
+    {
+      "name": "zone/en_AG.res",
+      "file": "data/icu78/zone/en_AG.res",
+      "object": "ZoneResource_en_AG",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_AI.res",
+      "file": "data/icu78/zone/en_AI.res",
+      "object": "ZoneResource_en_AI",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_AT.res",
+      "file": "data/icu78/zone/en_AT.res",
+      "object": "ZoneResource_en_AT",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_AU.res",
+      "file": "data/icu78/zone/en_AU.res",
+      "object": "ZoneResource_en_AU",
+      "sha256": "28c27a42a3e180418650bca9250e85d6305a4c4eff4a20a015bb1ad6852fcf19",
+      "size": 608
+    },
+    {
+      "name": "zone/en_BB.res",
+      "file": "data/icu78/zone/en_BB.res",
+      "object": "ZoneResource_en_BB",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_BE.res",
+      "file": "data/icu78/zone/en_BE.res",
+      "object": "ZoneResource_en_BE",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_BM.res",
+      "file": "data/icu78/zone/en_BM.res",
+      "object": "ZoneResource_en_BM",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_BS.res",
+      "file": "data/icu78/zone/en_BS.res",
+      "object": "ZoneResource_en_BS",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_BW.res",
+      "file": "data/icu78/zone/en_BW.res",
+      "object": "ZoneResource_en_BW",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_BZ.res",
+      "file": "data/icu78/zone/en_BZ.res",
+      "object": "ZoneResource_en_BZ",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CA.res",
+      "file": "data/icu78/zone/en_CA.res",
+      "object": "ZoneResource_en_CA",
+      "sha256": "a48be28bf5d1e5b359f1581fb2a4b0284696445c8f86a87f1a6d8f0845fdc7e1",
+      "size": 544
+    },
+    {
+      "name": "zone/en_CC.res",
+      "file": "data/icu78/zone/en_CC.res",
+      "object": "ZoneResource_en_CC",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CH.res",
+      "file": "data/icu78/zone/en_CH.res",
+      "object": "ZoneResource_en_CH",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CK.res",
+      "file": "data/icu78/zone/en_CK.res",
+      "object": "ZoneResource_en_CK",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CM.res",
+      "file": "data/icu78/zone/en_CM.res",
+      "object": "ZoneResource_en_CM",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_CX.res",
+      "file": "data/icu78/zone/en_CX.res",
+      "object": "ZoneResource_en_CX",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CY.res",
+      "file": "data/icu78/zone/en_CY.res",
+      "object": "ZoneResource_en_CY",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_CZ.res",
+      "file": "data/icu78/zone/en_CZ.res",
+      "object": "ZoneResource_en_CZ",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_DE.res",
+      "file": "data/icu78/zone/en_DE.res",
+      "object": "ZoneResource_en_DE",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_DG.res",
+      "file": "data/icu78/zone/en_DG.res",
+      "object": "ZoneResource_en_DG",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_DK.res",
+      "file": "data/icu78/zone/en_DK.res",
+      "object": "ZoneResource_en_DK",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_DM.res",
+      "file": "data/icu78/zone/en_DM.res",
+      "object": "ZoneResource_en_DM",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_EE.res",
+      "file": "data/icu78/zone/en_EE.res",
+      "object": "ZoneResource_en_EE",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_ER.res",
+      "file": "data/icu78/zone/en_ER.res",
+      "object": "ZoneResource_en_ER",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_ES.res",
+      "file": "data/icu78/zone/en_ES.res",
+      "object": "ZoneResource_en_ES",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_FI.res",
+      "file": "data/icu78/zone/en_FI.res",
+      "object": "ZoneResource_en_FI",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_FJ.res",
+      "file": "data/icu78/zone/en_FJ.res",
+      "object": "ZoneResource_en_FJ",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_FK.res",
+      "file": "data/icu78/zone/en_FK.res",
+      "object": "ZoneResource_en_FK",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_FM.res",
+      "file": "data/icu78/zone/en_FM.res",
+      "object": "ZoneResource_en_FM",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_FR.res",
+      "file": "data/icu78/zone/en_FR.res",
+      "object": "ZoneResource_en_FR",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GB.res",
+      "file": "data/icu78/zone/en_GB.res",
+      "object": "ZoneResource_en_GB",
+      "sha256": "12f9c2ae9d551dd840a476522eb941b234bdc1dcc8680d48c0b3a4eec3284ed4",
+      "size": 192
+    },
+    {
+      "name": "zone/en_GD.res",
+      "file": "data/icu78/zone/en_GD.res",
+      "object": "ZoneResource_en_GD",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GE.res",
+      "file": "data/icu78/zone/en_GE.res",
+      "object": "ZoneResource_en_GE",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GG.res",
+      "file": "data/icu78/zone/en_GG.res",
+      "object": "ZoneResource_en_GG",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GH.res",
+      "file": "data/icu78/zone/en_GH.res",
+      "object": "ZoneResource_en_GH",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_GI.res",
+      "file": "data/icu78/zone/en_GI.res",
+      "object": "ZoneResource_en_GI",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GM.res",
+      "file": "data/icu78/zone/en_GM.res",
+      "object": "ZoneResource_en_GM",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_GS.res",
+      "file": "data/icu78/zone/en_GS.res",
+      "object": "ZoneResource_en_GS",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_GU.res",
+      "file": "data/icu78/zone/en_GU.res",
+      "object": "ZoneResource_en_GU",
+      "sha256": "4d93f3fdae096988c5679d5ec5b72f75333b79b37ca82d19d3f88929389da691",
+      "size": 112
+    },
+    {
+      "name": "zone/en_GY.res",
+      "file": "data/icu78/zone/en_GY.res",
+      "object": "ZoneResource_en_GY",
+      "sha256": "73c0e4c6321ea2b97d79eff647d40c62ec7448e18f5196eeb76a34212a5200dc",
+      "size": 112
+    },
+    {
+      "name": "zone/en_HK.res",
+      "file": "data/icu78/zone/en_HK.res",
+      "object": "ZoneResource_en_HK",
+      "sha256": "ae1749aed055447b760fc86a7296c26bb34fde13fed5047bcc19fba988a743e5",
+      "size": 128
+    },
+    {
+      "name": "zone/en_HU.res",
+      "file": "data/icu78/zone/en_HU.res",
+      "object": "ZoneResource_en_HU",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_ID.res",
+      "file": "data/icu78/zone/en_ID.res",
+      "object": "ZoneResource_en_ID",
+      "sha256": "dd837dd09abd09e6483dc10e0d730997c7712beb56fe6025014b8462c9166b9c",
+      "size": 160
+    },
+    {
+      "name": "zone/en_IE.res",
+      "file": "data/icu78/zone/en_IE.res",
+      "object": "ZoneResource_en_IE",
+      "sha256": "6e0559822053267c517c5d2dc77d6040b962a6e68795884d7d7177612a126af8",
+      "size": 112
+    },
+    {
+      "name": "zone/en_IL.res",
+      "file": "data/icu78/zone/en_IL.res",
+      "object": "ZoneResource_en_IL",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_IM.res",
+      "file": "data/icu78/zone/en_IM.res",
+      "object": "ZoneResource_en_IM",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_IN.res",
+      "file": "data/icu78/zone/en_IN.res",
+      "object": "ZoneResource_en_IN",
+      "sha256": "6327d78f5a0264d2924a8289d52010e1e7a6b7421108813aaf4d559f8787f99b",
+      "size": 128
+    },
+    {
+      "name": "zone/en_IO.res",
+      "file": "data/icu78/zone/en_IO.res",
+      "object": "ZoneResource_en_IO",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_IT.res",
+      "file": "data/icu78/zone/en_IT.res",
+      "object": "ZoneResource_en_IT",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_JE.res",
+      "file": "data/icu78/zone/en_JE.res",
+      "object": "ZoneResource_en_JE",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_JM.res",
+      "file": "data/icu78/zone/en_JM.res",
+      "object": "ZoneResource_en_JM",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_JP.res",
+      "file": "data/icu78/zone/en_JP.res",
+      "object": "ZoneResource_en_JP",
+      "sha256": "a2ae589c47cbef145ffdd1d6fb7ca87a4645d4c275061e6a99bbe12f6422942d",
+      "size": 240
+    },
+    {
+      "name": "zone/en_KE.res",
+      "file": "data/icu78/zone/en_KE.res",
+      "object": "ZoneResource_en_KE",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_KI.res",
+      "file": "data/icu78/zone/en_KI.res",
+      "object": "ZoneResource_en_KI",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_KN.res",
+      "file": "data/icu78/zone/en_KN.res",
+      "object": "ZoneResource_en_KN",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_KY.res",
+      "file": "data/icu78/zone/en_KY.res",
+      "object": "ZoneResource_en_KY",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_LC.res",
+      "file": "data/icu78/zone/en_LC.res",
+      "object": "ZoneResource_en_LC",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_LR.res",
+      "file": "data/icu78/zone/en_LR.res",
+      "object": "ZoneResource_en_LR",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_LS.res",
+      "file": "data/icu78/zone/en_LS.res",
+      "object": "ZoneResource_en_LS",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_LT.res",
+      "file": "data/icu78/zone/en_LT.res",
+      "object": "ZoneResource_en_LT",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_LV.res",
+      "file": "data/icu78/zone/en_LV.res",
+      "object": "ZoneResource_en_LV",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_MG.res",
+      "file": "data/icu78/zone/en_MG.res",
+      "object": "ZoneResource_en_MG",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_MH.res",
+      "file": "data/icu78/zone/en_MH.res",
+      "object": "ZoneResource_en_MH",
+      "sha256": "a2ae589c47cbef145ffdd1d6fb7ca87a4645d4c275061e6a99bbe12f6422942d",
+      "size": 240
+    },
+    {
+      "name": "zone/en_MO.res",
+      "file": "data/icu78/zone/en_MO.res",
+      "object": "ZoneResource_en_MO",
+      "sha256": "c6342da764138dbd4d6666cd5979c9c0d67c869eda852548fc52d98e94563592",
+      "size": 160
+    },
+    {
+      "name": "zone/en_MP.res",
+      "file": "data/icu78/zone/en_MP.res",
+      "object": "ZoneResource_en_MP",
+      "sha256": "a2ae589c47cbef145ffdd1d6fb7ca87a4645d4c275061e6a99bbe12f6422942d",
+      "size": 240
+    },
+    {
+      "name": "zone/en_MS.res",
+      "file": "data/icu78/zone/en_MS.res",
+      "object": "ZoneResource_en_MS",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_MT.res",
+      "file": "data/icu78/zone/en_MT.res",
+      "object": "ZoneResource_en_MT",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_MU.res",
+      "file": "data/icu78/zone/en_MU.res",
+      "object": "ZoneResource_en_MU",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_MV.res",
+      "file": "data/icu78/zone/en_MV.res",
+      "object": "ZoneResource_en_MV",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_MW.res",
+      "file": "data/icu78/zone/en_MW.res",
+      "object": "ZoneResource_en_MW",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_MY.res",
+      "file": "data/icu78/zone/en_MY.res",
+      "object": "ZoneResource_en_MY",
+      "sha256": "f257208c52bd34c343673f56dc06b0fe807fff309cbb419de6242106dcb26aad",
+      "size": 112
+    },
+    {
+      "name": "zone/en_NA.res",
+      "file": "data/icu78/zone/en_NA.res",
+      "object": "ZoneResource_en_NA",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_NF.res",
+      "file": "data/icu78/zone/en_NF.res",
+      "object": "ZoneResource_en_NF",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_NG.res",
+      "file": "data/icu78/zone/en_NG.res",
+      "object": "ZoneResource_en_NG",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_NH.res",
+      "file": "data/icu78/zone/en_NH.res",
+      "object": "ZoneResource_en_NH",
+      "sha256": "5374f07c20c1be69be94331ac4f037a7e54df295707898d32dc026d147913df6",
+      "size": 96
+    },
+    {
+      "name": "zone/en_NL.res",
+      "file": "data/icu78/zone/en_NL.res",
+      "object": "ZoneResource_en_NL",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_NO.res",
+      "file": "data/icu78/zone/en_NO.res",
+      "object": "ZoneResource_en_NO",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_NR.res",
+      "file": "data/icu78/zone/en_NR.res",
+      "object": "ZoneResource_en_NR",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_NU.res",
+      "file": "data/icu78/zone/en_NU.res",
+      "object": "ZoneResource_en_NU",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_NZ.res",
+      "file": "data/icu78/zone/en_NZ.res",
+      "object": "ZoneResource_en_NZ",
+      "sha256": "60115fc46e92049025ae479e5c7b0e4d38b9f49c1f056eb0759b390746cc95f0",
+      "size": 288
+    },
+    {
+      "name": "zone/en_PG.res",
+      "file": "data/icu78/zone/en_PG.res",
+      "object": "ZoneResource_en_PG",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_PK.res",
+      "file": "data/icu78/zone/en_PK.res",
+      "object": "ZoneResource_en_PK",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_PL.res",
+      "file": "data/icu78/zone/en_PL.res",
+      "object": "ZoneResource_en_PL",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_PN.res",
+      "file": "data/icu78/zone/en_PN.res",
+      "object": "ZoneResource_en_PN",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_PT.res",
+      "file": "data/icu78/zone/en_PT.res",
+      "object": "ZoneResource_en_PT",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_PW.res",
+      "file": "data/icu78/zone/en_PW.res",
+      "object": "ZoneResource_en_PW",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_RH.res",
+      "file": "data/icu78/zone/en_RH.res",
+      "object": "ZoneResource_en_RH",
+      "sha256": "35bf12d6cb23733e83fe9d9caf9d941978689b58cd0ec6c639569849ff280fd3",
+      "size": 96
+    },
+    {
+      "name": "zone/en_RO.res",
+      "file": "data/icu78/zone/en_RO.res",
+      "object": "ZoneResource_en_RO",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_RW.res",
+      "file": "data/icu78/zone/en_RW.res",
+      "object": "ZoneResource_en_RW",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_SB.res",
+      "file": "data/icu78/zone/en_SB.res",
+      "object": "ZoneResource_en_SB",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SC.res",
+      "file": "data/icu78/zone/en_SC.res",
+      "object": "ZoneResource_en_SC",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SD.res",
+      "file": "data/icu78/zone/en_SD.res",
+      "object": "ZoneResource_en_SD",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_SE.res",
+      "file": "data/icu78/zone/en_SE.res",
+      "object": "ZoneResource_en_SE",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SG.res",
+      "file": "data/icu78/zone/en_SG.res",
+      "object": "ZoneResource_en_SG",
+      "sha256": "dd7d1ce3f8410dbca713b08f3ca0403c20cb481ebed8fe947f9e2ac265c541f3",
+      "size": 128
+    },
+    {
+      "name": "zone/en_SH.res",
+      "file": "data/icu78/zone/en_SH.res",
+      "object": "ZoneResource_en_SH",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SI.res",
+      "file": "data/icu78/zone/en_SI.res",
+      "object": "ZoneResource_en_SI",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SK.res",
+      "file": "data/icu78/zone/en_SK.res",
+      "object": "ZoneResource_en_SK",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SL.res",
+      "file": "data/icu78/zone/en_SL.res",
+      "object": "ZoneResource_en_SL",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_SS.res",
+      "file": "data/icu78/zone/en_SS.res",
+      "object": "ZoneResource_en_SS",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_SX.res",
+      "file": "data/icu78/zone/en_SX.res",
+      "object": "ZoneResource_en_SX",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_SZ.res",
+      "file": "data/icu78/zone/en_SZ.res",
+      "object": "ZoneResource_en_SZ",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_TC.res",
+      "file": "data/icu78/zone/en_TC.res",
+      "object": "ZoneResource_en_TC",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_TK.res",
+      "file": "data/icu78/zone/en_TK.res",
+      "object": "ZoneResource_en_TK",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_TO.res",
+      "file": "data/icu78/zone/en_TO.res",
+      "object": "ZoneResource_en_TO",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_TT.res",
+      "file": "data/icu78/zone/en_TT.res",
+      "object": "ZoneResource_en_TT",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_TV.res",
+      "file": "data/icu78/zone/en_TV.res",
+      "object": "ZoneResource_en_TV",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_TZ.res",
+      "file": "data/icu78/zone/en_TZ.res",
+      "object": "ZoneResource_en_TZ",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_UA.res",
+      "file": "data/icu78/zone/en_UA.res",
+      "object": "ZoneResource_en_UA",
+      "sha256": "91fef9e1b769f099a316367d04ba797c4fad4f78c57a6f05ce2ce3ff9a2f349d",
+      "size": 80
+    },
+    {
+      "name": "zone/en_UG.res",
+      "file": "data/icu78/zone/en_UG.res",
+      "object": "ZoneResource_en_UG",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_VC.res",
+      "file": "data/icu78/zone/en_VC.res",
+      "object": "ZoneResource_en_VC",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_VG.res",
+      "file": "data/icu78/zone/en_VG.res",
+      "object": "ZoneResource_en_VG",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_VU.res",
+      "file": "data/icu78/zone/en_VU.res",
+      "object": "ZoneResource_en_VU",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_WS.res",
+      "file": "data/icu78/zone/en_WS.res",
+      "object": "ZoneResource_en_WS",
+      "sha256": "f0102ed8acfbc936837f00a21c2a67efd5d65a42cfa80ac8faab0b249d6371db",
+      "size": 80
+    },
+    {
+      "name": "zone/en_ZA.res",
+      "file": "data/icu78/zone/en_ZA.res",
+      "object": "ZoneResource_en_ZA",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_ZM.res",
+      "file": "data/icu78/zone/en_ZM.res",
+      "object": "ZoneResource_en_ZM",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/en_ZW.res",
+      "file": "data/icu78/zone/en_ZW.res",
+      "object": "ZoneResource_en_ZW",
+      "sha256": "01f4847411cc9fe22acc5d8eb75f4231cd172b776cc1aa0f15673e0303bf45cf",
+      "size": 160
+    },
+    {
+      "name": "zone/eo.res",
+      "file": "data/icu78/zone/eo.res",
+      "object": "ZoneResource_eo",
+      "sha256": "87f181f4e0b6d864586edc40c8fb78b26dea1953f7864eff7cf2d1f0039e1fa3",
+      "size": 23344
+    },
+    {
+      "name": "zone/es.res",
+      "file": "data/icu78/zone/es.res",
+      "object": "ZoneResource_es",
+      "sha256": "6b8077fdc26d92722015a86dc0429b796705efcaecfc3eca3fdd56869ec3f28e",
+      "size": 15632
+    },
+    {
+      "name": "zone/es_419.res",
+      "file": "data/icu78/zone/es_419.res",
+      "object": "ZoneResource_es_419",
+      "sha256": "9fa645c7ef5589c46c5d33a6a4645550667c90867d17eabc6f40d0c8a1be05fc",
+      "size": 2560
+    },
+    {
+      "name": "zone/es_AR.res",
+      "file": "data/icu78/zone/es_AR.res",
+      "object": "ZoneResource_es_AR",
+      "sha256": "67bddc60d39af661379b06d6c8fc7bead546d4eb340f164d7babd95d65c5bec5",
+      "size": 160
+    },
+    {
+      "name": "zone/es_BO.res",
+      "file": "data/icu78/zone/es_BO.res",
+      "object": "ZoneResource_es_BO",
+      "sha256": "34bc76b8dcc01ce32c6558b0a18faf3724809469663d79ff71e22fdf708365f8",
+      "size": 112
+    },
+    {
+      "name": "zone/es_BR.res",
+      "file": "data/icu78/zone/es_BR.res",
+      "object": "ZoneResource_es_BR",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_BZ.res",
+      "file": "data/icu78/zone/es_BZ.res",
+      "object": "ZoneResource_es_BZ",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_CL.res",
+      "file": "data/icu78/zone/es_CL.res",
+      "object": "ZoneResource_es_CL",
+      "sha256": "4942bf08075b8cbcb6d6c081d4b69f849f69328ab856178cdfd26864bf16ee89",
+      "size": 128
+    },
+    {
+      "name": "zone/es_CO.res",
+      "file": "data/icu78/zone/es_CO.res",
+      "object": "ZoneResource_es_CO",
+      "sha256": "54ca9b6667a86f4df49cef6da09107748955e7205b2c638df536631ef5c7c7d3",
+      "size": 128
+    },
+    {
+      "name": "zone/es_CR.res",
+      "file": "data/icu78/zone/es_CR.res",
+      "object": "ZoneResource_es_CR",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_CU.res",
+      "file": "data/icu78/zone/es_CU.res",
+      "object": "ZoneResource_es_CU",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_DO.res",
+      "file": "data/icu78/zone/es_DO.res",
+      "object": "ZoneResource_es_DO",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_EC.res",
+      "file": "data/icu78/zone/es_EC.res",
+      "object": "ZoneResource_es_EC",
+      "sha256": "8f849c9019a0896fac436940a11db0ce896a8afca12c3afcb7af100d195bb5b0",
+      "size": 112
+    },
+    {
+      "name": "zone/es_GT.res",
+      "file": "data/icu78/zone/es_GT.res",
+      "object": "ZoneResource_es_GT",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_HN.res",
+      "file": "data/icu78/zone/es_HN.res",
+      "object": "ZoneResource_es_HN",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_MX.res",
+      "file": "data/icu78/zone/es_MX.res",
+      "object": "ZoneResource_es_MX",
+      "sha256": "12b9f96a81c3e363a1a4ceebbccec6ea7a2adee47789a08e7c38c188df22f51d",
+      "size": 864
+    },
+    {
+      "name": "zone/es_NI.res",
+      "file": "data/icu78/zone/es_NI.res",
+      "object": "ZoneResource_es_NI",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_PA.res",
+      "file": "data/icu78/zone/es_PA.res",
+      "object": "ZoneResource_es_PA",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_PE.res",
+      "file": "data/icu78/zone/es_PE.res",
+      "object": "ZoneResource_es_PE",
+      "sha256": "cafeaa261ef500fa7723329a770d7fd89de577e074644c4580b1f9209066bbda",
+      "size": 128
+    },
+    {
+      "name": "zone/es_PR.res",
+      "file": "data/icu78/zone/es_PR.res",
+      "object": "ZoneResource_es_PR",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_PY.res",
+      "file": "data/icu78/zone/es_PY.res",
+      "object": "ZoneResource_es_PY",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_SV.res",
+      "file": "data/icu78/zone/es_SV.res",
+      "object": "ZoneResource_es_SV",
+      "sha256": "9aacc8f70c075496d57c5a83a9bd0a1933c7b0713f9debfaaa157d58c3de62ef",
+      "size": 80
+    },
+    {
+      "name": "zone/es_US.res",
+      "file": "data/icu78/zone/es_US.res",
+      "object": "ZoneResource_es_US",
+      "sha256": "c31a0909a4819bd2dd1ba97af450d5c4b37c028df0fc53959e65e9798339c06c",
+      "size": 880
+    },
+    {
+      "name": "zone/es_UY.res",
+      "file": "data/icu78/zone/es_UY.res",
+      "object": "ZoneResource_es_UY",
+      "sha256": "2f0cb39ec1558c21a826c57a4c9816062dd41b3a048d22d84cbf8e80fbe012ad",
+      "size": 128
+    },
+    {
+      "name": "zone/es_VE.res",
+      "file": "data/icu78/zone/es_VE.res",
+      "object": "ZoneResource_es_VE",
+      "sha256": "72da653d24350ced68fa464bcda42566742998c772ebb47df28a3098be168d3a",
+      "size": 112
+    },
+    {
+      "name": "zone/et.res",
+      "file": "data/icu78/zone/et.res",
+      "object": "ZoneResource_et",
+      "sha256": "7c12df1bb2522353283a5bda1536482519b5ec4d2a1ea71d1228bfc828144d76",
+      "size": 16624
+    },
+    {
+      "name": "zone/eu.res",
+      "file": "data/icu78/zone/eu.res",
+      "object": "ZoneResource_eu",
+      "sha256": "bcfb484eb1ece134e79181f6f152ff1651379f1eb06ee048d21241a0d1a4432b",
+      "size": 21488
+    },
+    {
+      "name": "zone/ewo.res",
+      "file": "data/icu78/zone/ewo.res",
+      "object": "ZoneResource_ewo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/fa.res",
+      "file": "data/icu78/zone/fa.res",
+      "object": "ZoneResource_fa",
+      "sha256": "8eb57592fd05724afa83ac3b6497f13722c0e92c5c62f4623672a1d4bec96f47",
+      "size": 24240
+    },
+    {
+      "name": "zone/ff.res",
+      "file": "data/icu78/zone/ff.res",
+      "object": "ZoneResource_ff",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_Adlm.res",
+      "file": "data/icu78/zone/ff_Adlm.res",
+      "object": "ZoneResource_ff_Adlm",
+      "sha256": "29ef3238a01e55e5175ed42c425af98adf91796b870bf263266c8d2256be175f",
+      "size": 51136
+    },
+    {
+      "name": "zone/ff_CM.res",
+      "file": "data/icu78/zone/ff_CM.res",
+      "object": "ZoneResource_ff_CM",
+      "sha256": "b0627e31190d3c97524b112d8c13411790c9ef1a678555cd5e77988735b62745",
+      "size": 112
+    },
+    {
+      "name": "zone/ff_GN.res",
+      "file": "data/icu78/zone/ff_GN.res",
+      "object": "ZoneResource_ff_GN",
+      "sha256": "c867e669e8a5214bd6635d88de7720a37f681cf2c772b01a31e4205e57d0b04f",
+      "size": 112
+    },
+    {
+      "name": "zone/ff_Latn.res",
+      "file": "data/icu78/zone/ff_Latn.res",
+      "object": "ZoneResource_ff_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_Latn_CM.res",
+      "file": "data/icu78/zone/ff_Latn_CM.res",
+      "object": "ZoneResource_ff_Latn_CM",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_Latn_GN.res",
+      "file": "data/icu78/zone/ff_Latn_GN.res",
+      "object": "ZoneResource_ff_Latn_GN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_Latn_MR.res",
+      "file": "data/icu78/zone/ff_Latn_MR.res",
+      "object": "ZoneResource_ff_Latn_MR",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_Latn_SN.res",
+      "file": "data/icu78/zone/ff_Latn_SN.res",
+      "object": "ZoneResource_ff_Latn_SN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ff_MR.res",
+      "file": "data/icu78/zone/ff_MR.res",
+      "object": "ZoneResource_ff_MR",
+      "sha256": "8e3277d35248940d0daa6396e202784995803be2bd0c363207019a4c49ab94ea",
+      "size": 112
+    },
+    {
+      "name": "zone/ff_SN.res",
+      "file": "data/icu78/zone/ff_SN.res",
+      "object": "ZoneResource_ff_SN",
+      "sha256": "2c6d41a2166a12d99e338bda91b2a6477685e84249162f854faf880846f0b0fc",
+      "size": 112
+    },
+    {
+      "name": "zone/fi.res",
+      "file": "data/icu78/zone/fi.res",
+      "object": "ZoneResource_fi",
+      "sha256": "f151b71f63971d002011fd71207a28f4adc61379e160e292f492489e8a8af6cf",
+      "size": 18176
+    },
+    {
+      "name": "zone/fil.res",
+      "file": "data/icu78/zone/fil.res",
+      "object": "ZoneResource_fil",
+      "sha256": "6b3a5adef4e8ed2682c3ed49cd493496aded05a171dfd92b0cf9eb1aeddb4669",
+      "size": 11056
+    },
+    {
+      "name": "zone/fil_PH.res",
+      "file": "data/icu78/zone/fil_PH.res",
+      "object": "ZoneResource_fil_PH",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/fo.res",
+      "file": "data/icu78/zone/fo.res",
+      "object": "ZoneResource_fo",
+      "sha256": "c0d1d6d9e4c568bc6eef4293c687860611580f8310656fbf3b52c1cb3bf0dd3f",
+      "size": 13664
+    },
+    {
+      "name": "zone/fr.res",
+      "file": "data/icu78/zone/fr.res",
+      "object": "ZoneResource_fr",
+      "sha256": "1d9ae14c3af11cb46ae9e428b24a06f6d00fb0aab9a7155debacc2177b5c3bc3",
+      "size": 14672
+    },
+    {
+      "name": "zone/fr_CA.res",
+      "file": "data/icu78/zone/fr_CA.res",
+      "object": "ZoneResource_fr_CA",
+      "sha256": "283a62eb8dfd048f7f1fafbd294a137476ecb954e7d6bf99a604cacdb7dc4622",
+      "size": 8640
+    },
+    {
+      "name": "zone/fr_GF.res",
+      "file": "data/icu78/zone/fr_GF.res",
+      "object": "ZoneResource_fr_GF",
+      "sha256": "d45dc22a0ab27036a83f9dd6e7f008a0141c6c07cd1274b1805f5c6c06324667",
+      "size": 112
+    },
+    {
+      "name": "zone/fur.res",
+      "file": "data/icu78/zone/fur.res",
+      "object": "ZoneResource_fur",
+      "sha256": "ef22568bd1c4fc8083ffbc242646738d1a489c3c648dbc6aca6c74d48a3930de",
+      "size": 1248
+    },
+    {
+      "name": "zone/fy.res",
+      "file": "data/icu78/zone/fy.res",
+      "object": "ZoneResource_fy",
+      "sha256": "e23c5f9c6366dc00941e8d84027977c53b6eb6173b25876ae9edde02edf2eb86",
+      "size": 17552
+    },
+    {
+      "name": "zone/ga.res",
+      "file": "data/icu78/zone/ga.res",
+      "object": "ZoneResource_ga",
+      "sha256": "4b84beeac5fc25d4dc39326be6dd6ddc96ba9ddc6e09202b86c0a0a8bff609fe",
+      "size": 22320
+    },
+    {
+      "name": "zone/gaa.res",
+      "file": "data/icu78/zone/gaa.res",
+      "object": "ZoneResource_gaa",
+      "sha256": "74cbda8944a008041ba39eefe0403028c34f37bf8716ea5cf450b48ee2d7b055",
+      "size": 272
+    },
+    {
+      "name": "zone/gd.res",
+      "file": "data/icu78/zone/gd.res",
+      "object": "ZoneResource_gd",
+      "sha256": "54e7b26fa44a036a939f45cc60f5a1d9ec4eafe676f5bebe219d70ab3e548e55",
+      "size": 19408
+    },
+    {
+      "name": "zone/gl.res",
+      "file": "data/icu78/zone/gl.res",
+      "object": "ZoneResource_gl",
+      "sha256": "9b9ef129e51ba89ab0ba025b42f60e7e73c75c7fd407fe9e850fa10491e2ca4b",
+      "size": 16688
+    },
+    {
+      "name": "zone/gsw.res",
+      "file": "data/icu78/zone/gsw.res",
+      "object": "ZoneResource_gsw",
+      "sha256": "a1925539669f414d0add562e6ca5ca395ca684dc46b956154500c6c49b731e0e",
+      "size": 3008
+    },
+    {
+      "name": "zone/gu.res",
+      "file": "data/icu78/zone/gu.res",
+      "object": "ZoneResource_gu",
+      "sha256": "edd4a4bd6b784f550332bfe52d7a7ad4181e340c919dd76cf5e1b93731eadc05",
+      "size": 27424
+    },
+    {
+      "name": "zone/guz.res",
+      "file": "data/icu78/zone/guz.res",
+      "object": "ZoneResource_guz",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/gv.res",
+      "file": "data/icu78/zone/gv.res",
+      "object": "ZoneResource_gv",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ha.res",
+      "file": "data/icu78/zone/ha.res",
+      "object": "ZoneResource_ha",
+      "sha256": "33ad15e8ab5b37bdb3a889597be56569012ea7388a64aa3683c0649b2af481dd",
+      "size": 15792
+    },
+    {
+      "name": "zone/haw.res",
+      "file": "data/icu78/zone/haw.res",
+      "object": "ZoneResource_haw",
+      "sha256": "dbff1b0fd1e5d857431d67ec099f83b69f6b5f7f5e97f44fab8be8a4b400906a",
+      "size": 144
+    },
+    {
+      "name": "zone/he.res",
+      "file": "data/icu78/zone/he.res",
+      "object": "ZoneResource_he",
+      "sha256": "11ee3f9bec4456f5f12aa56b05f50e2cf52ee491ebad890a8ba710584460bf58",
+      "size": 25440
+    },
+    {
+      "name": "zone/he_IL.res",
+      "file": "data/icu78/zone/he_IL.res",
+      "object": "ZoneResource_he_IL",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/hi.res",
+      "file": "data/icu78/zone/hi.res",
+      "object": "ZoneResource_hi",
+      "sha256": "e8abf9deac5a3b67a5bfe66d7af2725d4be4212198a483a835a1c754fa5124bc",
+      "size": 18016
+    },
+    {
+      "name": "zone/hi_Latn.res",
+      "file": "data/icu78/zone/hi_Latn.res",
+      "object": "ZoneResource_hi_Latn",
+      "sha256": "6f67c02e98b62a56335113247269e6836cb6b95839af13e032086f2f94fda348",
+      "size": 1296
+    },
+    {
+      "name": "zone/hr.res",
+      "file": "data/icu78/zone/hr.res",
+      "object": "ZoneResource_hr",
+      "sha256": "4cd0a633463582f7c59087f646ecd0c40e2cc0cc73686d7356542c55f981d43b",
+      "size": 18896
+    },
+    {
+      "name": "zone/hsb.res",
+      "file": "data/icu78/zone/hsb.res",
+      "object": "ZoneResource_hsb",
+      "sha256": "f033fe313b0c841fbcf7f1737d2545f15bebd3f57fa6bd11c7da5c99443e70a3",
+      "size": 16448
+    },
+    {
+      "name": "zone/hu.res",
+      "file": "data/icu78/zone/hu.res",
+      "object": "ZoneResource_hu",
+      "sha256": "cc1c511b3b36fd92b188a0a876936187a9bd274e259dbb8f4c32bfd0bd133b21",
+      "size": 19424
+    },
+    {
+      "name": "zone/hy.res",
+      "file": "data/icu78/zone/hy.res",
+      "object": "ZoneResource_hy",
+      "sha256": "2a356ef484140d3895593bf8d490c11ede7c83d81465588142cadca6ad2c0aa7",
+      "size": 30656
+    },
+    {
+      "name": "zone/ia.res",
+      "file": "data/icu78/zone/ia.res",
+      "object": "ZoneResource_ia",
+      "sha256": "fb5c517ae682bdb5fbabda2250d82d32808a5f4e1ecf42b40267ce5a7f4ffb8f",
+      "size": 15040
+    },
+    {
+      "name": "zone/id.res",
+      "file": "data/icu78/zone/id.res",
+      "object": "ZoneResource_id",
+      "sha256": "a1cc11943ddb6ee39d97d1d26d5d817d5e11d21456f17c8d18a4010561dcac8d",
+      "size": 12128
+    },
+    {
+      "name": "zone/id_ID.res",
+      "file": "data/icu78/zone/id_ID.res",
+      "object": "ZoneResource_id_ID",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ie.res",
+      "file": "data/icu78/zone/ie.res",
+      "object": "ZoneResource_ie",
+      "sha256": "9b5bbe68b2945813f6111bb7d5664a8a1114d153c6c3eef4018af68b61769ee2",
+      "size": 656
+    },
+    {
+      "name": "zone/ig.res",
+      "file": "data/icu78/zone/ig.res",
+      "object": "ZoneResource_ig",
+      "sha256": "186e804efab5079a77f0757e7de433f4ab6750cb03b5dd4bfc0aeb8b2eb4d530",
+      "size": 14896
+    },
+    {
+      "name": "zone/ii.res",
+      "file": "data/icu78/zone/ii.res",
+      "object": "ZoneResource_ii",
+      "sha256": "f34a2239ce1851560d914e44220e93089629ccb6358697b1fc6fc5447d8768ed",
+      "size": 240
+    },
+    {
+      "name": "zone/in.res",
+      "file": "data/icu78/zone/in.res",
+      "object": "ZoneResource_in",
+      "sha256": "a35eb23acf90e711d6ab58023bb55a618123a87cb51a02953e9c4f07bcf0ddbe",
+      "size": 80
+    },
+    {
+      "name": "zone/in_ID.res",
+      "file": "data/icu78/zone/in_ID.res",
+      "object": "ZoneResource_in_ID",
+      "sha256": "753fc2f7b329f16f712ddd695610fdc84784724ec54d5f0d10f915fe49a477c9",
+      "size": 96
+    },
+    {
+      "name": "zone/is.res",
+      "file": "data/icu78/zone/is.res",
+      "object": "ZoneResource_is",
+      "sha256": "08447f35e16f68cd2a8286194cc65316a7f73845ac8120a6875adcebc67d013a",
+      "size": 18144
+    },
+    {
+      "name": "zone/it.res",
+      "file": "data/icu78/zone/it.res",
+      "object": "ZoneResource_it",
+      "sha256": "0b5c896ae25bc8a90987756e01fec9b632da1b23f0840b59de69da1d2ac4cdac",
+      "size": 19072
+    },
+    {
+      "name": "zone/iw.res",
+      "file": "data/icu78/zone/iw.res",
+      "object": "ZoneResource_iw",
+      "sha256": "4eed11dd6825bedab454a025daf5af7e8033e296dc165b78a1106d6f150730f7",
+      "size": 96
+    },
+    {
+      "name": "zone/iw_IL.res",
+      "file": "data/icu78/zone/iw_IL.res",
+      "object": "ZoneResource_iw_IL",
+      "sha256": "01e38a69df2d11c7a3df1c85cadc193d5da25f97ea53d02acb5e70d0b9e2c2e1",
+      "size": 96
+    },
+    {
+      "name": "zone/ja.res",
+      "file": "data/icu78/zone/ja.res",
+      "object": "ZoneResource_ja",
+      "sha256": "796557395ea2b9946bb5d7effb73715da2e9434abd84586625353bf74cabb045",
+      "size": 18816
+    },
+    {
+      "name": "zone/jgo.res",
+      "file": "data/icu78/zone/jgo.res",
+      "object": "ZoneResource_jgo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/jmc.res",
+      "file": "data/icu78/zone/jmc.res",
+      "object": "ZoneResource_jmc",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/jv.res",
+      "file": "data/icu78/zone/jv.res",
+      "object": "ZoneResource_jv",
+      "sha256": "cbb1a313937634805bdd7becde35cb4386a1516b4bbcfbe9da13ce26199ce696",
+      "size": 16576
+    },
+    {
+      "name": "zone/ka.res",
+      "file": "data/icu78/zone/ka.res",
+      "object": "ZoneResource_ka",
+      "sha256": "8da9d3aade341574aaa54ba04dfc2f05cacf516c59fc206a10d64ba42ac38ee1",
+      "size": 28720
+    },
+    {
+      "name": "zone/kab.res",
+      "file": "data/icu78/zone/kab.res",
+      "object": "ZoneResource_kab",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kam.res",
+      "file": "data/icu78/zone/kam.res",
+      "object": "ZoneResource_kam",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kde.res",
+      "file": "data/icu78/zone/kde.res",
+      "object": "ZoneResource_kde",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kea.res",
+      "file": "data/icu78/zone/kea.res",
+      "object": "ZoneResource_kea",
+      "sha256": "d1b712f8d982ff8afce8fe9d5ef29e1d4e5f75f2b8127076d268babfb895d383",
+      "size": 5648
+    },
+    {
+      "name": "zone/kgp.res",
+      "file": "data/icu78/zone/kgp.res",
+      "object": "ZoneResource_kgp",
+      "sha256": "0d8c965ed218c06331d5f7f6925b7fd0e07f53879eefe2cb95b84ced1e05be6a",
+      "size": 27856
+    },
+    {
+      "name": "zone/khq.res",
+      "file": "data/icu78/zone/khq.res",
+      "object": "ZoneResource_khq",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ki.res",
+      "file": "data/icu78/zone/ki.res",
+      "object": "ZoneResource_ki",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kk.res",
+      "file": "data/icu78/zone/kk.res",
+      "object": "ZoneResource_kk",
+      "sha256": "c283aa9bb1b5a7cc9b42ed9dba53f825358dc66204475b1e37543b5cc109167b",
+      "size": 22304
+    },
+    {
+      "name": "zone/kk_Arab.res",
+      "file": "data/icu78/zone/kk_Arab.res",
+      "object": "ZoneResource_kk_Arab",
+      "sha256": "9f84fc6c3628943264ee0c8ea1556515f7cafda4b55c97b0401731aeca0b5f95",
+      "size": 29168
+    },
+    {
+      "name": "zone/kkj.res",
+      "file": "data/icu78/zone/kkj.res",
+      "object": "ZoneResource_kkj",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kl.res",
+      "file": "data/icu78/zone/kl.res",
+      "object": "ZoneResource_kl",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kln.res",
+      "file": "data/icu78/zone/kln.res",
+      "object": "ZoneResource_kln",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/km.res",
+      "file": "data/icu78/zone/km.res",
+      "object": "ZoneResource_km",
+      "sha256": "e55ea6584c86837f2e3700c5f3cc0e08e385e6957ee4badafcc40a1306f151b8",
+      "size": 30496
+    },
+    {
+      "name": "zone/kn.res",
+      "file": "data/icu78/zone/kn.res",
+      "object": "ZoneResource_kn",
+      "sha256": "ad120347a9491f0a49d82c941b2310a685c545b6b9f470e52dba9eedff87899d",
+      "size": 29136
+    },
+    {
+      "name": "zone/ko.res",
+      "file": "data/icu78/zone/ko.res",
+      "object": "ZoneResource_ko",
+      "sha256": "1484e69736963997890c48ade732e8c5b0ae31043d26d532acc79ce27a460ea8",
+      "size": 18272
+    },
+    {
+      "name": "zone/ko_KP.res",
+      "file": "data/icu78/zone/ko_KP.res",
+      "object": "ZoneResource_ko_KP",
+      "sha256": "f7f1405b5843e3708cc7e6918cc06a79ba6bdc4b3616896cb9ddafd1b5e564e5",
+      "size": 160
+    },
+    {
+      "name": "zone/kok.res",
+      "file": "data/icu78/zone/kok.res",
+      "object": "ZoneResource_kok",
+      "sha256": "423e7b4f76db37ea03bcc5de0aeee892430521dd7495012c673ca4776728a23e",
+      "size": 21536
+    },
+    {
+      "name": "zone/kok_Latn.res",
+      "file": "data/icu78/zone/kok_Latn.res",
+      "object": "ZoneResource_kok_Latn",
+      "sha256": "4ce066cc00fb9a7637cc4cbb45248cc3c74661030ddd6f33ca14c166e3e1d2de",
+      "size": 448
+    },
+    {
+      "name": "zone/ks.res",
+      "file": "data/icu78/zone/ks.res",
+      "object": "ZoneResource_ks",
+      "sha256": "a169c89856d7d8f99eec04478d168421576e83b7c5ee1765652a3707b78fc0ee",
+      "size": 26944
+    },
+    {
+      "name": "zone/ks_Arab.res",
+      "file": "data/icu78/zone/ks_Arab.res",
+      "object": "ZoneResource_ks_Arab",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ks_Arab_IN.res",
+      "file": "data/icu78/zone/ks_Arab_IN.res",
+      "object": "ZoneResource_ks_Arab_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ks_Deva.res",
+      "file": "data/icu78/zone/ks_Deva.res",
+      "object": "ZoneResource_ks_Deva",
+      "sha256": "363601b0d42876ded4ff35075af1ddc239dd84f5f5686a184ac444b9668fb743",
+      "size": 1440
+    },
+    {
+      "name": "zone/ks_IN.res",
+      "file": "data/icu78/zone/ks_IN.res",
+      "object": "ZoneResource_ks_IN",
+      "sha256": "341998cb9730bd207f72dd27f7835c4873bc04e63664748e863971994fb677b2",
+      "size": 112
+    },
+    {
+      "name": "zone/ksb.res",
+      "file": "data/icu78/zone/ksb.res",
+      "object": "ZoneResource_ksb",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ksf.res",
+      "file": "data/icu78/zone/ksf.res",
+      "object": "ZoneResource_ksf",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ksh.res",
+      "file": "data/icu78/zone/ksh.res",
+      "object": "ZoneResource_ksh",
+      "sha256": "360989d141a4fd3cd152130d3ff74194f3a4732d51d764da92d5d6369844b959",
+      "size": 4432
+    },
+    {
+      "name": "zone/ku.res",
+      "file": "data/icu78/zone/ku.res",
+      "object": "ZoneResource_ku",
+      "sha256": "fef93a657f50bbf15cdba98fdc2ad9176e3db03585595f1a87530868a04348d1",
+      "size": 22608
+    },
+    {
+      "name": "zone/ku_Latn.res",
+      "file": "data/icu78/zone/ku_Latn.res",
+      "object": "ZoneResource_ku_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ku_Latn_SY.res",
+      "file": "data/icu78/zone/ku_Latn_SY.res",
+      "object": "ZoneResource_ku_Latn_SY",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/ku_SY.res",
+      "file": "data/icu78/zone/ku_SY.res",
+      "object": "ZoneResource_ku_SY",
+      "sha256": "efc6c4605322a2b0a27045a660621192770209d3e9effc01d76804583b7db3ba",
+      "size": 112
+    },
+    {
+      "name": "zone/kw.res",
+      "file": "data/icu78/zone/kw.res",
+      "object": "ZoneResource_kw",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kxv.res",
+      "file": "data/icu78/zone/kxv.res",
+      "object": "ZoneResource_kxv",
+      "sha256": "bbbdfaa533b1c082038167efafbb3643a2348dfa38900c1e179e9e5c7cf74a0c",
+      "size": 25936
+    },
+    {
+      "name": "zone/kxv_Deva.res",
+      "file": "data/icu78/zone/kxv_Deva.res",
+      "object": "ZoneResource_kxv_Deva",
+      "sha256": "b2a2e5eb6a615ac0d407bc3d10e994985c93b29a13137913f1978e3d48c78101",
+      "size": 21376
+    },
+    {
+      "name": "zone/kxv_IN.res",
+      "file": "data/icu78/zone/kxv_IN.res",
+      "object": "ZoneResource_kxv_IN",
+      "sha256": "493bdd24e44b6f106a7252467d528125f46783595ac04d5869c612cc29311ee7",
+      "size": 112
+    },
+    {
+      "name": "zone/kxv_Latn.res",
+      "file": "data/icu78/zone/kxv_Latn.res",
+      "object": "ZoneResource_kxv_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/kxv_Latn_IN.res",
+      "file": "data/icu78/zone/kxv_Latn_IN.res",
+      "object": "ZoneResource_kxv_Latn_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/kxv_Orya.res",
+      "file": "data/icu78/zone/kxv_Orya.res",
+      "object": "ZoneResource_kxv_Orya",
+      "sha256": "85d02fd15d47cb65f6cbde7bdfae81037ddf0071b824aec525bdf69ac90b4f2b",
+      "size": 25216
+    },
+    {
+      "name": "zone/kxv_Telu.res",
+      "file": "data/icu78/zone/kxv_Telu.res",
+      "object": "ZoneResource_kxv_Telu",
+      "sha256": "538e1afd75bc92160f1f79965e3ee2409f711a631ea6296e67d8d470289679e0",
+      "size": 11648
+    },
+    {
+      "name": "zone/ky.res",
+      "file": "data/icu78/zone/ky.res",
+      "object": "ZoneResource_ky",
+      "sha256": "95480c889cfc716dba5bcdd120dd2c51c944dbbc22b48224993d2f572612e735",
+      "size": 22832
+    },
+    {
+      "name": "zone/lag.res",
+      "file": "data/icu78/zone/lag.res",
+      "object": "ZoneResource_lag",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/lb.res",
+      "file": "data/icu78/zone/lb.res",
+      "object": "ZoneResource_lb",
+      "sha256": "b528c4a1988830fdc91cfb34836d786f4428161885791d403c7a2d0bf78508ff",
+      "size": 16096
+    },
+    {
+      "name": "zone/lg.res",
+      "file": "data/icu78/zone/lg.res",
+      "object": "ZoneResource_lg",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/lij.res",
+      "file": "data/icu78/zone/lij.res",
+      "object": "ZoneResource_lij",
+      "sha256": "0a6d5e52db5f601c984cb11b4c807ff6d5299c7b152eeba167f07848b5d976de",
+      "size": 272
+    },
+    {
+      "name": "zone/lkt.res",
+      "file": "data/icu78/zone/lkt.res",
+      "object": "ZoneResource_lkt",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/lmo.res",
+      "file": "data/icu78/zone/lmo.res",
+      "object": "ZoneResource_lmo",
+      "sha256": "b840ca6ffac2a074c6027e823a5e221d5848ff4a0e414c15c2e3c8930979663b",
+      "size": 144
+    },
+    {
+      "name": "zone/ln.res",
+      "file": "data/icu78/zone/ln.res",
+      "object": "ZoneResource_ln",
+      "sha256": "35d6be87fa74e409583c1b98e86576747b1613f706479481de44d58cb57368c2",
+      "size": 112
+    },
+    {
+      "name": "zone/lo.res",
+      "file": "data/icu78/zone/lo.res",
+      "object": "ZoneResource_lo",
+      "sha256": "b5bb0abdb4bea273fd050029f9e27a616e380423a16a8d6e076d2b7e50fe24f8",
+      "size": 28288
+    },
+    {
+      "name": "zone/lrc.res",
+      "file": "data/icu78/zone/lrc.res",
+      "object": "ZoneResource_lrc",
+      "sha256": "c227810a227e2f3a33fc39bfa921e9555ac60c11b5489d151e38cbaffb9f1af0",
+      "size": 256
+    },
+    {
+      "name": "zone/lt.res",
+      "file": "data/icu78/zone/lt.res",
+      "object": "ZoneResource_lt",
+      "sha256": "36cff102f23cb914a5c76ffd0ef2b49bff19bcaa20eacf88e4ac1b72391ff0f2",
+      "size": 29824
+    },
+    {
+      "name": "zone/lu.res",
+      "file": "data/icu78/zone/lu.res",
+      "object": "ZoneResource_lu",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/luo.res",
+      "file": "data/icu78/zone/luo.res",
+      "object": "ZoneResource_luo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/luy.res",
+      "file": "data/icu78/zone/luy.res",
+      "object": "ZoneResource_luy",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/lv.res",
+      "file": "data/icu78/zone/lv.res",
+      "object": "ZoneResource_lv",
+      "sha256": "e4c8c2d45a19316df2cd816fa5699891868b980cb58ec3a08162f5e5aa5264fc",
+      "size": 26912
+    },
+    {
+      "name": "zone/mai.res",
+      "file": "data/icu78/zone/mai.res",
+      "object": "ZoneResource_mai",
+      "sha256": "5750122c7003af92ad2931700b76c85c5f4bdd98ef3b5dc59e6f19eef647b7f8",
+      "size": 19040
+    },
+    {
+      "name": "zone/mas.res",
+      "file": "data/icu78/zone/mas.res",
+      "object": "ZoneResource_mas",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mer.res",
+      "file": "data/icu78/zone/mer.res",
+      "object": "ZoneResource_mer",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mfe.res",
+      "file": "data/icu78/zone/mfe.res",
+      "object": "ZoneResource_mfe",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mg.res",
+      "file": "data/icu78/zone/mg.res",
+      "object": "ZoneResource_mg",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mgh.res",
+      "file": "data/icu78/zone/mgh.res",
+      "object": "ZoneResource_mgh",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mgo.res",
+      "file": "data/icu78/zone/mgo.res",
+      "object": "ZoneResource_mgo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mi.res",
+      "file": "data/icu78/zone/mi.res",
+      "object": "ZoneResource_mi",
+      "sha256": "03ee66307696c467c891b346ae47d7de0355691ccf8df036963664882b2c17c9",
+      "size": 16944
+    },
+    {
+      "name": "zone/mk.res",
+      "file": "data/icu78/zone/mk.res",
+      "object": "ZoneResource_mk",
+      "sha256": "a5534b66147bdc6f6ffeadff736bd294158d5bb3d14390896ff5ae8c188212ce",
+      "size": 23168
+    },
+    {
+      "name": "zone/ml.res",
+      "file": "data/icu78/zone/ml.res",
+      "object": "ZoneResource_ml",
+      "sha256": "7c194e755a6b645d97c5faa20ca8cee4330312f98409215363d10f93d556cc73",
+      "size": 31024
+    },
+    {
+      "name": "zone/mn.res",
+      "file": "data/icu78/zone/mn.res",
+      "object": "ZoneResource_mn",
+      "sha256": "f0d5a54807b18dacb0658faab9ccafcca693143b96e526e0e88436a55976adce",
+      "size": 20912
+    },
+    {
+      "name": "zone/mni.res",
+      "file": "data/icu78/zone/mni.res",
+      "object": "ZoneResource_mni",
+      "sha256": "d5f9c0dd111480e722f3f1eba38cc8d2d61e26860d96ea7c909453075a6293ac",
+      "size": 2112
+    },
+    {
+      "name": "zone/mni_Beng.res",
+      "file": "data/icu78/zone/mni_Beng.res",
+      "object": "ZoneResource_mni_Beng",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/mni_Beng_IN.res",
+      "file": "data/icu78/zone/mni_Beng_IN.res",
+      "object": "ZoneResource_mni_Beng_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/mni_IN.res",
+      "file": "data/icu78/zone/mni_IN.res",
+      "object": "ZoneResource_mni_IN",
+      "sha256": "bfc7972572ac0008997ec46255957e809944fd4664e9c0abb3589e710f1b7f79",
+      "size": 112
+    },
+    {
+      "name": "zone/mo.res",
+      "file": "data/icu78/zone/mo.res",
+      "object": "ZoneResource_mo",
+      "sha256": "936356013c9b8499b1ddeb388ff5c25f6bdf3221a5db23b56aaadf61881ae126",
+      "size": 80
+    },
+    {
+      "name": "zone/mr.res",
+      "file": "data/icu78/zone/mr.res",
+      "object": "ZoneResource_mr",
+      "sha256": "f1668e697f096211218e1a2f7ad8ebe60225628d3fbb9ecce84b96ed39870c1f",
+      "size": 23696
+    },
+    {
+      "name": "zone/ms.res",
+      "file": "data/icu78/zone/ms.res",
+      "object": "ZoneResource_ms",
+      "sha256": "f6ce855422735d420c3066e0388cffe8865ef66a7071761e12eec900a3189491",
+      "size": 10896
+    },
+    {
+      "name": "zone/ms_ID.res",
+      "file": "data/icu78/zone/ms_ID.res",
+      "object": "ZoneResource_ms_ID",
+      "sha256": "5526889bf8befe6f4f040d930822a62d0c98acab61ea885ca18cb17a29e77fa4",
+      "size": 96
+    },
+    {
+      "name": "zone/mt.res",
+      "file": "data/icu78/zone/mt.res",
+      "object": "ZoneResource_mt",
+      "sha256": "b2dd299e9ba0f1a3fb56eb71b6006092e0a89c3db2345203d5d93f00b61fc655",
+      "size": 1168
+    },
+    {
+      "name": "zone/mua.res",
+      "file": "data/icu78/zone/mua.res",
+      "object": "ZoneResource_mua",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/my.res",
+      "file": "data/icu78/zone/my.res",
+      "object": "ZoneResource_my",
+      "sha256": "8dd1e7def76ca9b9bf2c3feca1a9e79b69ae58c116cabc855c73e055ddb392a3",
+      "size": 29808
+    },
+    {
+      "name": "zone/mzn.res",
+      "file": "data/icu78/zone/mzn.res",
+      "object": "ZoneResource_mzn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/naq.res",
+      "file": "data/icu78/zone/naq.res",
+      "object": "ZoneResource_naq",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/nb.res",
+      "file": "data/icu78/zone/nb.res",
+      "object": "ZoneResource_nb",
+      "sha256": "4612d4e9124cbbb0776039116fc753f9e7211b7ca21b883ba1e04c0ba0034691",
+      "size": 80
+    },
+    {
+      "name": "zone/nd.res",
+      "file": "data/icu78/zone/nd.res",
+      "object": "ZoneResource_nd",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/nds.res",
+      "file": "data/icu78/zone/nds.res",
+      "object": "ZoneResource_nds",
+      "sha256": "8fac3fc8b1f42703662e88dc39fdac3a0da0102802688b906a6c1f7a2bf2933b",
+      "size": 256
+    },
+    {
+      "name": "zone/ne.res",
+      "file": "data/icu78/zone/ne.res",
+      "object": "ZoneResource_ne",
+      "sha256": "1cf865ea6731e0b09864023e6aa71869ff6058a5878d407a9777c3b78202018f",
+      "size": 23488
+    },
+    {
+      "name": "zone/ne_IN.res",
+      "file": "data/icu78/zone/ne_IN.res",
+      "object": "ZoneResource_ne_IN",
+      "sha256": "ffb29dfe665a8a8170576a8aacd2a78dfcf49dd1c8cb393d3a28872baa302d67",
+      "size": 96
+    },
+    {
+      "name": "zone/nl.res",
+      "file": "data/icu78/zone/nl.res",
+      "object": "ZoneResource_nl",
+      "sha256": "dbd59beb7f896e3bf009e160298c791b128f5dc13a009a5999ad0b9da6ead240",
+      "size": 17824
+    },
+    {
+      "name": "zone/nl_SR.res",
+      "file": "data/icu78/zone/nl_SR.res",
+      "object": "ZoneResource_nl_SR",
+      "sha256": "388e028f0414123ef675121d2d8211bc386deb317fba3cf0674bf848eef79b66",
+      "size": 112
+    },
+    {
+      "name": "zone/nmg.res",
+      "file": "data/icu78/zone/nmg.res",
+      "object": "ZoneResource_nmg",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/nn.res",
+      "file": "data/icu78/zone/nn.res",
+      "object": "ZoneResource_nn",
+      "sha256": "5cba9deb311ed8c83d3b6c755f45ddd0c22ea40ca83076358c987db4b5b54d96",
+      "size": 7520
+    },
+    {
+      "name": "zone/nn_NO.res",
+      "file": "data/icu78/zone/nn_NO.res",
+      "object": "ZoneResource_nn_NO",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/nnh.res",
+      "file": "data/icu78/zone/nnh.res",
+      "object": "ZoneResource_nnh",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/no.res",
+      "file": "data/icu78/zone/no.res",
+      "object": "ZoneResource_no",
+      "sha256": "36757381a8037175ee5bce7f24fbbe2f0454cb06097fe573ad0b4e4307b69237",
+      "size": 13264
+    },
+    {
+      "name": "zone/no_NO.res",
+      "file": "data/icu78/zone/no_NO.res",
+      "object": "ZoneResource_no_NO",
+      "sha256": "104bf0a404d35ca577bbda90b1dd1ac13f074818d4eb8625a7af21ad55d3a3c3",
+      "size": 80
+    },
+    {
+      "name": "zone/no_NO_NY.res",
+      "file": "data/icu78/zone/no_NO_NY.res",
+      "object": "ZoneResource_no_NO_NY",
+      "sha256": "28633db1212d02ece07ae3a9203de488e96f580ab62697ad9ab6670ea2777216",
+      "size": 96
+    },
+    {
+      "name": "zone/nqo.res",
+      "file": "data/icu78/zone/nqo.res",
+      "object": "ZoneResource_nqo",
+      "sha256": "377f59cac206196497ad32822a1809fae01fd322513c2c41793de01d5600786b",
+      "size": 30800
+    },
+    {
+      "name": "zone/nso.res",
+      "file": "data/icu78/zone/nso.res",
+      "object": "ZoneResource_nso",
+      "sha256": "5aadb998f73add2d84a7835f4081a28b395dd842131d0c4264efe700e9cc5408",
+      "size": 160
+    },
+    {
+      "name": "zone/nus.res",
+      "file": "data/icu78/zone/nus.res",
+      "object": "ZoneResource_nus",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/nyn.res",
+      "file": "data/icu78/zone/nyn.res",
+      "object": "ZoneResource_nyn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/oc.res",
+      "file": "data/icu78/zone/oc.res",
+      "object": "ZoneResource_oc",
+      "sha256": "7a31f91b4c29c42f55d8886797ed0ac6afdb41df8880c9a674d2e6ec1cbcf609",
+      "size": 272
+    },
+    {
+      "name": "zone/om.res",
+      "file": "data/icu78/zone/om.res",
+      "object": "ZoneResource_om",
+      "sha256": "f41c0c2e29ac10dfe68c747e54d159e56af60acf73183a1cc4e72a737aa41366",
+      "size": 19328
+    },
+    {
+      "name": "zone/or.res",
+      "file": "data/icu78/zone/or.res",
+      "object": "ZoneResource_or",
+      "sha256": "6ff355b6793a1928ff841bd5f4fa9bb8e1298a8507d593943b052d0a30569809",
+      "size": 26896
+    },
+    {
+      "name": "zone/os.res",
+      "file": "data/icu78/zone/os.res",
+      "object": "ZoneResource_os",
+      "sha256": "937d22ac5ba23f51d8e84bf850f1c3e62d4eaea2d5ef66feab1902e528e6f702",
+      "size": 1248
+    },
+    {
+      "name": "zone/pa.res",
+      "file": "data/icu78/zone/pa.res",
+      "object": "ZoneResource_pa",
+      "sha256": "f1e578e056e3219f6dbb78c063d6defa0a1938416ee45aadce83e9122f5e4cea",
+      "size": 26736
+    },
+    {
+      "name": "zone/pa_Arab.res",
+      "file": "data/icu78/zone/pa_Arab.res",
+      "object": "ZoneResource_pa_Arab",
+      "sha256": "758f2839886fbb87f6c77473f1538e380ec9b67263bd15b989cdf3e171b3c3e1",
+      "size": 80
+    },
+    {
+      "name": "zone/pa_Arab_PK.res",
+      "file": "data/icu78/zone/pa_Arab_PK.res",
+      "object": "ZoneResource_pa_Arab_PK",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/pa_Guru.res",
+      "file": "data/icu78/zone/pa_Guru.res",
+      "object": "ZoneResource_pa_Guru",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/pa_Guru_IN.res",
+      "file": "data/icu78/zone/pa_Guru_IN.res",
+      "object": "ZoneResource_pa_Guru_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/pa_IN.res",
+      "file": "data/icu78/zone/pa_IN.res",
+      "object": "ZoneResource_pa_IN",
+      "sha256": "c71eb808453a262ca8131cb78d163a264cb4fa0fd2eb6ee1a2270be7eeee1d45",
+      "size": 112
+    },
+    {
+      "name": "zone/pa_PK.res",
+      "file": "data/icu78/zone/pa_PK.res",
+      "object": "ZoneResource_pa_PK",
+      "sha256": "1680ecd7430b5c525711ed861aeeeab86a76f46c85da4b2f94cbf6ad4728bb5b",
+      "size": 112
+    },
+    {
+      "name": "zone/pcm.res",
+      "file": "data/icu78/zone/pcm.res",
+      "object": "ZoneResource_pcm",
+      "sha256": "7f9be48b46113b2aee39afdce652523c0becf545c3fe2702c209018b61b40846",
+      "size": 25728
+    },
+    {
+      "name": "zone/pl.res",
+      "file": "data/icu78/zone/pl.res",
+      "object": "ZoneResource_pl",
+      "sha256": "4da608aee578c100c8a6af25353ff7cedfb6370879e4330af43bec804b2f36e2",
+      "size": 19984
+    },
+    {
+      "name": "zone/pms.res",
+      "file": "data/icu78/zone/pms.res",
+      "object": "ZoneResource_pms",
+      "sha256": "8085de395f0f2b77958c9e1d99ca7ba2ea61e0831d5b72ad1bdc59d2502f04b7",
+      "size": 224
+    },
+    {
+      "name": "zone/pool.res",
+      "file": "data/icu78/zone/pool.res",
+      "object": "ZoneResource_pool",
+      "sha256": "1b7515543ec6d58ceac9890821a96a32148767cb76c3007c52dba38cfa4b5389",
+      "size": 142576
+    },
+    {
+      "name": "zone/prg.res",
+      "file": "data/icu78/zone/prg.res",
+      "object": "ZoneResource_prg",
+      "sha256": "b87b0ebb37156727325e1dc666a6956cd17377d489a32b15fbe0b8598fe9f6ba",
+      "size": 240
+    },
+    {
+      "name": "zone/ps.res",
+      "file": "data/icu78/zone/ps.res",
+      "object": "ZoneResource_ps",
+      "sha256": "f69ce7b40bd93283d0309762bee159690984ebbd65db68c2c96f7e164f64e9bc",
+      "size": 23744
+    },
+    {
+      "name": "zone/ps_PK.res",
+      "file": "data/icu78/zone/ps_PK.res",
+      "object": "ZoneResource_ps_PK",
+      "sha256": "d25308c8d2824f9dca68c34ffecb6caa1f8486053a044561fb89ae856d032cfa",
+      "size": 1776
+    },
+    {
+      "name": "zone/pt.res",
+      "file": "data/icu78/zone/pt.res",
+      "object": "ZoneResource_pt",
+      "sha256": "e036cbc95ecb92c276df37b9f8f96cd06371256000cfa7a426e3cb18077ceed3",
+      "size": 22768
+    },
+    {
+      "name": "zone/pt_AO.res",
+      "file": "data/icu78/zone/pt_AO.res",
+      "object": "ZoneResource_pt_AO",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_CH.res",
+      "file": "data/icu78/zone/pt_CH.res",
+      "object": "ZoneResource_pt_CH",
+      "sha256": "538a1a35494a7b2b6b5bf3c5afa07a1609fb86d9e329d85344971db1fd3b671c",
+      "size": 80
+    },
+    {
+      "name": "zone/pt_CV.res",
+      "file": "data/icu78/zone/pt_CV.res",
+      "object": "ZoneResource_pt_CV",
+      "sha256": "aa3e42251fffafc104e5273de677f2e985c97266605efd5da5c211c76736c5bc",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_GQ.res",
+      "file": "data/icu78/zone/pt_GQ.res",
+      "object": "ZoneResource_pt_GQ",
+      "sha256": "538a1a35494a7b2b6b5bf3c5afa07a1609fb86d9e329d85344971db1fd3b671c",
+      "size": 80
+    },
+    {
+      "name": "zone/pt_GW.res",
+      "file": "data/icu78/zone/pt_GW.res",
+      "object": "ZoneResource_pt_GW",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_LU.res",
+      "file": "data/icu78/zone/pt_LU.res",
+      "object": "ZoneResource_pt_LU",
+      "sha256": "538a1a35494a7b2b6b5bf3c5afa07a1609fb86d9e329d85344971db1fd3b671c",
+      "size": 80
+    },
+    {
+      "name": "zone/pt_MO.res",
+      "file": "data/icu78/zone/pt_MO.res",
+      "object": "ZoneResource_pt_MO",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_MZ.res",
+      "file": "data/icu78/zone/pt_MZ.res",
+      "object": "ZoneResource_pt_MZ",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_PT.res",
+      "file": "data/icu78/zone/pt_PT.res",
+      "object": "ZoneResource_pt_PT",
+      "sha256": "41aec05798547e05524846e72273252d332b59ef1cd69c789c340c1ad59b6a43",
+      "size": 19680
+    },
+    {
+      "name": "zone/pt_ST.res",
+      "file": "data/icu78/zone/pt_ST.res",
+      "object": "ZoneResource_pt_ST",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/pt_TL.res",
+      "file": "data/icu78/zone/pt_TL.res",
+      "object": "ZoneResource_pt_TL",
+      "sha256": "9ea9939100af4fce04274146908f0b410ca1f10134ef8fc4268c02679b863990",
+      "size": 176
+    },
+    {
+      "name": "zone/qu.res",
+      "file": "data/icu78/zone/qu.res",
+      "object": "ZoneResource_qu",
+      "sha256": "d46a54abe816fb7cc62797ed8a795446b9e9c217bc0372794546ec79500f1b8b",
+      "size": 16256
+    },
+    {
+      "name": "zone/qu_BO.res",
+      "file": "data/icu78/zone/qu_BO.res",
+      "object": "ZoneResource_qu_BO",
+      "sha256": "9702d97b4aff0581b04a0a7499d20064a906d1573d94397059b0ebe320069c4c",
+      "size": 128
+    },
+    {
+      "name": "zone/qu_EC.res",
+      "file": "data/icu78/zone/qu_EC.res",
+      "object": "ZoneResource_qu_EC",
+      "sha256": "247c356e68a35f54bdf2fdd3f666517e4a51bb260569416a66eb5c53be210177",
+      "size": 128
+    },
+    {
+      "name": "zone/raj.res",
+      "file": "data/icu78/zone/raj.res",
+      "object": "ZoneResource_raj",
+      "sha256": "3f3b783d9c9dbe74f61b2c33778157772e64df502245a49fdb94d10bae102f3f",
+      "size": 144
+    },
+    {
+      "name": "zone/res_index.res",
+      "file": "data/icu78/zone/res_index.res",
+      "object": "ZoneResource_res_index",
+      "sha256": "188dd0958057f56bbffa73ab638b50ec033ae29f7e674db48ae89e2f4af4853b",
+      "size": 5088
+    },
+    {
+      "name": "zone/rm.res",
+      "file": "data/icu78/zone/rm.res",
+      "object": "ZoneResource_rm",
+      "sha256": "c0916d1d6e70b2e18ce20771607b88e91599dafd12570c464cc08b9b51441aa6",
+      "size": 19200
+    },
+    {
+      "name": "zone/rn.res",
+      "file": "data/icu78/zone/rn.res",
+      "object": "ZoneResource_rn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ro.res",
+      "file": "data/icu78/zone/ro.res",
+      "object": "ZoneResource_ro",
+      "sha256": "051853428e27cfe38c41cb4cc352d3bafce640ba2f36fc7e223c7dc2d03e8a83",
+      "size": 19200
+    },
+    {
+      "name": "zone/rof.res",
+      "file": "data/icu78/zone/rof.res",
+      "object": "ZoneResource_rof",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/root.res",
+      "file": "data/icu78/zone/root.res",
+      "object": "ZoneResource_root",
+      "sha256": "eace7e6af8c4f5251dd6a392eb1c1f57b2b633e2cb0495b045eb2100cac4e4ac",
+      "size": 1472
+    },
+    {
+      "name": "zone/ru.res",
+      "file": "data/icu78/zone/ru.res",
+      "object": "ZoneResource_ru",
+      "sha256": "502125af9d7d235ea0cfa37ce08e196ed02f4a0deff5172b76826d383d4a67f4",
+      "size": 20720
+    },
+    {
+      "name": "zone/rw.res",
+      "file": "data/icu78/zone/rw.res",
+      "object": "ZoneResource_rw",
+      "sha256": "cb5e169f18f286379c98dc385289f54fa478b65294906737c2401b208c9fc631",
+      "size": 96
+    },
+    {
+      "name": "zone/rwk.res",
+      "file": "data/icu78/zone/rwk.res",
+      "object": "ZoneResource_rwk",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sa.res",
+      "file": "data/icu78/zone/sa.res",
+      "object": "ZoneResource_sa",
+      "sha256": "29913e89ffaa5a9ddf0284ab05f322e41a2484d79c0f1bb5d9f6eaad7e888d2c",
+      "size": 1824
+    },
+    {
+      "name": "zone/sah.res",
+      "file": "data/icu78/zone/sah.res",
+      "object": "ZoneResource_sah",
+      "sha256": "83129efe39a11fe851032143dd242012488d58111d8843e241e3471b912ac1c7",
+      "size": 4480
+    },
+    {
+      "name": "zone/saq.res",
+      "file": "data/icu78/zone/saq.res",
+      "object": "ZoneResource_saq",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sat.res",
+      "file": "data/icu78/zone/sat.res",
+      "object": "ZoneResource_sat",
+      "sha256": "f6640a49e5ef0f2b14b10ed8ebeef0b2e68c6cf724f2058ef133bac414dfe2e4",
+      "size": 2096
+    },
+    {
+      "name": "zone/sat_IN.res",
+      "file": "data/icu78/zone/sat_IN.res",
+      "object": "ZoneResource_sat_IN",
+      "sha256": "02f4079dbfdd1f658bae20c694ee4c1c77cac9b890261f929042a955a8a8906e",
+      "size": 112
+    },
+    {
+      "name": "zone/sat_Olck.res",
+      "file": "data/icu78/zone/sat_Olck.res",
+      "object": "ZoneResource_sat_Olck",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sat_Olck_IN.res",
+      "file": "data/icu78/zone/sat_Olck_IN.res",
+      "object": "ZoneResource_sat_Olck_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sbp.res",
+      "file": "data/icu78/zone/sbp.res",
+      "object": "ZoneResource_sbp",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sc.res",
+      "file": "data/icu78/zone/sc.res",
+      "object": "ZoneResource_sc",
+      "sha256": "c80b595d249f6e185cbaa329efb333de9a51ca4f053db973c8b110d3c2d2d932",
+      "size": 21040
+    },
+    {
+      "name": "zone/scn.res",
+      "file": "data/icu78/zone/scn.res",
+      "object": "ZoneResource_scn",
+      "sha256": "21f2274bdeaec19ee3d3799ed68f7cfe7dc71afa65c935a508a81413577d94ce",
+      "size": 19056
+    },
+    {
+      "name": "zone/sd.res",
+      "file": "data/icu78/zone/sd.res",
+      "object": "ZoneResource_sd",
+      "sha256": "11522caff61d130c09828998a869bce06699a8e1a10b28fe774198e0dd5564f5",
+      "size": 26032
+    },
+    {
+      "name": "zone/sd_Arab.res",
+      "file": "data/icu78/zone/sd_Arab.res",
+      "object": "ZoneResource_sd_Arab",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sd_Arab_PK.res",
+      "file": "data/icu78/zone/sd_Arab_PK.res",
+      "object": "ZoneResource_sd_Arab_PK",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sd_Deva.res",
+      "file": "data/icu78/zone/sd_Deva.res",
+      "object": "ZoneResource_sd_Deva",
+      "sha256": "8037ced3366974acde12f2cb5a9810b02a454bfea3a250ad3604ae40be5e79bb",
+      "size": 1616
+    },
+    {
+      "name": "zone/sd_Deva_IN.res",
+      "file": "data/icu78/zone/sd_Deva_IN.res",
+      "object": "ZoneResource_sd_Deva_IN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sd_IN.res",
+      "file": "data/icu78/zone/sd_IN.res",
+      "object": "ZoneResource_sd_IN",
+      "sha256": "be7ec2d675a1cd21c6ba0bd3311d9f8072c061993ee306296718584815611ac3",
+      "size": 112
+    },
+    {
+      "name": "zone/sd_PK.res",
+      "file": "data/icu78/zone/sd_PK.res",
+      "object": "ZoneResource_sd_PK",
+      "sha256": "61e00056d4256b41a3ee4a3ff5906e7e7c159a2bed3ff91bf29085d4ebf25d44",
+      "size": 112
+    },
+    {
+      "name": "zone/se.res",
+      "file": "data/icu78/zone/se.res",
+      "object": "ZoneResource_se",
+      "sha256": "b506681ad10b9a773a4cf48d62f5eec0622d73162400f72db1b3d6050b656256",
+      "size": 896
+    },
+    {
+      "name": "zone/se_FI.res",
+      "file": "data/icu78/zone/se_FI.res",
+      "object": "ZoneResource_se_FI",
+      "sha256": "7d0134f83c7fe86608dc2dd830c681e37300632356f5f7dce4ba2c0869b76f39",
+      "size": 14512
+    },
+    {
+      "name": "zone/seh.res",
+      "file": "data/icu78/zone/seh.res",
+      "object": "ZoneResource_seh",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ses.res",
+      "file": "data/icu78/zone/ses.res",
+      "object": "ZoneResource_ses",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sg.res",
+      "file": "data/icu78/zone/sg.res",
+      "object": "ZoneResource_sg",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sh.res",
+      "file": "data/icu78/zone/sh.res",
+      "object": "ZoneResource_sh",
+      "sha256": "98bce932cb4a0b0acfa84abe2819eb2696833e2f59749c8192bd4d01de23615e",
+      "size": 96
+    },
+    {
+      "name": "zone/sh_BA.res",
+      "file": "data/icu78/zone/sh_BA.res",
+      "object": "ZoneResource_sh_BA",
+      "sha256": "5b87a529324c24b33ef822eda785643555befd0f47bdde6e8585b819c744fabe",
+      "size": 112
+    },
+    {
+      "name": "zone/sh_CS.res",
+      "file": "data/icu78/zone/sh_CS.res",
+      "object": "ZoneResource_sh_CS",
+      "sha256": "ca14fe5579a7b3b03950a6bbc481eb40005ae66d34d13b9df939282a32781ca2",
+      "size": 80
+    },
+    {
+      "name": "zone/sh_YU.res",
+      "file": "data/icu78/zone/sh_YU.res",
+      "object": "ZoneResource_sh_YU",
+      "sha256": "ca14fe5579a7b3b03950a6bbc481eb40005ae66d34d13b9df939282a32781ca2",
+      "size": 80
+    },
+    {
+      "name": "zone/shi.res",
+      "file": "data/icu78/zone/shi.res",
+      "object": "ZoneResource_shi",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/shi_Latn.res",
+      "file": "data/icu78/zone/shi_Latn.res",
+      "object": "ZoneResource_shi_Latn",
+      "sha256": "758f2839886fbb87f6c77473f1538e380ec9b67263bd15b989cdf3e171b3c3e1",
+      "size": 80
+    },
+    {
+      "name": "zone/shi_MA.res",
+      "file": "data/icu78/zone/shi_MA.res",
+      "object": "ZoneResource_shi_MA",
+      "sha256": "aea9c21d01d42c4afa918e13f6b4600e38b6ac0eaf6df92dd110b61eba467076",
+      "size": 112
+    },
+    {
+      "name": "zone/shi_Tfng.res",
+      "file": "data/icu78/zone/shi_Tfng.res",
+      "object": "ZoneResource_shi_Tfng",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/shi_Tfng_MA.res",
+      "file": "data/icu78/zone/shi_Tfng_MA.res",
+      "object": "ZoneResource_shi_Tfng_MA",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/shn.res",
+      "file": "data/icu78/zone/shn.res",
+      "object": "ZoneResource_shn",
+      "sha256": "0cf8ce5548913b5c7141368a46ae836f7a1ad57d19a173826bbf02fb2ab19284",
+      "size": 33888
+    },
+    {
+      "name": "zone/si.res",
+      "file": "data/icu78/zone/si.res",
+      "object": "ZoneResource_si",
+      "sha256": "925b16fa20094b1b51a8acbab401a99483c853c03ab848fbb2bae9d4d637d924",
+      "size": 28256
+    },
+    {
+      "name": "zone/sk.res",
+      "file": "data/icu78/zone/sk.res",
+      "object": "ZoneResource_sk",
+      "sha256": "9b6adad1d376d7701985d79f5d2468a231eb372367ff0fdf6af41fc07086a23a",
+      "size": 17584
+    },
+    {
+      "name": "zone/sl.res",
+      "file": "data/icu78/zone/sl.res",
+      "object": "ZoneResource_sl",
+      "sha256": "9a72604d0bdceb8f46afa1a81bd7f6b0c4e3f4e09b394b8f2bb1f417677dc3db",
+      "size": 18224
+    },
+    {
+      "name": "zone/smn.res",
+      "file": "data/icu78/zone/smn.res",
+      "object": "ZoneResource_smn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sn.res",
+      "file": "data/icu78/zone/sn.res",
+      "object": "ZoneResource_sn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/so.res",
+      "file": "data/icu78/zone/so.res",
+      "object": "ZoneResource_so",
+      "sha256": "9d5e7a8cdffc86c003460cb2ef4b124fe0f3daa975963bfc63e0a2caab45bf66",
+      "size": 30752
+    },
+    {
+      "name": "zone/sq.res",
+      "file": "data/icu78/zone/sq.res",
+      "object": "ZoneResource_sq",
+      "sha256": "56156f9c12249ff8e2ba47090e85613133ef4a924eb2cf7fce100f9e0a919b69",
+      "size": 25824
+    },
+    {
+      "name": "zone/sr.res",
+      "file": "data/icu78/zone/sr.res",
+      "object": "ZoneResource_sr",
+      "sha256": "b11042a0396666a384ec3d7116e8793f4294a273a22776fe18ae308df4f3c1cf",
+      "size": 21840
+    },
+    {
+      "name": "zone/sr_BA.res",
+      "file": "data/icu78/zone/sr_BA.res",
+      "object": "ZoneResource_sr_BA",
+      "sha256": "e46a81b5b1906ccd578f8a8b19d66f17d922d77a7f0888f82236f1313c1a6069",
+      "size": 112
+    },
+    {
+      "name": "zone/sr_CS.res",
+      "file": "data/icu78/zone/sr_CS.res",
+      "object": "ZoneResource_sr_CS",
+      "sha256": "ca33ae4555a4e2f5eee8658da86583d8f557b9f24645bc0c1a623df1018c9c42",
+      "size": 96
+    },
+    {
+      "name": "zone/sr_Cyrl.res",
+      "file": "data/icu78/zone/sr_Cyrl.res",
+      "object": "ZoneResource_sr_Cyrl",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Cyrl_BA.res",
+      "file": "data/icu78/zone/sr_Cyrl_BA.res",
+      "object": "ZoneResource_sr_Cyrl_BA",
+      "sha256": "51d69239c1122f6d4257f1bb16cd57ad948e530ffc0cf3a50915742cf40d4134",
+      "size": 12736
+    },
+    {
+      "name": "zone/sr_Cyrl_CS.res",
+      "file": "data/icu78/zone/sr_Cyrl_CS.res",
+      "object": "ZoneResource_sr_Cyrl_CS",
+      "sha256": "6c7e941adbe79aa3045675ea84ea66060999a6a314f2e4497582b19b77104785",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Cyrl_RS.res",
+      "file": "data/icu78/zone/sr_Cyrl_RS.res",
+      "object": "ZoneResource_sr_Cyrl_RS",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Cyrl_XK.res",
+      "file": "data/icu78/zone/sr_Cyrl_XK.res",
+      "object": "ZoneResource_sr_Cyrl_XK",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Cyrl_YU.res",
+      "file": "data/icu78/zone/sr_Cyrl_YU.res",
+      "object": "ZoneResource_sr_Cyrl_YU",
+      "sha256": "6c7e941adbe79aa3045675ea84ea66060999a6a314f2e4497582b19b77104785",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Latn.res",
+      "file": "data/icu78/zone/sr_Latn.res",
+      "object": "ZoneResource_sr_Latn",
+      "sha256": "e49b177c423b5062d20b00b65b6be76a54532e41b3b5c6e6634d261ae0340750",
+      "size": 25792
+    },
+    {
+      "name": "zone/sr_Latn_BA.res",
+      "file": "data/icu78/zone/sr_Latn_BA.res",
+      "object": "ZoneResource_sr_Latn_BA",
+      "sha256": "11343247bc968068fbf2e922ecd2f835e50a09604836834995f35646a8d3ad5d",
+      "size": 16448
+    },
+    {
+      "name": "zone/sr_Latn_CS.res",
+      "file": "data/icu78/zone/sr_Latn_CS.res",
+      "object": "ZoneResource_sr_Latn_CS",
+      "sha256": "ca14fe5579a7b3b03950a6bbc481eb40005ae66d34d13b9df939282a32781ca2",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Latn_ME.res",
+      "file": "data/icu78/zone/sr_Latn_ME.res",
+      "object": "ZoneResource_sr_Latn_ME",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Latn_RS.res",
+      "file": "data/icu78/zone/sr_Latn_RS.res",
+      "object": "ZoneResource_sr_Latn_RS",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_Latn_YU.res",
+      "file": "data/icu78/zone/sr_Latn_YU.res",
+      "object": "ZoneResource_sr_Latn_YU",
+      "sha256": "ca14fe5579a7b3b03950a6bbc481eb40005ae66d34d13b9df939282a32781ca2",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_ME.res",
+      "file": "data/icu78/zone/sr_ME.res",
+      "object": "ZoneResource_sr_ME",
+      "sha256": "378b6bd9f3cb346a89fee8671afb3caae884cef900704678e802320265aea136",
+      "size": 112
+    },
+    {
+      "name": "zone/sr_RS.res",
+      "file": "data/icu78/zone/sr_RS.res",
+      "object": "ZoneResource_sr_RS",
+      "sha256": "6c7e941adbe79aa3045675ea84ea66060999a6a314f2e4497582b19b77104785",
+      "size": 80
+    },
+    {
+      "name": "zone/sr_XK.res",
+      "file": "data/icu78/zone/sr_XK.res",
+      "object": "ZoneResource_sr_XK",
+      "sha256": "42bb024d6ebec91301cb4785e8a5550fc1767199c6ad1c5ab0a95af8dc66ece6",
+      "size": 112
+    },
+    {
+      "name": "zone/sr_YU.res",
+      "file": "data/icu78/zone/sr_YU.res",
+      "object": "ZoneResource_sr_YU",
+      "sha256": "ca33ae4555a4e2f5eee8658da86583d8f557b9f24645bc0c1a623df1018c9c42",
+      "size": 96
+    },
+    {
+      "name": "zone/st.res",
+      "file": "data/icu78/zone/st.res",
+      "object": "ZoneResource_st",
+      "sha256": "4dcc49060f23d3096e079eb2e11099c3c232659b2f954e837019c4115e0f9f1a",
+      "size": 224
+    },
+    {
+      "name": "zone/su.res",
+      "file": "data/icu78/zone/su.res",
+      "object": "ZoneResource_su",
+      "sha256": "d721ed7a92479847c77e422dd34fe07d33692d853d14621284c639e816869696",
+      "size": 1280
+    },
+    {
+      "name": "zone/su_ID.res",
+      "file": "data/icu78/zone/su_ID.res",
+      "object": "ZoneResource_su_ID",
+      "sha256": "4fec3e5ec9448257b431849c531080b632efff33abcacd6ed6023fadb103d4bc",
+      "size": 112
+    },
+    {
+      "name": "zone/su_Latn.res",
+      "file": "data/icu78/zone/su_Latn.res",
+      "object": "ZoneResource_su_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/su_Latn_ID.res",
+      "file": "data/icu78/zone/su_Latn_ID.res",
+      "object": "ZoneResource_su_Latn_ID",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/sv.res",
+      "file": "data/icu78/zone/sv.res",
+      "object": "ZoneResource_sv",
+      "sha256": "d9e14c94eaac3ca417dc861ce799875f9e733e29d6b4c4957a01dd4e0ab29f02",
+      "size": 14272
+    },
+    {
+      "name": "zone/sw.res",
+      "file": "data/icu78/zone/sw.res",
+      "object": "ZoneResource_sw",
+      "sha256": "84945f317a49a4b859e9f12212c3d425ebb0e74785bc9f98948e783a505755a7",
+      "size": 15584
+    },
+    {
+      "name": "zone/sw_KE.res",
+      "file": "data/icu78/zone/sw_KE.res",
+      "object": "ZoneResource_sw_KE",
+      "sha256": "0057d3c9d910d141248db383fe01d33a04a0f291996c3d2e247d1698682e54de",
+      "size": 7472
+    },
+    {
+      "name": "zone/syr.res",
+      "file": "data/icu78/zone/syr.res",
+      "object": "ZoneResource_syr",
+      "sha256": "21e74a1f16b851a08bfb855496ee42b5eb0e818c468d0bb7b455fc4f715e5963",
+      "size": 28112
+    },
+    {
+      "name": "zone/szl.res",
+      "file": "data/icu78/zone/szl.res",
+      "object": "ZoneResource_szl",
+      "sha256": "4b8a60e5081101864a51dda46d4f5f8e333752a324f74fa3750b46fa02408053",
+      "size": 240
+    },
+    {
+      "name": "zone/ta.res",
+      "file": "data/icu78/zone/ta.res",
+      "object": "ZoneResource_ta",
+      "sha256": "fbfaa9ea66fda32457eceb417af91391e654d5462013fd0ccfcdba901f0aa148",
+      "size": 29840
+    },
+    {
+      "name": "zone/ta_MY.res",
+      "file": "data/icu78/zone/ta_MY.res",
+      "object": "ZoneResource_ta_MY",
+      "sha256": "6b37514695496ea15ac80898a0f0bb1d27916f3ef5ae0e77ea8bb23331789594",
+      "size": 128
+    },
+    {
+      "name": "zone/ta_SG.res",
+      "file": "data/icu78/zone/ta_SG.res",
+      "object": "ZoneResource_ta_SG",
+      "sha256": "6b37514695496ea15ac80898a0f0bb1d27916f3ef5ae0e77ea8bb23331789594",
+      "size": 128
+    },
+    {
+      "name": "zone/te.res",
+      "file": "data/icu78/zone/te.res",
+      "object": "ZoneResource_te",
+      "sha256": "ca05eb65351f803b143ea68d555b2baa148e44642cbee34f6c4310cb430f51ba",
+      "size": 13376
+    },
+    {
+      "name": "zone/teo.res",
+      "file": "data/icu78/zone/teo.res",
+      "object": "ZoneResource_teo",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/tg.res",
+      "file": "data/icu78/zone/tg.res",
+      "object": "ZoneResource_tg",
+      "sha256": "ef4cca8b9222a36804537462d513ca7dcb627d62754483e0796a8875edef21f0",
+      "size": 21856
+    },
+    {
+      "name": "zone/th.res",
+      "file": "data/icu78/zone/th.res",
+      "object": "ZoneResource_th",
+      "sha256": "0871609b2a63c926523154364e841b504ebbfc40eb0b3a3c7177ae12178ae5ba",
+      "size": 27360
+    },
+    {
+      "name": "zone/ti.res",
+      "file": "data/icu78/zone/ti.res",
+      "object": "ZoneResource_ti",
+      "sha256": "3903ac5071c47e84ed66007331e807eb35bd48d8d4fe79f9946f5977f9dfe311",
+      "size": 21520
+    },
+    {
+      "name": "zone/tk.res",
+      "file": "data/icu78/zone/tk.res",
+      "object": "ZoneResource_tk",
+      "sha256": "01c44bc6e538670351bb6886d2716dc3e9af88d363f3f7f3f88dfb85ddac4c17",
+      "size": 23536
+    },
+    {
+      "name": "zone/tl.res",
+      "file": "data/icu78/zone/tl.res",
+      "object": "ZoneResource_tl",
+      "sha256": "f0cefff7589e0fd309887a5f4d532ccd11222adc818d039db3e89458f1758f57",
+      "size": 96
+    },
+    {
+      "name": "zone/tl_PH.res",
+      "file": "data/icu78/zone/tl_PH.res",
+      "object": "ZoneResource_tl_PH",
+      "sha256": "232995bf17ddd48de2f1239604e417ddcb190c95f2cdda072cfe54578193f1f6",
+      "size": 96
+    },
+    {
+      "name": "zone/tn.res",
+      "file": "data/icu78/zone/tn.res",
+      "object": "ZoneResource_tn",
+      "sha256": "524f75484eb470d337d2a718f4e938c56773f814eb7002b7f3c6eb8b961c238c",
+      "size": 208
+    },
+    {
+      "name": "zone/to.res",
+      "file": "data/icu78/zone/to.res",
+      "object": "ZoneResource_to",
+      "sha256": "541c295c923738c23cc9a40673e9d4f358353aff4b61495675d84a033cc97b3b",
+      "size": 22624
+    },
+    {
+      "name": "zone/tok.res",
+      "file": "data/icu78/zone/tok.res",
+      "object": "ZoneResource_tok",
+      "sha256": "c4112e1dad1595a46987e60eacb66ac65bdfc0ad239de6b87987b2e4a04e4cbc",
+      "size": 240
+    },
+    {
+      "name": "zone/tr.res",
+      "file": "data/icu78/zone/tr.res",
+      "object": "ZoneResource_tr",
+      "sha256": "fa2d9badca208d79d5ab0c4d21d6221db76cb95231981909d974dfdd5ab8a3cd",
+      "size": 18544
+    },
+    {
+      "name": "zone/tt.res",
+      "file": "data/icu78/zone/tt.res",
+      "object": "ZoneResource_tt",
+      "sha256": "a9e363805b029470efe3ecca7d6a0af4ab28b9e491977b068e8b242f8cc95e6d",
+      "size": 22608
+    },
+    {
+      "name": "zone/twq.res",
+      "file": "data/icu78/zone/twq.res",
+      "object": "ZoneResource_twq",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/tyv.res",
+      "file": "data/icu78/zone/tyv.res",
+      "object": "ZoneResource_tyv",
+      "sha256": "15c1ef0c816b9e15faa98d490171a2863a4d41b989fad431e04dca8711b3b222",
+      "size": 224
+    },
+    {
+      "name": "zone/tzdbNames.res",
+      "file": "data/icu78/zone/tzdbNames.res",
+      "object": "ZoneResource_tzdbNames",
+      "sha256": "49c2dc4df845fdee1652f6509223f75e61dea22c023f7117776140415689e3a6",
+      "size": 8176
+    },
+    {
+      "name": "zone/tzm.res",
+      "file": "data/icu78/zone/tzm.res",
+      "object": "ZoneResource_tzm",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/ug.res",
+      "file": "data/icu78/zone/ug.res",
+      "object": "ZoneResource_ug",
+      "sha256": "689b541b261f36551c3d08aaa56dc2a42ff64cc67bf79d7c339eb5be77f54e05",
+      "size": 16672
+    },
+    {
+      "name": "zone/uk.res",
+      "file": "data/icu78/zone/uk.res",
+      "object": "ZoneResource_uk",
+      "sha256": "33f692b39046acb63afc6ffe4f6dc48525649138d1173b38bec9b03cdbbcd5be",
+      "size": 29696
+    },
+    {
+      "name": "zone/ur.res",
+      "file": "data/icu78/zone/ur.res",
+      "object": "ZoneResource_ur",
+      "sha256": "7d73ad08c9445220a6271340b67cdca06197af0829d3c1cd6f6fed4678a85baa",
+      "size": 24480
+    },
+    {
+      "name": "zone/ur_IN.res",
+      "file": "data/icu78/zone/ur_IN.res",
+      "object": "ZoneResource_ur_IN",
+      "sha256": "607ec63fa9b29473fee08d0c6c4230ce073460ed9531eedfb1445e20d9f63ba6",
+      "size": 3680
+    },
+    {
+      "name": "zone/uz.res",
+      "file": "data/icu78/zone/uz.res",
+      "object": "ZoneResource_uz",
+      "sha256": "961e34cd30f5142a3cd3169fb9fa60490aaa5f05f63101aa4762a84653577edc",
+      "size": 22064
+    },
+    {
+      "name": "zone/uz_AF.res",
+      "file": "data/icu78/zone/uz_AF.res",
+      "object": "ZoneResource_uz_AF",
+      "sha256": "e6ab158372dd755a0260a3fce7283bc2a41a68c2291eefb9e0860f034c4f3ebc",
+      "size": 112
+    },
+    {
+      "name": "zone/uz_Arab.res",
+      "file": "data/icu78/zone/uz_Arab.res",
+      "object": "ZoneResource_uz_Arab",
+      "sha256": "7a9924df7c2cfa6eef3cb0ec938f4064340c7ad9a947981deff841b0b09b9e76",
+      "size": 112
+    },
+    {
+      "name": "zone/uz_Arab_AF.res",
+      "file": "data/icu78/zone/uz_Arab_AF.res",
+      "object": "ZoneResource_uz_Arab_AF",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/uz_Cyrl.res",
+      "file": "data/icu78/zone/uz_Cyrl.res",
+      "object": "ZoneResource_uz_Cyrl",
+      "sha256": "ee2f7a6254ef7e1b1a58a51892138da08084688324d0d10279f52d995394b8f5",
+      "size": 14624
+    },
+    {
+      "name": "zone/uz_Latn.res",
+      "file": "data/icu78/zone/uz_Latn.res",
+      "object": "ZoneResource_uz_Latn",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/uz_Latn_UZ.res",
+      "file": "data/icu78/zone/uz_Latn_UZ.res",
+      "object": "ZoneResource_uz_Latn_UZ",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/uz_UZ.res",
+      "file": "data/icu78/zone/uz_UZ.res",
+      "object": "ZoneResource_uz_UZ",
+      "sha256": "711bb8f665fd74a310191c260321dda18f40ac653909d7130205e21c58eee74c",
+      "size": 112
+    },
+    {
+      "name": "zone/vai.res",
+      "file": "data/icu78/zone/vai.res",
+      "object": "ZoneResource_vai",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/vai_LR.res",
+      "file": "data/icu78/zone/vai_LR.res",
+      "object": "ZoneResource_vai_LR",
+      "sha256": "90370144aab32d494546e91e5adb0dd12bd4a6a12b48948e21d156b5f0d7da2f",
+      "size": 112
+    },
+    {
+      "name": "zone/vai_Latn.res",
+      "file": "data/icu78/zone/vai_Latn.res",
+      "object": "ZoneResource_vai_Latn",
+      "sha256": "758f2839886fbb87f6c77473f1538e380ec9b67263bd15b989cdf3e171b3c3e1",
+      "size": 80
+    },
+    {
+      "name": "zone/vai_Vaii.res",
+      "file": "data/icu78/zone/vai_Vaii.res",
+      "object": "ZoneResource_vai_Vaii",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/vai_Vaii_LR.res",
+      "file": "data/icu78/zone/vai_Vaii_LR.res",
+      "object": "ZoneResource_vai_Vaii_LR",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/vec.res",
+      "file": "data/icu78/zone/vec.res",
+      "object": "ZoneResource_vec",
+      "sha256": "703dd7f711a3ed1a69c40e391ef7463113a88779bdf64c9b296a06c87a787b84",
+      "size": 22240
+    },
+    {
+      "name": "zone/vi.res",
+      "file": "data/icu78/zone/vi.res",
+      "object": "ZoneResource_vi",
+      "sha256": "8d76a92375474ca9ff1d4a394968fa93d1b5d948b5e8800c889dc2e3596fecbc",
+      "size": 15584
+    },
+    {
+      "name": "zone/vmw.res",
+      "file": "data/icu78/zone/vmw.res",
+      "object": "ZoneResource_vmw",
+      "sha256": "f1847a849ee2263c92847910b43d70e7a9aa3457bc609479e0376644e05cff82",
+      "size": 304
+    },
+    {
+      "name": "zone/vun.res",
+      "file": "data/icu78/zone/vun.res",
+      "object": "ZoneResource_vun",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/wae.res",
+      "file": "data/icu78/zone/wae.res",
+      "object": "ZoneResource_wae",
+      "sha256": "48ce2cd833595b7658f54c4182b7833f18b0e1922fad00eecfb840f915785b38",
+      "size": 1568
+    },
+    {
+      "name": "zone/wo.res",
+      "file": "data/icu78/zone/wo.res",
+      "object": "ZoneResource_wo",
+      "sha256": "86df90b7cde0c7ce58c39e7b40e9c31620b121d36f699c4223a9b41b7fb0fbda",
+      "size": 13952
+    },
+    {
+      "name": "zone/xh.res",
+      "file": "data/icu78/zone/xh.res",
+      "object": "ZoneResource_xh",
+      "sha256": "45d0858f60cd0f4cf8b06484d28d24e7e3424f87bf173b560712fc44eabdc28f",
+      "size": 3216
+    },
+    {
+      "name": "zone/xnr.res",
+      "file": "data/icu78/zone/xnr.res",
+      "object": "ZoneResource_xnr",
+      "sha256": "9302fc5a1279f5e0d7251381ce911818ac7df9c43f0e452d5386aa15a0826036",
+      "size": 22288
+    },
+    {
+      "name": "zone/xog.res",
+      "file": "data/icu78/zone/xog.res",
+      "object": "ZoneResource_xog",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/yav.res",
+      "file": "data/icu78/zone/yav.res",
+      "object": "ZoneResource_yav",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/yi.res",
+      "file": "data/icu78/zone/yi.res",
+      "object": "ZoneResource_yi",
+      "sha256": "1919137244665cf2ca782d52573b0c8f9a2dc5940e1fb3791ceea06289271c8c",
+      "size": 304
+    },
+    {
+      "name": "zone/yo.res",
+      "file": "data/icu78/zone/yo.res",
+      "object": "ZoneResource_yo",
+      "sha256": "4390d9f5abc90199fd2abcbdff3d6de9353bd9c1c1a3ec9284f88496cdf0c69a",
+      "size": 16784
+    },
+    {
+      "name": "zone/yo_BJ.res",
+      "file": "data/icu78/zone/yo_BJ.res",
+      "object": "ZoneResource_yo_BJ",
+      "sha256": "5c8e916d94a9efd3b705bf4f743f57efa050559a8e6c778cb0ae7217caf0819e",
+      "size": 10560
+    },
+    {
+      "name": "zone/yrl.res",
+      "file": "data/icu78/zone/yrl.res",
+      "object": "ZoneResource_yrl",
+      "sha256": "21e64032a21a53872cd66041c913f095a7a96ec57abddd78c255642b9d3d29a0",
+      "size": 31072
+    },
+    {
+      "name": "zone/yrl_CO.res",
+      "file": "data/icu78/zone/yrl_CO.res",
+      "object": "ZoneResource_yrl_CO",
+      "sha256": "630f308fb59eeb8b33d2d591ded1ce98c107ffcc9e999e50405ebc21df842250",
+      "size": 144
+    },
+    {
+      "name": "zone/yrl_VE.res",
+      "file": "data/icu78/zone/yrl_VE.res",
+      "object": "ZoneResource_yrl_VE",
+      "sha256": "630f308fb59eeb8b33d2d591ded1ce98c107ffcc9e999e50405ebc21df842250",
+      "size": 144
+    },
+    {
+      "name": "zone/yue.res",
+      "file": "data/icu78/zone/yue.res",
+      "object": "ZoneResource_yue",
+      "sha256": "faa88475b3ca1be4d008a38b810c57658056f62d2cc59e1bf7efc2be8972da05",
+      "size": 14560
+    },
+    {
+      "name": "zone/yue_CN.res",
+      "file": "data/icu78/zone/yue_CN.res",
+      "object": "ZoneResource_yue_CN",
+      "sha256": "3fcba050162fe714f4174696326dc6e3c8f170eb7107cc06b505d46ed5752fef",
+      "size": 112
+    },
+    {
+      "name": "zone/yue_HK.res",
+      "file": "data/icu78/zone/yue_HK.res",
+      "object": "ZoneResource_yue_HK",
+      "sha256": "d4ebec977508c9864afda1cd46d88618f6cbaef7062e311b2e3c6d1aa92798b1",
+      "size": 112
+    },
+    {
+      "name": "zone/yue_Hans.res",
+      "file": "data/icu78/zone/yue_Hans.res",
+      "object": "ZoneResource_yue_Hans",
+      "sha256": "4708eafcddd3c46531ac23bf501f62d68130fe8b276bb88a3dfc4a5689b86cc3",
+      "size": 15152
+    },
+    {
+      "name": "zone/yue_Hans_CN.res",
+      "file": "data/icu78/zone/yue_Hans_CN.res",
+      "object": "ZoneResource_yue_Hans_CN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/yue_Hant.res",
+      "file": "data/icu78/zone/yue_Hant.res",
+      "object": "ZoneResource_yue_Hant",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/yue_Hant_HK.res",
+      "file": "data/icu78/zone/yue_Hant_HK.res",
+      "object": "ZoneResource_yue_Hant_HK",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/za.res",
+      "file": "data/icu78/zone/za.res",
+      "object": "ZoneResource_za",
+      "sha256": "fea3c04a7d30eeb60217a94b3f499a5002f499d0613304f402edd9f69b97681d",
+      "size": 288
+    },
+    {
+      "name": "zone/zgh.res",
+      "file": "data/icu78/zone/zgh.res",
+      "object": "ZoneResource_zgh",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/zh.res",
+      "file": "data/icu78/zone/zh.res",
+      "object": "ZoneResource_zh",
+      "sha256": "46d4a0eff885eccdddefebdf069d73b55f590f8afe8ab8d98b7a9e647e90ae8f",
+      "size": 15920
+    },
+    {
+      "name": "zone/zh_CN.res",
+      "file": "data/icu78/zone/zh_CN.res",
+      "object": "ZoneResource_zh_CN",
+      "sha256": "737f6a71d29cbb42071b26eccf9f423f8f26b712f29d60de2a84a0e8b1d15486",
+      "size": 112
+    },
+    {
+      "name": "zone/zh_HK.res",
+      "file": "data/icu78/zone/zh_HK.res",
+      "object": "ZoneResource_zh_HK",
+      "sha256": "b9bdef9c173fce5f29893f2c3883faa5fa26a64df2023656c5d16df1a7f89254",
+      "size": 80
+    },
+    {
+      "name": "zone/zh_Hans.res",
+      "file": "data/icu78/zone/zh_Hans.res",
+      "object": "ZoneResource_zh_Hans",
+      "sha256": "157706bc163964e8bca98a2d040a44b99b80b3dd7eceaa8f58289d71e572650c",
+      "size": 80
+    },
+    {
+      "name": "zone/zh_Hans_CN.res",
+      "file": "data/icu78/zone/zh_Hans_CN.res",
+      "object": "ZoneResource_zh_Hans_CN",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/zh_Hans_SG.res",
+      "file": "data/icu78/zone/zh_Hans_SG.res",
+      "object": "ZoneResource_zh_Hans_SG",
+      "sha256": "62d03c84ecf0345f13fc719f12c141adc33f94b069c321f3799f50be139dece1",
+      "size": 144
+    },
+    {
+      "name": "zone/zh_Hant.res",
+      "file": "data/icu78/zone/zh_Hant.res",
+      "object": "ZoneResource_zh_Hant",
+      "sha256": "dca9a19b092f3086aab9f4ccf3548646427693e29b0bec9e10c8c8312f138cdc",
+      "size": 14656
+    },
+    {
+      "name": "zone/zh_Hant_HK.res",
+      "file": "data/icu78/zone/zh_Hant_HK.res",
+      "object": "ZoneResource_zh_Hant_HK",
+      "sha256": "8500ba2f88dc8a6257e8bcd1338fac3f73fc93d05986b42bc0e3696b92ad6f6a",
+      "size": 5088
+    },
+    {
+      "name": "zone/zh_Hant_MO.res",
+      "file": "data/icu78/zone/zh_Hant_MO.res",
+      "object": "ZoneResource_zh_Hant_MO",
+      "sha256": "94301323ff72f22f6481cdf2f70df78a5a51a4430c042b1b57361654cd382538",
+      "size": 80
+    },
+    {
+      "name": "zone/zh_Hant_TW.res",
+      "file": "data/icu78/zone/zh_Hant_TW.res",
+      "object": "ZoneResource_zh_Hant_TW",
+      "sha256": "a961565b13a860a71b47b3316b2565434158b07fe2f0432184fac2df256ad014",
+      "size": 80
+    },
+    {
+      "name": "zone/zh_MO.res",
+      "file": "data/icu78/zone/zh_MO.res",
+      "object": "ZoneResource_zh_MO",
+      "sha256": "6cb6db0d1f024e2178b29f571c5c4fe8ac4b88354975951786432ce0586362d0",
+      "size": 112
+    },
+    {
+      "name": "zone/zh_SG.res",
+      "file": "data/icu78/zone/zh_SG.res",
+      "object": "ZoneResource_zh_SG",
+      "sha256": "3b750a4ab2871be3862b3d62476d3318593d9e9168a05340bfc0f390a85b019a",
+      "size": 112
+    },
+    {
+      "name": "zone/zh_TW.res",
+      "file": "data/icu78/zone/zh_TW.res",
+      "object": "ZoneResource_zh_TW",
+      "sha256": "1bb94257b944984ddf608555b45091c2d246426b4db18cf328b4e94b64c124eb",
+      "size": 112
+    },
+    {
+      "name": "zone/zu.res",
+      "file": "data/icu78/zone/zu.res",
+      "object": "ZoneResource_zu",
+      "sha256": "b8568105eca13c0461593757618972e47aebf1bcdc1362ed95b617953aafddd5",
+      "size": 33376
     }
-  ]
+  ],
+  "registries": {
+    "zone/": "ZoneResourceRegistry"
+  }
 }
