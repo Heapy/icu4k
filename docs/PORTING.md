@@ -9413,3 +9413,57 @@ suite passed in 58s. All eight new common groups passed on JVM, JS and macOS
 Native. Linux tests were compiled, not executed on this macOS host. The earlier
 Native missing-fa failure was resolved by embedding the full catalog, without
 changing the generator policy or weakening the snapshot tests.
+
+### PatternTokenizer and date/time skeleton syntax/matching (2026-10-16)
+
+Added the public common PatternTokenizer prerequisite for DateTimePatternGenerator.
+It retains all source settings, cloned/frozen UnicodeSet ownership, cached quoting
+sets, quote/slash/hex states, token statuses, append-only buffers, UTF-16 offsets,
+broken-escape recovery and normalization's virtual dispatch. Source StringBuffer
+parameters use the existing common StringBuilder convention. Invalid cursors and
+limits are checked explicitly for JS, without preventing the source UTF16.charAt
+behavior across a limit or when starting at a trail surrogate. normalize restores
+the original cursor only after DONE; failures retain partial cursor/buffer state.
+
+Fixed the existing UTF16.append/appendCodePoint boundary uncovered by tokenizer
+oracles: invalid code points are validated before a nullable destination is read,
+and the exception includes Java's hexadecimal code-point spelling. valueOf keeps
+its own source behavior; the append boundary no longer inherits valueOf's shorter
+error message. Valid append behavior is unchanged.
+
+Added internal DateTimePatternSyntaxCore with all 83 field-table rows, numeric/
+text classification, canonical field lookup and the quote-aware FormatParser.
+The source parser's strict argument is intentionally ignored at its three variable
+flush sites. Mutable item-list aliases, quote handling, Latin/Cyrillic quoting,
+range errors and partially parsed lists are preserved.
+
+DateTimePatternMatcherCore and compact DateTimeSkeletonFields retain original,
+base and canonical skeletons, duplicate-field conflicts and the r/U/y exception,
+implicit seconds for minute+fraction input, 12-hour default day periods, removal
+of day periods for 24-hour fields, distance penalties/masks, reverse sorting,
+equality/hashing and extraction. extractFrom intentionally leaves the source's
+base skeleton and added-default-day-period flag untouched. Byte storage preserves
+signed narrowing/wrapping; an explicit internal assertion flag models the source
+Java assertions without imposing JVM debug assertions on all common platforms.
+
+Five tokenizer JVM oracle groups compare raw UTF-16 inputs, quoting/normalization,
+null buffers, invalid cursor/limit combinations, cached settings, virtual dispatch
+and the corrected UTF16 append validation. Four syntax/matcher oracle groups
+compare the entire type table, parser items, source public skeleton methods,
+partial states after failures, distance masks, reverse ordering and extraction.
+The reflection outcome helper propagates fatal VirtualMachineError, including
+unwrapped causes; only expected AssertionError is compared. Four tokenizer and
+six syntax/matcher common groups include independent ICU4J snapshots and portable
+checks of the signed-byte/assertion and failure-order behavior.
+
+The DateTimePatternGenerator public facade, pattern map/conflict registration,
+locale initialization, best-pattern search, field adjustment/appending, frozen
+instance/cache/clone behavior and integration with CalendarPatternDataCore remain
+pending. This stage supplies the real parser and matcher prerequisites; it does
+not substitute a fixed skeleton table or ICU4J production dependency.
+
+Verification: final focused JVM run passed in 18s (42 tests including existing
+UTF16 tests). Full JVM/macOS Native tests and Linux x64 test compilation passed
+in 5m41s; the separate full JavaScript Node suite passed in 1m27s. All ten new
+common groups passed on JVM, JS and macOS Native, and all nine new JVM oracle
+groups passed. Linux tests were compiled, not executed on this macOS host.
