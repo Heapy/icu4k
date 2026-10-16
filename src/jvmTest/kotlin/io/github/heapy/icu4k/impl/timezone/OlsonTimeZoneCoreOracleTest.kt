@@ -14,7 +14,7 @@ class OlsonTimeZoneCoreOracleTest {
     private data class Pairing(var a: Source, var b: OlsonTimeZoneCore)
     private fun outcome(block: () -> Any?): Any? = try { block() } catch (e: Throwable) {
         val error = if (e is java.lang.reflect.InvocationTargetException) e.cause!! else e
-        when (error) { is NullPointerException -> "null"; is IndexOutOfBoundsException -> "bounds"; else -> error.javaClass.simpleName+":"+error.message }
+        when (error) { is VirtualMachineError -> throw error; is NullPointerException -> "null"; is IndexOutOfBoundsException -> "bounds"; else -> error.javaClass.simpleName+":"+error.message }
     }
     private fun field(a: Any,n: String): Any? = generateSequence(a.javaClass) { it.superclass }.flatMap { it.declaredFields.asSequence() }.first { it.name == n }.also { it.isAccessible = true }.get(a)
     private fun state(p: Pairing) {
@@ -250,6 +250,10 @@ class OlsonTimeZoneCoreOracleTest {
             val source = SourceMeta.getSystemTimeZone(id)
             val target = ZoneMetaCore.getSystemTimeZoneCore(id)
             assertNotNull(source); assertNotNull(target)
+            // Shared frozen prototypes may have different query histories in earlier tests.
+            // Compare lazy state after equivalent queries; fresh-instance tests cover cold state.
+            assertEquals(source.canonicalID,target.getCanonicalID())
+            assertEquals(source.timeZoneRules.map { it.toString() },target.getTimeZoneRules().map { it?.toString() })
             state(Pairing(source,target))
             assertSame(source,SourceMeta.getSystemTimeZone(id)); assertSame(target,ZoneMetaCore.getSystemTimeZoneCore(id))
             assertTrue(target.isFrozen())

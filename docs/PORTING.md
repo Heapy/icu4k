@@ -8714,3 +8714,51 @@ the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 3m 50s. Four new common tests executed on JVM, Node and macOS Arm64;
 Linux tests compiled only. Four new JVM differential groups and the existing
 fields/Gregorian groups passed with the common date framework connected.
+
+## Calendar wall-time conversion and timezone transitions
+
+`CalendarTimeCore` ports computeTime, both computeZoneOffset overloads and the
+nearby-transition search used by WALLTIME_NEXT_VALID. It preserves user-stamp
+priority for MILLISECONDS_IN_DAY and explicit raw/DST offsets, the 548-hour
+wide-arithmetic threshold, Int.MIN_VALUE abs behavior, Int raw+DST overflow,
+strict gap failures and lenient first/last/next-valid policies.
+
+The owner distinguishes virtual isLenient from the private lenient flag and
+reads the stored timezone without calling virtual getTimeZone. Repeated reads
+after callbacks retain source behavior when flags or zone change. Basic zones
+receive the original FORMER/LATTER flags. Non-basic zones use local offset
+queries, the six-hour negative-shift check and conditional UTC recalculation.
+Next-valid uses BasicTimeZone's previous transition or the original two-/thirty-
+hour fallback windows and unit-aligned recursive search. Unsigned midpoint
+arithmetic, live offset arrays, assertion policy and explicit errors are kept.
+Computed time is assigned directly; caller state flags remain the owning
+Calendar's responsibility.
+
+The Gregorian JVM probe now routes computeTime and both zone-offset methods
+through this engine, rebinds it on clone and supplies raw private state through
+its explicit test boundary. Existing date/fields/Gregorian groups therefore
+exercise the combined common conversion pipeline. New comparisons cover strict
+and lenient gaps/overlaps, Basic and non-basic wrappers, randomized field/stamp
+arithmetic, all zone IDs, transition windows and subsecond searches. Fatal VM
+errors are rethrown rather than normalized as successful parity.
+Common tests use the actual common Olson data/rule engine for New York's gap and
+overlap and Apia's missing day, in both Basic and non-basic modes. Scripted
+boundaries cover private/virtual leniency, stale-time preservation on errors,
+assertions, local-option flags, explicit-offset overflow and hour thresholds.
+
+Calendar state management and public factories/facades remain pending.
+
+The full suite exposed an older Olson oracle's dependence on global cache
+history: common frozen prototypes had already initialized transitions while
+ICU4J's prototypes were still cold. The prototype oracle now requests canonical
+IDs and rules from both sides before comparing their lazy internals, retaining
+identity/freeze/data assertions. Fresh-instance tests continue to compare cold
+state. Its outcome helper also rethrows fatal VM errors.
+
+Verification: the focused calendar suite passed in 54s; the combined time/Olson
+cache regression selection passed in 45s. After the oracle correction, the full
+jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
+2m 33s (JVM rerun; unchanged platform checks up to date). The four common tests
+executed successfully on JVM, Node and macOS Arm64 in this verification cycle;
+Linux tests compiled only. Three new JVM differential groups and all existing
+calendar/Olson groups passed.

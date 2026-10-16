@@ -11,13 +11,14 @@ import java.lang.invoke.MethodType
 import kotlin.test.*
 
 class GregorianCalendarCoreOracleTest {
-    internal class Probe(zoneID: String = "Etc/GMT") : GregorianCalendar(TimeZone.getTimeZone(zoneID), ULocale.US) {
+    internal open class Probe(zoneID: String = "Etc/GMT") : GregorianCalendar(TimeZone.getTimeZone(zoneID), ULocale.US) {
         var common = false
         private var ready = false
         var trace = ArrayList<String>()
         var port = GregorianCalendarCore<GregorianCalendar>(Binding(this))
         var fieldPort = CalendarFieldsCore(rawFields(), rawStamps(), FieldBinding(this))
         var datePort = CalendarDateCore(rawFields(),rawStamps(),DateBinding(this))
+        var timePort = CalendarTimeCore<TimeZone>(rawStamps(),TimeBinding(this),Calendar::class.java.desiredAssertionStatus())
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -56,6 +57,11 @@ class GregorianCalendarCoreOracleTest {
             if (common) CalendarDateCore.computeGregorianMonthStart(year,month) else super.computeGregorianMonthStart(year,month)
         override fun getDefaultMonthInYear(year: Int): Int = if (common) datePort.getDefaultMonthInYear(year) else super.getDefaultMonthInYear(year)
         override fun getDefaultDayInMonth(year: Int, month: Int): Int = if (common) datePort.getDefaultDayInMonth(year,month) else super.getDefaultDayInMonth(year,month)
+        override fun computeTime() { if (common) timePort.computeTime() else super.computeTime() }
+        override fun computeZoneOffset(millis: Long, millisInDay: Int): Int =
+            if (common) timePort.computeZoneOffset(millis,millisInDay) else super.computeZoneOffset(millis,millisInDay)
+        override fun computeZoneOffset(millis: Long, millisInDay: Long): Int =
+            if (common) timePort.computeZoneOffset(millis,millisInDay) else super.computeZoneOffset(millis,millisInDay)
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -65,6 +71,7 @@ class GregorianCalendarCoreOracleTest {
             copy.port = port.copyFor(Binding(copy))
             copy.fieldPort = fieldPort.copyFor(copy.rawFields(), copy.rawStamps(), FieldBinding(copy))
             copy.datePort = CalendarDateCore(copy.rawFields(),copy.rawStamps(),DateBinding(copy))
+            copy.timePort = CalendarTimeCore(copy.rawStamps(),TimeBinding(copy),Calendar::class.java.desiredAssertionStatus())
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -91,6 +98,18 @@ class GregorianCalendarCoreOracleTest {
         fun rawStamps() = stampsField.get(this) as ByteArray
         fun rawMask() = maskField.getInt(this)
         fun rawTime() = internalGetTimeInMillis()
+        fun assignTime(value: Long) = timeField.setLong(this,value)
+        fun storedZone() = zoneField.get(this) as TimeZone?
+        fun lenientFlag() = lenientField.getBoolean(this)
+        fun skippedFlag() = skippedField.getInt(this)
+        fun repeatedFlag() = repeatedField.getInt(this)
+        fun computeRawTime() = computeTime()
+        fun zoneOffset32(millis: Long,mid: Int) = computeZoneOffset(millis,mid)
+        fun zoneOffset64(millis: Long,mid: Long) = computeZoneOffset(millis,mid)
+        fun virtualMillis32() = computeMillisInDay()
+        fun virtualMillis64() = computeMillisInDayLong()
+        fun immediatePrevious(base: Long): Long? = if (common) timePort.getImmediatePreviousZoneTransition(base) else immediateTransitionMethod.invoke(this,base) as Long?
+        fun searchPrevious(zone: TimeZone?,base: Long,duration: Long): Long? = if (common) timePort.getPreviousZoneTransitionTime(zone,base,duration) else previousTransitionMethod.invoke(null,zone,base,duration) as Long?
         fun computeAll() = computeFields()
         fun handleFields(day: Int) = handleComputeFields(day)
         fun yearSize(year: Int) = handleGetYearLength(year)
@@ -123,6 +142,33 @@ class GregorianCalendarCoreOracleTest {
         fun previousGregorianLength(year: Int, month: Int) = if (common) CalendarDateCore.gregorianPreviousMonthLength(year,month) else gregorianPreviousMonthLength(year,month)
         fun baseMonthLength(year: Int, month: Int): Int = if (common) datePort.handleGetMonthLength(year,month) else baseMonthLengthHandle.invokeWithArguments(this,year,month) as Int
         fun baseYearLength(year: Int): Int = if (common) datePort.handleGetYearLength(year) else baseYearLengthHandle.invokeWithArguments(this,year) as Int
+    }
+    private class TimeBinding(private val p: Probe) : CalendarTimeCore.Owner<TimeZone> {
+        override fun isLenient() = p.isLenient
+        override fun getLenientFlag() = p.lenientFlag()
+        override fun validateFields() = p.validateAll()
+        override fun computeJulianDay() = p.allJulian()
+        override fun newestStamp(first: Int,last: Int,best: Int) = p.newest(first,last,best)
+        override fun internalGet(field: Int) = p.read(field)
+        override fun computeMillisInDay() = p.virtualMillis32()
+        override fun computeMillisInDayLong() = p.virtualMillis64()
+        override fun computeZoneOffset(millis: Long,millisInDay: Long) = p.zoneOffset64(millis,millisInDay)
+        override fun setTime(time: Long) = p.assignTime(time)
+        override fun getZone() = p.storedZone()
+        override fun getSkippedWallTime() = p.skippedFlag()
+        override fun getRepeatedWallTime() = p.repeatedFlag()
+        override fun isBasicTimeZone(zone: TimeZone?) = zone is com.ibm.icu.util.BasicTimeZone
+        override fun getOffsetFromLocal(zone: TimeZone?,wall: Long,nonExisting: Int,duplicated: Int,offsets: IntArray) {
+            val former = com.ibm.icu.util.BasicTimeZone.LocalOption.FORMER
+            val latter = com.ibm.icu.util.BasicTimeZone.LocalOption.LATTER
+            (zone as com.ibm.icu.util.BasicTimeZone).getOffsetFromLocal(wall,if (nonExisting == 4) former else latter,if (duplicated == 4) former else latter,offsets)
+        }
+        override fun getOffset(zone: TimeZone?,date: Long,local: Boolean,offsets: IntArray) = zone!!.getOffset(date,local,offsets)
+        override fun getTotalOffset(zone: TimeZone?,date: Long) = zone!!.getOffset(date)
+        override fun getPreviousTransition(zone: TimeZone?,base: Long,inclusive: Boolean): CalendarTimeCore.Transition? {
+            val transition = (zone as com.ibm.icu.util.BasicTimeZone).getPreviousTransition(base,inclusive) ?: return null
+            return CalendarTimeCore.Transition { transition.time }
+        }
     }
     private class DateBinding(private val p: Probe) : CalendarDateCore.Owner {
         override fun newestStamp(first: Int,last: Int,best: Int) = p.newest(first,last,best)
@@ -263,6 +309,13 @@ class GregorianCalendarCoreOracleTest {
         private val stampsField = Calendar::class.java.getDeclaredField("stamp").apply { isAccessible = true }
         private val maskField = Calendar::class.java.getDeclaredField("internalSetMask").apply { isAccessible = true }
         private val weekFieldsMethod = Calendar::class.java.getDeclaredMethod("computeWeekFields").apply { isAccessible = true }
+        private val timeField = Calendar::class.java.getDeclaredField("time").apply { isAccessible = true }
+        private val zoneField = Calendar::class.java.getDeclaredField("zone").apply { isAccessible = true }
+        private val lenientField = Calendar::class.java.getDeclaredField("lenient").apply { isAccessible = true }
+        private val skippedField = Calendar::class.java.getDeclaredField("skippedWallTime").apply { isAccessible = true }
+        private val repeatedField = Calendar::class.java.getDeclaredField("repeatedWallTime").apply { isAccessible = true }
+        private val immediateTransitionMethod = Calendar::class.java.getDeclaredMethod("getImmediatePreviousZoneTransition",Long::class.javaPrimitiveType).apply { isAccessible = true }
+        private val previousTransitionMethod = Calendar::class.java.getDeclaredMethod("getPreviousZoneTransitionTime",TimeZone::class.java,Long::class.javaPrimitiveType,Long::class.javaPrimitiveType).apply { isAccessible = true }
         private val lookup = MethodHandles.privateLookupIn(GregorianCalendar::class.java, MethodHandles.lookup())
         private val intType = Int::class.javaPrimitiveType!!
         private val baseJulian = lookup.findSpecial(Calendar::class.java, "handleComputeJulianDay", MethodType.methodType(intType, intType), GregorianCalendar::class.java)
