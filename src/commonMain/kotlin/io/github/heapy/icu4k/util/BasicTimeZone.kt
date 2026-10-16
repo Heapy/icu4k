@@ -9,6 +9,7 @@ import io.github.heapy.icu4k.impl.timezone.BasicTimeZoneCore
 abstract class BasicTimeZone : TimeZone {
     protected constructor() : super()
     protected constructor(id: String?) : super(id)
+    protected constructor(other: BasicTimeZone, copyMarker: Unit) : super(other, copyMarker)
     abstract fun getNextTransition(base: Long, inclusive: Boolean): TimeZoneTransition?
     abstract fun getPreviousTransition(base: Long, inclusive: Boolean): TimeZoneTransition?
     abstract fun getTimeZoneRules(): Array<TimeZoneRule?>?

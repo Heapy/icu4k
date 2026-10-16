@@ -12,6 +12,7 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
     private var id: String? = null
     constructor() : super()
     protected constructor(id: String?) : super() { this.id = id!! }
+    protected constructor(other: TimeZone, @Suppress("UNUSED_PARAMETER") copyMarker: Unit) : super() { id = other.id }
     abstract fun getOffset(era: Int, year: Int, month: Int, day: Int, dayOfWeek: Int, milliseconds: Int): Int
     abstract fun setRawOffset(offsetMillis: Int)
     abstract fun getRawOffset(): Int

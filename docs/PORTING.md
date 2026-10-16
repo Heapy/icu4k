@@ -10015,3 +10015,36 @@ known source CalendarCache nontermination is not invoked in-process.
 Verification: the focused JVM run passed in 1m 17s. Full JVM (2,086 tests), macOS
 Native (994 tests) and JS/Node (996 tests, one existing skip) passed without
 failures; Linux x64 test compilation passed. Combined verification took 5m 53s.
+
+### Public Olson time zones (2026-10-17)
+
+Public common impl.OlsonTimeZone now extends BasicTimeZone and binds the existing
+resource-backed OlsonTimeZoneCore to its public virtual methods. Both source
+constructors (ID and top/resource/ID) are available. An internal prototype-copy
+path is ready for the common timezone factory. Historical/final-rule offsets,
+local-time gap/overlap options, transitions, rules, daylight policies, canonical
+ID, raw-offset mutation, equality/hash and freeze/clone use the existing core.
+
+The core's setID now accepts an optional base-setter callback, allowing the facade
+to update TimeZone's stored ID at precisely the source position after canonical
+ID preservation and final-zone mutation. It retains the two virtual frozen
+checks for a valid mutable rename. Rule comparison first invokes TimeZone's base
+comparison, even for a non-Olson argument, and then compares Olson data without
+repeating the virtual raw/DST queries. Existing standalone core calls retain their
+original behavior. Protected TimeZone/BasicTimeZone copy constructors copy stored
+ID directly, avoiding resource, clock or virtual getter calls on Native copies.
+Olson's protected copy hook supports Native subclasses with additional state.
+Host clones and Native copies bind a fresh owner to their copied core.
+
+New common tests cover resource offsets, transitions/local gaps, frozen and thawed
+copies, canonical ID retention, independent mutation, owner rebinding and a Native
+subclass copy hook. JVM integration oracles compare every available system zone's
+offsets, transitions, rules, hashes and daylight policies with pinned ICU4J 78.3;
+additional probes cover all local options, mutable clones and virtual call order.
+The public TimeZone factory/default runtime and platform host synchronization are
+still pending; this facade supplies their real ICU-zone prerequisite.
+
+Verification: focused Olson JVM integration/core tests passed in 23s. Full JVM
+(2,093 tests), macOS Native (998 tests) and JS/Node (1,000 tests, one existing skip)
+passed without failures; Linux x64 test compilation passed. Combined verification
+completed in 6m 3s.

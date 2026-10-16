@@ -131,7 +131,7 @@ internal class OlsonTimeZoneCore private constructor(
         value == "Etc/Unknown" -> value
         else -> ZoneMetaCore.getCanonicalCLDRID(value) ?: ZoneMetaCore.getCustomID(value)
     }
-    fun setID(value: String?) {
+    fun setID(value: String?, baseSetID: ((String) -> Unit)? = null) {
         if (queryFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen OlsonTimeZone instance.")
         if (canonicalID == null) {
             canonicalID = canonical(queryID())
@@ -140,7 +140,8 @@ internal class OlsonTimeZoneCore private constructor(
         }
         finalZone?.setID(value)
         val newID = value ?: throw NullPointerException()
-        if (queryFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
+        if (baseSetID != null) baseSetID(newID)
+        else if (queryFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
         id = newID
         transitionRulesInitialized = false
     }
@@ -415,9 +416,10 @@ internal class OlsonTimeZoneCore private constructor(
         }
         return result.toTypedArray()
     }
-    fun hasSameRules(other: OlsonTimeZoneCore?): Boolean {
+    fun hasSameRules(other: OlsonTimeZoneCore?, compareBaseRules: Boolean = true): Boolean {
         if (this === other) return true
-        if (other == null || queryRaw() != other.queryRaw() || queryUseDST() != other.queryUseDST()) return false
+        if (other == null) return false
+        if (compareBaseRules && (queryRaw() != other.queryRaw() || queryUseDST() != other.queryUseDST())) return false
         if (finalZone == null) { if (other.finalZone != null) return false }
         else if (other.finalZone == null || finalStartYear != other.finalStartYear || !finalZone!!.hasSameRules(other.finalZone)) return false
         return transitionCount == other.transitionCount && transitionTimes64.contentEquals(other.transitionTimes64) && typeCount == other.typeCount &&
