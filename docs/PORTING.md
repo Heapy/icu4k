@@ -8674,3 +8674,43 @@ the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 10m 8s. All four new common tests ran on JVM, Node and macOS Arm64;
 Linux tests compiled only. Four new JVM differential test groups and the three
 existing Gregorian groups passed with the common field pipeline connected.
+
+## Calendar date selection, Julian days and validation
+
+`CalendarDateCore` ports computeJulianDay's explicit-JULIAN_DAY stamp priority,
+the base handleComputeJulianDay framework for dates/day-of-year/weeks/ordinal
+weekdays, internal month precedence, defaulted/raw field reads, masked internal
+field writes, field validation and default month/year-length dispatch. Owner
+services retain the virtual calendar hooks and the default month-length
+method's System.out.printf diagnostic. The common engine does not replace that
+diagnostic with a no-op.
+
+Arithmetic helpers cover proleptic Gregorian month starts and month lengths,
+epoch/Julian conversion and all floorDivide overloads. They preserve source
+Int overflow and signed division behavior, including truncating a negative Long
+quotient to Int before computing its remainder. Division-by-zero precedes a
+null/empty remainder store, and explicit checks preserve those failures on JS.
+Validation retains user-stamp filtering, zero ordinal-weekday rejection,
+calendar-specific month/year limits, private field reads and exact explicit
+messages. Default arguments and callbacks execute in source order.
+
+The Gregorian oracle now uses this common base Julian-day framework rather
+than a special method handle in common mode. computeJulianDay, internal month
+selection, validation, metadata access and Gregorian arithmetic are routed
+through the common implementations; clones bind all three engines to their own
+fields/stamps. New JVM groups compare randomized stamp/date resolution, all
+base Julian-day branches, validation and partial writes, extreme arithmetic,
+remainder-store failures, and the default length callbacks and diagnostic.
+The existing fields/Gregorian suites also run through the combined pipeline.
+Common fixtures cover epoch/default dates, ordinal-month and explicit-JD
+precedence, ISO weeks, last weekdays, default-argument mutation, validation,
+internal-set masks and division/epoch boundaries.
+
+Calendar state management, public factories and the timezone/time computation
+framework remain pending.
+
+Verification: the focused Calendar date/fields/Gregorian JVM selection passed;
+the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 3m 50s. Four new common tests executed on JVM, Node and macOS Arm64;
+Linux tests compiled only. Four new JVM differential groups and the existing
+fields/Gregorian groups passed with the common date framework connected.

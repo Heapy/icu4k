@@ -17,6 +17,7 @@ class GregorianCalendarCoreOracleTest {
         var trace = ArrayList<String>()
         var port = GregorianCalendarCore<GregorianCalendar>(Binding(this))
         var fieldPort = CalendarFieldsCore(rawFields(), rawStamps(), FieldBinding(this))
+        var datePort = CalendarDateCore(rawFields(),rawStamps(),DateBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -45,6 +46,16 @@ class GregorianCalendarCoreOracleTest {
             if (common) fieldPort.resolveFields(table) else super.resolveFields(table)
         override fun computeMillisInDay(): Int = if (common) fieldPort.computeMillisInDay() else super.computeMillisInDay()
         override fun computeMillisInDayLong(): Long = if (common) fieldPort.computeMillisInDayLong() else super.computeMillisInDayLong()
+        override fun computeJulianDay(): Int = if (common) datePort.computeJulianDay() else super.computeJulianDay()
+        override fun internalGetMonth(): Int = if (common) datePort.internalGetMonth() else super.internalGetMonth()
+        override fun internalGetMonth(defaultValue: Int): Int = if (common) datePort.internalGetMonth(defaultValue) else super.internalGetMonth(defaultValue)
+        override fun validateFields() { if (common) datePort.validateFields() else super.validateFields() }
+        override fun validateField(field: Int) { if (common) datePort.validateField(field) else super.validateField(field) }
+        override fun fieldName(field: Int): String = if (common) datePort.fieldName(field) else super.fieldName(field)
+        override fun computeGregorianMonthStart(year: Int, month: Int): Int =
+            if (common) CalendarDateCore.computeGregorianMonthStart(year,month) else super.computeGregorianMonthStart(year,month)
+        override fun getDefaultMonthInYear(year: Int): Int = if (common) datePort.getDefaultMonthInYear(year) else super.getDefaultMonthInYear(year)
+        override fun getDefaultDayInMonth(year: Int, month: Int): Int = if (common) datePort.getDefaultDayInMonth(year,month) else super.getDefaultDayInMonth(year,month)
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -53,6 +64,7 @@ class GregorianCalendarCoreOracleTest {
             val copy = super.clone() as Probe
             copy.port = port.copyFor(Binding(copy))
             copy.fieldPort = fieldPort.copyFor(copy.rawFields(), copy.rawStamps(), FieldBinding(copy))
+            copy.datePort = CalendarDateCore(copy.rawFields(),copy.rawStamps(),DateBinding(copy))
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -63,9 +75,9 @@ class GregorianCalendarCoreOracleTest {
         fun fields(day: Int): List<Int> { if (common) fieldPort.computeGregorianFields(day) else computeGregorianFields(day); handleComputeFields(day); return listOf(ERA,YEAR,MONTH,DAY_OF_MONTH,DAY_OF_YEAR,EXTENDED_YEAR,ORDINAL_MONTH).map { internalGet(it) } }
         fun extendedYear() = handleGetExtendedYear()
         fun julianDay(field: Int) = handleComputeJulianDay(field)
-        fun read(field: Int) = internalGet(field)
-        fun read(field: Int, default: Int) = internalGet(field, default)
-        fun write(field: Int, value: Int) = internalSet(field, value)
+        fun read(field: Int) = if (common) datePort.internalGet(field) else internalGet(field)
+        fun read(field: Int, default: Int) = if (common) datePort.internalGet(field,default) else internalGet(field, default)
+        fun write(field: Int, value: Int) { if (common) datePort.internalSet(field,value) else internalSet(field, value) }
         fun month() = internalGetMonth()
         fun newer(a: Int, b: Int) = newerField(a, b)
         fun gregorianMonth() = if (common) fieldPort.gregorianMonth else getGregorianMonth()
@@ -91,6 +103,53 @@ class GregorianCalendarCoreOracleTest {
         fun chooseNewer(a: Int, b: Int) = if (common) fieldPort.newerField(a,b) else newerField(a,b)
         fun weekFields() { if (common) fieldPort.computeWeekFields() else weekFieldsMethod.invoke(this) }
         fun sourceDateTable() = getFieldResolutionTable()
+        fun monthDefault(default: Int) = internalGetMonth(default)
+        fun defaultMonth(year: Int) = getDefaultMonthInYear(year)
+        fun defaultDay(year: Int, month: Int) = getDefaultDayInMonth(year,month)
+        fun allJulian() = computeJulianDay()
+        fun baseJulianDay(field: Int): Int = if (common) datePort.handleComputeJulianDay(field) else baseJulian.invokeWithArguments(this,field) as Int
+        fun validateAll() = validateFields()
+        fun validateOne(field: Int) = validateField(field)
+        fun validateRange(field: Int, min: Int, max: Int) { if (common) datePort.validateField(field,min,max) else validateField(field,min,max) }
+        fun nameOf(field: Int) = fieldName(field)
+        fun gregorianStart(year: Int, month: Int) = computeGregorianMonthStart(year,month)
+        fun floorInt(n: Int,d: Int) = if (common) CalendarDateCore.floorDivide(n,d) else floorDivide(n,d)
+        fun floorLong(n: Long,d: Long) = if (common) CalendarDateCore.floorDivide(n,d) else floorDivide(n,d)
+        fun floorIntRemainder(n: Int,d: Int,r: IntArray?) = if (common) CalendarDateCore.floorDivide(n,d,r) else floorDivide(n,d,r)
+        fun floorLongRemainder(n: Long,d: Int,r: IntArray?) = if (common) CalendarDateCore.floorDivide(n,d,r) else floorDivide(n,d,r)
+        fun millisDay(value: Long) = if (common) CalendarDateCore.millisToJulianDay(value) else millisToJulianDay(value)
+        fun dayMillis(value: Int) = if (common) CalendarDateCore.julianDayToMillis(value) else julianDayToMillis(value)
+        fun gregorianLength(year: Int, month: Int) = if (common) CalendarDateCore.gregorianMonthLength(year,month) else gregorianMonthLength(year,month)
+        fun previousGregorianLength(year: Int, month: Int) = if (common) CalendarDateCore.gregorianPreviousMonthLength(year,month) else gregorianPreviousMonthLength(year,month)
+        fun baseMonthLength(year: Int, month: Int): Int = if (common) datePort.handleGetMonthLength(year,month) else baseMonthLengthHandle.invokeWithArguments(this,year,month) as Int
+        fun baseYearLength(year: Int): Int = if (common) datePort.handleGetYearLength(year) else baseYearLengthHandle.invokeWithArguments(this,year) as Int
+    }
+    private class DateBinding(private val p: Probe) : CalendarDateCore.Owner {
+        override fun newestStamp(first: Int,last: Int,best: Int) = p.newest(first,last,best)
+        override fun resolveFields(table: Array<Array<IntArray>>?) = p.resolve(table)
+        override fun getFieldResolutionTable() = p.sourceDateTable()
+        override fun newerField(defaultField: Int,alternateField: Int) = p.newer(defaultField,alternateField)
+        override fun internalGet(field: Int) = p.read(field)
+        override fun internalGet(field: Int,defaultValue: Int) = p.read(field,defaultValue)
+        override fun internalGetMonth() = p.month()
+        override fun internalGetMonth(defaultValue: Int) = p.monthDefault(defaultValue)
+        override fun internalSet(field: Int,value: Int) = p.write(field,value)
+        override fun handleGetExtendedYear() = p.extendedYear()
+        override fun handleComputeJulianDay(bestField: Int) = p.julianDay(bestField)
+        override fun handleComputeMonthStart(year: Int,month: Int,useMonth: Boolean) = p.monthStart(year,month,useMonth)
+        override fun getDefaultMonthInYear(year: Int) = p.defaultMonth(year)
+        override fun getDefaultDayInMonth(year: Int,month: Int) = p.defaultDay(year,month)
+        override fun isSet(field: Int) = p.isSet(field)
+        override fun getFirstDayOfWeek() = p.firstDayOfWeek
+        override fun getMinimalDaysInFirstWeek() = p.minimalDaysInFirstWeek
+        override fun handleGetMonthLength(year: Int,month: Int) = p.monthLength(year,month)
+        override fun handleGetYearLength(year: Int) = p.yearLength(year)
+        override fun validateField(field: Int) = p.validateOne(field)
+        override fun getMinimum(field: Int) = p.getMinimum(field)
+        override fun getMaximum(field: Int) = p.getMaximum(field)
+        override fun fieldName(field: Int) = p.nameOf(field)
+        override fun getInternalSetMask() = p.rawMask()
+        override fun reportDefaultMonthLength(year: Int,month: Int) { System.out.printf("handleGetMonthLength(ey=%d, m=%d)",year,month) }
     }
     private class FieldBinding(private val p: Probe) : CalendarFieldsCore.Owner<TimeZone> {
         override fun getTimeZone(): TimeZone = p.timeZone
@@ -116,7 +175,7 @@ class GregorianCalendarCoreOracleTest {
         override fun internalGet(field: Int, defaultValue: Int) = p.read(field, defaultValue)
         override fun internalGetMonth() = p.month()
         override fun newerField(defaultField: Int, alternateField: Int) = p.newer(defaultField, alternateField)
-        override fun baseComputeJulianDay(bestField: Int): Int = baseJulian.invokeWithArguments(p, bestField) as Int
+        override fun baseComputeJulianDay(bestField: Int): Int = p.baseJulianDay(bestField)
         override fun get(field: Int) = p.get(field)
         override fun set(field: Int, value: Int) = p.set(field, value)
         override fun getYearLength(year: Int) = p.yearLength(year)
@@ -209,6 +268,8 @@ class GregorianCalendarCoreOracleTest {
         private val baseJulian = lookup.findSpecial(Calendar::class.java, "handleComputeJulianDay", MethodType.methodType(intType, intType), GregorianCalendar::class.java)
         private val baseRollHandle = lookup.findSpecial(Calendar::class.java, "roll", MethodType.methodType(Void.TYPE, intType, intType), GregorianCalendar::class.java)
         private val baseActualMaximum = lookup.findSpecial(Calendar::class.java, "getActualMaximum", MethodType.methodType(intType, intType), GregorianCalendar::class.java)
+        private val baseMonthLengthHandle = lookup.findSpecial(Calendar::class.java, "handleGetMonthLength", MethodType.methodType(intType, intType, intType), GregorianCalendar::class.java)
+        private val baseYearLengthHandle = lookup.findSpecial(Calendar::class.java, "handleGetYearLength", MethodType.methodType(intType, intType), GregorianCalendar::class.java)
         private fun outcome(block: () -> Any?): Any? = try { block() } catch (e: Throwable) {
             when (e) {
                 is VirtualMachineError -> throw e
