@@ -11,11 +11,12 @@ import java.lang.invoke.MethodType
 import kotlin.test.*
 
 class GregorianCalendarCoreOracleTest {
-    private class Probe(zoneID: String = "Etc/GMT") : GregorianCalendar(TimeZone.getTimeZone(zoneID), ULocale.US) {
+    internal class Probe(zoneID: String = "Etc/GMT") : GregorianCalendar(TimeZone.getTimeZone(zoneID), ULocale.US) {
         var common = false
         private var ready = false
         var trace = ArrayList<String>()
         var port = GregorianCalendarCore<GregorianCalendar>(Binding(this))
+        var fieldPort = CalendarFieldsCore(rawFields(), rawStamps(), FieldBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -35,6 +36,15 @@ class GregorianCalendarCoreOracleTest {
             record("start:$year:$month:$useMonth")
             return if (common) port.handleComputeMonthStart(year, month, useMonth) else super.handleComputeMonthStart(year, month, useMonth)
         }
+        override fun computeFields() { if (common) fieldPort.computeFields() else super.computeFields() }
+        override fun weekNumber(desiredDay: Int, dayOfPeriod: Int, dayOfWeek: Int): Int =
+            if (common) fieldPort.weekNumber(desiredDay, dayOfPeriod, dayOfWeek) else super.weekNumber(desiredDay, dayOfPeriod, dayOfWeek)
+        override fun newerField(defaultField: Int, alternateField: Int): Int =
+            if (common) fieldPort.newerField(defaultField,alternateField) else super.newerField(defaultField,alternateField)
+        override fun resolveFields(table: Array<Array<IntArray>>?): Int =
+            if (common) fieldPort.resolveFields(table) else super.resolveFields(table)
+        override fun computeMillisInDay(): Int = if (common) fieldPort.computeMillisInDay() else super.computeMillisInDay()
+        override fun computeMillisInDayLong(): Long = if (common) fieldPort.computeMillisInDayLong() else super.computeMillisInDayLong()
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -42,6 +52,7 @@ class GregorianCalendarCoreOracleTest {
             record("clone")
             val copy = super.clone() as Probe
             copy.port = port.copyFor(Binding(copy))
+            copy.fieldPort = fieldPort.copyFor(copy.rawFields(), copy.rawStamps(), FieldBinding(copy))
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -49,7 +60,7 @@ class GregorianCalendarCoreOracleTest {
         fun monthLength(year: Int, month: Int) = handleGetMonthLength(year, month)
         fun yearLength(year: Int) = handleGetYearLength(year)
         fun monthStart(year: Int, month: Int, useMonth: Boolean) = handleComputeMonthStart(year, month, useMonth)
-        fun fields(day: Int): List<Int> { computeGregorianFields(day); handleComputeFields(day); return listOf(ERA,YEAR,MONTH,DAY_OF_MONTH,DAY_OF_YEAR,EXTENDED_YEAR,ORDINAL_MONTH).map { internalGet(it) } }
+        fun fields(day: Int): List<Int> { if (common) fieldPort.computeGregorianFields(day) else computeGregorianFields(day); handleComputeFields(day); return listOf(ERA,YEAR,MONTH,DAY_OF_MONTH,DAY_OF_YEAR,EXTENDED_YEAR,ORDINAL_MONTH).map { internalGet(it) } }
         fun extendedYear() = handleGetExtendedYear()
         fun julianDay(field: Int) = handleComputeJulianDay(field)
         fun read(field: Int) = internalGet(field)
@@ -57,13 +68,41 @@ class GregorianCalendarCoreOracleTest {
         fun write(field: Int, value: Int) = internalSet(field, value)
         fun month() = internalGetMonth()
         fun newer(a: Int, b: Int) = newerField(a, b)
-        fun gregorianMonth() = getGregorianMonth()
-        fun gregorianDayOfMonth() = getGregorianDayOfMonth()
-        fun gregorianDayOfYear() = getGregorianDayOfYear()
-        fun gregorianYear() = getGregorianYear()
+        fun gregorianMonth() = if (common) fieldPort.gregorianMonth else getGregorianMonth()
+        fun gregorianDayOfMonth() = if (common) fieldPort.gregorianDayOfMonth else getGregorianDayOfMonth()
+        fun gregorianDayOfYear() = if (common) fieldPort.gregorianDayOfYear else getGregorianDayOfYear()
+        fun gregorianYear() = if (common) fieldPort.gregorianYear else getGregorianYear()
         fun week(day: Int, dow: Int) = weekNumber(day, dow)
         fun finish() = complete()
         fun flags() = if (common) listOf(port.isGregorian, port.invertGregorian) else listOf(isGregorian, invertGregorian)
+        fun rawFields() = fieldsField.get(this) as IntArray
+        fun rawStamps() = stampsField.get(this) as ByteArray
+        fun rawMask() = maskField.getInt(this)
+        fun rawTime() = internalGetTimeInMillis()
+        fun computeAll() = computeFields()
+        fun handleFields(day: Int) = handleComputeFields(day)
+        fun yearSize(year: Int) = handleGetYearLength(year)
+        fun week3(desired: Int, period: Int, dow: Int) = weekNumber(desired, period, dow)
+        fun millis32() = if (common) fieldPort.computeMillisInDay() else computeMillisInDay()
+        fun millis64() = if (common) fieldPort.computeMillisInDayLong() else computeMillisInDayLong()
+        fun resolve(table: Array<Array<IntArray>>?) = if (common) fieldPort.resolveFields(table) else resolveFields(table)
+        fun newest(first: Int, last: Int, best: Int) = if (common) fieldPort.newestStamp(first,last,best) else newestStamp(first,last,best)
+        fun stampAt(field: Int) = if (common) fieldPort.getStamp(field) else getStamp(field)
+        fun chooseNewer(a: Int, b: Int) = if (common) fieldPort.newerField(a,b) else newerField(a,b)
+        fun weekFields() { if (common) fieldPort.computeWeekFields() else weekFieldsMethod.invoke(this) }
+        fun sourceDateTable() = getFieldResolutionTable()
+    }
+    private class FieldBinding(private val p: Probe) : CalendarFieldsCore.Owner<TimeZone> {
+        override fun getTimeZone(): TimeZone = p.timeZone
+        override fun getOffset(zone: TimeZone?, date: Long, local: Boolean, offsets: IntArray) = zone!!.getOffset(date,local,offsets)
+        override fun getTime() = p.rawTime()
+        override fun getInternalSetMask() = p.rawMask()
+        override fun handleComputeFields(julianDay: Int) = p.handleFields(julianDay)
+        override fun getFirstDayOfWeek() = p.firstDayOfWeek
+        override fun getMinimalDaysInFirstWeek() = p.minimalDaysInFirstWeek
+        override fun handleGetYearLength(year: Int) = p.yearSize(year)
+        override fun weekNumber(desiredDay: Int, dayOfPeriod: Int, dayOfWeek: Int) = p.week3(desiredDay,dayOfPeriod,dayOfWeek)
+        override fun internalGet(field: Int) = p.read(field)
     }
     private class Binding(private val p: Probe) : GregorianCalendarCore.Owner<GregorianCalendar> {
         override fun cutoverExtendedYear(date: Date): Int = GregorianCalendar(p.timeZone).apply { time = date }.get(Calendar.EXTENDED_YEAR)
@@ -161,6 +200,10 @@ class GregorianCalendarCoreOracleTest {
     }
 
     companion object {
+        private val fieldsField = Calendar::class.java.getDeclaredField("fields").apply { isAccessible = true }
+        private val stampsField = Calendar::class.java.getDeclaredField("stamp").apply { isAccessible = true }
+        private val maskField = Calendar::class.java.getDeclaredField("internalSetMask").apply { isAccessible = true }
+        private val weekFieldsMethod = Calendar::class.java.getDeclaredMethod("computeWeekFields").apply { isAccessible = true }
         private val lookup = MethodHandles.privateLookupIn(GregorianCalendar::class.java, MethodHandles.lookup())
         private val intType = Int::class.javaPrimitiveType!!
         private val baseJulian = lookup.findSpecial(Calendar::class.java, "handleComputeJulianDay", MethodType.methodType(intType, intType), GregorianCalendar::class.java)

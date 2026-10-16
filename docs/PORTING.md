@@ -8635,3 +8635,42 @@ on JVM, Node and macOS Arm64; Linux tests compiled only. All three differential
 test groups passed. A standalone ICU4J Java process reproduced the cutover
 setter issue; its source, output and compatibility decision are tracked as
 ICU4J-005 in ICU4J_BUGS.md.
+
+## Calendar fields, weeks and stamp resolution
+
+`CalendarFieldsCore` ports Calendar's time-to-fields pipeline, Gregorian cache
+fields, localized day/week numbering, field-resolution tables and remapping,
+stamp recency queries, and both millis-in-day overloads. It binds to the owning
+calendar's IntArray fields and ByteArray stamps. Required owner services supply
+the raw stored time, timezone, internal-set mask, calendar-specific fields and
+year lengths, virtual week numbering and internal field reads.
+
+The pipeline obtains the zone before reading time, rereads stored time after
+the offset callback, marks stamps before the calendar-specific callback, then
+computes week and time fields. Source ordering and arithmetic include signed
+mask shifts, signed byte stamps, Int overflow before Gregorian epoch-day
+promotion, localized week-year boundaries, first-match ties and DATE remapping
+guards. Both time-of-day overloads prefer HOUR_OF_DAY on stamp ties. The wide
+overload retains the source's Int multiplication for 12 * AM_PM before adding
+to its Long accumulator. Explicit bounds checks preserve invalid-index behavior
+on JavaScript. Copying rebinds fields, stamps and owner while preserving the
+cached Gregorian values.
+
+The Gregorian JVM probe now routes computeFields, newerField, resolveFields,
+weekNumber and millis-in-day through this engine in common mode. Its Gregorian
+owner reads the common Gregorian cache, and clones rebind both common engines.
+The existing Gregorian suite therefore tests the combined common pipeline.
+New comparisons cover all localized week rules over timezone transitions and
+date limits, randomized time values and byte stamps, remapping/tie/malformed
+tables, week/year boundaries and overflowing week arguments. Common tests
+cover known epoch/ISO fields, stamp timing, a timezone callback changing stored
+time, null-zone failure, copies, extended masks, precedence and wide arithmetic.
+
+Public Calendar state management, factories, validation and time computation
+remain pending; this stage does not introduce a public facade.
+
+Verification: the focused Calendar/Gregorian JVM selection passed in 1m 6s;
+the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 10m 8s. All four new common tests ran on JVM, Node and macOS Arm64;
+Linux tests compiled only. Four new JVM differential test groups and the three
+existing Gregorian groups passed with the common field pipeline connected.
