@@ -9883,3 +9883,31 @@ tests were compiled only on this macOS host.
 Global factories/default-zone constructors, other public calendar subclasses,
 formatting integration, Java Locale adapters, debug formatting and serialization
 compatibility are still pending; this does not complete the public Calendar API.
+
+### Public SimpleTimeZone with the common Gregorian lifecycle (2026-10-17)
+
+Public common SimpleTimeZone binds all four constructor forms, rule setters,
+offset queries, local-option disambiguation, transitions, rule extraction,
+equality/hash, freeze and clone operations to SimpleTimeZoneCore. Its
+inDaylightTime constructs the actual common GregorianCalendar with this zone,
+sets the supplied Date and uses the Gregorian completion/DST field lifecycle.
+The earlier dependency on a real calendar facade is now resolved; no direct
+single-offset substitute is used for this method.
+
+The ID setter routes the core's base-set boundary through TimeZone.setID,
+retaining null/frozen check order and two virtual frozen queries for successful
+updates, while keeping private base ID and rule-engine ID synchronized. Clones rebind all core
+owner callbacks to the new instance, retaining source shallow rule-cache/info
+sharing. The standard Native class has a typed mutable-copy path. Arbitrary
+Native subclasses still need a typed override to preserve their extra state.
+
+Two common and three JVM oracle groups cover summer/winter and transition
+instants, extreme Date values, all LocalOption pairs, skipped/repeated calendar
+wall-time policies, rule mutations, hashes, ID changes, frozen/thawed copies,
+virtual callback order and subtype clone-owner rebinding. All common groups
+passed on JVM/JS/macOS Native and all JVM oracle groups passed. Combined final
+full JVM/macOS tests and Linux x64 test compilation passed in 4m18s; full JS Node
+passed separately in 1m9s. Linux tests were compiled only on this macOS host.
+README now demonstrates public explicit-zone Gregorian arithmetic. Host zone
+factories/default ownership, localized display names and serialization remain
+pending in the wider TimeZone API.

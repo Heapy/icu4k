@@ -55,11 +55,12 @@ internal class SimpleTimeZoneCore(
         if (frozenCheck) throw UnsupportedOperationException("Attempt to modify a frozen SimpleTimeZone instance.")
     }
     fun getID(): String = id
-    fun setID(value: String?, frozenCheck: Boolean = queryFrozen()) {
+    fun setID(value: String?, frozenCheck: Boolean = queryFrozen(), baseSetID: ((String) -> Unit)? = null) {
         checkMutable(frozenCheck)
         val newID = value!!
         // TimeZone.setID checks null before its own virtual frozen query.
-        if (queryFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
+        if (baseSetID != null) baseSetID(newID)
+        else if (queryFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
         id = newID
         transitionRulesInitialized = false
     }

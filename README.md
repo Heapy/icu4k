@@ -389,5 +389,23 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
-The `Date` boundary retains mutable epoch milliseconds and aliases `java.util.Date`
-on JVM. Full time-zone lookup and calendar/date formatting are still pending.
+`GregorianCalendar` supports explicit time zones, field resolution and date arithmetic:
+
+```kotlin
+import io.github.heapy.icu4k.util.Calendar
+import io.github.heapy.icu4k.util.GregorianCalendar
+import io.github.heapy.icu4k.util.SimpleTimeZone
+import io.github.heapy.icu4k.util.ULocale
+
+val calendar = GregorianCalendar(SimpleTimeZone(0, "UTC"), ULocale.US)
+calendar.clear()
+calendar.set(2024, Calendar.JANUARY, 31)
+calendar.add(Calendar.MONTH, 1)
+println(calendar.get(Calendar.DATE)) // 29
+```
+
+`SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
+local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
+retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. System-zone
+lookup/default-zone factories, remaining calendar APIs and date formatting are
+still pending; see [the porting log](docs/PORTING.md) for current coverage.
