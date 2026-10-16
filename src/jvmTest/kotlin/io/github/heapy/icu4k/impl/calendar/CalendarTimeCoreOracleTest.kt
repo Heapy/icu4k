@@ -44,10 +44,10 @@ class CalendarTimeCoreOracleTest {
                 val p = Probe(id)
                 for (date in cases) for (repeat in 0..1) for (skip in 0..2) for (lenient in listOf(false,true)) {
                     compare(p, {
-                        p.assignTime(123); p.clear(); p.timeZone = wrapped ?: base; p.isLenient = lenient
+                        p.assignTime(123); p.clearFields(); p.timeZone = wrapped ?: base; p.isLenient = lenient
                         p.repeatedWallTimeOption = repeat; p.skippedWallTimeOption = skip
-                        p.set(Calendar.EXTENDED_YEAR,date[0]); p.set(Calendar.MONTH,date[1]); p.set(Calendar.DAY_OF_MONTH,date[2])
-                        p.set(Calendar.HOUR_OF_DAY,date[3]); p.set(Calendar.MINUTE,date[4])
+                        p.setField(Calendar.EXTENDED_YEAR,date[0]); p.setField(Calendar.MONTH,date[1]); p.setField(Calendar.DAY_OF_MONTH,date[2])
+                        p.setField(Calendar.HOUR_OF_DAY,date[3]); p.setField(Calendar.MINUTE,date[4])
                     },wrapped) { p.computeRawTime() }
                 }
             }
@@ -64,7 +64,7 @@ class CalendarTimeCoreOracleTest {
             val stamps = ByteArray(24) { random.nextInt(-1,5).toByte() }
             stamps[19] = 5; stamps[2] = 5; stamps[5] = 5
             compare(p, {
-                p.assignTime(123); p.clear(); p.isLenient = true; p.skippedWallTimeOption = 0; p.repeatedWallTimeOption = 0
+                p.assignTime(123); p.clearFields(); p.isLenient = true; p.skippedWallTimeOption = 0; p.repeatedWallTimeOption = 0
                 values.copyInto(p.rawFields()); stamps.copyInto(p.rawStamps())
             }) { p.computeRawTime() }
         }

@@ -19,6 +19,7 @@ class GregorianCalendarCoreOracleTest {
         var fieldPort = CalendarFieldsCore(rawFields(), rawStamps(), FieldBinding(this))
         var datePort = CalendarDateCore(rawFields(),rawStamps(),DateBinding(this))
         var timePort = CalendarTimeCore<TimeZone>(rawStamps(),TimeBinding(this),Calendar::class.java.desiredAssertionStatus())
+        var statePort = CalendarStateCore(rawFields(),rawStamps(),StateBinding(this),StateOwner(this),Calendar::class.java.desiredAssertionStatus())
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -62,6 +63,27 @@ class GregorianCalendarCoreOracleTest {
             if (common) timePort.computeZoneOffset(millis,millisInDay) else super.computeZoneOffset(millis,millisInDay)
         override fun computeZoneOffset(millis: Long, millisInDay: Long): Int =
             if (common) timePort.computeZoneOffset(millis,millisInDay) else super.computeZoneOffset(millis,millisInDay)
+        override fun complete() { if (common) statePort.complete() else super.complete() }
+        override fun getTimeInMillis(): Long = if (common) statePort.getTimeInMillis() else super.getTimeInMillis()
+        override fun setTimeInMillis(value: Long) { if (common) statePort.setTimeInMillis(value) else super.setTimeInMillis(value) }
+        override fun getTimeZone(): TimeZone? = if (common) statePort.getTimeZone() else super.getTimeZone()
+        override fun setTimeZone(value: TimeZone?) { if (common) statePort.setTimeZone(value) else super.setTimeZone(value) }
+        override fun isLenient(): Boolean = if (common) statePort.isLenient() else super.isLenient()
+        override fun setLenient(value: Boolean) { if (common) statePort.setLenient(value) else super.setLenient(value) }
+        override fun getRepeatedWallTimeOption(): Int = if (common) statePort.getRepeatedWallTimeOption() else super.getRepeatedWallTimeOption()
+        override fun setRepeatedWallTimeOption(value: Int) { if (common) statePort.setRepeatedWallTimeOption(value) else super.setRepeatedWallTimeOption(value) }
+        override fun getSkippedWallTimeOption(): Int = if (common) statePort.getSkippedWallTimeOption() else super.getSkippedWallTimeOption()
+        override fun setSkippedWallTimeOption(value: Int) { if (common) statePort.setSkippedWallTimeOption(value) else super.setSkippedWallTimeOption(value) }
+        override fun getFirstDayOfWeek(): Int = if (common) statePort.getFirstDayOfWeek() else super.getFirstDayOfWeek()
+        override fun setFirstDayOfWeek(value: Int) { if (common) statePort.setFirstDayOfWeek(value) else super.setFirstDayOfWeek(value) }
+        override fun getMinimalDaysInFirstWeek(): Int = if (common) statePort.getMinimalDaysInFirstWeek() else super.getMinimalDaysInFirstWeek()
+        override fun setMinimalDaysInFirstWeek(value: Int) { if (common) statePort.setMinimalDaysInFirstWeek(value) else super.setMinimalDaysInFirstWeek(value) }
+        override fun getRelatedYearDifference(): Int = if (common) statePort.getRelatedYearDifference() else super.getRelatedYearDifference()
+        override fun getRelatedYear(): Int = if (common) statePort.getRelatedYear() else super.getRelatedYear()
+        override fun setRelatedYear(year: Int) { if (common) statePort.setRelatedYear(year) else super.setRelatedYear(year) }
+        override fun inTemporalLeapYear(): Boolean = if (common) statePort.inTemporalLeapYear() else super.inTemporalLeapYear()
+        override fun getTemporalMonthCode(): String = if (common) statePort.getTemporalMonthCode() else super.getTemporalMonthCode()
+        override fun setTemporalMonthCode(value: String?) { if (common) statePort.setTemporalMonthCode(value) else super.setTemporalMonthCode(value) }
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -72,6 +94,7 @@ class GregorianCalendarCoreOracleTest {
             copy.fieldPort = fieldPort.copyFor(copy.rawFields(), copy.rawStamps(), FieldBinding(copy))
             copy.datePort = CalendarDateCore(copy.rawFields(),copy.rawStamps(),DateBinding(copy))
             copy.timePort = CalendarTimeCore(copy.rawStamps(),TimeBinding(copy),Calendar::class.java.desiredAssertionStatus())
+            copy.statePort = CalendarStateCore(copy.rawFields(),copy.rawStamps(),StateBinding(copy),StateOwner(copy),Calendar::class.java.desiredAssertionStatus())
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -142,6 +165,55 @@ class GregorianCalendarCoreOracleTest {
         fun previousGregorianLength(year: Int, month: Int) = if (common) CalendarDateCore.gregorianPreviousMonthLength(year,month) else gregorianPreviousMonthLength(year,month)
         fun baseMonthLength(year: Int, month: Int): Int = if (common) datePort.handleGetMonthLength(year,month) else baseMonthLengthHandle.invokeWithArguments(this,year,month) as Int
         fun baseYearLength(year: Int): Int = if (common) datePort.handleGetYearLength(year) else baseYearLengthHandle.invokeWithArguments(this,year) as Int
+        fun getField(field: Int) = if (common) statePort.get(field) else get(field)
+        fun setField(field: Int,value: Int) { if (common) statePort.set(field,value) else set(field,value) }
+        fun setDateFields(year: Int,month: Int,day: Int) { if (common) statePort.set(year,month,day) else set(year,month,day) }
+        fun setDateTimeFields(year: Int,month: Int,day: Int,hour: Int,minute: Int,second: Int) { if (common) statePort.set(year,month,day,hour,minute,second) else set(year,month,day,hour,minute,second) }
+        fun clearFields() { if (common) statePort.clear() else clear() }
+        fun clearField(field: Int) { if (common) statePort.clear(field) else clear(field) }
+        fun fieldIsSet(field: Int) = if (common) statePort.isSet(field) else isSet(field)
+        fun dateValue(): Date = if (common) statePort.getTime() else time
+        fun assignDate(value: Date?) { if (common) statePort.setTime(value) else setTime(value) }
+        fun relatedDifference() = getRelatedYearDifference()
+        fun lifecycleSnapshot(): List<Any?> = stateFields.map { (name,field) -> if (name == "zone") (field.get(this) as TimeZone?)?.id else field.get(this) }
+        fun forceLifecycle(name: String,value: Any?) = stateFields.getValue(name).set(this,value)
+    }
+    private class StateOwner(private val p: Probe) : CalendarStateCore.Owner {
+        override fun computeFields() = p.computeAll()
+        override fun computeTime() = p.computeRawTime()
+        override fun complete() = p.finish()
+        override fun isLenient() = p.isLenient
+        override fun getTimeInMillis() = p.timeInMillis
+        override fun setTimeInMillis(millis: Long) { p.timeInMillis = millis }
+        override fun getRelatedYearDifference() = p.relatedDifference()
+        override fun getActualMaximum(field: Int) = p.getActualMaximum(field)
+    }
+    private class StateBinding(private val p: Probe) : CalendarStateCore.State<TimeZone> {
+        private fun f(name: String) = stateFields.getValue(name)
+        override var time: Long get() = p.rawTime()
+            set(value) { p.assignTime(value) }
+        override var isTimeSet: Boolean get() = f("isTimeSet").getBoolean(p)
+            set(value) = f("isTimeSet").setBoolean(p,value)
+        override var areFieldsSet: Boolean get() = f("areFieldsSet").getBoolean(p)
+            set(value) = f("areFieldsSet").setBoolean(p,value)
+        override var areAllFieldsSet: Boolean get() = f("areAllFieldsSet").getBoolean(p)
+            set(value) = f("areAllFieldsSet").setBoolean(p,value)
+        override var areFieldsVirtuallySet: Boolean get() = f("areFieldsVirtuallySet").getBoolean(p)
+            set(value) = f("areFieldsVirtuallySet").setBoolean(p,value)
+        override var nextStamp: Byte get() = f("nextStamp").getByte(p)
+            set(value) = f("nextStamp").setByte(p,value)
+        override var zone: TimeZone? get() = p.storedZone()
+            set(value) = zoneField.set(p,value)
+        override var lenient: Boolean get() = p.lenientFlag()
+            set(value) = lenientField.setBoolean(p,value)
+        override var repeatedWallTime: Int get() = p.repeatedFlag()
+            set(value) = repeatedField.setInt(p,value)
+        override var skippedWallTime: Int get() = p.skippedFlag()
+            set(value) = skippedField.setInt(p,value)
+        override var firstDayOfWeek: Int get() = f("firstDayOfWeek").getInt(p)
+            set(value) = f("firstDayOfWeek").setInt(p,value)
+        override var minimalDaysInFirstWeek: Int get() = f("minimalDaysInFirstWeek").getInt(p)
+            set(value) = f("minimalDaysInFirstWeek").setInt(p,value)
     }
     private class TimeBinding(private val p: Probe) : CalendarTimeCore.Owner<TimeZone> {
         override fun isLenient() = p.isLenient
@@ -185,7 +257,7 @@ class GregorianCalendarCoreOracleTest {
         override fun handleComputeMonthStart(year: Int,month: Int,useMonth: Boolean) = p.monthStart(year,month,useMonth)
         override fun getDefaultMonthInYear(year: Int) = p.defaultMonth(year)
         override fun getDefaultDayInMonth(year: Int,month: Int) = p.defaultDay(year,month)
-        override fun isSet(field: Int) = p.isSet(field)
+        override fun isSet(field: Int) = p.fieldIsSet(field)
         override fun getFirstDayOfWeek() = p.firstDayOfWeek
         override fun getMinimalDaysInFirstWeek() = p.minimalDaysInFirstWeek
         override fun handleGetMonthLength(year: Int,month: Int) = p.monthLength(year,month)
@@ -198,7 +270,7 @@ class GregorianCalendarCoreOracleTest {
         override fun reportDefaultMonthLength(year: Int,month: Int) { System.out.printf("handleGetMonthLength(ey=%d, m=%d)",year,month) }
     }
     private class FieldBinding(private val p: Probe) : CalendarFieldsCore.Owner<TimeZone> {
-        override fun getTimeZone(): TimeZone = p.timeZone
+        override fun getTimeZone(): TimeZone? = p.timeZone
         override fun getOffset(zone: TimeZone?, date: Long, local: Boolean, offsets: IntArray) = zone!!.getOffset(date,local,offsets)
         override fun getTime() = p.rawTime()
         override fun getInternalSetMask() = p.rawMask()
@@ -222,8 +294,8 @@ class GregorianCalendarCoreOracleTest {
         override fun internalGetMonth() = p.month()
         override fun newerField(defaultField: Int, alternateField: Int) = p.newer(defaultField, alternateField)
         override fun baseComputeJulianDay(bestField: Int): Int = p.baseJulianDay(bestField)
-        override fun get(field: Int) = p.get(field)
-        override fun set(field: Int, value: Int) = p.set(field, value)
+        override fun get(field: Int) = p.getField(field)
+        override fun set(field: Int, value: Int) = p.setField(field, value)
         override fun getYearLength(year: Int) = p.yearLength(year)
         override fun getFirstDayOfWeek() = p.firstDayOfWeek
         override fun getMinimalDaysInFirstWeek() = p.minimalDaysInFirstWeek
@@ -233,11 +305,11 @@ class GregorianCalendarCoreOracleTest {
         override fun baseGetActualMaximum(field: Int): Int = baseActualMaximum.invokeWithArguments(p, field) as Int
         override fun cloneCalendar(): GregorianCalendar = p.clone()
         override fun setLenient(calendar: GregorianCalendar, value: Boolean) { calendar.isLenient = value }
-        override fun get(calendar: GregorianCalendar, field: Int) = calendar.get(field)
-        override fun set(calendar: GregorianCalendar, field: Int, value: Int) = calendar.set(field, value)
+        override fun get(calendar: GregorianCalendar, field: Int) = (calendar as Probe).getField(field)
+        override fun set(calendar: GregorianCalendar, field: Int, value: Int) = (calendar as Probe).setField(field, value)
         override fun getTime(calendar: GregorianCalendar): Date = calendar.time
         override fun setTime(calendar: GregorianCalendar, date: Date) { calendar.time = date }
-        override fun zoneUsesDaylightTime() = p.timeZone.useDaylightTime()
+        override fun zoneUsesDaylightTime() = p.timeZone!!.useDaylightTime()
         override fun complete() = p.finish()
     }
 
@@ -266,7 +338,7 @@ class GregorianCalendarCoreOracleTest {
                 }
             }
             for (day in listOf(Int.MIN_VALUE, -2130706432, -1, 0, 1721423, 1721424, 1721425, 1721426, 2299159, 2299160, 2299161, 2299162, 2440588, 2451604, 2130706432, Int.MAX_VALUE)) {
-                compare(p, { p.clear() }) { p.fields(day) }
+                compare(p, { p.clearFields() }) { p.fields(day) }
             }
         }
     }
@@ -276,13 +348,13 @@ class GregorianCalendarCoreOracleTest {
         for (cutover in listOf(null, Long.MIN_VALUE, -12219292800000L, 0L, Long.MAX_VALUE)) {
             p.common = false; if (cutover != null) p.change(Date(cutover))
             for (year in listOf(-400, 0, 1, 1500, 1582, 1583, 1900, 2000)) for (month in listOf(-1, 0, 1, 9, 11, 12)) for (day in listOf(-1, 1, 4, 5, 14, 15, 28, 32)) {
-                compare(p, { p.clear(); p.set(Calendar.EXTENDED_YEAR, year); p.set(Calendar.MONTH, month); p.set(Calendar.DAY_OF_MONTH, day) }) {
+                compare(p, { p.clearFields(); p.setField(Calendar.EXTENDED_YEAR, year); p.setField(Calendar.MONTH, month); p.setField(Calendar.DAY_OF_MONTH, day) }) {
                     listOf(p.julianDay(Calendar.DAY_OF_MONTH), p.flags())
                 }
             }
         }
         val orders = listOf(emptyList(), listOf(19 to 7), listOf(1 to 7), listOf(0 to 0), listOf(1 to Int.MIN_VALUE, 0 to 0), listOf(19 to 9, 1 to 4), listOf(1 to 4, 19 to 9))
-        for (fields in orders) compare(p, { p.clear(); for ((field,value) in fields) p.set(field,value) }) { p.extendedYear() }
+        for (fields in orders) compare(p, { p.clearFields(); for ((field,value) in fields) p.setField(field,value) }) { p.extendedYear() }
     }
 
     @Test fun weekRollAndActualLimitsThroughRealCalendarState() {
@@ -314,6 +386,8 @@ class GregorianCalendarCoreOracleTest {
         private val lenientField = Calendar::class.java.getDeclaredField("lenient").apply { isAccessible = true }
         private val skippedField = Calendar::class.java.getDeclaredField("skippedWallTime").apply { isAccessible = true }
         private val repeatedField = Calendar::class.java.getDeclaredField("repeatedWallTime").apply { isAccessible = true }
+        private val stateFields = listOf("time","isTimeSet","areFieldsSet","areAllFieldsSet","areFieldsVirtuallySet","nextStamp","zone","lenient","repeatedWallTime","skippedWallTime","firstDayOfWeek","minimalDaysInFirstWeek")
+            .associateWith { Calendar::class.java.getDeclaredField(it).apply { isAccessible = true } }
         private val immediateTransitionMethod = Calendar::class.java.getDeclaredMethod("getImmediatePreviousZoneTransition",Long::class.javaPrimitiveType).apply { isAccessible = true }
         private val previousTransitionMethod = Calendar::class.java.getDeclaredMethod("getPreviousZoneTransitionTime",TimeZone::class.java,Long::class.javaPrimitiveType,Long::class.javaPrimitiveType).apply { isAccessible = true }
         private val lookup = MethodHandles.privateLookupIn(GregorianCalendar::class.java, MethodHandles.lookup())

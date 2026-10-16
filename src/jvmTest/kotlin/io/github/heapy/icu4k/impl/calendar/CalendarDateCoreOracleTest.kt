@@ -21,7 +21,7 @@ class CalendarDateCoreOracleTest {
             values[19] = listOf(Int.MIN_VALUE,-400,0,1,1582,1900,2000,Int.MAX_VALUE)[random.nextInt(8)]
             val stamps = ByteArray(24) { random.nextInt(-1,6).toByte() }
             val first = random.nextInt(1,8); val minimal = random.nextInt(1,8)
-            val setup: () -> Unit = { p.clear(); p.firstDayOfWeek = first; p.minimalDaysInFirstWeek = minimal; values.copyInto(p.rawFields()); stamps.copyInto(p.rawStamps()); Unit }
+            val setup: () -> Unit = { p.clearFields(); p.firstDayOfWeek = first; p.minimalDaysInFirstWeek = minimal; values.copyInto(p.rawFields()); stamps.copyInto(p.rawStamps()); Unit }
             compare(p,setup) { p.allJulian() }
             for (field in listOf(-1,3,4,5,6,8,18,24)) compare(p,setup) { p.baseJulianDay(field) }
             compare(p,setup) { listOf(p.month(),p.monthDefault(-7),p.read(19,1970)) }
@@ -32,7 +32,7 @@ class CalendarDateCoreOracleTest {
         for (year in listOf(-400,0,1,1582,1900,2000)) for (value in listOf(Int.MIN_VALUE,-1,0,1,28,29,30,31,59,60,365,366,Int.MAX_VALUE)) {
             for (field in -1..24) {
                 val setup = {
-                    p.clear(); p.set(19,year); p.set(2,1)
+                    p.clearFields(); p.setField(19,year); p.setField(2,1)
                     if (field in 0..23) { p.rawFields()[field] = value; p.rawStamps()[field] = 2 }
                 }
                 compare(p,setup) { p.validateOne(field) }
@@ -42,7 +42,7 @@ class CalendarDateCoreOracleTest {
                 compare(p) { p.nameOf(field) }
             }
         }
-        for (field in listOf(31,32,33,63,Int.MIN_VALUE,Int.MAX_VALUE)) compare(p,{ p.clear() }) { p.write(field,123) }
+        for (field in listOf(31,32,33,63,Int.MIN_VALUE,Int.MAX_VALUE)) compare(p,{ p.clearFields() }) { p.write(field,123) }
     }
     @Test fun gregorianNormalizationDivisionRemaindersAndEpochConversions() {
         val p = Probe()

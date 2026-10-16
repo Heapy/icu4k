@@ -8762,3 +8762,42 @@ jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
 executed successfully on JVM, Node and macOS Arm64 in this verification cycle;
 Linux tests compiled only. Three new JVM differential groups and all existing
 calendar/Olson groups passed.
+
+## Calendar mutable state and accessors
+
+`CalendarStateCore` ports get/set time, field get/set/clear overloads, complete
+and updateTime, byte-stamp compression, month/ordinal alias clearing and isSet's
+virtual-fields short circuit. Its state carrier includes the stored time,
+four validity flags, nextStamp, zone, leniency, wall-time options and week rules.
+It supports direct common Values or an owner-backed state projection; fields
+and stamps retain their owning storage. The constructor storage helper validates
+the source 24..32 field limit and computes the original internal-set mask.
+
+Ordering preserves source partial writes and callbacks: virtual fields compute
+before indexed mutations; field values store before stamp compression; nextStamp
+increments before the stamp store; failed callbacks do not roll state back.
+set retains areAllFieldsSet, clear retains numeric time, and complete does not
+clear the virtual-fields flag after a timestamp. Time bounds query virtual
+isLenient only when out of range. Date accessors preserve virtual millis hooks
+and fresh Date results. Configuration retains zone aliasing, conditional week
+invalidation and option validation. Related-year and base Temporal month-code/
+leap-year APIs preserve source callbacks, overflow, assertions and errors.
+
+The Gregorian JVM probe projects the same private ICU4J state into this engine
+in common mode, routes public virtual accessors/complete through it, and uses
+common final-field helper equivalents in the date, time and Gregorian suites.
+Clones bind all five engines to their own arrays/state. New JVM groups compare
+random public-operation sequences and every state flag, stamp compression and
+malformed indices, Date aliases, Temporal APIs, related years and cloning.
+Common tests exercise virtual-field behavior, callback failures/partial state,
+counter-store timing, bounded timestamps, configuration, assertions and storage
+allocation independently of ICU4J.
+
+Public Calendar construction/factories, arithmetic operations and serialization
+remain pending.
+
+Verification of the state stage: the focused Calendar/Gregorian JVM selection
+passed in 39s. The complete jvmTest/jsNodeTest/macosArm64Test/
+compileTestKotlinLinuxX64 selection passed in 3m 31s. All five new common tests
+executed on JVM, Node and macOS Arm64; Linux tests compiled only. Three new JVM
+state groups and the existing combined-calendar suites passed.
