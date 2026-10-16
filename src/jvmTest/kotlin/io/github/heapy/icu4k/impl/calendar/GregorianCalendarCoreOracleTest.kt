@@ -28,6 +28,8 @@ class GregorianCalendarCoreOracleTest {
         var weekendPort = CalendarWeekendCore(WeekendState(this),WeekendBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
+        override fun getType(): String = if (common) port.getType() else super.getType()
+        override fun isEra0CountingBackward(): Boolean = if (common) port.isEra0CountingBackward() else super.isEra0CountingBackward()
         override fun isLeapYear(year: Int): Boolean {
             record("leap:$year")
             return if (common) port.isLeapYear(year) else super.isLeapYear(year)

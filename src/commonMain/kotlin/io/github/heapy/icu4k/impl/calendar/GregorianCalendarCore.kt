@@ -59,6 +59,8 @@ internal class GregorianCalendarCore<C : Any>(private val owner: Owner<C>) {
         }
     }
     fun getGregorianChange(): Date = Date(gregorianCutover)
+    fun getType(): String = "gregorian"
+    fun isEra0CountingBackward(): Boolean = true
     fun isLeapYear(year: Int): Boolean = if (year >= gregorianCutoverYear) Grego.isLeapYear(year) else year % 4 == 0
     fun hashCode(baseHashCode: Int): Int = baseHashCode xor gregorianCutover.toInt()
     fun hasSameCutover(other: GregorianCalendarCore<*>): Boolean = gregorianCutover == other.gregorianCutover

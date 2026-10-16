@@ -8980,3 +8980,35 @@ The final jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
 passed in 4m 24s. All three new common groups, including non-ASCII case conversion,
 passed on JVM, Node and macOS Arm64; Linux tests compiled only. Both new JVM
 locale/factory oracle groups and the existing suites passed.
+
+### Buddhist and Taiwan Gregorian variants (2026-10-16)
+
+BuddhistCalendarCore ports all Buddhist-specific Gregorian overrides: extended-
+year selection/defaults, the 543-year offset, Gregorian month-start delegation,
+field conversion, the single-era limit, type and forward-counting era policy.
+TaiwanCalendarCore ports extended-year precedence (including ERA), the 1911-year
+offset, before/after-Minguo conversion, era limits and type. Source Int overflow,
+short-circuiting, callback order, unvalidated era values and partial field writes
+are preserved. GregorianCalendarCore now supplies its own type and backward-era
+policy; the combined Gregorian probe no longer borrows those methods from ICU4J.
+
+New JVM probes extend the actual Buddhist/Taiwan classes and replace only their
+specific overrides with common engines. The inherited Gregorian framework is an
+explicit oracle boundary, independently covered by the existing common Gregorian
+suite. Clones rebind variant owners to cloned state. Two oracle groups compare
+limits (including malformed field/limit indexes), default and competing year/era
+stamps, extreme Int years/Julian days, random date/add/roll/maximum operations and
+clone mutations in GMT, New York and Bangkok. Five common groups verify defaults,
+precedence, offsets, overflow, era boundaries, exact delegation and failure state.
+
+Public Buddhist/Taiwan constructors/facades and their integration with common
+Calendar/GregorianCalendar remain pending. Other calendar families, date-format
+factories and serialization are still required for the full port.
+
+Verification: focused Calendar/Gregorian/variant JVM oracle tests passed in 33s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 3m 57s. All five new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. After adding the explicit YEAR -> EXTENDED_YEAR -> ERA
+stamp order and correcting source copyright-year notices, the focused oracle
+selection passed again in 57s. Production behavior did not change after the
+complete platform run.
