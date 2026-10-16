@@ -93,6 +93,17 @@ internal class CalendarPatternDataCore(
         return PatternData(patterns, overrides, atTime)
     }
     companion object {
+        /** Bind Calendar's regenerated hour patterns to the actual common no-standard generator. */
+        fun withCommonGenerator(
+            resourceLoader: ICUResourceLoader=defaultICUResourceLoader(),
+            cache: ICUCache<String,PatternData> = PATTERN_CACHE,
+        ): CalendarPatternDataCore {
+            val initialization by lazy { DateTimePatternInitializationCore(resourceLoader) }
+            return CalendarPatternDataCore({ locale ->
+                val generator=initialization.noStandardPatterns(locale)
+                object: Generator { override fun getBestPattern(skeleton: String): String=generator.getBestPattern(skeleton) }
+            },cache,resourceLoader)
+        }
         private val PATTERN_CACHE = SimpleCache<String, PatternData>()
         private val DEFAULT_PATTERNS = arrayOf<String?>(
             "HH:mm:ss z","HH:mm:ss z","HH:mm:ss","HH:mm",

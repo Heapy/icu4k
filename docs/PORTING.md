@@ -228,6 +228,14 @@ interleaved operations over arbitrary UTF-16 plus title option combinations.
 String mapping loops, Latin fast paths, Greek uppercase and title boundaries
 remain pending.
 
+Verification for this integration: focused initialization/Calendar JVM tests
+passed. After removing the invalid rejecting-loader fixture, full JVM/macOS
+Native suites and Linux x64 test compilation passed in 4m19s; the separate full
+JS Node suite passed in 1m5s. All three new common groups passed on JVM, JS and
+macOS Native, both initializer oracle groups and all five existing Calendar
+pattern oracle groups passed with the common generator binding. Linux tests
+were compiled only on this macOS host.
+
 ## String lowercasing and folding
 
 CaseMapImpl lowercasing and folding now retain the ICU Latin delta fast path,
@@ -9601,3 +9609,30 @@ Verification: focused JVM tests passed in 1m20s; full JVM/macOS Native suites
 and Linux x64 test compilation passed in 5m7s; the separate full JS Node suite
 passed in 1m4s. Both new common groups passed on JVM, JS and macOS Native and
 both JVM oracle groups passed. Linux tests were compiled, not run on macOS.
+
+### DateTimePatternGenerator initialization and Calendar binding (2026-10-16)
+
+DateTimePatternInitializationCore joins initData's source steps in order:
+canonical items, optional standard patterns, CLDR formats/names, date/time glue,
+DecimalFormatSymbols' decimal separator character, preferred/allowed hours and
+missing-field defaults. Its no-standard factory creates an uncached, thawed
+generator and uses ICU4J's literal date/time glue for this specific mode, avoiding
+the Calendar recursion. Normal initialization requires the actual Calendar owner,
+constructs it once and fetches/sets the four styles in sequence; it does not
+invent calendar glue or construct a substitute calendar.
+
+CalendarPatternDataCore.withCommonGenerator binds regenerated time patterns to
+the real common no-standard generator. Existing Calendar pattern-data/format
+JVM oracles now use this binding instead of invoking ICU4J's generator as their
+dependency. The initializer is lazy, so ordinary pattern reads do not initialize
+an unused generator. An attempted rejecting-loader timing fixture was removed:
+it incorrectly assumed a loader could reject an already published ICU reader,
+but resource cache keys intentionally omit loaders, matching ICU4J.
+The initializer oracle compares full state and searches for every
+available locale, calendar types and hour/number/region keywords. Normal init
+is tested with an actual ICU4J Calendar owner as a test fixture; that verifies
+the generator initialization steps, not the pending common public Calendar
+factory. Common tests cover independent locale snapshots, uncached/thawed state,
+the real Calendar resource/generator pipeline, callback order and partial failures.
+Public generator facade, frozen-instance cache and common Calendar ownership
+remain pending.

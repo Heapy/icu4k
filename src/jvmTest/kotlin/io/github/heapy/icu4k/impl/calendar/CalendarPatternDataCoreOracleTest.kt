@@ -2,7 +2,6 @@
 package io.github.heapy.icu4k.impl.calendar
 
 import com.ibm.icu.text.DateFormat
-import com.ibm.icu.text.DateTimePatternGenerator
 import com.ibm.icu.text.SimpleDateFormat
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.GregorianCalendar
@@ -16,10 +15,7 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class CalendarPatternDataCoreOracleTest {
-    private fun core() = CalendarPatternDataCore({ locale ->
-        val generator = DateTimePatternGenerator.getInstanceNoStdPat(SourceLocale(locale.toString()))
-        object: CalendarPatternDataCore.Generator { override fun getBestPattern(skeleton: String) = generator.getBestPattern(skeleton) }
-    }, SimpleCache(), ICUResourceBundleReader.embeddedLoader)
+    private fun core() = CalendarPatternDataCore.withCommonGenerator(ICUResourceBundleReader.embeddedLoader,SimpleCache())
     private class Probe(private val requestedType: String?): GregorianCalendar(TimeZone.getTimeZone("Etc/GMT"),SourceLocale.US) {
         private var ready = false
         var record: List<String?>? = null
