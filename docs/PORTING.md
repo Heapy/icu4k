@@ -8833,3 +8833,33 @@ After fixing a JVM setter-name collision in the new test fixture, the complete
 jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
 4m 12s. All four new common tests passed on JVM, Node and macOS Arm64; Linux
 tests compiled only. Both new JVM arithmetic/limits oracle groups passed.
+
+### Base Calendar roll arithmetic (2026-10-16)
+
+CalendarRollCore ports the complete base roll switch: fixed-range fields, elapsed
+hour rolling, month/ordinal-month pinning, bounded and backward-era years,
+week-of-month/year phantom-day calculations, day-of-year/week/week-in-month
+millisecond arithmetic and Julian-day increments. It preserves zero-amount
+short-circuiting, completion before unsupported-field errors, Int/Long overflow,
+signed remainders, virtual callbacks and direct stored-time writes before the
+final timestamp setter. Variable-divisor checks retain arithmetic exceptions on
+JS as well as JVM/Native.
+
+The integrated Gregorian probe now routes base roll through the common engine;
+the Gregorian-specific week-of-year override remains in GregorianCalendarCore.
+Clones rebind the roll owner. JVM oracle coverage compares both dispatch paths
+across reform dates, month/year boundaries and offset transitions, including
+Int.MIN_VALUE/Int.MAX_VALUE amounts, raw time, fields, stamps, lifecycle flags
+and callback traces. A second group checks both week rolls under all 49 week
+configurations.
+
+Four common groups verify zero/unsupported fields and completion failures,
+fixed-range wrapping and zero divisors, bounded/backward-era years with pinning,
+and stored-time mutations surviving a throwing timestamp setter. Public Calendar
+construction/factories, comparison/difference helpers and serialization remain
+pending.
+
+Verification: focused Calendar/Gregorian JVM oracle tests passed in 57s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 5m 56s. All four new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. Both new JVM roll oracle groups passed.
