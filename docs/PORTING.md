@@ -9215,3 +9215,41 @@ compileTestKotlinLinuxX64 passed in 4m 52s, then the unchanged full jsNodeTest s
 passed separately in 59s, including CollationKeysTest. All five new common groups
 passed on JVM, Node and macOS Arm64; Linux tests compiled only. All three Hebrew
 and both cache JVM oracle groups passed.
+
+### CalendarAstronomer solar/lunar algorithms (2026-10-16)
+
+CalendarAstronomer ports the public astronomy component needed by astronomical
+Islamic and Chinese calendars: time/Julian-day state, solar longitude and Kepler
+iteration, lunar position/age corrections, ecliptic/equatorial conversion and
+next/previous solar/lunar angle searches. The iterative divergence fallback,
+recursive restart, truncating casts, Long overflow, NaN behavior, source cache
+sentinel and mutable final timestamp are retained. Virtual getters/setters keep
+source callback order; private stored-time reads do not become virtual getTime.
+Moon-position identity persists until cache invalidation, and Date results are
+fresh. Coordinate text uses the existing common Java-compatible Double formatter.
+
+Public constants and coordinate fields are available in common Kotlin. Opaque
+SolarLongitude/MoonAge token types have internal constructors so the source's
+constant-based overloads are callable in Kotlin; the Java source used private
+nested parameter types. The no-argument constructor uses the existing portable
+Date clock boundary rather than a fixed timestamp. Numeric calendar algorithms
+and host-independent strings have no ICU4J dependency.
+
+Four JVM oracle groups compare cache fields and floating-point results bit for
+bit, randomized times including Long extremes, Julian setters, event timestamps,
+coordinate strings, aliases and virtual-setter failures. Five common groups use
+standalone ICU4J snapshots for lunar/solar positions and events, cache/Date
+identity, sentinel/NaN/overflow behavior and scripted callback/failure ordering.
+A package-local Java oracle subclass also checks short-array failures and partial
+solar-cache writes; explicit sequential bounds checks preserve those failures on
+JavaScript. Cross-platform trig values allow 1e-12 radians and event timestamps 10ms around
+the recorded source results; JVM oracle comparisons remain exact.
+
+Islamic/Chinese/Dangi calendar algorithms and Calendar/TimeZone facade integration
+remain pending, as do formatting factories and serialization. This stage supplies
+the complete astronomical dependency rather than replacing those calendar modes
+with arithmetic approximations.
+
+Verification: the final focused JVM run passed in 1m17s; the full JVM/macOS
+Native tests and Linux x64 test compilation passed in 3m43s. The full JavaScript
+Node test suite also passed separately. Linux tests were compiled, not run.
