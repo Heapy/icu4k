@@ -9636,3 +9636,37 @@ JS Node suite passed in 1m5s. All three new common groups passed on JVM, JS and
 macOS Native, both initializer oracle groups and all five existing Calendar
 pattern oracle groups passed with the common generator binding. Linux tests
 were compiled only on this macOS host.
+
+### DateTimePatternGenerator factory and cache policy (2026-10-16)
+
+DateTimePatternFactoryCore ports empty/default-locale/locale/frozen/no-standard
+factory policy around the initializer. Normal instances use a full locale-string
+key, return cache hits unchanged, initialize before freezing/publication and clone
+the cached instance for getInstance. Empty and no-standard modes always create
+new objects and bypass the cache. Failed reads/publication propagate and failed
+publication is retried by the next call. Read and publication remain separate,
+so an intervening publication can be overwritten, matching ICU4J.
+
+ICU4J 007 is preserved through the factory: getInstance's cloneAsThawed also
+thaws the cached receiver, so a subsequent getFrozenInstance can return an
+unfrozen object with mutations retained. Clone field-name rows remain shared;
+decimal and map changes are independent. Common and JVM oracle groups exercise
+identity, complete locale keys, default locale selection, uncached modes,
+publication/read failures and intervening publication. JVM tests temporarily
+replace ICU4J's factory cache and restore it in finally; normal initialization
+uses an actual ICU4J Calendar as the mandatory owner fixture. This proves factory
+policy, not a completed common public Calendar or generator facade. Public
+facades and their shared factory/cache ownership remain pending.
+
+The first oracle attempted Cmm on an empty instance as a successful lookup;
+ICU4J instead throws because allowed-hour formats are unset there. The oracle
+now compares that expected failure as well, and the common fixture checks it
+explicitly. Initialization failures for unknown calendars are retried without
+cache publication, also compared to ICU4J. Fatal VM errors are not caught by
+the lookup-outcome helper.
+
+Verification: focused factory JVM checks passed in 22s. Full JVM/macOS Native
+suites and Linux x64 test compilation passed in 4m38s; the separate full JS Node
+suite passed in 1m51s. All three new common groups passed on JVM, JS and macOS
+Native, and all three JVM factory oracle groups passed. Linux tests were
+compiled only, not executed on this macOS host.
