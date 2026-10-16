@@ -8396,3 +8396,41 @@ test fixture that mistakenly treated CST as an unavailable system ID. Production
 selection code needed no change for that fixture. Linux tests compiled only;
 three new common tests ran on JVM, Node and macOS Arm64. The ID parser oracle,
 two main-parser oracle groups and callback-trace oracle passed on JVM.
+
+### TimeZoneFormat display selection
+
+`TimeZoneFormatDisplayCore` ports the main formatter for all twenty styles,
+specific-name selection and exemplar fallback. Generic location/long/short
+styles query the generic service; specific styles choose standard/daylight
+names using the zone's inDaylightTime result. Missing names fall back to the
+appropriate localized GMT or ISO numeric form. ID styles never use numeric
+fallback: absent short IDs become `unk`, and missing exemplars try `Etc/Unknown`
+then literal `Unknown`.
+
+The required owner boundary provides timezone queries and real name services.
+It preserves service acquisition before canonical-ID resolution, including
+Java's argument evaluation before a null receiver fails. Exemplar fallback
+acquires the name service again. Specific-name success sets its standard/daylight
+time type; generic and ID results leave UNKNOWN. Numeric fallback obtains fresh
+raw/daylight offsets, retains Java Int addition overflow and updates the output
+time type after virtual localized formatting. A formatter that mutates the
+captured offsets therefore affects this final classification. ISO formatting
+uses the existing concrete engine; localized formatting remains virtual.
+
+JVM integration compares all available system IDs, aliases, custom/unknown IDs,
+all styles and three dates in seven locales. Further cases cover extreme dates,
+null style/zone, missing output arguments and numeric range/precision boundaries.
+Names use the common localized engine; generic services and timezone objects at
+the required owner boundary use ICU4J only in the oracle tests. The common
+public TimeZone/TimeZoneFormat and generic-name implementations remain pending.
+Callback comparisons exercise custom name services, getter order, exceptions,
+null getters/IDs/results, virtual formatting and captured-offset mutation.
+Common tests cover specific and generic names, exemplar fallback, ISO flags,
+Int overflow, callback order and output time-type changes.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed. The common display tests executed on JVM,
+Node and macOS Arm64 in the 3m 32s full build; Linux tests compiled only.
+After correcting the callback fixture's qualified ID reference and making
+VirtualMachineError fatal to oracle comparisons, the same task selection passed
+in 1m 52s with JVM tests rerun and unchanged platform results up to date.
