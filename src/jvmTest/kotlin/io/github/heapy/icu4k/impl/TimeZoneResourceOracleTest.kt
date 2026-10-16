@@ -21,7 +21,7 @@ class TimeZoneResourceOracleTest {
                 else -> error("Unexpected resource type ${expected.type} at $path")
             }
         }
-        for (name in listOf("zoneinfo64", "metaZones")) {
+        for (name in listOf("zoneinfo64", "metaZones", "windowsZones")) {
             compare(
                 com.ibm.icu.util.UResourceBundle.getBundleInstance(com.ibm.icu.impl.ICUData.ICU_BASE_NAME, name),
                 UResourceBundle.getBundleInstance(ICUData.ICU_BASE_NAME, name), name,

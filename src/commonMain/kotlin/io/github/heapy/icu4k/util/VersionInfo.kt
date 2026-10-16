@@ -7,8 +7,8 @@ package io.github.heapy.icu4k.util
  * Four unsigned byte-sized version components, ordered lexicographically.
  *
  * Port of ICU4J VersionInfo's value operations. Instances use value equality;
- * unlike ICU4J, they are not interned. Historical constants and resource-backed
- * timezone version lookup are not yet ported.
+ * unlike ICU4J, they are not interned. Historical constants
+ * are not yet ported.
  */
 class VersionInfo private constructor(private val packed: UInt) : Comparable<VersionInfo> {
     val major: Int get() = (packed shr 24).toInt()
@@ -30,6 +30,10 @@ class VersionInfo private constructor(private val packed: UInt) : Comparable<Ver
     }
 
     companion object {
+        private val timeZoneDataVersion: String by lazy {
+            UResourceBundle.getBundleInstance(io.github.heapy.icu4k.impl.ICUData.ICU_BASE_NAME, "zoneinfo64").getString("TZVersion")
+        }
+        internal fun getTZDataVersion(): String = timeZoneDataVersion
         val ICU_VERSION: VersionInfo = getInstance(78, 3)
         val UCOL_BUILDER_VERSION: VersionInfo = getInstance(9)
         val UCOL_RUNTIME_VERSION: VersionInfo = getInstance(9)

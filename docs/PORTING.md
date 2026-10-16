@@ -8099,3 +8099,46 @@ Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
 OlsonTimeZoneCore and prototype-factory common tests ran on JVM, Node and macOS
 Arm64. ICU4J comparisons ran on JVM. The public TimeZone front end remains pending.
+
+### TimeZone static metadata policies and Windows mappings
+
+Ported TimeZone's static ID policies into TimeZoneMetadataCore: canonical ID plus
+system-ID output flag, IANA fallback, strict system-region lookup, fresh available-ID
+arrays and sorted set filters, equivalent IDs, TZ data version and Windows ID
+conversion. ZoneMeta's lower-level lookups remain separate: the public policy
+returns Etc/Unknown for unknown IANA inputs, rejects Etc/Unknown as a region query,
+and identifies it as canonical but not a system ID. Custom GMT IDs are normalized
+without setting the system flag. A zero-length flag array fails after lookup;
+explicit checks preserve that failure on JS as well as JVM/Native.
+
+Embedded the exact pinned windowsZones.res (22,064 bytes), with manifest SHA-256
+and portable generated data, bringing the registry to 398 resources. Forward
+Windows conversion canonicalizes system IDs first and preserves table-order
+first-match selection. Reverse conversion preserves exact case-sensitive Windows
+and region keys, first regional token selection and untrimmed world fallback.
+The pinned Mexico/MX mapping has a trailing space; it is retained byte for byte.
+Java's dropped trailing split item is accounted for in resource-reference tests;
+no data cleanup or host Windows/IANA database is used.
+
+VersionInfo now implements its internal cached resource-backed getTZDataVersion,
+used by the metadata core. The locale-selection helper passes the timezone keyword
+to an owner constructor or invokes the owner's default getter only when absent;
+null locale fails before either callback. Public TimeZone wrappers, Java Locale
+bridging, default-zone ownership/host integration and display names still remain
+pending. These internal helpers do not publish a reduced public TimeZone class.
+
+Targeted JVM comparisons passed for every zone ID plus null, invalid, custom,
+case-variant and colon-form IDs, with null/zero/short system-flag arrays. Every
+Windows ID and regional mapping is compared along with invalid/case/whitespace
+keys and world fallback. Available arrays are compared for every region and every
+distinct current raw offset, and set filters for all system types. The existing
+resource oracle now compares every node and exact binary bytes of windowsZones
+against ICU4J, in addition to zoneinfo64 and metaZones. Common tests cover ID
+classification, fresh arrays, strict region errors, all Windows regional first
+IDs, preserved resource whitespace, TZ version caching and lazy locale callbacks.
+generate-data.py --check passed for all 398 entries.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 28s. Linux tests compiled only;
+metadata and Windows-mapping common tests ran on JVM, Node and macOS Arm64.
+ICU4J API and full-resource comparisons ran on JVM.

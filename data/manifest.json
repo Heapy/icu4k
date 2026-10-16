@@ -2994,6 +2994,13 @@
       "object": "MetaZonesResourceData",
       "sha256": "49e15327d83905e096e265bc402171409da2ba999a811ef0d7d119fd92ff8a96",
       "size": 43488
+    },
+    {
+      "name": "windowsZones.res",
+      "file": "data/icu78/windowsZones.res",
+      "object": "WindowsZonesResourceData",
+      "sha256": "719a5891db89233e4fbe9b15727f8f5b803f4a6769b58975ae7f91b1506a08d9",
+      "size": 22064
     }
   ]
 }
