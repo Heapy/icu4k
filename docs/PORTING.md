@@ -9572,3 +9572,32 @@ suites and Linux x64 test compilation in 5m20s and the full JS Node suite in
 1m. Both new common groups passed on JVM, JS and macOS Native; the expanded
 hour-data oracle passed with every timeData key included. Linux execution is
 not available on this macOS host.
+
+### DateTimePatternGenerator standard and CLDR resource steps (2026-10-16)
+
+DateTimePatternResourceCore ports addICUPatterns, addCLDRData and calendar-type
+selection. It reads all eight standard patterns (including pattern/override
+arrays), validates their resource shape, and loads appendItems, field display
+names in all three widths and availableFormats through full-path fallback.
+Missing CLDR tables are ignored independently, as in ICU4J. Existing names and
+append formats win; the first availableFormats key wins, while an explicit
+available format can override a previously derived standard skeleton. Calendar
+keywords are used verbatim; regional calendar preference selection is shared
+with the previously ported Calendar locale core. Unknown calendar types do not
+silently become Gregorian standard patterns.
+
+JVM oracles compare ordered skeleton maps, base skeletons, append formats,
+display names, conflict metadata, calendar types and repeated cross-locale loads
+with the pinned ICU4J private initialization steps, across all available locales
+and every calendar type. Common fixtures exercise embedded US resource values,
+precedence, Persian calendar selection and missing-calendar behavior.
+These are initialization steps, not a replacement for the complete factory:
+decimal-symbol setup, date/time glue, initialization order, caching and the
+public DateTimePatternGenerator facade still need connection. The dormant
+short-time derivation helpers also remain to be ported (ICU4J initData does not
+call them in the pinned release).
+
+Verification: focused JVM tests passed in 1m20s; full JVM/macOS Native suites
+and Linux x64 test compilation passed in 5m7s; the separate full JS Node suite
+passed in 1m4s. Both new common groups passed on JVM, JS and macOS Native and
+both JVM oracle groups passed. Linux tests were compiled, not run on macOS.
