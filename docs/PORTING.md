@@ -9253,3 +9253,44 @@ with arithmetic approximations.
 Verification: the final focused JVM run passed in 1m17s; the full JVM/macOS
 Native tests and Linux x64 test compilation passed in 3m43s. The full JavaScript
 Node test suite also passed separately. Linux tests were compiled, not run.
+
+### IslamicCalendar four calculation engines (2026-10-16)
+
+Added internal IslamicCalendarCore with the source astronomical ISLAMIC, civil,
+Thursday-epoch TBLA and Umm al-Qura algorithms. The port retains all 301 years
+of Umm al-Qura month bitmaps and year-start corrections (1300–1600 inclusive),
+including the source fallback and signed month normalization. Astronomical month
+starts use CalendarAstronomer and the shared synchronized CalendarCache; they
+are not replaced by arithmetic approximations. Source Int-before-Long overflow,
+truncating division, negative remainders, shift masking, Julian epochs and the
+raw-current-time branch of the astronomical field conversion are preserved.
+
+The owner boundary handles extended-year field resolution, limits, ordered field
+publication, related-year estimates, Temporal leap-year queries and locale mode
+selection. setCalculationType changes algorithms without clearing fields;
+setCivil preserves the computed time and clears/resets fields only on the source
+transition conditions. Null type assignment preserves the source partial update
+before failure. Owner rebinding copies mode state for calendar clones, including
+mode transitions that failed after partial mutation.
+
+JVM oracles compare every day around the full Umm al-Qura table, all month/year
+lengths and starts, arithmetic limits and overflow, randomized astronomical dates,
+related-year formulas, and integrated add/roll/leap-year operations in GMT,
+Riyadh and New York. The test integration uses ICU4J's inherited Calendar
+framework; it does not prove the public Calendar/IslamicCalendar facades exist.
+Common fixtures independently record ICU4J dates for all four modes and test
+callback order, partial failures, mode changes, related years and locale selection.
+Negative astronomical months are compared with independent cold caches because
+upstream CalendarCache bug 006 can hang a later rehash after signed-key insertion.
+The source hang was confirmed by a test-worker stack dump and is tracked in
+ICU4J_BUGS.md; the production port retains the pinned source cache behavior.
+
+Public IslamicCalendar construction and facade integration, serialization,
+Chinese/Dangi algorithms and remaining calendar facade/formatting work are still
+pending. This stage ports the calculation engines and their owner contracts.
+
+Verification: final focused JVM tests passed in 22s (four JVM oracle groups
+and six common groups). Full JVM/macOS Native tests plus Linux x64 test
+compilation passed in 4m18s; the separate full JavaScript Node suite passed in
+42s. All six new common groups passed on JVM, JavaScript and macOS Native.
+Linux tests were compiled, not executed on this macOS host.

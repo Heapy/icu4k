@@ -375,7 +375,11 @@ upstream verdict.
 hashing, replacement counts, sentinel and synchronization. Its JVM oracle compares
 complete cache layouts through growth and signed-long probes. Hebrew signed-year
 arithmetic is compared with cold caches to isolate it from this source probing
-defect. The hanging lookup is deliberately kept out of in-process test execution.
+defect. Islamic signed-month tests likewise use separate cold caches: an initial
+mixed signed/positive-month oracle run on 2026-10-16 was stopped after a JVM stack
+dump confirmed `CalendarCache.findIndex` looping during `rehash`, called by the
+source `IslamicCalendar.trueMonthStart`. The hanging lookup is deliberately kept
+out of in-process test execution.
 No behavior change is applied without a separate baseline compatibility decision.
 
 ## Upstream handoff
