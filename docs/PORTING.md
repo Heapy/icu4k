@@ -8275,3 +8275,36 @@ coverage uses JVM, Node and macOS Arm64.
 
 Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 4s.
+
+### ISO 8601 numeric timezone offsets
+
+`TimeZoneOffsetCore` ports TimeZoneFormat's ISO basic/extended formatting and
+numeric parsing, including the shared separated/abutting ASCII field parsers.
+It supports hour, hour-minute and hour-minute-second forms, optional UTC `Z`,
+short forms, seconds suppression and millisecond truncation. Parsing retains
+source longest-prefix selection, invalid-field truncation, fixed-width hour
+rules and pre-existing ParsePosition error indices. Successful parsing does not
+clear an old error index. The optional digit-offset output is reset before
+validating text/position and is false for UTC `Z`.
+
+Source edge behavior is preserved: a one-digit hour followed by a colon is
+consumed only through the hour; malformed larger fields may fall back to a
+shorter numeric prefix. Int.MIN_VALUE negation overflows exactly as in Java,
+including the early UTC result when enabled and JVM assertion behavior when
+not enabled. Common explicit string bounds checks keep negative parse indices
+from silently producing JavaScript-specific results.
+
+JVM oracle coverage compares formatting in all sixteen flag combinations,
+range/precision boundaries and 4,000 seeded random offsets. It compares all
+100,000 five-digit numeric strings in basic and extended-only parsing, 12,000
+seeded malformed/Unicode strings, null inputs and extreme start positions.
+Both numeric helper algorithms are compared against private ICU4J methods for
+all minimum/maximum field combinations, both hour-width policies and three
+separators. Common tests check source prefix behavior, stale error indices,
+output mutation and extended-format round trips at every second in the
+supported range. This is the numeric engine; localized GMT patterns and the
+public TimeZoneFormat service remain pending.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 9s. Linux tests compiled only;
+every-second common round trips executed on JVM, Node and macOS Arm64.
