@@ -9096,3 +9096,37 @@ The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selecti
 passed in 4m 27s. All five new common tests passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. All three new JVM oracle groups and the existing
 calendar suites passed.
+
+### Persian calendar algorithms (2026-10-16)
+
+PersianCalendarCore ports the complete PersianCalendar algorithm layer: corrected
+33-year leap rules, first Julian day of a year, normalized month starts/lengths,
+year/era precedence, source limits, field computation, related-year difference
+and type. The exact source correction list is represented by a bounded direct
+membership table; lookup remains constant-time without platform BitSet.
+
+Source arithmetic is preserved: the leap predicate's 25*year+11 wraps as Int,
+first-year arithmetic widens before subtraction/multiplication, and Julian-day
+minus epoch wraps as Int before widening. The corrected non-leap year's day 365
+becomes day zero of the next year. Field computation preserves source month
+selection and writes ERA, YEAR, EXTENDED_YEAR, MONTH, ORDINAL_MONTH, DAY_OF_MONTH,
+DAY_OF_YEAR in order. Month starts ignore useMonth as in ICU4J, and callback
+failures retain prior field writes.
+
+The JVM PersianCalendar probe replaces every subclass algorithm with the common
+engine and rebinds owners on cloning; inherited Calendar machinery remains the
+explicit oracle boundary. Three oracle groups compare all correction years and
+neighbors, cycle boundaries, random full-range Int leap/first-year values,
+malformed limits, normalized extreme months, raw Julian days and random arithmetic,
+Temporal, related-year and clone operations in GMT, Tehran and New York.
+Five common groups verify correction transfers, round trips, month boundaries,
+floor normalization, cycle identities, source overflow, defaults and failure state.
+
+Public PersianCalendar construction/facade integration, other calendar families,
+Calendar/TimeZone facades, date-format factories and serialization remain pending.
+
+Verification: focused PersianCalendar common/oracle JVM tests passed in 13s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 3m 59s. All five new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. All three new JVM oracle groups and the existing
+calendar suites passed.
