@@ -228,14 +228,6 @@ interleaved operations over arbitrary UTF-16 plus title option combinations.
 String mapping loops, Latin fast paths, Greek uppercase and title boundaries
 remain pending.
 
-Verification for this integration: focused initialization/Calendar JVM tests
-passed. After removing the invalid rejecting-loader fixture, full JVM/macOS
-Native suites and Linux x64 test compilation passed in 4m19s; the separate full
-JS Node suite passed in 1m5s. All three new common groups passed on JVM, JS and
-macOS Native, both initializer oracle groups and all five existing Calendar
-pattern oracle groups passed with the common generator binding. Linux tests
-were compiled only on this macOS host.
-
 ## String lowercasing and folding
 
 CaseMapImpl lowercasing and folding now retain the ICU Latin delta fast path,
@@ -9636,3 +9628,11 @@ factory. Common tests cover independent locale snapshots, uncached/thawed state,
 the real Calendar resource/generator pipeline, callback order and partial failures.
 Public generator facade, frozen-instance cache and common Calendar ownership
 remain pending.
+
+Verification for this integration: focused initialization/Calendar JVM tests
+passed. After removing the invalid rejecting-loader fixture, full JVM/macOS
+Native suites and Linux x64 test compilation passed in 4m19s; the separate full
+JS Node suite passed in 1m5s. All three new common groups passed on JVM, JS and
+macOS Native, both initializer oracle groups and all five existing Calendar
+pattern oracle groups passed with the common generator binding. Linux tests
+were compiled only on this macOS host.
