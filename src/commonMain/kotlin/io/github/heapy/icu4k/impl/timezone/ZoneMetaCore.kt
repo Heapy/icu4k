@@ -20,6 +20,8 @@ internal object ZoneMetaCore {
     private val canonicalIDs = mutableMapOf<String?, String>()
     private val regions = mutableMapOf<String?, String>()
     private val singleCountries = mutableMapOf<String?, Boolean>()
+    private val systemZones = mutableMapOf<String?, OlsonTimeZoneCore?>()
+    private val customZones = mutableMapOf<Int, SimpleTimeZoneCore>()
 
     private fun bundle(name: String): UResourceBundle = UResourceBundle.getBundleInstance(ICUData.ICU_BASE_NAME, name)
     private fun getZoneIDs(): Array<String> = lock.withLock {
@@ -74,6 +76,35 @@ internal object ZoneMetaCore {
     }
     fun getAvailableIDs(type: SystemTimeZoneType?, region: String? = null): Set<String> =
         filterIDs(type, region, null, null)
+
+    fun getAvailableIDs(type: SystemTimeZoneType?, region: String?, rawOffset: Int?): Set<String> =
+        filterIDs(type, region, rawOffset) { getSystemTimeZoneCore(it)?.getRawOffset() }
+
+    /** Frozen prototypes; the pending public TimeZone layer owns its wrappers. */
+    fun getSystemTimeZoneCore(id: String?): OlsonTimeZoneCore? = lock.withLock {
+        if (systemZones.containsKey(id)) return@withLock systemZones[id]
+        var zone: OlsonTimeZoneCore? = null
+        try {
+            val top = bundle("zoneinfo64")
+            val resource = openOlsonResource(top, id)
+            if (resource != null) zone = OlsonTimeZoneCore(top, resource, id).freeze()
+        } catch (_: MissingResourceException) { }
+        systemZones[id] = zone
+        zone
+    }
+    fun getCustomTimeZoneCore(id: String?): SimpleTimeZoneCore? {
+        val fields = IntArray(4)
+        if (!parseCustomID(id, fields)) return null
+        val key = fields[0] * (fields[1] or (fields[2] shl 5) or (fields[3] shl 11))
+        return lock.withLock {
+            customZones.getOrPut(key) {
+                val normalized = formatCustomID(fields[1], fields[2], fields[3], fields[0] < 0)
+                val offset = fields[0] * ((fields[1] * 60 + fields[2]) * 60 + fields[3]) * 1000
+                SimpleTimeZoneCore(offset, normalized).freeze()
+            }
+        }
+    }
+    fun getCustomTimeZoneCore(offset: Int): SimpleTimeZoneCore = SimpleTimeZoneCore(offset, customIDForOffset(offset))
 
     /** The owner supplies the system-zone raw offset, returning null when construction fails. */
     fun getAvailableIDs(type: SystemTimeZoneType?, region: String?, rawOffset: Int?, rawOffsetForID: (String) -> Int?): Set<String> =

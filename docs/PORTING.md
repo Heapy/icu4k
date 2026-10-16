@@ -8037,3 +8037,65 @@ Final verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together in 3m 7s after correcting JS array bounds
 behavior. Linux tests compiled only; SimpleTimeZoneCore common tests ran on JVM,
 Node and macOS Arm64. The ICU4J oracle ran on JVM. OlsonTimeZone remains pending.
+
+### OlsonTimeZone resource-backed engine and zone prototypes
+
+Ported OlsonTimeZone's resource-backed state and algorithms into OlsonTimeZoneCore:
+pre-/post-32-bit transition decoding, type offsets/maps, final-rule construction,
+historical UTC/local lookup, field offsets, current/future DST queries, transitions,
+rule extraction, raw-offset changes, canonical-ID retention, equality/hash and
+freeze/clone state. The engine uses SimpleTimeZoneCore for final recurring rules
+and BasicTimeZoneCore for simplified-rule extraction during raw-offset changes.
+An injected clock supports deterministic owners. No host zone database is used.
+
+Historic lookup retains the reverse linear scan, floor division for negative
+milliseconds, 24-hour local-transition margin, standard/daylight and former/latter
+masks, unsigned byte type indexes and full-width Int/Long arithmetic. Final-rule
+selection retains the Double millisecond boundary and the separate field-year
+check (including source BC year negation). Supplied monthLength is honored by
+Olson's seven-field overload. Explicit output/type-index checks retain source
+failures on JS as well as JVM/Native, including partial offset-array writes.
+
+Transition initialization retains initial type-zero skipping, null historic-rule
+slots, final-start filtering, final-zone cloning/start-year adjustment and cached
+rule/transition identity. Recursive redundant-transition skipping calls the owner.
+Clones share read-only transition/offset arrays, historic rule caches and the
+finalZoneWithStartYear cache, while cloning finalZone itself. setID retains the
+original canonical ID before touching the final zone and parent ID. JVM assertions
+follow the engine class's assertion status; JS/Native disable them.
+
+Source quirks remain: setRawOffset's newly created finalStartMillis stores epoch
+days without a millisecond multiplier; equals can short-circuit on equal type-map
+contents, and its final-zone expression retains its original operator grouping;
+hash retains its separate XOR/add arithmetic. The debug dump suffix retains its
+missing type-map closing bracket. Current-year DST detection does not become a
+constant initial-DST check when there are no transitions. Virtual owner callbacks
+preserve raw/offset/DST, ID, field-overload, simplified-rule and transition queries,
+including lazy failures on nullable rule arrays and ID getters.
+
+ZoneMetaCore now constructs/caches frozen system and normalized custom-zone core
+prototypes, caches missing system IDs and filters raw offsets through these engines.
+String custom-zone cache keys preserve the source sign/hour/minute/second packing;
+millisecond-offset construction returns a fresh unfrozen core. These factories
+provide engines for the pending public TimeZone wrappers. The public hierarchy,
+wrapper identity/dispatch, display services and JVM serialization/back-level
+resource reload still remain pending. The core does not claim a public Olson API.
+
+Targeted JVM verification passed against every embedded zone ID: all historic
+transition edges, random/extreme milliseconds, final years, field dates, complete
+rule descriptions, canonical/current/future queries, private state, debug suffix
+and hash. All 36 local-option pairs are checked around sampled raw/DST transition
+boundaries in every zone. Another 280 mixed mutation/freeze/clone histories compare
+raw-offset changes, cache state, equality and rule equivalence. Synthetic resources
+compare malformed-format read order/failures and 180 full-width transition/offset
+configurations with arbitrary option masks. Owner cases cover nullable IDs/rules,
+annual/fallback raw-offset rules and getter/transition order. Factory tests compare
+every system prototype, custom IDs/offsets and direct raw-offset filters. Common
+tests cover New York historic/final transitions, Apia's date-line gap, BasicTimeZone
+integration, cache/clone identities, canonical-ID retention, frozen prototypes,
+short outputs and the source's day-valued raw-offset mutation boundary.
+
+Final verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 36s. Linux tests compiled only;
+OlsonTimeZoneCore and prototype-factory common tests ran on JVM, Node and macOS
+Arm64. ICU4J comparisons ran on JVM. The public TimeZone front end remains pending.
