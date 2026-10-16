@@ -20,12 +20,17 @@ class GregorianCalendarCoreOracleTest {
         var datePort = CalendarDateCore(rawFields(),rawStamps(),DateBinding(this))
         var timePort = CalendarTimeCore<TimeZone>(rawStamps(),TimeBinding(this),Calendar::class.java.desiredAssertionStatus())
         var statePort = CalendarStateCore(rawFields(),rawStamps(),StateBinding(this),StateOwner(this),Calendar::class.java.desiredAssertionStatus())
+        var limitsPort = CalendarLimitsCore(rawFields(), LimitsBinding(this))
+        var addPort = CalendarAddCore(AddBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
             record("leap:$year")
             return if (common) port.isLeapYear(year) else super.isLeapYear(year)
         }
+        override fun getLimit(field: Int, limitType: Int): Int = if (common) limitsPort.getLimit(field,limitType) else super.getLimit(field,limitType)
+        override fun prepareGetActual(field: Int, minimum: Boolean) { if (common) limitsPort.prepareGetActual(field,minimum) else super.prepareGetActual(field,minimum) }
+        override fun pinField(field: Int) { if (common) limitsPort.pinField(field) else super.pinField(field) }
         override fun handleGetLimit(field: Int, limitType: Int) = if (common) port.handleGetLimit(field, limitType) else super.handleGetLimit(field, limitType)
         override fun handleGetMonthLength(year: Int, month: Int) = if (common) port.handleGetMonthLength(year, month) else super.handleGetMonthLength(year, month)
         override fun handleGetYearLength(year: Int): Int {
@@ -84,6 +89,7 @@ class GregorianCalendarCoreOracleTest {
         override fun inTemporalLeapYear(): Boolean = if (common) statePort.inTemporalLeapYear() else super.inTemporalLeapYear()
         override fun getTemporalMonthCode(): String = if (common) statePort.getTemporalMonthCode() else super.getTemporalMonthCode()
         override fun setTemporalMonthCode(value: String?) { if (common) statePort.setTemporalMonthCode(value) else super.setTemporalMonthCode(value) }
+        override fun add(field: Int, amount: Int) { if (common) addPort.add(field,amount) else super.add(field,amount) }
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -95,9 +101,14 @@ class GregorianCalendarCoreOracleTest {
             copy.datePort = CalendarDateCore(copy.rawFields(),copy.rawStamps(),DateBinding(copy))
             copy.timePort = CalendarTimeCore(copy.rawStamps(),TimeBinding(copy),Calendar::class.java.desiredAssertionStatus())
             copy.statePort = CalendarStateCore(copy.rawFields(),copy.rawStamps(),StateBinding(copy),StateOwner(copy),Calendar::class.java.desiredAssertionStatus())
+            copy.limitsPort = CalendarLimitsCore(copy.rawFields(), LimitsBinding(copy))
+            copy.addPort = CalendarAddCore(AddBinding(copy))
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
+        fun pin(field: Int) = pinField(field)
+        fun backwardEra() = isEra0CountingBackward()
+        fun prepareLimits(field: Int, minimum: Boolean) = prepareGetActual(field,minimum)
         fun limit(field: Int, type: Int) = handleGetLimit(field, type)
         fun monthLength(year: Int, month: Int) = handleGetMonthLength(year, month)
         fun yearLength(year: Int) = handleGetYearLength(year)
@@ -269,6 +280,44 @@ class GregorianCalendarCoreOracleTest {
         override fun getInternalSetMask() = p.rawMask()
         override fun reportDefaultMonthLength(year: Int,month: Int) { System.out.printf("handleGetMonthLength(ey=%d, m=%d)",year,month) }
     }
+    private class AddBinding(private val p: Probe) : CalendarAddCore.Owner {
+        override fun get(field: Int) = p.getField(field)
+        override fun set(field: Int, value: Int) = p.setField(field,value)
+        override fun pinField(field: Int) = p.pin(field)
+        override fun isEra0CountingBackward() = p.backwardEra()
+        override fun isLenient() = p.isLenient
+        override fun setLenient(value: Boolean) { p.isLenient = value }
+        override fun complete() = p.finish()
+        override fun fieldName(field: Int) = p.nameOf(field)
+        override fun getTimeInMillis() = p.timeInMillis
+        override fun setTimeInMillis(value: Long) { p.timeInMillis = value }
+        override fun storedTimeInMillis() = p.rawTime()
+        override fun storedSkippedWallTime() = p.skippedFlag()
+        override fun getImmediatePreviousZoneTransition(time: Long) = p.immediatePrevious(time)
+    }
+    private class LimitsBinding(private val p: Probe) : CalendarLimitsCore.Owner {
+        override fun handleGetLimit(field: Int, type: Int) = p.limit(field,type)
+        override fun getLimit(field: Int, type: Int) = when (type) {
+            0 -> p.getMinimum(field)
+            1 -> p.getGreatestMinimum(field)
+            2 -> p.getLeastMaximum(field)
+            else -> p.getMaximum(field)
+        }
+        override fun getMinimalDaysInFirstWeek() = p.minimalDaysInFirstWeek
+        override fun storedFirstDayOfWeek() = StateBinding(p).firstDayOfWeek
+        override fun get(field: Int) = p.getField(field)
+        override fun set(field: Int, value: Int) = p.setField(field,value)
+        override fun getActualMaximum(field: Int) = p.getActualMaximum(field)
+        override fun getActualMinimum(field: Int) = p.getActualMinimum(field)
+        override fun handleGetMonthLength(year: Int, month: Int) = p.monthLength(year,month)
+        override fun handleGetYearLength(year: Int) = p.yearLength(year)
+        override fun inTemporalLeapYear() = p.inTemporalLeapYear()
+        override fun cloneCalendar(): CalendarLimitsCore.Owner = LimitsBinding(p.clone())
+        override fun complete() = p.finish()
+        override fun setLenient(value: Boolean) { p.isLenient = value }
+        override fun prepareGetActual(field: Int, minimum: Boolean) { p.prepareLimits(field,minimum) }
+        override fun add(field: Int, amount: Int) = p.add(field,amount)
+    }
     private class FieldBinding(private val p: Probe) : CalendarFieldsCore.Owner<TimeZone> {
         override fun getTimeZone(): TimeZone? = p.timeZone
         override fun getOffset(zone: TimeZone?, date: Long, local: Boolean, offsets: IntArray) = zone!!.getOffset(date,local,offsets)
@@ -302,7 +351,7 @@ class GregorianCalendarCoreOracleTest {
         override fun weekNumber(dayOfPeriod: Int, dayOfWeek: Int) = p.week(dayOfPeriod, dayOfWeek)
         override fun baseRoll(field: Int, amount: Int) { baseRollHandle.invokeWithArguments(p, field, amount) }
         override fun getMinimum(field: Int) = p.getMinimum(field)
-        override fun baseGetActualMaximum(field: Int): Int = baseActualMaximum.invokeWithArguments(p, field) as Int
+        override fun baseGetActualMaximum(field: Int): Int = if (p.common) p.limitsPort.getActualMaximum(field) else baseActualMaximum.invokeWithArguments(p, field) as Int
         override fun cloneCalendar(): GregorianCalendar = p.clone()
         override fun setLenient(calendar: GregorianCalendar, value: Boolean) { calendar.isLenient = value }
         override fun get(calendar: GregorianCalendar, field: Int) = (calendar as Probe).getField(field)

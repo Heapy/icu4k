@@ -8801,3 +8801,35 @@ passed in 39s. The complete jvmTest/jsNodeTest/macosArm64Test/
 compileTestKotlinLinuxX64 selection passed in 3m 31s. All five new common tests
 executed on JVM, Node and macOS Arm64; Linux tests compiled only. Three new JVM
 state groups and the existing combined-calendar suites passed.
+
+### Calendar limits and add arithmetic (2026-10-16)
+
+CalendarLimitsCore ports fixed and calendar-specific limit dispatch, week-of-month
+bounds, actual minimum/maximum searches, prepareGetActual and pinField. Searches
+preserve clone/complete/leniency ordering, virtual add dispatch and the original
+receiver for month/year-length callbacks. Preparation reads the stored first day
+of week. Fixed-limit indexing and integer arithmetic retain source behavior.
+
+CalendarAddCore ports every supported add field, backward-era year arithmetic,
+day pinning, temporary leniency and elapsed-time scaling. Date increments retain
+wall time across offset changes, including the 24-hour Apia jump, all skipped-wall
+time policies and the immediate previous transition search. Zero amounts return
+before field validation. Overflow and failure state are preserved, including
+leniency remaining enabled if pinning or completion throws.
+
+The integrated Gregorian oracle now binds both engines, including clones, and
+routes base actual maxima, protected limits, pinning, preparation and virtual add
+through common implementations. New oracle groups cover all fields and signed
+amounts around leap days, month ends, the Gregorian cutover, New York gaps/overlaps
+and Apia, plus all 49 week-rule configurations. Common tests cover callback order,
+zero/unsupported fields, integer and long overflow, temporary-leniency failure
+state and skipped-time transition failures.
+
+Public Calendar construction/factories, base roll and serialization remain
+pending. The base roll implementation used by the JVM probe is still ICU4J.
+
+Verification: focused Calendar/Gregorian JVM oracle tests passed in 49s.
+After fixing a JVM setter-name collision in the new test fixture, the complete
+jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
+4m 12s. All four new common tests passed on JVM, Node and macOS Arm64; Linux
+tests compiled only. Both new JVM arithmetic/limits oracle groups passed.
