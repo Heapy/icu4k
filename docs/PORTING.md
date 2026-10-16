@@ -9670,3 +9670,50 @@ suites and Linux x64 test compilation passed in 4m38s; the separate full JS Node
 suite passed in 1m51s. All three new common groups passed on JVM, JS and macOS
 Native, and all three JVM factory oracle groups passed. Linux tests were
 compiled only, not executed on this macOS host.
+
+### DateFormatSymbols calendar-symbol resource initialization (2026-10-17)
+
+CalendarSymbolSink ports DateFormatSymbols.CalendarDataSink: same-calendar alias
+resolution with shared array/map identities, restricted traversal of referenced
+calendar types, AM/PM exceptions, variant filtering, cyclic-name path selection
+and final Gregorian fallback. Ordered path maps use the existing common AVL
+storage; source Java assertions are modeled by an explicit assertion policy.
+
+DateFormatSymbolsDataCore ports the full resource initialization: era rules and
+sparse era-name fallback, month/weekday/quarter forms and widths, AM/PM and day
+periods, leap-month patterns, cyclic year/zodiac names, requested/valid/actual
+locales, capitalization vectors and numbering-system time separators. Weekday
+arrays are one-based, day-period fallbacks preserve aliases, and repeated init
+retains existing leap-month patterns exactly as ICU4J does. EraRules' current
+clock/default-zone effects and the owning class name remain mandatory owner
+operations; production does not supply a fixed clock or a substitute UTC zone.
+
+The main JVM oracle compares every instance String[] field, pairwise array
+identity, capitalization values and shared rows, locales and separator/pattern
+characters against fresh ICU4J private initialization for all available locales,
+all calendar types in nine locales, and number-system/unknown-calendar cases.
+Repeated initialization also checks the partial field writes before a null-type
+failure. A second oracle compares each calendar-fallback callback's raw arrays,
+maps, aliases, visit filters and shared identities across calendar types and
+eight locales. Common fixtures cover embedded English symbols, Japanese era
+data, Chinese cyclic/leap names, fallback, aliases and owner failures.
+
+Initial compilation caught Java inherited static resource constants that need
+UResourceBundle qualification in Kotlin and a missing operator separator; both
+were corrected. Public DateFormatSymbols accessors, setters, clone/equality,
+cache/factories, zone strings and serialization remain pending, as do the public
+date/calendar/timezone facades. No reduced public facade was introduced.
+
+The initializer also dispatches through the overridable time-separator setter.
+Its MissingResourceException is caught in the same scope as resource lookup,
+causing a second setter call with the default separator; other setter failures
+propagate with prior separator state retained. JVM subclass probes and a common
+callback fixture verify dispatch, fallback scope and initialization order.
+
+Verification: final focused JVM checks passed in 23s (four common groups, three
+symbol initializer oracle groups and one raw-sink oracle). Final full JVM/macOS
+Native suites and Linux x64 test compilation passed in 4m32s; the separate full
+JS Node suite passed in 1m2s. All four new common groups passed on JVM, JS and
+macOS Native. Linux tests were compiled, not executed on this macOS host.
+Nullable setter-call fixtures needed explicit List<String?> expectations for
+Kotlin's test type inference; production behavior was unaffected by that fix.
