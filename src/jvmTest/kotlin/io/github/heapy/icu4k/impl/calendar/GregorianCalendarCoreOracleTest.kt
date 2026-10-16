@@ -25,6 +25,7 @@ class GregorianCalendarCoreOracleTest {
         var rollPort = CalendarRollCore(RollBinding(this))
         var differencePort = CalendarDifferenceCore(DifferenceBinding(this))
         var comparisonPort = CalendarComparisonCore(ComparisonBinding(this))
+        var weekendPort = CalendarWeekendCore(WeekendState(this),WeekendBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -93,6 +94,12 @@ class GregorianCalendarCoreOracleTest {
         override fun getTemporalMonthCode(): String = if (common) statePort.getTemporalMonthCode() else super.getTemporalMonthCode()
         override fun setTemporalMonthCode(value: String?) { if (common) statePort.setTemporalMonthCode(value) else super.setTemporalMonthCode(value) }
         override fun add(field: Int, amount: Int) { if (common) addPort.add(field,amount) else super.add(field,amount) }
+        override fun getDayOfWeekType(day: Int): Int = if (common) weekendPort.getDayOfWeekType(day) else super.getDayOfWeekType(day)
+        override fun getWeekendTransition(day: Int): Int = if (common) weekendPort.getWeekendTransition(day) else super.getWeekendTransition(day)
+        override fun isWeekend(): Boolean = if (common) weekendPort.isWeekend() else super.isWeekend()
+        override fun isWeekend(date: Date?): Boolean = if (common) weekendPort.isWeekend(date) else super.isWeekend(date)
+        override fun getWeekData(): Calendar.WeekData = if (common) weekendPort.getWeekData().toSourceWeekData() else super.getWeekData()
+        override fun setWeekData(value: Calendar.WeekData?): Calendar = if (common) weekendPort.setWeekData(value?.toCommonWeekData()) else super.setWeekData(value)
         override fun fieldDifference(whenDate: Date?, field: Int): Int = if (common) differencePort.fieldDifference(whenDate,field) else super.fieldDifference(whenDate,field)
         override fun equals(other: Any?): Boolean = if (common) comparisonPort.calendarEquals(other) else super.equals(other)
         override fun hashCode(): Int = if (common) port.hashCode(comparisonPort.calendarHashCode()) else super.hashCode()
@@ -116,6 +123,7 @@ class GregorianCalendarCoreOracleTest {
             copy.rollPort = CalendarRollCore(RollBinding(copy))
             copy.differencePort = CalendarDifferenceCore(DifferenceBinding(copy))
             copy.comparisonPort = CalendarComparisonCore(ComparisonBinding(copy))
+            copy.weekendPort = CalendarWeekendCore(WeekendState(copy),WeekendBinding(copy))
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -293,6 +301,34 @@ class GregorianCalendarCoreOracleTest {
         override fun fieldName(field: Int) = p.nameOf(field)
         override fun getInternalSetMask() = p.rawMask()
         override fun reportDefaultMonthLength(year: Int,month: Int) { System.out.printf("handleGetMonthLength(ey=%d, m=%d)",year,month) }
+    }
+    private class WeekendState(private val p: Probe) : CalendarWeekendCore.State {
+        override val firstDayOfWeek get() = StateBinding(p).firstDayOfWeek
+        override val minimalDaysInFirstWeek get() = StateBinding(p).minimalDaysInFirstWeek
+        override var weekendOnset: Int
+            get() = weekendFields.getValue("weekendOnset").getInt(p)
+            set(value) { weekendFields.getValue("weekendOnset").setInt(p,value) }
+        override var weekendOnsetMillis: Int
+            get() = weekendFields.getValue("weekendOnsetMillis").getInt(p)
+            set(value) { weekendFields.getValue("weekendOnsetMillis").setInt(p,value) }
+        override var weekendCease: Int
+            get() = weekendFields.getValue("weekendCease").getInt(p)
+            set(value) { weekendFields.getValue("weekendCease").setInt(p,value) }
+        override var weekendCeaseMillis: Int
+            get() = weekendFields.getValue("weekendCeaseMillis").getInt(p)
+            set(value) { weekendFields.getValue("weekendCeaseMillis").setInt(p,value) }
+    }
+    private class WeekendBinding(private val p: Probe) : CalendarWeekendCore.Owner<Calendar> {
+        override val self: Calendar get() = p
+        override fun setFirstDayOfWeek(value: Int) { p.firstDayOfWeek=value }
+        override fun setMinimalDaysInFirstWeek(value: Int) { p.minimalDaysInFirstWeek=value }
+        override fun setWeekData(value: CalendarWeekData): Calendar = p.setWeekData(value.toSourceWeekData())
+        override fun get(field: Int) = p.getField(field)
+        override fun internalGet(field: Int) = p.read(field)
+        override fun getDayOfWeekType(day: Int) = p.getDayOfWeekType(day)
+        override fun getWeekendTransition(day: Int) = p.getWeekendTransition(day)
+        override fun setTime(date: Date?) = p.assignDate(date)
+        override fun isWeekend() = p.isWeekend()
     }
     private class DifferenceBinding(private val p: Probe) : CalendarDifferenceCore.Owner {
         override fun getTimeInMillis() = p.timeInMillis
@@ -494,6 +530,7 @@ class GregorianCalendarCoreOracleTest {
         private val lenientField = Calendar::class.java.getDeclaredField("lenient").apply { isAccessible = true }
         private val skippedField = Calendar::class.java.getDeclaredField("skippedWallTime").apply { isAccessible = true }
         private val repeatedField = Calendar::class.java.getDeclaredField("repeatedWallTime").apply { isAccessible = true }
+        private val weekendFields = listOf("weekendOnset","weekendOnsetMillis","weekendCease","weekendCeaseMillis").associateWith { Calendar::class.java.getDeclaredField(it).apply { isAccessible=true } }
         private val stateFields = listOf("time","isTimeSet","areFieldsSet","areAllFieldsSet","areFieldsVirtuallySet","nextStamp","zone","lenient","repeatedWallTime","skippedWallTime","firstDayOfWeek","minimalDaysInFirstWeek")
             .associateWith { Calendar::class.java.getDeclaredField(it).apply { isAccessible = true } }
         private val immediateTransitionMethod = Calendar::class.java.getDeclaredMethod("getImmediatePreviousZoneTransition",Long::class.javaPrimitiveType).apply { isAccessible = true }
@@ -515,3 +552,6 @@ class GregorianCalendarCoreOracleTest {
         }
     }
 }
+
+internal fun Calendar.WeekData.toCommonWeekData() = CalendarWeekData(firstDayOfWeek,minimalDaysInFirstWeek,weekendOnset,weekendOnsetMillis,weekendCease,weekendCeaseMillis)
+internal fun CalendarWeekData.toSourceWeekData() = Calendar.WeekData(firstDayOfWeek,minimalDaysInFirstWeek,weekendOnset,weekendOnsetMillis,weekendCease,weekendCeaseMillis)

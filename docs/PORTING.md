@@ -8903,3 +8903,37 @@ jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
 4m 37s. All seven new common tests passed on JVM, Node and macOS Arm64; Linux
 tests compiled only. Both new JVM comparison/difference oracle groups passed,
 as did the deterministic roll oracle and the other combined calendar suites.
+
+### Calendar week data and weekend predicates (2026-10-16)
+
+CalendarWeekData ports WeekData's immutable six-field contract, source hash
+polynomial, equality and string form without input normalization.
+CalendarWeekDataCore reads the embedded supplementalData/weekData vectors through
+the common resource pipeline. Null regions map to 001 and missing region entries
+fall back to 001. Public lookups create fresh values; calendar initialization
+uses the existing common SoftCache with source key and reclamation policies.
+
+CalendarWeekendCore ports get/setWeekData, cached region initialization,
+getDayOfWeekType, getWeekendTransition and both isWeekend overloads. Week setters
+retain virtual dispatch, order and partial writes on failure. Weekend metadata
+is assigned without validation. Predicates preserve wrapping/same-day intervals,
+partial-day inclusive onset/exclusive cease, the source's same-day special case,
+invalid-day errors, internal-field read order/Int arithmetic and virtual dated
+predicate dispatch. Snapshot metadata reads stored fields rather than getters.
+
+The combined Gregorian JVM probe projects weekend fields, routes these APIs
+through common implementations and rebinds its owner/state on clone. JVM oracle
+coverage compares every embedded region with ICU4J, fresh lookup/cache identity,
+custom and invalid weekend boundaries, predicates, clone separation and partial
+week-setting failures. Four common groups cover real embedded resources,
+region fallback/cache initialization, partial weekends across week boundaries,
+same-day handling, callback order, snapshot freshness and failures.
+
+Public Calendar construction/factories, locale selection, formatting factories
+and serialization remain pending.
+
+Verification: focused Calendar/Gregorian JVM oracle tests passed in 55s.
+The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 4m 52s. All four new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. Both new JVM week-data/weekend oracle groups and the
+existing combined-calendar suites passed.
