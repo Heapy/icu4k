@@ -8248,3 +8248,30 @@ compileTestKotlinLinuxX64 passed together in 2m 44s. Linux tests compiled only;
 parsing common tests, including reentrant callbacks and supplementary UTF-16
 lengths, ran on JVM, Node and macOS Arm64. ICU4J ordered-result/state comparisons
 ran on JVM.
+
+### TZDB abbreviation engine
+
+`TZDBTimeZoneNamesCore` ports the TZDB metazone abbreviation lookup and shared
+case-insensitive prefix trie. It reads the already embedded `zone/tzdbNames.res`;
+no new data copy is required. Standard/daylight records retain source insertion
+order and region preferences. Matching chooses one record per prefix, preferring
+an explicit region, then a record without region restrictions, then the first
+fallback. Locale country and likely subtags determine the region lazily; the
+`rg` keyword does not override this source policy.
+
+Identical standard/daylight abbreviations become SHORT_GENERIC only when both
+standard and daylight filters are enabled. The source null-filter failure on
+such ambiguous records is retained. Missing names, invalid input validation,
+lazy null-locale failure and source match collection behavior are preserved.
+The implementation uses common code and recursive locks for shared caches and
+trie publication. This supplies the concrete TZDB engine; the public
+TimeZoneNames factory/default-timezone integration remains pending.
+
+Oracle tests compare all metazone display names and all abbreviation prefix
+matches across 128 filter subsets plus a null filter in eleven locale settings.
+Common tests cover US/China CST disambiguation, lowercase input, prefix offsets,
+match lengths and invalid input. Linux validation compiles tests; execution
+coverage uses JVM, Node and macOS Arm64.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 3m 4s.
