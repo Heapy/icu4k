@@ -9467,3 +9467,58 @@ UTF16 tests). Full JVM/macOS Native tests and Linux x64 test compilation passed
 in 5m41s; the separate full JavaScript Node suite passed in 1m27s. All ten new
 common groups passed on JVM, JS and macOS Native, and all nine new JVM oracle
 groups passed. Linux tests were compiled, not executed on this macOS host.
+
+### DateTimePatternGenerator registration and best-pattern engine (2026-10-16)
+
+Added DateTimePatternGeneratorCore for source pattern registration, base/exact
+conflict precedence, specified-skeleton priorities, canonical/empty setup, pattern
+and base-skeleton enumeration, best-match search, field adjustment, date/time
+composition and redundancy detection. Search preserves the actual source tie
+condition on missing-field masks, splitting by date/time masks, fractional-second
+insertion, field-length option interactions and the month/weekday/year exceptions.
+Hour metacharacters j/J/C retain source quoting, repetition, preferred/allowed
+hour-cycle rules and failure behavior; an empty generator's C request still fails
+without actual allowed-hour data rather than inventing a preference.
+
+The internal ordered storage is AVL-based: lookup/update/delete are logarithmic,
+copy is linear, iteration follows source comparator order, and comparator-equal
+replacement retains the first key object. It supports the source's fail-fast
+structural iteration and a stable live mutable key view. getBaseSkeletons calls
+the caller's actual addAll with that view, preserving callback observation and
+backed-view/iterator removals instead of copying or adding keys one at a time.
+Source getSkeletons/getRedundants output collection aliases and mutation failures
+are also retained.
+
+Getter scratch state uses the existing reentrant receiver-monitor boundary, with
+an optional facade monitor owner. The best-pattern date/time composition remains
+outside the inner source lock. Configuration/frozen checks, style/bounds/null
+ordering, shallow clone aliases and clone scratch-state resets are ported. The
+source cloneAsThawed receiver-side unfreeze is deliberately preserved and tracked
+as ICU4J-007. Display-name rows, allowed-hour arrays and available-format keys
+retain source sharing; append/date-time arrays and pattern maps are copied.
+
+Six generator JVM oracle groups compare randomized conflict/error sequences,
+field replacement and all hour-meta cases, search over real ICU4J pattern corpora
+for 12 locales/hour-cycle variants, cloning/frozen behavior, redundancy output,
+fail-fast mutations and live base-key collection callbacks. The corpus test
+imports source pattern/configuration state solely to isolate the common search
+algorithm; it does not prove common locale initialization. Three ordered-map
+oracle groups compare TreeMap key identity/order, mutations, AVL balance and
+iterator removals. Eight common groups include independent ICU4J empty/custom
+search snapshots, registration statuses, length options, inferred glue styles,
+required allowed-hour data, clone aliases, output callbacks and portable storage.
+The first Native compile rejected a JVM-only LinkedHashMap test subclass; the
+fixture now uses AbstractMutableMap on every target.
+
+Public DateTimePatternGenerator construction/API, resource-driven locale/hour
+initialization, normal/no-standard-pattern instance factories and caches, and
+CalendarPatternDataCore's real generator binding remain pending, together with
+the remaining date-format/Calendar facade work. No ICU4J production dependency
+or fixed per-locale skeleton-result table was added.
+
+Verification after the live-key callback fix: focused JVM tests passed in 44s
+(17 groups: eight common, six generator oracles and three storage oracles). Full
+JVM/macOS Native tests and Linux x64 test compilation passed in 4m42s; the
+separate full JavaScript Node suite passed in 1m18s. All eight new common groups
+passed on JVM, JS and macOS Native. Linux tests were compiled, not executed on
+this macOS host.

@@ -45,6 +45,7 @@ Priority is local triage priority, not an upstream severity assignment.
 | [ICU4J-004](#icu4j-004-a-null-currency-code-poisons-the-formatting-cache) | A null currency lookup breaks subsequent valid lookups | Reproduced behavior; contract review pending | Low | Not submitted |
 | [ICU4J-005](#icu4j-005-setting-the-existing-gregorian-cutover-changes-historical-dates) | Setting the existing Gregorian cutover changes historical dates | Reproduced defect | Medium | Not submitted |
 | [ICU4J-006](#icu4j-006-calendarcache-negative-key-probing-can-loop-forever) | A negative CalendarCache key can make collision probing loop forever | Reproduced defect | High | Not submitted |
+| [ICU4J-007](#icu4j-007-cloneasthawed-unfreezes-the-original-pattern-generator) | DateTimePatternGenerator.cloneAsThawed unfreezes its receiver | Reproduced defect | Medium | Not submitted |
 
 ## ICU4J 001 Region overrides depend on the host locale
 
@@ -381,6 +382,40 @@ dump confirmed `CalendarCache.findIndex` looping during `rehash`, called by the
 source `IslamicCalendar.trueMonthStart`. The hanging lookup is deliberately kept
 out of in-process test execution.
 No behavior change is applied without a separate baseline compatibility decision.
+
+## ICU4J 007 cloneAsThawed unfreezes the original pattern generator
+
+**Suggested title.** DateTimePatternGenerator.cloneAsThawed mutates the receiver's frozen flag.
+
+**Status.** Reproduced locally against pinned ICU4J 78.3 on 2026-10-16,
+OpenJDK 25.0.4+9-LTS, macOS arm64. Local priority: medium. No report submitted;
+current releases, upstream HEAD and duplicate searches remain pending.
+
+**Trigger.** Freeze a generator, call cloneAsThawed, then inspect the original:
+
+```java
+import com.ibm.icu.text.DateTimePatternGenerator;
+
+public class GeneratorThawProbe {
+    public static void main(String[] args) {
+        DateTimePatternGenerator original = DateTimePatternGenerator.getEmptyInstance().freeze();
+        DateTimePatternGenerator copy = original.cloneAsThawed();
+        System.out.println(original.isFrozen()); // false
+        System.out.println(copy.isFrozen());     // false
+    }
+}
+```
+
+**Impact and source evidence.** A caller can clone a frozen/shared generator and
+unexpectedly make the original modifiable. The source method assigns
+`frozen = false` on `this` after obtaining `result = this.clone()`; clone itself
+already returns an unfrozen copy. The receiver mutation conflicts with obtaining
+a thawed copy while retaining the original frozen instance. This is a pinned
+source reproduction, not a claim about current upstream versions.
+
+**ICU4K compatibility.** The internal generator core retains this receiver-side
+mutation. JVM and common tests explicitly verify both frozen flags and clone
+aliases. A behavior fix requires a separate compatibility decision.
 
 ## Upstream handoff
 
