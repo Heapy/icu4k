@@ -9547,3 +9547,28 @@ Verification: full JVM/macOS Native suites and Linux x64 test compilation passed
 in 4m41s, followed by the full JavaScript Node suite in 59s. All three new common
 groups passed on JVM, macOS Native and JS; all seven generator JVM oracle groups
 passed. Linux tests were compiled only on this macOS host.
+
+### DateTimePatternGenerator supplemental hour data (2026-10-16)
+
+DateTimePatternHourDataCore now reads supplementalData/timeData via the common
+resource sink. It preserves preferred/allowed ordering, scalar-or-array allowed
+values, missing-entry fallback, language/region precedence, likely-subtag
+expansion, Region aliases and hours keyword overrides. The generator engine can
+initialize its j/J default-hour and C allowed-hour inputs from this real data.
+The hours keyword changes the preferred hour only, retaining the resource's
+allowed formats. Per-lookup allowed arrays are copied as in ICU4J (except its
+shared last-resort array).
+
+The JVM oracle invokes ICU4J's hour initializer for every available locale and
+ISO country with all four hour keywords and invalid keyword values, comparing
+preferred characters, full allowed lists, and resulting Cmm/jmm searches.
+Common tests use embedded resources for preferred hours, rg overrides, hours
+overrides, copied allowed arrays and generator integration. Locale standard
+patterns, append-item/field-name/available-format loading, decimal symbols and
+public generator construction still remain to be connected.
+
+Verification: focused JVM checks passed, followed by full JVM/macOS Native
+suites and Linux x64 test compilation in 5m20s and the full JS Node suite in
+1m. Both new common groups passed on JVM, JS and macOS Native; the expanded
+hour-data oracle passed with every timeData key included. Linux execution is
+not available on this macOS host.

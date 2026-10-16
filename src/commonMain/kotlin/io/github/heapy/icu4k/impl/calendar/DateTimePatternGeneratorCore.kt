@@ -42,6 +42,9 @@ internal open class DateTimePatternGeneratorCore(private val assertionsEnabled: 
     open fun getDefaultHourFormatChar(): Char=hour
     open fun setDefaultHourFormatChar(value: Char) { hour=value }
     fun setAllowedHourFormats(value: Array<String?>?) { allowedHours=value }
+    fun initializeHourFormats(locale: io.github.heapy.icu4k.util.ULocale?,data: DateTimePatternHourDataCore) {
+        val hours=data.get(locale); hour=hours.preferred; allowedHours=hours.allowed
+    }
     open fun getDefaultHourCycle(): HourCycle=when(getDefaultHourFormatChar()) {
         'h' -> HourCycle.HOUR_CYCLE_12; 'H' -> HourCycle.HOUR_CYCLE_23; 'k' -> HourCycle.HOUR_CYCLE_24; 'K' -> HourCycle.HOUR_CYCLE_11
         else -> throw AssertionError("should be unreachable")
