@@ -12,7 +12,7 @@ class CalendarRollCoreOracleTest {
                     val source=GregorianCalendarCoreOracleTest.Probe(zone)
                     val target=GregorianCalendarCoreOracleTest.Probe(zone).apply { common=true }
                     for(p in listOf(source,target)) {
-                        p.clearFields(); p.setDateTimeFields(date[0],date[1],date[2],date[3],date[4],date[5]); p.trace.clear()
+                        p.timeInMillis=0; p.clearFields(); p.setDateTimeFields(date[0],date[1],date[2],date[3],date[4],date[5]); p.trace.clear()
                     }
                     fun roll(p: GregorianCalendarCoreOracleTest.Probe) { if(base) p.baseRoll(field,amount) else p.roll(field,amount) }
                     val context="$zone ${date.toList()} field=$field amount=$amount base=$base"

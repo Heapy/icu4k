@@ -23,6 +23,8 @@ class GregorianCalendarCoreOracleTest {
         var limitsPort = CalendarLimitsCore(rawFields(), LimitsBinding(this))
         var addPort = CalendarAddCore(AddBinding(this))
         var rollPort = CalendarRollCore(RollBinding(this))
+        var differencePort = CalendarDifferenceCore(DifferenceBinding(this))
+        var comparisonPort = CalendarComparisonCore(ComparisonBinding(this))
         init { ready = true }
         private fun record(value: String) { if (ready) trace.add(value) }
         override fun isLeapYear(year: Int): Boolean {
@@ -91,6 +93,13 @@ class GregorianCalendarCoreOracleTest {
         override fun getTemporalMonthCode(): String = if (common) statePort.getTemporalMonthCode() else super.getTemporalMonthCode()
         override fun setTemporalMonthCode(value: String?) { if (common) statePort.setTemporalMonthCode(value) else super.setTemporalMonthCode(value) }
         override fun add(field: Int, amount: Int) { if (common) addPort.add(field,amount) else super.add(field,amount) }
+        override fun fieldDifference(whenDate: Date?, field: Int): Int = if (common) differencePort.fieldDifference(whenDate,field) else super.fieldDifference(whenDate,field)
+        override fun equals(other: Any?): Boolean = if (common) comparisonPort.calendarEquals(other) else super.equals(other)
+        override fun hashCode(): Int = if (common) port.hashCode(comparisonPort.calendarHashCode()) else super.hashCode()
+        override fun isEquivalentTo(other: Calendar?): Boolean = if (common) comparisonPort.isEquivalentTo(other) && port.hasSameCutover((other as Probe).port) else super.isEquivalentTo(other)
+        override fun before(other: Any?): Boolean = if (common) comparisonPort.before(other) else super.before(other)
+        override fun after(other: Any?): Boolean = if (common) comparisonPort.after(other) else super.after(other)
+        override fun compareTo(other: Calendar?): Int = if (common) comparisonPort.compareTo(other) else super.compareTo(other)
         override fun roll(field: Int, amount: Int) { if (common) port.roll(field, amount) else super.roll(field, amount) }
         override fun getActualMinimum(field: Int) = if (common) port.getActualMinimum(field) else super.getActualMinimum(field)
         override fun getActualMaximum(field: Int) = if (common) port.getActualMaximum(field) else super.getActualMaximum(field)
@@ -105,6 +114,8 @@ class GregorianCalendarCoreOracleTest {
             copy.limitsPort = CalendarLimitsCore(copy.rawFields(), LimitsBinding(copy))
             copy.addPort = CalendarAddCore(AddBinding(copy))
             copy.rollPort = CalendarRollCore(RollBinding(copy))
+            copy.differencePort = CalendarDifferenceCore(DifferenceBinding(copy))
+            copy.comparisonPort = CalendarComparisonCore(ComparisonBinding(copy))
             return copy
         }
         fun change(date: Date?) { super.setGregorianChange(date); port.setGregorianChange(date) }
@@ -282,6 +293,31 @@ class GregorianCalendarCoreOracleTest {
         override fun fieldName(field: Int) = p.nameOf(field)
         override fun getInternalSetMask() = p.rawMask()
         override fun reportDefaultMonthLength(year: Int,month: Int) { System.out.printf("handleGetMonthLength(ey=%d, m=%d)",year,month) }
+    }
+    private class DifferenceBinding(private val p: Probe) : CalendarDifferenceCore.Owner {
+        override fun getTimeInMillis() = p.timeInMillis
+        override fun setTimeInMillis(value: Long) { p.timeInMillis = value }
+        override fun add(field: Int, amount: Int) = p.add(field,amount)
+    }
+    private class ComparisonBinding(private val p: Probe) : CalendarComparisonCore.Owner<Calendar> {
+        override val self: Calendar get() = p
+        override fun sameRuntimeClass(value: Any) = p.javaClass == value.javaClass
+        override fun asCalendar(value: Any?) = value as? Calendar
+        override fun isEquivalentTo(calendar: Calendar) = p.isEquivalentTo(calendar)
+        override fun getTimeInMillis(calendar: Calendar) = calendar.timeInMillis
+        override fun getTime(calendar: Calendar): Date = if (calendar is Probe) calendar.dateValue() else calendar.time
+        override fun isLenient(calendar: Calendar) = calendar.isLenient
+        override fun getFirstDayOfWeek(calendar: Calendar) = calendar.firstDayOfWeek
+        override fun getMinimalDaysInFirstWeek(calendar: Calendar) = calendar.minimalDaysInFirstWeek
+        override fun getTimeZone(calendar: Calendar): Any? = calendar.timeZone
+        override fun getRepeatedWallTimeOption(calendar: Calendar) = calendar.repeatedWallTimeOption
+        override fun getSkippedWallTimeOption(calendar: Calendar) = calendar.skippedWallTimeOption
+        override fun storedLenient() = StateBinding(p).lenient
+        override fun storedFirstDayOfWeek() = StateBinding(p).firstDayOfWeek
+        override fun storedMinimalDaysInFirstWeek() = StateBinding(p).minimalDaysInFirstWeek
+        override fun storedRepeatedWallTime() = p.repeatedFlag()
+        override fun storedSkippedWallTime() = p.skippedFlag()
+        override fun storedZoneHashCode() = p.storedZone()!!.hashCode()
     }
     private class RollBinding(private val p: Probe) : CalendarRollCore.Owner {
         override fun complete() = p.finish()

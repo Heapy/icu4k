@@ -8863,3 +8863,43 @@ Verification: focused Calendar/Gregorian JVM oracle tests passed in 57s.
 The complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
 passed in 5m 56s. All four new common tests passed on JVM, Node and macOS Arm64;
 Linux tests compiled only. Both new JVM roll oracle groups passed.
+
+### Calendar comparison and field difference (2026-10-16)
+
+CalendarComparisonCore ports base equals, isEquivalentTo, hashCode, before,
+after and compareTo. Runtime-class and identity checks, virtual configuration
+accessors, short-circuiting, the other calendar's Date accessor and signed Long
+subtraction overflow match ICU4J. Both virtual zones are evaluated before a null
+receiver fails. Hashing reads stored configuration and zone without resolving
+time. Gregorian cutover equivalence and hash mixing remain in the Gregorian
+binding/core.
+
+CalendarDifferenceCore ports fieldDifference's positive/negative exponential
+bracketing, binary search and final partial endpoint. Every add starts from the
+original timestamp to avoid repeated month/day pinning. Date reads occur after
+the initial virtual time read; Int limits, asymmetric overflow failures and
+partial state on failed add calls retain source behavior. No failure rollback
+or artificial search cap is added.
+
+The integrated Gregorian probe routes these APIs through common implementations
+and rebinds both owners on cloning. New JVM oracle groups compare date-difference
+searches around leap years, reform dates, gaps/overlaps and Apia, including
+unsupported fields and differences exceeding Int range. Comparison coverage
+includes configuration changes, cutover, invalid fields, null arguments/zones,
+foreign object types, identity and extreme Date timestamps. Seven common groups
+exercise exact callback order, short circuits, signed search endpoints, Int/Long
+overflow, null evaluation and failure state.
+
+The prior roll oracle now sets a deterministic stored timestamp before clearing
+fields. Since clear preserves that timestamp and zero roll returns immediately,
+comparing independently constructed calendars had depended on both constructors
+running within the same millisecond. Production roll behavior is unchanged.
+
+Public Calendar construction/factories, locale/weekend metadata, format factories
+and serialization remain pending.
+
+Verification: focused Calendar JVM tests passed in 51s. The complete
+jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection passed in
+4m 37s. All seven new common tests passed on JVM, Node and macOS Arm64; Linux
+tests compiled only. Both new JVM comparison/difference oracle groups passed,
+as did the deterministic roll oracle and the other combined calendar suites.
