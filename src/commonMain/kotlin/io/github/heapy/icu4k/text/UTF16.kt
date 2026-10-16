@@ -118,8 +118,13 @@ object UTF16 {
         if (offset < 0 || offset > length) throw IndexOutOfBoundsException("Offset $offset, length $length")
     }
 
-    fun append(target: StringBuilder, char32: Int): StringBuilder = target.append(valueOf(char32))
-    fun appendCodePoint(target: StringBuilder, cp: Int): StringBuilder = append(target, cp)
+    fun append(target: StringBuilder?, char32: Int): StringBuilder {
+        if (char32 !in CODEPOINT_MIN_VALUE..CODEPOINT_MAX_VALUE) {
+            throw IllegalArgumentException("Illegal codepoint: ${char32.toUInt().toString(16)}")
+        }
+        return target!!.append(valueOf(char32))
+    }
+    fun appendCodePoint(target: StringBuilder?, cp: Int): StringBuilder = append(target, cp)
 
     fun setCharAt(target: StringBuilder, offset16: Int, char32: Int) {
         val boundary = bounds(target, offset16)
