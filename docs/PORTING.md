@@ -9812,3 +9812,34 @@ mutation behavior. Full JVM/macOS Native suites and Linux x64 test compilation
 passed in 4m46s; the separate full JS Node suite passed in 50s. Both common groups
 passed on JVM, JS and macOS Native; both JVM oracle groups passed. Linux tests
 were compiled only on this macOS host.
+
+### Public TimeZone and BasicTimeZone base contracts (2026-10-17)
+
+Public common TimeZone and BasicTimeZone classes now expose the previously
+ported base-offset and transition algorithms. TimeZone preserves private ID
+storage independently of virtual getID, subclass dispatch for date/field offset
+queries, raw/DST sums, rule comparison, freeze policy and shallow host cloning.
+Its resource-backed metadata entry points expose all/region/offset/canonical ID
+filters, aliases, canonicalization, IANA IDs, regions, TZ data version and Windows
+ID mappings. BasicTimeZone exposes transition-rule filtering, nearby simple-rule
+extraction, equivalent-transition comparisons and all six LocalOption values.
+Its default getOffsetFromLocal throws exactly as the pinned base implementation.
+
+These are public base contracts, not completion of the timezone API. Global
+default-zone ownership, ICU/JDK factories, localized display names, concrete
+public zone implementations and serialization compatibility remain pending.
+Generic host shallow cloning preserves subclass fields on JVM/JS; Native
+subclasses must supply their typed cloneAsThawed copy path, as with the existing
+ICUCloneableBase boundary. The common fixtures explicitly implement that path.
+SimpleTimeZone.inDaylightTime still needs the actual Gregorian calendar
+constructor/state lifecycle, so no offset-only substitute is exposed as a
+public SimpleTimeZone implementation.
+
+Three common groups exercise user-defined public subclasses, base offset and ID
+policies, metadata and transition dispatch. Three JVM oracle groups compare
+extreme timestamps, local-time paths, null/short output arrays and partial writes,
+virtual callback order, host clone subtype/shared fields, filtered rules and
+nearby simple rules over 100 seeded dates. Focused JVM checks passed, followed by
+full JVM/macOS Native suites and Linux x64 test compilation in 4m5s. The separate
+full JS Node suite passed in 54s. All three common groups passed on JVM, JS and
+macOS Native; all three JVM oracle groups passed. Linux tests were compiled only.
