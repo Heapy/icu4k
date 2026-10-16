@@ -9012,3 +9012,53 @@ Linux tests compiled only. After adding the explicit YEAR -> EXTENDED_YEAR -> ER
 stamp order and correcting source copyright-year notices, the focused oracle
 selection passed again in 57s. Production behavior did not change after the
 complete platform run.
+
+### Coptic/Ethiopic and common-era calendar algorithms (2026-10-16)
+
+CECalendarCore ports the complete CECalendar algorithm layer: source limits,
+month starts and signed-remainder month lengths, Julian-day conversions,
+seven-field computation and Temporal M13 handling. Month normalization retains
+Int/Long overflow and source negative-month division. Julian-day subtraction
+wraps as Int before floor division; output-array failures retain earlier writes.
+Field computation stores EXTENDED_YEAR before virtual era/year conversion and
+uses the original local date throughout callbacks. Month-start ignores useMonth
+as in ICU4J; the negative-year short-month quirks remain unchanged.
+
+CopticCalendarCore ports year/era precedence, BCE conversion, epoch, backward-era
+policy, related-year difference, type and the public static conversion algorithm.
+EthiopicCalendarCore ports both mutable era modes, virtual mode queries, era/year
+conversion, limits/epochs/types, locale-based initialization, related-year
+constant and static conversion. Mode assignment does not invalidate date fields.
+Copying the Ethiopic engine binds a new owner and preserves the stored mode.
+
+Both upstream public classes are final. The JVM oracle therefore compares the
+original classes with a Calendar probe driven entirely by the three common
+engines for CE/Coptic/Ethiopic algorithms; the inherited base Calendar machinery
+is the explicit test boundary. Tests cover extreme static conversions and
+partial output arrays, limits, competing year fields, signed month normalization,
+raw fields, arithmetic, Temporal codes, era-mode toggles and clone mutation.
+Five common groups cover conversion cycles, overflow, negative-year behavior,
+field callback order/partial writes, Temporal dispatch and era/mode policies.
+
+Public Calendar/CECalendar/CopticCalendar/EthiopicCalendar facade construction and
+integration remain pending, as do other calendar families, formatting factories
+and serialization. Production algorithms have no ICU4J dependency.
+
+The complete run also exposed constructor-clock dependence in the older
+comparison oracle: clear preserves the stored numeric timestamp, so metadata
+short circuits could compare two constructors' different milliseconds. Paired
+comparison fixtures now set the same timestamp before clear. The analogous
+weekend partial-failure fixture also starts at a deterministic timestamp.
+Assertions and production algorithms remain unchanged.
+
+The JS common test caught silently ignored out-of-range IntArray stores in
+jdToCE. Each output write now checks its own bounds, preserving the source's
+partial writes and failure point on all targets; null and short arrays remain
+part of both common and JVM oracle coverage.
+
+Verification: focused CE/Coptic/Ethiopic JVM oracle tests passed in 20s.
+After fixing constructor-clock fixtures and explicit JS output-array bounds,
+the complete jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 selection
+passed in 4m 44s. All five new common tests passed on JVM, Node and macOS Arm64;
+Linux tests compiled only. All three new JVM oracle groups and the existing
+comparison/weekend suites passed.
