@@ -229,7 +229,45 @@ internal open class DateTimePatternGeneratorCore(private val assertionsEnabled: 
         }
         output
     }
+    open fun getFields(pattern: String?): String {
+        parser.set(pattern)
+        return buildString {
+            for(item in parser.getItems()) {
+                if(item is String) append(parser.quoteLiteral(item))
+                else append('{').append(DateTimePatternSyntaxCore.getName(item.toString())).append('}')
+            }
+        }
+    }
+    open fun skeletonsAreSimilar(id: String?,skeleton: String?): Boolean {
+        if(id!! == skeleton) return true
+        val first=fieldSet(id)
+        val second=fieldSet(skeleton)
+        if(first.size!=second.size) return false
+        val other=second.iterator()
+        for(item in first) {
+            val a=DateTimePatternSyntaxCore.getCanonicalIndex(item,false)
+            val b=DateTimePatternSyntaxCore.getCanonicalIndex(other.next(),false)
+            if(a<0 || b<0) throw IndexOutOfBoundsException()
+            if(DateTimePatternSyntaxCore.types[a][1]!=DateTimePatternSyntaxCore.types[b][1]) return false
+        }
+        return true
+    }
+    private fun fieldSet(pattern: String?): List<String> {
+        val result=HashSet<String>()
+        for(value in parser.set(pattern).getItems()) {
+            val item=value.toString()
+            if(!item.startsWith('G') && !item.startsWith('a')) result.add(item)
+        }
+        return result.sorted()
+    }
     companion object {
+        fun isSingleField(skeleton: String?): Boolean {
+            val value=skeleton!!
+            if(value.isEmpty()) throw IndexOutOfBoundsException()
+            val first=value[0]
+            for(i in 1 until value.length) if(value[i]!=first) return false
+            return true
+        }
         private const val FIX_FRACTION=1; private const val CAP_J=2
         fun empty(assertionsEnabled: Boolean=false,monitorOwner: Any?=null): DateTimePatternGeneratorCore = DateTimePatternGeneratorCore(assertionsEnabled,monitorOwner).apply { addCanonicalItems(); fillInMissing() }
     }

@@ -8,6 +8,23 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class DateTimePatternGeneratorCoreOracleTest {
+    @Test fun diagnosticFieldsSimilarityAndSingleFieldSourceSemantics() {
+        val source=Source.getEmptyInstance(); val core=empty()
+        val patterns=listOf(null,"","y","yyyy","yMd","EEEccc","GyMda","UML","aG","G","a","b","B","HH:mm:ss.SSS","y 'year' M","'x'","'G'","''''","VVVVV","MMMMMM","yY","😀","\uD800")
+        for(pattern in patterns) {
+            assertEquals(outcome { source.getFields(pattern) },outcome { core.getFields(pattern) },"fields/$pattern")
+            assertEquals(outcome { Source.isSingleField(pattern) },outcome { DateTimePatternGeneratorCore.isSingleField(pattern) },"single/$pattern")
+            for(other in patterns) assertEquals(outcome { source.skeletonsAreSimilar(pattern,other) },outcome { core.skeletonsAreSimilar(pattern,other) },"similar/$pattern/$other")
+        }
+        val random=Random(78315)
+        val fields="GyYuUrQqMLwWEecdgDFabBHkhKmsASvzZO VXx'.:"
+        repeat(1500) {
+            val a=buildString { repeat(random.nextInt(20)) { append(fields[random.nextInt(fields.length)]) } }
+            val b=buildString { repeat(random.nextInt(20)) { append(fields[random.nextInt(fields.length)]) } }
+            assertEquals(outcome { source.getFields(a) },outcome { core.getFields(a) },"random fields/$a")
+            assertEquals(outcome { source.skeletonsAreSimilar(a,b) },outcome { core.skeletonsAreSimilar(a,b) },"random similar/$a/$b")
+        }
+    }
     private fun outcome(action: ()->Any?): Any?=try { action() } catch(e: Throwable) {
         val cause=if(e is InvocationTargetException) e.targetException else e
         if(cause is VirtualMachineError) throw cause

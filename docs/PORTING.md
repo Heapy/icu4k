@@ -9522,3 +9522,28 @@ JVM/macOS Native tests and Linux x64 test compilation passed in 4m42s; the
 separate full JavaScript Node suite passed in 1m18s. All eight new common groups
 passed on JVM, JS and macOS Native. Linux tests were compiled, not executed on
 this macOS host.
+
+### DateTimePatternGenerator diagnostic utilities (2026-10-16)
+
+Ported getFields, skeletonsAreSimilar and isSingleField into the common generator
+engine. Field diagnostics preserve tokenizer quoting and strict name lookup;
+similarity retains ICU4J's distinct token sorting by UTF-16 order, era/AM-PM
+exclusion, equal-input fast path and invalid literal failures. Single-field
+detection compares code units without parsing and preserves empty-input failure.
+The similarity routine deliberately retains the documented ordering limitation
+for noncanonical skeletons (EEEM versus cccM).
+
+A JVM oracle compares nullable, empty, quoted, overlong and surrogate inputs,
+all fixture pairs and 1,500 random pattern pairs with ICU4J 78.3. Three common
+test groups exercise field classification, quoting, similarity ordering and
+code-unit semantics. An initial common expectation incorrectly treated EEEy
+and cccy as dissimilar; corrected it and added the actual ordering counterexample.
+Quoted single-letter literals are classified as fields by similarity too:
+'x' and 'z' compare as the same zone type, while unmatched multi-letter literals
+fail canonical lookup. This source behavior is covered explicitly.
+Public facade and resource initialization remain pending as described above.
+
+Verification: full JVM/macOS Native suites and Linux x64 test compilation passed
+in 4m41s, followed by the full JavaScript Node suite in 59s. All three new common
+groups passed on JVM, macOS Native and JS; all seven generator JVM oracle groups
+passed. Linux tests were compiled only on this macOS host.
