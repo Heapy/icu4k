@@ -8347,3 +8347,52 @@ Verification: jvmTest, jsNodeTest, macosArm64Test and
 compileTestKotlinLinuxX64 passed together after the final volatile-freeze change
 in 3m 26s. Linux tests compiled only. The four new common tests ran on JVM,
 Node and macOS Arm64; five new JVM oracle groups passed against ICU4J 78.3.
+
+### TimeZoneFormat ID tries and parse selection
+
+`TimeZoneIDParseCore` ports the full timezone ID and BCP 47 short-ID parsers.
+Each trie is built lazily from the existing system metadata, preserves source
+insertion order and uses the common case-folding TextTrieMap. Short IDs include
+`unk` -> `Etc/Unknown`; full IDs use the source available-ID list. Longest-prefix
+matches update the input position without clearing an old error index. Explicit
+range checks retain invalid-index failures on JS/Native. Publication uses the
+recursive availability lock.
+
+`TimeZoneFormatParseCore` ports the complete main parse selection algorithm for
+all twenty styles. It preserves the early localized-offset fallback, ISO and
+localized numeric passes, named-zone/TZDB/generic matching, ID passes, longest-
+match comparisons and first-result tie policy. ISO local styles reject `Z` in
+their primary pass but still run the source's later fallback passes. Specific
+styles may return before evaluating a longer match in another style. Numeric
+zero resolves through `Etc/GMT`; nonzero offsets use the owner's custom-zone
+factory. Exemplar matching resolves direct IDs or regional metazone reference
+IDs, including explicit invalid-metazone errors.
+
+Timezone object creation and virtual services are required OwnerQueries methods.
+The engine supplies no empty implementation for missing generic names or zone
+factories. The eventual public TimeZoneFormat will supply its real timezone and
+generic-name services through that boundary. Only the two public localized GMT
+parse methods dispatch virtually; numeric fallback uses the concrete engine.
+Default parse options are read at the same points as the source, including a
+second read when ALL_STYLES is reached. Name filters retain enum iteration order;
+output time type, input position and callback exception ordering are preserved.
+The target region uses locale country/likely subtags and is cached under a lock.
+
+JVM tests compare every available full ID, canonical short ID, aliases, all
+proper prefixes, mixed case, trailing text and invalid ranges against the
+private ICU4J ID parsers. Main parser integration compares all styles and option
+combinations in seven locales using real names, abbreviation and numeric
+engines. Generic names and timezone objects in this integration test are supplied
+by ICU4J at the required owner boundary; their public Kotlin implementations
+remain pending. Separate callback tests compare invocation traces, match getter
+order, ties, late reference-zone failures, virtual numeric overrides and changing
+default options. Common tests cover selection, offset fallback, regional mapping,
+ID parsing and result/error state. This adds the actual selection engine without
+claiming a completed public TimeZoneFormat or TimeZoneGenericNames facade.
+
+Verification: jvmTest, jsNodeTest, macosArm64Test and
+compileTestKotlinLinuxX64 passed together in 2m 38s after correcting a common
+test fixture that mistakenly treated CST as an unavailable system ID. Production
+selection code needed no change for that fixture. Linux tests compiled only;
+three new common tests ran on JVM, Node and macOS Arm64. The ID parser oracle,
+two main-parser oracle groups and callback-trace oracle passed on JVM.
