@@ -8565,3 +8565,36 @@ compiled only. The JVM oracle uses ICU4J timezone objects and JDK pattern
 construction at their existing explicit boundaries; display-name selection,
 localized/numeric formatting, generic names and localized name data use the
 common engines.
+
+## TimeZone base subclass behavior
+
+`TimeZoneBaseCore` ports base raw/DST offset calculation and virtual dispatch,
+default DST savings and observesDaylightTime, hasSameRules, ID state and
+validation, private-ID equality/hash, base freeze behavior and clone dispatch.
+The no-argument base constructor retains a null ID, including source null-ID
+equality/hash failures. An explicit ID constructor rejects null without calling
+the virtual setter. Equality checks identity and exact runtime class and reads
+private base IDs, bypassing overridden getID methods. Frozen clone returns the
+owner itself; mutable clone invokes the owner's virtual cloneAsThawed method.
+The actual platform shallow-copy operation remains an owner/facade concern.
+
+Offset calculation captures the raw offset, computes Gregorian fields with AD
+even for negative proleptic years, and retries once for nonzero local DST. Signed
+Int/Long arithmetic retains source overflow. Array failure timing and partial
+writes retain Java evaluation order, including calling getRawOffset before a
+null/empty-array store fails and calling the field-offset getter before a
+one-element-array store fails. Explicit bounds checks enforce the same behavior
+on JavaScript. The single-millisecond overload delegates to the virtual
+three-argument offset method and adds its two returned components.
+
+JVM oracle tests compare callback traces, results and partial array mutations
+across extreme dates/raw/DST values, both local modes, retry behavior, virtual
+offset overrides and getter-driven array mutation. Additional cases cover
+daylight short circuits, rule comparisons, nullable clone results, frozen
+identity, overridden getID, exact classes and setter validation precedence.
+Common tests cover Gregorian retry fields, array failures, virtual dispatch,
+date creation, short circuits, ID state and clone/freeze contracts.
+
+Verification: jvmTest/jsNodeTest/macosArm64Test/compileTestKotlinLinuxX64 passed
+in 4m 45s. All four new common tests executed on JVM, Node and macOS Arm64;
+Linux tests compiled only. All three JVM differential test groups passed.
