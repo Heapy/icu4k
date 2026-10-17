@@ -11875,3 +11875,22 @@ contracts are now available in Common Kotlin.
 Targeted JVM oracles compare constructor/cursor bounds, replacements, malformed
 UTF-16, context directions and full lower/upper/title/fold mappings in English,
 Turkish, Azerbaijani, Lithuanian and Greek contexts against ICU4J 78.3.
+
+SourceTargetUtility now performs the upstream eager scan of all 1,114,112 code
+points, caches transformed sources and canonical decomposition strings, and applies
+owner/external filters when accumulating source/target sets. It retains inertness
+handling, frozen caches and transform call counts. The internal owner boundary is
+a filter callback until the public Transliterator is connected.
+
+Standalone ICU4J goldens cover lowercasing, NFC, NFKC and identity transformation
+with an NFD inertness model, including complete cache content and filtered output
+sets. A JVM differential test additionally compares null transform results and
+partial set updates on failure. The public transliteration facade and built-in
+classes remain outstanding.
+
+Support validation: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` passed in 8m 28s: 2,742 JVM tests, 1,344 JS tests (one
+existing skip), 1,342 macOS Native tests, zero failures/errors, and successful
+Linux Native test compilation. Earlier lookup commit 453e3a83 passed both GitHub
+Actions jobs in run 39032866389; UScript commit ebaa94b1 passed both jobs in run
+39032303638.
