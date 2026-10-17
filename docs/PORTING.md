@@ -10624,3 +10624,31 @@ serialization remain pending.
 
 Full verification passed in 6m 18s: JVM 2,241 tests, macOS Native 1,051 tests
 and JS 1,053 tests (one existing skip), plus Linux Native test compilation.
+
+### MessageFormat parsing and pattern traversal (2026-10-17)
+
+Ported the complete MessageFormat parse traversal into internal common
+MessageFormatParseCore: array/map/parseObject entry points, throwing overloads,
+top-level array sizing, repeated arguments, literal delimiters, cached formatter
+delegation and explicit null overrides. Parser callbacks keep stock/custom
+formatter ownership on the eventual facade. Temporary parse positions retain
+the source error-index reuse behavior, and null results count as successful
+arguments when the custom parser advances.
+
+MessageFormatPatternCore contains source top-level traversal, literal extraction,
+choice selection/parsing, plural-other lookup and first-plural-number lookup.
+Choice parsing matches branch text literally, including nested argument syntax;
+it retains the source's fixed-offset matching across quoted chunks. Plural,
+select and selectordinal parsing retain ICU4J's explicit unsupported exception.
+
+Five common tests and five JVM oracle tests cover names/numbers, sparse arrays,
+repeated/adjacent arguments, apostrophe modes, placeholders, null/empty input,
+invalid positions, choice boundaries including NaN/infinities, custom parsers,
+stock parser delegation, parse errors and source traversal helpers. The JVM
+stock-format delegation tests use cloned source Format objects to verify the
+parser protocol independently; an additional path uses the real common
+NumberFormat parser. Full MessageFormat formatting, stock-format construction,
+custom-format lifecycle, public API and serialization remain pending.
+
+Full verification passed in 4m 37s: JVM 2,251 tests, macOS Native 1,056 tests
+and JS 1,058 tests (one existing skip), plus Linux Native test compilation.
