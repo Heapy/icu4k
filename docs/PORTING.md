@@ -11965,3 +11965,31 @@ regressions cover alias execution and deferred factory failure.
   macOS Native 1,357 tests; no failures or errors. Linux Native test compilation
   also passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
+
+## UTS #46 domain processing
+
+- Added IDNA's modern label/name ASCII and Unicode operations, options, errors,
+  and reusable Info. The returned error set remains live and mutable, iterates in
+  enum order, and retains EnumSet's snapshot iterator and removal behavior.
+- Ported UTS46 processing over the embedded `uts46.nrm`: ASCII fast path,
+  normalization and deviation mappings, ACE validation, replacement/error
+  recovery, label/domain limits, BiDi, ContextJ, and ContextO checks.
+- Added UCharacter.JoiningType constants used by the joining-context checks.
+- JVM differential coverage includes every input from Unicode 17.0.0
+  IdnaTestV2.txt at five option combinations, all 128 option combinations on
+  boundary cases, random UTF-16, input limits, destination aliasing, and Info
+  reuse. Corpus SHA-256:
+  `beb5d0be20e896189b03209a82fdc34f06351502bbd4b8e2523583fc2954d9cf`.
+- Common tests contain 1,080 independent source-generated vectors, including
+  malformed UTF-16 encoded as hex rather than source string literals. Regenerate
+  using JDK 25 and the pinned ICU4J 78.3 JAR:
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/IdnaGoldens.java >
+  src/commonTest/kotlin/io/github/heapy/icu4k/text/IdnaGoldenRows.kt`.
+- Legacy IDNA2003 static conversion/compare methods and StringPrep profiles are
+  still pending; this milestone completes the modern UTS #46 processing path.
+- Full validation passed: JVM 2,775 tests; Node 1,361 tests (one skipped);
+  macOS Native 1,359 tests; no failures or errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
+  The imported Unicode corpus is retained byte-for-byte, including its original
+  trailing spaces in seven lines; other changed files pass `git diff --check`.

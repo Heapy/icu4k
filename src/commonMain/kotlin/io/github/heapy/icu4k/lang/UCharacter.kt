@@ -22,6 +22,17 @@ import io.github.heapy.icu4k.util.VersionInfo
  * Remaining API coverage is tracked in the porting notes.
  */
 class UCharacter private constructor() {
+    interface JoiningType {
+        companion object {
+            const val NON_JOINING = 0
+            const val JOIN_CAUSING = 1
+            const val DUAL_JOINING = 2
+            const val LEFT_JOINING = 3
+            const val RIGHT_JOINING = 4
+            const val TRANSPARENT = 5
+            @Deprecated("Use property maximum") const val COUNT = 6
+        }
+    }
     interface BidiPairedBracketType {
         companion object {
             const val NONE = 0
