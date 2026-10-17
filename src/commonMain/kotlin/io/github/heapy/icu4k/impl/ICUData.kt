@@ -9,6 +9,7 @@ import io.github.heapy.icu4k.impl.data.WindowsZonesResourceData
 import io.github.heapy.icu4k.impl.data.ZoneResourceRegistry
 import io.github.heapy.icu4k.impl.data.RegionResourceRegistry
 import io.github.heapy.icu4k.impl.data.CoreResourceRegistry
+import io.github.heapy.icu4k.impl.data.UnitResourceRegistry
 import io.github.heapy.icu4k.impl.data.UcaData
 import io.github.heapy.icu4k.impl.data.CollationAfResourceData
 import io.github.heapy.icu4k.impl.data.CollationAmResourceData
@@ -308,10 +309,6 @@ import io.github.heapy.icu4k.impl.data.CurrencyItResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyPtResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyKoResourceData
 import io.github.heapy.icu4k.impl.data.CurrencyNlResourceData
-import io.github.heapy.icu4k.impl.data.UnitRootResourceData
-import io.github.heapy.icu4k.impl.data.UnitPoolResourceData
-import io.github.heapy.icu4k.impl.data.UnitEnResourceData
-import io.github.heapy.icu4k.impl.data.UnitLocaleIndexResourceData
 import io.github.heapy.icu4k.impl.data.RegionRootResourceData
 import io.github.heapy.icu4k.impl.data.RegionPoolResourceData
 import io.github.heapy.icu4k.impl.data.RegionEnResourceData
@@ -356,11 +353,8 @@ import io.github.heapy.icu4k.impl.data.LanguageJaResourceData
 import io.github.heapy.icu4k.impl.data.SupplementalResourceData
 import io.github.heapy.icu4k.impl.data.LanguageInfoResourceData
 import io.github.heapy.icu4k.impl.data.GrammaticalFeaturesResourceData
-import io.github.heapy.icu4k.impl.data.GermanUnitResourceData
-import io.github.heapy.icu4k.impl.data.FrenchUnitResourceData
 import io.github.heapy.icu4k.impl.data.GermanResourceData
 import io.github.heapy.icu4k.impl.data.RussianResourceData
-import io.github.heapy.icu4k.impl.data.ArabicUnitResourceData
 import io.github.heapy.icu4k.impl.data.LocaleMetadataResourceData
 import io.github.heapy.icu4k.impl.data.RootResourceData
 import io.github.heapy.icu4k.impl.data.PoolResourceData
@@ -431,7 +425,7 @@ object ICUData {
     const val ICU_ZONE_BASE_NAME = "$ICU_BASE_NAME/zone"
     const val ICU_UNIT_BASE_NAME = "$ICU_BASE_NAME/unit"
 
-    private val resourceNames = setOf("windowsZones.res", "zoneinfo64.res", "metaZones.res", "coll/af.res", "coll/am.res", "coll/ar.res", "coll/ar_SA.res", "coll/ars.res", "coll/as.res", "coll/az.res", "coll/be.res", "coll/bg.res", "coll/blo.res", "coll/bn.res", "coll/bo.res", "coll/br.res", "coll/bs.res", "coll/bs_Cyrl.res", "coll/ca.res", "coll/ceb.res", "coll/chr.res", "coll/cs.res", "coll/cy.res", "coll/da.res", "coll/de.res", "coll/de_.res", "coll/de_AT.res", "coll/de__PHONEBOOK.res", "coll/dsb.res", "coll/dz.res", "coll/ee.res", "coll/el.res", "coll/en.res", "coll/en_US.res", "coll/en_US_POSIX.res", "coll/eo.res", "coll/es.res", "coll/es_.res", "coll/es__TRADITIONAL.res", "coll/et.res", "coll/fa.res", "coll/fa_AF.res", "coll/ff.res", "coll/ff_Adlm.res", "coll/fi.res", "coll/fil.res", "coll/fo.res", "coll/fr.res", "coll/fr_CA.res", "coll/fy.res", "coll/ga.res", "coll/gl.res", "coll/gu.res", "coll/ha.res", "coll/haw.res", "coll/he.res", "coll/he_IL.res", "coll/hi.res", "coll/hr.res", "coll/hsb.res", "coll/hu.res", "coll/hy.res", "coll/id.res", "coll/id_ID.res", "coll/ig.res", "coll/in.res", "coll/in_ID.res", "coll/is.res", "coll/it.res", "coll/iw.res", "coll/iw_IL.res", "coll/ja.res", "coll/ka.res", "coll/kk.res", "coll/kk_Arab.res", "coll/kl.res", "coll/km.res", "coll/kn.res", "coll/ko.res", "coll/kok.res", "coll/ku.res", "coll/ky.res", "coll/lb.res", "coll/lij.res", "coll/lkt.res", "coll/ln.res", "coll/lo.res", "coll/lt.res", "coll/lv.res", "coll/mk.res", "coll/ml.res", "coll/mn.res", "coll/mo.res", "coll/mr.res", "coll/ms.res", "coll/mt.res", "coll/my.res", "coll/nb.res", "coll/nb_NO.res", "coll/ne.res", "coll/nl.res", "coll/nn.res", "coll/no.res", "coll/no_NO.res", "coll/nso.res", "coll/om.res", "coll/or.res", "coll/pa.res", "coll/pa_Guru.res", "coll/pa_Guru_IN.res", "coll/pa_IN.res", "coll/pl.res", "coll/ps.res", "coll/pt.res", "coll/res_index.res", "coll/ro.res", "coll/root.res", "coll/ru.res", "coll/sa.res", "coll/se.res", "coll/sh.res", "coll/sh_BA.res", "coll/sh_CS.res", "coll/sh_YU.res", "coll/si.res", "coll/sk.res", "coll/sl.res", "coll/smn.res", "coll/sq.res", "coll/sr.res", "coll/sr_BA.res", "coll/sr_Cyrl.res", "coll/sr_Cyrl_BA.res", "coll/sr_Cyrl_ME.res", "coll/sr_Cyrl_RS.res", "coll/sr_Latn.res", "coll/sr_Latn_BA.res", "coll/sr_Latn_RS.res", "coll/sr_ME.res", "coll/sr_RS.res", "coll/st.res", "coll/sv.res", "coll/sw.res", "coll/ta.res", "coll/te.res", "coll/th.res", "coll/tk.res", "coll/tn.res", "coll/to.res", "coll/tr.res", "coll/ug.res", "coll/uk.res", "coll/ur.res", "coll/uz.res", "coll/vi.res", "coll/wae.res", "coll/wo.res", "coll/xh.res", "coll/yi.res", "coll/yo.res", "coll/yue.res", "coll/yue_CN.res", "coll/yue_Hans.res", "coll/yue_Hans_CN.res", "coll/yue_Hant.res", "coll/zh.res", "coll/zh_CN.res", "coll/zh_HK.res", "coll/zh_Hans.res", "coll/zh_Hans_CN.res", "coll/zh_Hans_SG.res", "coll/zh_Hant.res", "coll/zh_Hant_HK.res", "coll/zh_Hant_MO.res", "coll/zh_Hant_TW.res", "coll/zh_MO.res", "coll/zh_SG.res", "coll/zh_TW.res", "coll/zu.res", "coll/ucadata.icu", "plurals.res", "pluralRanges.res", "unit/ar.res", "ru.res", "de.res", "unit/fr.res", "unit/de.res", "grammaticalFeatures.res", "region/fr.res", "region/ar.res", "region/ja.res", "brkitr/en_US.res", "brkitr/en_US_POSIX.res", "brkitr/el.res", "brkitr/ko.res", "brkitr/zh.res", "brkitr/zh_Hant.res", "brkitr/en.res", "brkitr/fr.res", "brkitr/de.res", "brkitr/es.res", "region/root.res", "region/pool.res", "region/en.res", "unit/root.res", "unit/pool.res", "unit/en.res", "unit/res_index.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict",
+    private val resourceNames = setOf("windowsZones.res", "zoneinfo64.res", "metaZones.res", "coll/af.res", "coll/am.res", "coll/ar.res", "coll/ar_SA.res", "coll/ars.res", "coll/as.res", "coll/az.res", "coll/be.res", "coll/bg.res", "coll/blo.res", "coll/bn.res", "coll/bo.res", "coll/br.res", "coll/bs.res", "coll/bs_Cyrl.res", "coll/ca.res", "coll/ceb.res", "coll/chr.res", "coll/cs.res", "coll/cy.res", "coll/da.res", "coll/de.res", "coll/de_.res", "coll/de_AT.res", "coll/de__PHONEBOOK.res", "coll/dsb.res", "coll/dz.res", "coll/ee.res", "coll/el.res", "coll/en.res", "coll/en_US.res", "coll/en_US_POSIX.res", "coll/eo.res", "coll/es.res", "coll/es_.res", "coll/es__TRADITIONAL.res", "coll/et.res", "coll/fa.res", "coll/fa_AF.res", "coll/ff.res", "coll/ff_Adlm.res", "coll/fi.res", "coll/fil.res", "coll/fo.res", "coll/fr.res", "coll/fr_CA.res", "coll/fy.res", "coll/ga.res", "coll/gl.res", "coll/gu.res", "coll/ha.res", "coll/haw.res", "coll/he.res", "coll/he_IL.res", "coll/hi.res", "coll/hr.res", "coll/hsb.res", "coll/hu.res", "coll/hy.res", "coll/id.res", "coll/id_ID.res", "coll/ig.res", "coll/in.res", "coll/in_ID.res", "coll/is.res", "coll/it.res", "coll/iw.res", "coll/iw_IL.res", "coll/ja.res", "coll/ka.res", "coll/kk.res", "coll/kk_Arab.res", "coll/kl.res", "coll/km.res", "coll/kn.res", "coll/ko.res", "coll/kok.res", "coll/ku.res", "coll/ky.res", "coll/lb.res", "coll/lij.res", "coll/lkt.res", "coll/ln.res", "coll/lo.res", "coll/lt.res", "coll/lv.res", "coll/mk.res", "coll/ml.res", "coll/mn.res", "coll/mo.res", "coll/mr.res", "coll/ms.res", "coll/mt.res", "coll/my.res", "coll/nb.res", "coll/nb_NO.res", "coll/ne.res", "coll/nl.res", "coll/nn.res", "coll/no.res", "coll/no_NO.res", "coll/nso.res", "coll/om.res", "coll/or.res", "coll/pa.res", "coll/pa_Guru.res", "coll/pa_Guru_IN.res", "coll/pa_IN.res", "coll/pl.res", "coll/ps.res", "coll/pt.res", "coll/res_index.res", "coll/ro.res", "coll/root.res", "coll/ru.res", "coll/sa.res", "coll/se.res", "coll/sh.res", "coll/sh_BA.res", "coll/sh_CS.res", "coll/sh_YU.res", "coll/si.res", "coll/sk.res", "coll/sl.res", "coll/smn.res", "coll/sq.res", "coll/sr.res", "coll/sr_BA.res", "coll/sr_Cyrl.res", "coll/sr_Cyrl_BA.res", "coll/sr_Cyrl_ME.res", "coll/sr_Cyrl_RS.res", "coll/sr_Latn.res", "coll/sr_Latn_BA.res", "coll/sr_Latn_RS.res", "coll/sr_ME.res", "coll/sr_RS.res", "coll/st.res", "coll/sv.res", "coll/sw.res", "coll/ta.res", "coll/te.res", "coll/th.res", "coll/tk.res", "coll/tn.res", "coll/to.res", "coll/tr.res", "coll/ug.res", "coll/uk.res", "coll/ur.res", "coll/uz.res", "coll/vi.res", "coll/wae.res", "coll/wo.res", "coll/xh.res", "coll/yi.res", "coll/yo.res", "coll/yue.res", "coll/yue_CN.res", "coll/yue_Hans.res", "coll/yue_Hans_CN.res", "coll/yue_Hant.res", "coll/zh.res", "coll/zh_CN.res", "coll/zh_HK.res", "coll/zh_Hans.res", "coll/zh_Hans_CN.res", "coll/zh_Hans_SG.res", "coll/zh_Hant.res", "coll/zh_Hant_HK.res", "coll/zh_Hant_MO.res", "coll/zh_Hant_TW.res", "coll/zh_MO.res", "coll/zh_SG.res", "coll/zh_TW.res", "coll/zu.res", "coll/ucadata.icu", "plurals.res", "pluralRanges.res", "ru.res", "de.res", "grammaticalFeatures.res", "region/fr.res", "region/ar.res", "region/ja.res", "brkitr/en_US.res", "brkitr/en_US_POSIX.res", "brkitr/el.res", "brkitr/ko.res", "brkitr/zh.res", "brkitr/zh_Hant.res", "brkitr/en.res", "brkitr/fr.res", "brkitr/de.res", "brkitr/es.res", "region/root.res", "region/pool.res", "region/en.res", "curr/de.res", "curr/zh.res", "curr/ru.res", "curr/hi.res", "curr/it.res", "curr/pt.res", "curr/ko.res", "curr/nl.res", "currencyNumericCodes.res", "units.res", "curr/he.res", "curr/es.res", "curr/ja.res", "curr/ar.res", "curr/fr.res", "curr/en.res", "curr/pool.res", "curr/root.res", "curr/supplementalData.res", "numberingSystems.res", "es.res", "he.res", "lang/ja.res", "lang/ar.res", "lang/fr.res", "lang/en.res", "lang/pool.res", "lang/root.res", "ja.res", "ar.res", "fr.res", "en.res", "supplementalData.res", "langInfo.res", "metadata.res", "root.res", "pool.res", "res_index.res", "brkitr/res_index.res", "timezoneTypes.res", "keyTypeData.res", "brkitr/Burmese_graphclust_model5_heavy.res", "brkitr/Thai_graphclust_model4_heavy.res", "brkitr/jaml.res", "brkitr/ja.res", "brkitr/root.res", "unames.icu", "uts46.nrm", "nfkc_scf.nrm", "nfkc_cf.nrm", "nfkc.nrm", "nfc.nrm", "uemoji.icu", "pnames.icu", "ubidi.icu", "ucase.icu", "ulayout.icu", "uprops.icu", "brkitr/char.brk", "brkitr/line.brk", "brkitr/line_cj.brk", "brkitr/line_loose.brk", "brkitr/line_loose_cj.brk", "brkitr/line_loose_phrase_cj.brk", "brkitr/line_normal.brk", "brkitr/line_normal_cj.brk", "brkitr/line_normal_phrase_cj.brk", "brkitr/line_phrase_cj.brk", "brkitr/sent.brk", "brkitr/sent_el.brk", "brkitr/title.brk", "brkitr/word.brk", "brkitr/word_POSIX.brk", "brkitr/burmesedict.dict", "brkitr/cjdict.dict", "brkitr/khmerdict.dict", "brkitr/laodict.dict", "brkitr/thaidict.dict",
         "rbnf/af.res",
         "rbnf/ak.res",
         "rbnf/am.res",
@@ -544,7 +538,7 @@ object ICUData {
         "rbnf/zh_Hant_TW.res",
         "rbnf/zh_MO.res",
         "rbnf/zh_TW.res",
-    ) + ZoneResourceRegistry.names + RegionResourceRegistry.names + CoreResourceRegistry.names
+    ) + ZoneResourceRegistry.names + RegionResourceRegistry.names + CoreResourceRegistry.names + UnitResourceRegistry.names
     internal fun visitResources(directory: String, visitor: (String) -> Unit) {
         val prefix = directory.removePrefix("/")
         if (!prefix.startsWith("$ICU_BASE_NAME/")) return
@@ -745,10 +739,6 @@ object ICUData {
         "curr/pt.res" -> CurrencyPtResourceData.copy()
         "curr/ko.res" -> CurrencyKoResourceData.copy()
         "curr/nl.res" -> CurrencyNlResourceData.copy()
-        "unit/root.res" -> UnitRootResourceData.copy()
-        "unit/pool.res" -> UnitPoolResourceData.copy()
-        "unit/en.res" -> UnitEnResourceData.copy()
-        "unit/res_index.res" -> UnitLocaleIndexResourceData.copy()
         "region/root.res" -> RegionRootResourceData.copy()
         "region/pool.res" -> RegionPoolResourceData.copy()
         "region/en.res" -> RegionEnResourceData.copy()
@@ -793,11 +783,8 @@ object ICUData {
         "supplementalData.res" -> SupplementalResourceData.copy()
         "langInfo.res" -> LanguageInfoResourceData.copy()
         "grammaticalFeatures.res" -> GrammaticalFeaturesResourceData.copy()
-        "unit/de.res" -> GermanUnitResourceData.copy()
-        "unit/fr.res" -> FrenchUnitResourceData.copy()
         "de.res" -> GermanResourceData.copy()
         "ru.res" -> RussianResourceData.copy()
-        "unit/ar.res" -> ArabicUnitResourceData.copy()
         "metadata.res" -> LocaleMetadataResourceData.copy()
         "root.res" -> RootResourceData.copy()
         "pool.res" -> PoolResourceData.copy()
@@ -957,6 +944,6 @@ object ICUData {
         "rbnf/zh_Hant_TW.res" -> RbnfZhHantTWResourceData.copy()
         "rbnf/zh_MO.res" -> RbnfZhMOResourceData.copy()
         "rbnf/zh_TW.res" -> RbnfZhTWResourceData.copy()
-        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName)) ?: RegionResourceRegistry.getBytes(itemPath(resourceName)) ?: CoreResourceRegistry.getBytes(itemPath(resourceName))
+        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName)) ?: RegionResourceRegistry.getBytes(itemPath(resourceName)) ?: CoreResourceRegistry.getBytes(itemPath(resourceName)) ?: UnitResourceRegistry.getBytes(itemPath(resourceName))
     }
 }
