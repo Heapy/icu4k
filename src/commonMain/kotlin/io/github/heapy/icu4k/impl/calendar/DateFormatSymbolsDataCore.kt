@@ -4,6 +4,7 @@
 package io.github.heapy.icu4k.impl.calendar
 
 import io.github.heapy.icu4k.impl.*
+import io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage
 import io.github.heapy.icu4k.text.NumberingSystem
 import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.ULocale
@@ -22,7 +23,7 @@ internal open class DateFormatSymbolsDataCore(
     var actualLocale: ULocale?=null
     var localPatternChars: String?=null
     var timeSeparator: String?=null
-    var capitalization: MutableMap<String,BooleanArray>?=null
+    var capitalization: MutableMap<CapitalizationContextUsage,BooleanArray>?=null
 
     open fun initialize(desiredLocale: ULocale?,bundle: ICUResourceBundle?,calendarType: String?) {
         val sink=CalendarSymbolSink(assertionsEnabled)
@@ -76,7 +77,7 @@ internal open class DateFormatSymbolsDataCore(
         val rb=bundle(desiredLocale)
         localPatternChars=PATTERN_CHARS
         validLocale=rb.getULocale(); actualLocale=validLocale
-        val transforms=HashMap<String,BooleanArray>(); capitalization=transforms
+        val transforms=HashMap<CapitalizationContextUsage,BooleanArray>(); capitalization=transforms
         val none=BooleanArray(2); for(usage in USAGES) transforms[usage]=none
         val context=try { rb.getWithFallback("contextTransforms") } catch(_: MissingResourceException) { null }
         if(context!=null) {
@@ -118,7 +119,7 @@ internal open class DateFormatSymbolsDataCore(
         private val QUARTER_FIELDS=arrayOf("quarters" to "quarters/format/wide","shortQuarters" to "quarters/format/abbreviated","narrowQuarters" to "quarters/format/narrow","standaloneQuarters" to "quarters/stand-alone/wide","standaloneShortQuarters" to "quarters/stand-alone/abbreviated","standaloneNarrowQuarters" to "quarters/stand-alone/narrow")
         private val PERIOD_KEYS=arrayOf("midnight","noon","morning1","afternoon1","evening1","night1","morning2","afternoon2","evening2","night2")
         private val LEAP_PATHS=arrayOf("monthPatterns/format/wide","monthPatterns/format/abbreviated","monthPatterns/format/narrow","monthPatterns/stand-alone/wide","monthPatterns/stand-alone/abbreviated","monthPatterns/stand-alone/narrow","monthPatterns/numeric/all")
-        private val USAGES=arrayOf("OTHER","MONTH_FORMAT","MONTH_STANDALONE","MONTH_NARROW","DAY_FORMAT","DAY_STANDALONE","DAY_NARROW","ERA_WIDE","ERA_ABBREV","ERA_NARROW","ZONE_LONG","ZONE_SHORT","METAZONE_LONG","METAZONE_SHORT")
+        private val USAGES=CapitalizationContextUsage.entries.toTypedArray()
         private val CONTEXT_KEYS=arrayOf("month-format-except-narrow","month-standalone-except-narrow","month-narrow","day-format-except-narrow","day-standalone-except-narrow","day-narrow","era-name","era-abbr","era-narrow","zone-long","zone-short","metazone-long","metazone-short").zip(USAGES.drop(1)).toMap()
     }
 }

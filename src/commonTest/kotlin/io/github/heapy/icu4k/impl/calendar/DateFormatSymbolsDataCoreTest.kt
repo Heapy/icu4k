@@ -49,8 +49,8 @@ class DateFormatSymbolsDataCoreTest {
     @Test fun capitalizationDefaultRowsShareAndOwnerFailuresPropagate() {
         val data=core(); data.initialize(ULocale.ROOT,null,"gregorian")
         val rows=data.capitalization!!
-        assertSame(rows["OTHER"],rows["ZONE_LONG"])
-        assertContentEquals(booleanArrayOf(false,false),rows["OTHER"])
+        assertSame(rows[io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage.OTHER],rows[io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage.ZONE_LONG])
+        assertContentEquals(booleanArrayOf(false,false),rows[io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage.OTHER])
         val broken=DateFormatSymbolsDataCore(object: DateFormatSymbolsDataCore.Owner {
             override fun className()="test.Symbols"
             override fun currentTimeMillis(): Long=error("clock")

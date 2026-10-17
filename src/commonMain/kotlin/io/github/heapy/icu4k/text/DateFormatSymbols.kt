@@ -12,7 +12,7 @@ import kotlin.time.Clock
 
 /** Locale and calendar symbol data with ICU's copy and cache semantics. */
 open class DateFormatSymbols : ICUCloneableBase {
-    private var symbols: DateFormatSymbolsStateCore? = null
+    @kotlin.jvm.Transient private var symbols: DateFormatSymbolsStateCore? = null
     internal val state: DateFormatSymbolsStateCore get() = symbols ?: newState(this).also { symbols=it }
     constructor() : this(ULocale.getDefault(ULocale.Category.FORMAT))
     constructor(locale: ULocale?) : super() { initializeData(locale,CalendarUtil.getCalendarType(locale)) }
@@ -78,7 +78,17 @@ open class DateFormatSymbols : ICUCloneableBase {
     override fun hashCode(): Int = state.hashCodeState()
     override fun equals(other: Any?): Boolean = state.equalsObject(this,other,
         { it::class==this::class },{ (it as DateFormatSymbols).state },{ it.getDisplayName()!! })
+    internal enum class CapitalizationContextUsage {
+        OTHER, MONTH_FORMAT, MONTH_STANDALONE, MONTH_NARROW, DAY_FORMAT,
+        DAY_STANDALONE, DAY_NARROW, ERA_WIDE, ERA_ABBREV, ERA_NARROW,
+        ZONE_LONG, ZONE_SHORT, METAZONE_LONG, METAZONE_SHORT
+    }
+    private fun writeObject(output: PluralObjectOutputStream) = dateSymbolsWrite(output,this)
+    private fun readObject(input: PluralObjectInputStream) = dateSymbolsRead(input,this)
     companion object {
+        private const val serialVersionUID = -5987973545549424702L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = dateSymbolsSerializationFields()
+
         const val FORMAT=0; const val STANDALONE=1
         @Deprecated("This API is ICU internal only.") const val NUMERIC=2
         @Deprecated("This API is ICU internal only.") const val DT_CONTEXT_COUNT=3
@@ -118,3 +128,6 @@ open class DateFormatSymbols : ICUCloneableBase {
     }
 }
 internal expect fun dateSymbolsClassName(type: KClass<*>): String
+internal expect fun dateSymbolsSerializationFields(): Array<RbnfObjectStreamField>
+internal expect fun dateSymbolsWrite(output: PluralObjectOutputStream,owner: DateFormatSymbols)
+internal expect fun dateSymbolsRead(input: PluralObjectInputStream,owner: DateFormatSymbols)

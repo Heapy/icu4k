@@ -10348,3 +10348,33 @@ ICU4J rather than imposing a 13-entry calendar-month assumption.
 Full verification passed in 6m 31s: JVM 2,154 tests, macOS Arm64 1,022 tests,
 and JS Node 1,024 tests (one existing skip), with no failures. Linux x64 test
 compilation passed. All new public symbol tests passed on the executed backends.
+
+### DateFormatSymbols JVM serialization (2026-10-17)
+
+Added the fixed source serialVersionUID (-5987973545549424702) and the exact
+42-field persistent descriptor: 35 symbol arrays, zoneStrings, two scalar strings,
+capitalization and three locale identities. The owner-backed implementation graph
+is transient. JVM write/read bridges write the source fields and rebuild a fresh
+callback-bound state on read, without loading resources, rerunning constructors,
+validating fields or filling missing/null values. JS/Native retain the existing
+explicit Java-serialization boundary.
+
+Capitalization now uses DateFormatSymbols.CapitalizationContextUsage enum keys,
+matching the source representation, instead of translating through a new map per
+object. This preserves map identity and shared default boolean rows across a
+serialized clone graph. Arrays, zone rows and locales likewise pass directly
+through ObjectOutputStream's handle table; no getter-induced copies or lazy
+zone-name generation occur during writing. Existing common/core data oracles
+were adjusted to compare the same enum names and retain their alias checks.
+
+Six JVM tests verify the exact descriptor/UID, custom and null-containing symbol
+round trips, bidirectional reads of ICU4J streams with package-name resolution,
+all source field values, clone-graph array/map/boolean aliases, unchanged null
+fields, lazy zone-table restoration, and reconstructed subclass era callbacks
+bound to the restored object. The source readObject only performs default field
+reading, so no migration defaults were added.
+
+Full verification passed in 6m 11s: JVM 2,160 tests, macOS Arm64 1,022 tests,
+and JS Node 1,024 tests (one existing skip), with no failures. Linux x64 test
+compilation passed. Both remapped ICU4J stream directions and the restored-owner
+subclass test passed in the full JVM suite.

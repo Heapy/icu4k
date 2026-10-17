@@ -30,9 +30,9 @@ class DateFormatSymbolsDataCoreOracleTest {
         assertEquals(source.getLocale(SourceLocale.ACTUAL_LOCALE)?.toString(),target.actualLocale?.toString(),label)
         assertEquals(source.localPatternChars,target.localPatternChars,label); assertEquals(source.timeSeparatorString,target.timeSeparator,label)
         val capitalization=read(source,"capitalization") as Map<*,*>
-        assertEquals(capitalization.entries.associate { it.key.toString() to (it.value as BooleanArray).toList() },target.capitalization!!.mapValues { it.value.toList() },label)
+        assertEquals(capitalization.entries.associate { it.key.toString() to (it.value as BooleanArray).toList() },target.capitalization!!.entries.associate { it.key.name to it.value.toList() },label)
         val names=capitalization.keys.toList()
-        for(a in names) for(b in names) assertEquals(capitalization[a]===capitalization[b],target.capitalization!![a.toString()]===target.capitalization!![b.toString()],"capitalization aliases/$label/$a/$b")
+        for(a in names) for(b in names) assertEquals(capitalization[a]===capitalization[b],target.capitalization!![io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage.valueOf(a.toString())]===target.capitalization!![io.github.heapy.icu4k.text.DateFormatSymbols.CapitalizationContextUsage.valueOf(b.toString())],"capitalization aliases/$label/$a/$b")
     }
     @Test fun allLocaleArraysEraFallbacksCalendarAliasesAndNumberSystems() {
         val ctor=Source::class.java.getDeclaredConstructor(SourceLocale::class.java,SourceBundle::class.java,String::class.java).apply { isAccessible=true }
