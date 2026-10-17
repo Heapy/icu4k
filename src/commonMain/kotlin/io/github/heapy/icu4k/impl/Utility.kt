@@ -6,6 +6,34 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** Shared ICU string, escaping and append utilities. */
 internal object Utility {
+    fun appendToRule(rule: StringBuilder, text: String, literal: Boolean, escape: Boolean, quote: StringBuilder) {
+        for (c in text) appendToRule(rule, c.code, literal, escape, quote)
+    }
+    fun appendToRule(rule: StringBuilder, c: Int, literal: Boolean, escape: Boolean, quote: StringBuilder) {
+        if (literal || (escape && isUnprintable(c))) {
+            if (quote.isNotEmpty()) {
+                while (quote.length >= 2 && quote[0] == '\'' && quote[1] == '\'') {
+                    rule.append("\\'"); quote.deleteRange(0, 2)
+                }
+                var trailing = 0
+                while (quote.length >= 2 && quote[quote.length - 2] == '\'' && quote[quote.length - 1] == '\'') {
+                    quote.setLength(quote.length - 2); ++trailing
+                }
+                if (quote.isNotEmpty()) { rule.append('\'').append(quote).append('\''); quote.setLength(0) }
+                repeat(trailing) { rule.append("\\'") }
+            }
+            if (c != -1) {
+                if (c == 32) { if (rule.isNotEmpty() && rule.last() != ' ') rule.append(' ') }
+                else if (!escape || !escapeUnprintable(rule, c)) UTF16.append(rule, c)
+            }
+        } else if (quote.isEmpty() && (c == 39 || c == 92)) {
+            rule.append('\\').append(c.toChar())
+        } else if (quote.isNotEmpty() || (c in 0x21..0x7e && c !in 0x30..0x39 && c !in 0x41..0x5a && c !in 0x61..0x7a) || PatternProps.isWhiteSpace(c)) {
+            UTF16.append(quote, c)
+            if (c == 39) quote.append(c.toChar())
+        } else UTF16.append(rule, c)
+    }
+
     /** Source parser advances one UTF-16 unit, including after supplementary digits. */
     fun parseNumber(text: String, pos: IntArray, radix: Int): Int {
         var number = 0

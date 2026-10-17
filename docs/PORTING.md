@@ -11617,3 +11617,44 @@ Final Bidi/BidiTransform validation: `jvmTest jsNodeTest macosArm64Test
 compileTestKotlinLinuxX64` passed in 4m 43s. XML reports contain 2,630 JVM tests,
 1,266 JavaScript tests (one existing skip) and 1,264 macOS Native tests, with zero
 failures or errors. Linux Native test compilation passed.
+
+
+### Transliteration string and rule execution kernels (2026-10-17)
+
+Common StringMatcher and StringReplacer now implement literal/stand-in matching,
+forward and backward captures, incremental partial matches, captured-segment
+replacement, temporary metadata-preserving copy buffers, nested replacements,
+cursor offsets and the cached literal-replacement fast path. UnicodeReplacer is
+internal, matching its upstream visibility. TransliterationData retains the
+shared matcher/replacer stand-in table and checked lookup casts. Utility's
+appendToRule quoting now preserves apostrophe/backslash handling, quote flushing,
+printable syntax quoting, whitespace and escaped UTF-16 units.
+
+TransliterationRule ports ante/key/post-context splitting, start/end anchors,
+masking, low-byte indexing, context-aware matching/replacement, cursor clamping,
+source/target-set analysis and rule serialization. TransliterationRuleSet ports
+the 256-bucket dispatch table, freeze/masking diagnostics, source-order selection,
+partial-match stop behavior and source/target aggregation. Its execution helper
+includes RuleBasedTransliterator's source loop guard. Position and data remain
+internal protocols until the complete public Transliterator is connected; that
+facade will own synchronization of shared capture state.
+
+JVM differential tests compare ICU4J 78.3 package-private classes by reflection:
+matching in both directions, empty/literal/set/segment patterns, all offset/limit
+pairs, partial input, supplementary and malformed UTF-16, capture state, reusable
+replacers, cursor positions inside/outside output, rule contexts, anchors, invalid
+constructors, masking and frozen dispatch. Nested replacement tests compare the
+actual Replaceable call trace (including copy and temporary replacement order),
+not only the resulting plain text. Bounds-error subclasses are normalized;
+text, positions, operation traces and other errors remain compared. The source's
+Int.MIN_VALUE segment-number formatting overflow is retained.
+
+Nine independent Common fingerprints were generated from ICU4J alone. They cover
+nine literal/set/context/UTF-16 patterns, four anchor combinations, three cursor
+positions, three cursor offsets and nine texts with every start/limit pair in
+incremental and nonincremental modes. Additional Common tests exercise captured
+replacement/reset, indexed multi-rule execution and the nonprogress loop guard.
+
+The public Transliterator/RuleBasedTransliterator facade, rule parser, ID parser,
+registry, function replacer, built-in transliterators and transliteration resource
+registration remain outstanding. No public transliteration availability is claimed.
