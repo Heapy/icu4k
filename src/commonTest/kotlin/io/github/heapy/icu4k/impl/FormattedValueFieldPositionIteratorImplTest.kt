@@ -58,6 +58,10 @@ class FormattedValueFieldPositionIteratorImplTest {
         val unique = mutableListOf(item(DateFormat.Field.MONTH, 0, 1), item(DateFormat.Field.YEAR, 2, 3))
         FormattedValueFieldPositionIteratorImpl.addOverlapSpans(unique, span, 0)
         assertEquals(2, unique.size)
+        FormattedValueFieldPositionIteratorImpl.addOverlapSpans(unique, null, 0)
+        val duplicated = fields()
+        assertFailsWith<NullPointerException> { FormattedValueFieldPositionIteratorImpl.addOverlapSpans(duplicated, null, 0) }
+        assertEquals(5, duplicated.size)
     }
     @Test fun iterationContextAndFailureMutationFollowSource() {
         val position = ConstrainedFieldPosition()

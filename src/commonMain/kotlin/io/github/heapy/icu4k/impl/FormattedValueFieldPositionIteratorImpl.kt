@@ -6,7 +6,7 @@ import io.github.heapy.icu4k.text.*
 
 /** Source list-based field iteration used by date intervals and relative dates. */
 internal object FormattedValueFieldPositionIteratorImpl {
-    private class FieldWithValue(val field: FormatField?, val value: Int) : FormatField(field.toString()) {
+    private class FieldWithValue(val field: FormatField?, val value: Int) : FormatField(field!!.toString()) {
         private companion object { private const val serialVersionUID = -3850076447157793465L }
     }
 
