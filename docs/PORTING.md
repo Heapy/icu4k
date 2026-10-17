@@ -10774,3 +10774,33 @@ DateFormat subclass used by these checks is a test fixture, not a public facade.
 
 Full verification passed in 6m 3s: JVM 2,296 tests, macOS Native 1,079 tests
 and JS 1,081 tests (one existing skip), plus Linux Native test compilation.
+
+
+### MessageFormat stock styles and caches; default date patterns (2026-10-17)
+
+MessageFormatStyleCore now ports explicit number/date/time/spellout/ordinal/duration
+style dispatch, including modern number skeletons, date skeleton routing,
+PatternProps keyword whitespace and Java-trimmed rule-set names. Number keywords
+honor registered NumberFormat services, while raw patterns and skeletons use their
+own constructors. Date construction is an owner callback; JVM comparisons bind it
+to the joined common date engines and the full date-pattern generator.
+
+MessageFormatCacheCore ports nested explicit-format discovery and top-level custom
+format setters/getters, nullable entries, duplicate argument behavior, named/index
+validation, clone map ownership and custom markers. Iteration reads the current
+MessagePattern after user callbacks, preserving reentrant pattern replacement.
+
+SimpleDateFormatDefaultPatternCore ports raw calendar resource lookup and the
+single-entry synchronized cache, including cache updates before failures, fallback
+boundaries, array-entry type errors and stale cached results after an exception.
+Its lock is recursive on Native and JVM, and synchronous on JS. A common callback
+regression checks reentrant locale replacement; the source oracle compares every
+available ICU locale and additional calendar/hour/region keyword cases.
+
+The public SimpleDateFormat and MessageFormat facades, date factory integration
+and serialization remain pending. These internal engines do not expose partial
+public replacements. Focused common/JVM tests cover real stock formatting/parsing,
+registration, cache operations, failures and reentrancy against ICU4J 78.3.
+
+Full verification passed in 8m 2s: JVM 2,313 tests, macOS Native 1,090
+and JS 1,092 tests (one existing skip), plus Linux Native main compilation.
