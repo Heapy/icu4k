@@ -12320,3 +12320,48 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false` (5m 13s).
+
+### Common decoder runtime and UTF-8/CESU-8 streaming (ICU4J 78.3)
+
+- Ported the shared decoder state, pending-input adapter, queued UTF-16 output,
+  byte replay, end-of-input handling/reset and callback dispatch. Added common
+  character/int cursor views and coder results so the algorithms do not depend
+  on java.nio. These runtime types remain internal until the public charset
+  facade and its platform adapters are complete.
+- Implemented all decoder callback behaviors: stop, skip, substitute and escape,
+  including the special single-byte substitution flag, custom replacements,
+  callback contexts, offsets and buffered replacement/escape output.
+- Ported the complete UTF8 validation primitives and actual streaming UTF-8 and
+  CESU-8 decoding. Surrogate-pair output can span target buffers; incomplete and
+  malformed sequences preserve the source's consumption and invalid-byte state.
+  The UTF-8 loop intentionally leaves normal offsets untouched, as ICU4J does.
+- Retained source runtime edge behavior: REPLACE's reported action becomes IGNORE
+  while its callback still substitutes, callback contexts survive reset, replay
+  buffer reuse can fail with overflow, and pending-state paths can fail while
+  constructing a non-positive malformed-length result. These cases are tested against the source.
+- Independent source vectors cover 4,172 internal streaming configurations and
+  512 pending-input/flush adapter configurations: both encodings, varied chunks
+  and target capacities (including zero), malformed/truncated sequences, all
+  callback modes, seeded replay/output/input state and callback-triggered replay.
+  Trace fingerprints include every result, source/output/offset cursor, output
+  UTF-16 unit, mutable decoder field and full state-array contents.
+  Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/CharsetDecoderGoldens.java`.
+- JVM tests additionally compare 6,144 direct callback configurations with ICU4J,
+  including unmappable errors, non-string contexts (also objects equating to a
+  format tag), subChar1, offsets and escape
+  overflow. UTF8 primitives are compared over all byte values, lead/trail pairs,
+  and every Unicode scalar/surrogate plus invalid boundaries.
+- This provides working common UTF-8/CESU-8 decoding and the shared runtime;
+  remaining codec algorithms, encoding, public registry/decoder facade and
+  CharsetDetector/CharsetMatch decoding integration are still pending.
+- Added a regression for non-string callback contexts whose equals() matches a
+  format tag. ICU4J always uses the default escape for these objects; the common
+  implementation now performs the same explicit String check. The differential
+  test reproduced the prior four-versus-six-character output discrepancy.
+- Full validation passed after the context correction: JVM 2,849 tests; Node
+  1,407 tests (one skipped); macOS Native 1,405 tests; zero failures/errors.
+  Linux Native test compilation passed. Command: `./gradlew jvmTest jsNodeTest
+  macosArm64Test compileTestKotlinLinuxX64
+  -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false`
+  (6m 2s).
