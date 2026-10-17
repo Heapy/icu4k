@@ -4,8 +4,9 @@ import java.io.Externalizable
 import java.io.ObjectInput
 import java.io.ObjectOutput
 
-internal actual fun measureUnitSerialProxy(type: String?, subType: String?): Any = MeasureUnitSerialProxy(type, subType)
+internal actual fun measureUnitSerialProxy(type: String?, subType: String?): Any = MeasureUnit.MeasureUnitProxy(type, subType)
 
+// Keep reading streams written by the earlier top-level port proxy.
 internal class MeasureUnitSerialProxy() : Externalizable {
     private var type: String? = null
     private var subType: String? = null
@@ -26,3 +27,7 @@ internal class MeasureUnitSerialProxy() : Externalizable {
     private fun readResolve(): Any = MeasureUnit.internalGetInstance(type, subType)
     companion object { private const val serialVersionUID: Long = -3910681415330989598L }
 }
+
+internal actual typealias MeasureUnitExternalizable = java.io.Externalizable
+internal actual typealias MeasureUnitObjectInput = java.io.ObjectInput
+internal actual typealias MeasureUnitObjectOutput = java.io.ObjectOutput

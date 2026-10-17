@@ -103,6 +103,27 @@ open class MeasureUnit : ICUSerializable {
     open fun getCopyOfMeasureUnitImpl(): MeasureUnitImpl = measureUnitImpl?.copy() ?: MeasureUnitImpl.forIdentifier(getIdentifier())!!
     private fun maybeReference(): MeasureUnitImpl = measureUnitImpl ?: MeasureUnitImpl.forIdentifier(getIdentifier())!!
     private fun writeReplace(): Any = measureUnitSerialProxy(type, subType)
+    /** Source-named serialization proxy; JVM uses the Externalizable wire protocol. */
+    internal class MeasureUnitProxy() : MeasureUnitExternalizable {
+        private var type: String? = null
+        private var subType: String? = null
+        constructor(type: String?, subType: String?) : this() { this.type = type; this.subType = subType }
+        override fun writeExternal(out: MeasureUnitObjectOutput) {
+            out.writeByte(0)
+            out.writeUTF(type)
+            out.writeUTF(subType)
+            out.writeShort(0)
+        }
+        override fun readExternal(input: MeasureUnitObjectInput) {
+            input.readByte()
+            type = input.readUTF()
+            subType = input.readUTF()
+            val extra = input.readShort().toInt()
+            if (extra > 0) input.read(ByteArray(extra), 0, extra)
+        }
+        private fun readResolve(): Any = internalGetInstance(type, subType)
+        companion object { private const val serialVersionUID = -3910681415330989598L }
+    }
     protected fun interface Factory { fun create(type: String, subType: String): MeasureUnit }
     companion object {
         private val cache = HashMap<String, MutableMap<String, MeasureUnit>>()
@@ -442,4 +463,20 @@ private object EmptyUnitSet : MutableSet<MeasureUnit> {
     override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
     override fun hashCode() = 0
     override fun toString() = "[]"
+}
+
+internal expect interface MeasureUnitExternalizable : ICUSerializable {
+    fun writeExternal(out: MeasureUnitObjectOutput)
+    fun readExternal(input: MeasureUnitObjectInput)
+}
+internal expect interface MeasureUnitObjectOutput {
+    fun writeByte(value: Int)
+    fun writeUTF(value: String?)
+    fun writeShort(value: Int)
+}
+internal expect interface MeasureUnitObjectInput {
+    fun readByte(): Byte
+    fun readUTF(): String
+    fun readShort(): Short
+    fun read(buffer: ByteArray, offset: Int, length: Int): Int
 }

@@ -10513,3 +10513,19 @@ order check passed in 5 seconds.
 Final full verification passed in 6m 38s: 2,195 JVM tests, 1,032 macOS
 Native tests and 1,034 JS tests (one existing skip), with no failures.
 Linux Native test sources compiled; execution on Linux remains a CI check.
+
+### Source-named MeasureUnit serialization proxy (2026-10-17)
+
+DateNumberFormat stream cross-reading with an assigned Currency exposed the
+older port proxy's different class name. Source Currency writes the nested
+MeasureUnit.MeasureUnitProxy; the port wrote a top-level MeasureUnitSerialProxy.
+A namespace-only stream remap therefore fell back to the original ICU4J proxy,
+which restored an ICU4J Currency into a port NumberFormat field.
+
+Added the real nested proxy with the source UID and Externalizable layout.
+The JVM boundary aliases the JDK object-input/output protocol; the common proxy
+preserves source version, UTF field order and single-read future-data handling.
+The old top-level proxy remains available to read earlier port streams. Three
+JVM oracle tests verify the descriptor/name, canonical unit/currency cross-read
+in both directions and reading old port proxy streams. The combined focused
+DateNumberFormat/proxy verification passed in 36 seconds.
