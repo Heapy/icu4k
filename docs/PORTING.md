@@ -11714,3 +11714,27 @@ full Unicode key folding and source null behavior. Targeted JVM tests pass.
 Public Transliterator/RuleBasedTransliterator lifecycle/filtering, registry and
 resource registration, compound execution and built-in transliterators remain
 outstanding. The full ICU4J port remains incomplete.
+
+
+Parser validation: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` passed in 4m 40s with Kotlin 2.4.21 / Gradle 9.8.1.
+XML reports contain 2,684 JVM tests, 1,307 JavaScript tests (one existing skip) and
+1,305 macOS Native tests, with zero failures or errors. Linux Native test
+compilation passed. Remote CI 39028073196 for Bidi/BidiTransform completed
+successfully on both jobs.
+
+CI 39028926340 for the preceding rule-engine stage failed in Node's timer path
+inside BidiBracketCoreTest.intermediateBracketStatesMatchSourceFingerprints. The
+same full 56-mode/level matrix takes 1.097s locally; combining all cases in one
+Mocha test leaves little margin on the Linux runner. The matrix is now partitioned
+into seven per-mode tests, each retaining its eight original level fingerprints,
+all fifteen inputs and every intermediate-state snapshot. No golden value or
+algorithm assertion was changed and no timeout was increased.
+
+
+After partitioning the Bidi bracket test, `jvmTest --tests '*BidiBracketCoreTest'
+jsNodeTest macosArm64Test compileTestKotlinLinuxX64` passed in 2m 10s. The targeted
+JVM report contains eight passing tests; full JS and macOS reports contain 1,313
+(one existing skip) and 1,311 tests respectively, with zero failures or errors.
+Linux Native test compilation passed. Remote verification of the partitioned
+CI workload will be provided by the next pushed run.

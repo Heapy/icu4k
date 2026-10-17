@@ -5,7 +5,15 @@ import io.github.heapy.icu4k.lang.UCharacter
 import kotlin.test.*
 
 class BidiBracketCoreTest {
-    @Test fun intermediateBracketStatesMatchSourceFingerprints() {
+    // Keep all 56 source fingerprints in smaller Node test cases.
+    @Test fun intermediateBracketStatesMode0() = verifyIntermediateBracketStates(0)
+    @Test fun intermediateBracketStatesMode1() = verifyIntermediateBracketStates(1)
+    @Test fun intermediateBracketStatesMode2() = verifyIntermediateBracketStates(2)
+    @Test fun intermediateBracketStatesMode3() = verifyIntermediateBracketStates(3)
+    @Test fun intermediateBracketStatesMode4() = verifyIntermediateBracketStates(4)
+    @Test fun intermediateBracketStatesMode5() = verifyIntermediateBracketStates(5)
+    @Test fun intermediateBracketStatesMode6() = verifyIntermediateBracketStates(6)
+    private fun verifyIntermediateBracketStates(mode: Int) {
         val texts = listOf("", "abc", "אבג", "a(אב)z", "א(a)ב", "ا[12(א)]a", "a((ב))z", "א[(a)ב]c",
             "a\u2329ב\u3009", "א\u3008a\u232a", "[\u0300a]\u0300", "((א)(a))", "(אב[cd]12)",
             "(".repeat(100) + "אב12a" + ")".repeat(100), "a\u0000(ב)")
@@ -68,8 +76,8 @@ class BidiBracketCoreTest {
 2348928413347396723L,
 5411425276518113062L,
 )
-        var fixture = 0
-        for (mode in 0..6) for (level in listOf(0, 1, 2, 3, -128, -127, -126, -125)) {
+        var fixture = mode * 8
+        for (level in listOf(0, 1, 2, 3, -128, -127, -126, -125)) {
             var hash = -3750763034362895579L
             fun mix(value: Int) { hash = (hash xor value.toLong()) * 1099511628211L }
             for (text in texts) {
