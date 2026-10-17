@@ -5,7 +5,7 @@ import io.github.heapy.icu4k.util.ICUSerializable
 import io.github.heapy.icu4k.util.ParseException
 
 /** JVM java.text.Format bridge; portable overloads use StringBuilder and ParsePosition. */
-expect abstract class UFormatBase() : ICUSerializable {
+expect abstract class UFormatBase() : Format {
     fun format(input: Any?): String
     abstract fun format(input: Any?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder
     abstract fun parseObject(source: String?, position: ParsePosition?): Any?
@@ -16,7 +16,7 @@ expect abstract class UFormatBase() : ICUSerializable {
 }
 
 /** Default java.text.Format protocol for platforms without the JDK. */
-abstract class PortableUFormatBase : ICUSerializable {
+abstract class PortableUFormatBase : PortableFormat() {
     fun format(input: Any?): String = format(input, StringBuilder(), FormatFieldPosition(0)).toString()
     abstract fun format(input: Any?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder
     abstract fun parseObject(source: String?, position: ParsePosition?): Any?

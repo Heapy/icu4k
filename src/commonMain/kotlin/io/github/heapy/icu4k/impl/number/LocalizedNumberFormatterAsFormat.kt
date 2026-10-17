@@ -12,7 +12,7 @@ import io.github.heapy.icu4k.text.ParsePosition
 import io.github.heapy.icu4k.util.ULocale
 
 /** JVM instances are java.text.Format; portable callers can use the StringBuilder overload. */
-expect open class LocalizedNumberFormatterAsFormat(formatter: LocalizedNumberFormatter?, locale: ULocale?) {
+expect open class LocalizedNumberFormatterAsFormat(formatter: LocalizedNumberFormatter?, locale: ULocale?) : io.github.heapy.icu4k.text.Format {
     fun format(input: Any?): String
     open fun format(input: Any?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder
     open fun formatToCharacterIterator(input: Any?): FormatAttributedCharacterIterator

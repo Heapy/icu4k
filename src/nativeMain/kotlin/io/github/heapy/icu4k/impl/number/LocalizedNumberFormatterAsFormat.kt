@@ -8,7 +8,7 @@ import io.github.heapy.icu4k.text.FormatFieldPosition
 import io.github.heapy.icu4k.text.ParsePosition
 import io.github.heapy.icu4k.util.ULocale
 
-actual open class LocalizedNumberFormatterAsFormat actual constructor(private val formatter: LocalizedNumberFormatter?, private val locale: ULocale?) {
+actual open class LocalizedNumberFormatterAsFormat actual constructor(private val formatter: LocalizedNumberFormatter?, private val locale: ULocale?) : io.github.heapy.icu4k.text.PortableFormat() {
     private val core = LocalizedNumberFormatterAsFormatCore(formatter)
     actual fun format(input: Any?): String {
         val output = StringBuilder()
