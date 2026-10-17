@@ -12536,3 +12536,43 @@ regressions cover alias execution and deferred factory failure.
 - Full validation passed in 6m 29s: JVM 2,885 tests; Node 1,439 tests (one
   skipped); macOS Native 1,437 tests; zero failures/errors. Linux Native test
   compilation passed using the full validation command recorded above.
+
+### UTF-8 / CESU-8 and UTF-16/32 encoders (ICU4J 78.3)
+
+- Ported Unicode encoders for UTF-8, CESU-8, UTF-16, UTF-16BE/LE and UTF-32,
+  UTF-32BE/LE. UTF-16 version 1 emits BOMs even for fixed endian names; version 2
+  uses the ordinary fixed-endian encoder behavior. Generic UTF-16/32 default to BE.
+- Preserved the UTF-8 array/generic cursor behavior, private pair-writing indices,
+  pending high surrogates and byte-overflow queues. Normal UTF-8 offsets remain
+  untouched, matching source. CESU-8 encodes lone surrogate code units as three
+  bytes and a pair as six, while UTF-8 validates and combines pairs into four bytes.
+- UTF-16/32 retain BOM state, endian substitution bytes, pair validation,
+  per-character offsets and four-byte temporary storage. Constructors preserve
+  the source's initial marker value 0; explicit reset changes it to -1. Temporary
+  bytes and UTF-8 private indices survive reset. UTF-32 never rewrites its zero
+  high byte, just as source does.
+- Added an internal opaque binary view to select non-array codec algorithms while
+  retaining writable shared storage and independent cursors. Opaqueness survives
+  slices/duplicates; this also makes recursive callback conversion use the same
+  buffer branch as source direct output buffers. Existing ASCII/Latin-1 goldens
+  rerun unchanged after extending the shared trace harness.
+- Independent source traces cover 24,000 streaming configurations over 12 codec/
+  version variants: zero/small output capacities, sliced and generic buffers,
+  read-only output, malformed/pending/replayed input, custom replacements,
+  contexts, the NIO adapter and independent chunks. Traces include all runtime
+  fields/arrays and each encoder's private indices or temporary array.
+- Another 24 bulk traces encode all 65,536 UTF-16 units with substitution and skip
+  callbacks, retaining source behavior for every lone surrogate as well as pairs.
+- Exhaustive direct-loop sweeps encode every valid Unicode scalar value through
+  each of the 12 variants in array and generic modes: 26,689,536 calls. The source
+  generator and common test reuse bounded two-char/eight-byte cursors; large hex
+  strings or generated tables of encoded code points are unnecessary. Output,
+  positions, results, pending state and final runtime/private state are compared.
+- Reproduce source goldens using `scripts/oracles/UnicodeEncoderGoldens.java`
+  with the pinned ICU4J core/charset 78.3 jars on the Java classpath.
+- This completes the internal UTF-8/CESU-8 and UTF-16/32 encoders. MBCS and
+  other algorithmic encoders, remaining decoders and public charset/detector
+  APIs are pending.
+- Full validation passed in 7m 16s: JVM 2,893 tests; Node 1,447 tests (one
+  skipped); macOS Native 1,445 tests; zero failures/errors. Linux Native test
+  compilation passed using the full validation command recorded above.

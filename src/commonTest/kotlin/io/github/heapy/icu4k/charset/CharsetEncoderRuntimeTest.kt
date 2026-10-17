@@ -7,8 +7,10 @@ internal val encoderNonStringContext = object {
     override fun hashCode() = 17
     override fun equals(other: Any?) = other is String && other == "D"
 }
-internal fun encoderConfigure(latin: Boolean, mode: Int, seed: Int): CharsetSingleByteEncoder {
-    val encoder = CharsetSingleByteEncoder(latin)
+internal fun encoderConfigure(latin: Boolean, mode: Int, seed: Int): CharsetSingleByteEncoder =
+    CharsetSingleByteEncoder(latin).also { encoderApplyConfiguration(it, mode, seed) }
+
+internal fun encoderApplyConfiguration(encoder: CharsetEncoderRuntime, mode: Int, seed: Int) {
     if (mode in listOf(1, 8, 9)) {
         encoder.onMalformedInput(CharsetCodingErrorAction.REPLACE); encoder.onUnmappableCharacter(CharsetCodingErrorAction.REPLACE)
         if (mode == 8) encoder.replaceWith(byteArrayOf(42))
@@ -36,23 +38,24 @@ internal fun encoderConfigure(latin: Boolean, mode: Int, seed: Int): CharsetSing
         4 -> encoder.fromUChar32 = 0xd800
         5 -> { encoder.preFromUFirstCP = 0x10000; encoder.preFromULength = 1; encoder.preFromUArray[0] = 'X' }
     }
-    return encoder
 }
-internal fun encoderGoldenRun(latin: Boolean, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, backend: Int, nio: Boolean, local: Boolean): String {
+internal fun encoderGoldenRun(latin: Boolean, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, backend: Int, nio: Boolean, local: Boolean): String =
+    encoderRuntimeRun(latin.toString(), encoderConfigure(latin, mode, seed), hex, split, capacity, mode, seed, backend, nio, local)
+
+internal fun encoderRuntimeRun(label: String, encoder: CharsetEncoderRuntime, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, backend: Int, nio: Boolean, local: Boolean, privateState: () -> List<Int> = { emptyList() }): String {
     val raw = hex.chunked(4).map { it.toInt(16).toChar() }.toCharArray()
     val sourceOffset = if (backend in listOf(1, 2, 7) || local) 2 else 0
     val targetOffset = if (backend in listOf(1, 2, 7)) 2 else 0
     val padded = CharArray(raw.size + 4); raw.copyInto(padded, sourceOffset)
     val readOnly = backend in listOf(2, 3, 5)
-    val accessible = backend !in listOf(6, 7)
+    val accessible = backend != 7
     var end = minOf(split, raw.size)
     var source = CharsetCharBuffer(padded, sourceOffset, if (local) end else raw.size, readOnly, accessible).apply { limit = end }
-    val encoder = encoderConfigure(latin, mode, seed)
     var hash = 1; var count = 0; var flushing = false
     fun add(value: Int) { hash = 31 * hash + value }
     while (true) {
         val cap = if (count % 5 == 0) 0 else capacity
-        val target = BinaryBuffer(ByteArray(cap + 4), arrayOffset = targetOffset, capacity = cap, isReadOnly = backend == 4)
+        val target = BinaryBuffer(ByteArray(cap + 4), arrayOffset = targetOffset, capacity = cap, isReadOnly = backend == 4).let { if (backend in listOf(5, 6)) it.asOpaqueBuffer() else it }
         val offsets = CharsetIntBuffer(IntArray(cap))
         var result: CharsetCoderResult? = null; var failed = false
         val text = try {
@@ -69,7 +72,8 @@ internal fun encoderGoldenRun(latin: Boolean, hex: String, split: Int, capacity:
         add(if (encoder.useSubChar1) 1 else 0); add(if (encoder.useFallback) 1 else 0)
         add(encoder.errorBuffer.contentHashCode()); add(encoder.preFromUArray.contentHashCode()); add(encoder.invalidUCharBuffer.contentHashCode())
         add(encoder.fromUContext?.hashCode() ?: 0); add(encoder.replacement.contentHashCode()); add(encoder.malformedInputAction.toString().hashCode()); add(encoder.unmappableCharacterAction.toString().hashCode())
-        check(++count <= 1000) { "Encoder did not terminate: $latin/$hex/$mode/$seed/$backend" }
+        for (value in privateState()) add(value)
+        check(++count <= 1000) { "Encoder did not terminate: $label/$hex/$mode/$seed/$backend" }
         if (failed) break
         if (nio) {
             if (result!!.isUnderflow()) {
@@ -84,7 +88,7 @@ internal fun encoderGoldenRun(latin: Boolean, hex: String, split: Int, capacity:
             if (local) source = CharsetCharBuffer(padded, sourceOffset + start, end - start) else source.limit = end
         }
     }
-    return "$latin|$hex|$split|$capacity|$mode|$seed|$backend|$nio|$local|$count|$hash"
+    return "$label|$hex|$split|$capacity|$mode|$seed|$backend|$nio|$local|$count|$hash"
 }
 class CharsetEncoderRuntimeTest {
     private fun compare(row: String) {

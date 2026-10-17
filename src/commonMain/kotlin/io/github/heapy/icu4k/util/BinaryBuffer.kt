@@ -22,6 +22,7 @@ class BinaryBuffer private constructor(
     val arrayOffset: Int,
     val capacity: Int,
     val isReadOnly: Boolean,
+    private val arrayAccessible: Boolean = true,
 ) {
     constructor(bytes: ByteArray, order: ByteOrder = ByteOrder.BIG_ENDIAN, arrayOffset: Int = 0,
                 capacity: Int = bytes.size - arrayOffset, isReadOnly: Boolean = false) :
@@ -46,29 +47,34 @@ class BinaryBuffer private constructor(
         }
     val remaining: Int get() = limit - position
     /** Codec fast paths may only access an exposed, writable array. */
-    internal val hasArray: Boolean get() = !isReadOnly && storage is ArrayBufferStorage
+    internal val hasArray: Boolean get() = !isReadOnly && arrayAccessible && storage is ArrayBufferStorage
 
     fun getByte(index: Int): Byte {
         if (index !in 0 until limit) throw IndexOutOfBoundsException("Invalid byte index: $index")
         return storage[arrayOffset + index]
     }
     /** Shares the remaining bytes, with an independent cursor and byte order. */
-    fun slice(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset + position, remaining, isReadOnly)
+    fun slice(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset + position, remaining, isReadOnly, arrayAccessible)
 
     /** Shares an absolute range within [limit], without changing this buffer's cursor. */
     fun slice(index: Int, length: Int = limit - index): BinaryBuffer {
         if (index < 0 || index > limit || length < 0 || length > limit - index) throw IndexOutOfBoundsException("Invalid buffer slice")
-        return BinaryBuffer(storage, order, arrayOffset + index, length, isReadOnly)
+        return BinaryBuffer(storage, order, arrayOffset + index, length, isReadOnly, arrayAccessible)
     }
 
     /** Shares storage/cursor bounds; like ByteBuffer.duplicate(), starts in big-endian order. */
-    fun duplicate(): BinaryBuffer = BinaryBuffer(storage, ByteOrder.BIG_ENDIAN, arrayOffset, capacity, isReadOnly).also {
+    fun duplicate(): BinaryBuffer = BinaryBuffer(storage, ByteOrder.BIG_ENDIAN, arrayOffset, capacity, isReadOnly, arrayAccessible).also {
         it.limit = limit
         it.position = position
     }
 
     /** Shares storage and preserves cursor state without permitting writes through this view. */
-    fun asReadOnlyBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, true).also {
+    fun asReadOnlyBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, true, arrayAccessible).also {
+        it.limit = limit
+        it.position = position
+    }
+    /** Writable codec view that selects generic buffer loops without exposing an array fast path. */
+    internal fun asOpaqueBuffer(): BinaryBuffer = BinaryBuffer(storage, order, arrayOffset, capacity, isReadOnly, false).also {
         it.limit = limit
         it.position = position
     }
