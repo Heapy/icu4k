@@ -389,6 +389,12 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
+`DateFormatSymbols` exposes locale/calendar era, month, weekday, quarter,
+AM/PM and leap-month names, with ICU's clone and defensive-copy behavior.
+For example, `DateFormatSymbols(ULocale("fr_FR")).getMonths()[0]` is `"janvier"`.
+Lazy zone-name tables and explicit calendar/class constructors are also available;
+JVM serialization remains pending.
+
 `GregorianCalendar` supports default or explicit time zones, locale timezone
 keywords, date-field constructors, field resolution and date arithmetic:
 

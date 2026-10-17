@@ -81,6 +81,33 @@ internal class PatternOrderedMap<K: Comparable<K>,V: Any>: Iterable<Pair<K,V>> {
             }
         }
     }
+    fun asMutableMap(): MutableMap<K,V> = object: AbstractMutableMap<K,V>() {
+        override fun put(key: K,value: V): V? = this@PatternOrderedMap[key].also { this@PatternOrderedMap[key]=value }
+        override fun get(key: K): V? = this@PatternOrderedMap[key]
+        override fun remove(key: K): V? = this@PatternOrderedMap.remove(key)
+        override fun clear() = this@PatternOrderedMap.clear()
+        override val entries: MutableSet<MutableMap.MutableEntry<K,V>> = object: AbstractMutableSet<MutableMap.MutableEntry<K,V>>() {
+            override val size: Int get()=count
+            override fun add(element: MutableMap.MutableEntry<K,V>): Boolean = throw UnsupportedOperationException()
+            override fun iterator(): MutableIterator<MutableMap.MutableEntry<K,V>> {
+                val keys=this@PatternOrderedMap.keys.iterator()
+                return object: MutableIterator<MutableMap.MutableEntry<K,V>> {
+                    override fun hasNext(): Boolean=keys.hasNext()
+                    override fun remove()=keys.remove()
+                    override fun next(): MutableMap.MutableEntry<K,V> {
+                        val k=keys.next()
+                        return object: MutableMap.MutableEntry<K,V> {
+                            override val key: K get()=k
+                            override val value: V get()=this@PatternOrderedMap[k]!!
+                            override fun setValue(newValue: V): V = value.also { this@PatternOrderedMap[k]=newValue }
+                            override fun equals(other: Any?): Boolean=other is Map.Entry<*,*> && key==other.key && value==other.value
+                            override fun hashCode(): Int=key.hashCode() xor value.hashCode()
+                        }
+                    }
+                }
+            }
+        }
+    }
     fun copy(): PatternOrderedMap<K,V> = PatternOrderedMap<K,V>().also { result ->
         fun copyNode(node: Node<K,V>?): Node<K,V>? = node?.let { Node(it.key,it.value,copyNode(it.left),copyNode(it.right),it.height) }
         result.root=copyNode(root); result.count=count

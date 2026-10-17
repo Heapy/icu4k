@@ -99,18 +99,18 @@ internal open class DateFormatSymbolsDataCore(
         source!!.copyInto(result,1)
     }
     open fun initEras(path: String,maps: PatternOrderedMap<String,MutableMap<String,String>>,calendar: ICUResourceBundle?,maxEra: Int): Array<String?>? {
-        val names=maps[path]?:return null
-        val fallback=calendar!!.findWithFallback(path)
-        return Array(maxEra+1) { index ->
-            val key=index.toString()
-            names[key]?:fallback?.findWithFallback(key)?.getString()?:""
-        }
+        return initializeEras(path,maps.asMutableMap(),calendar,maxEra)
     }
     private fun dayPeriods(map: Map<String,String>?,copy: Array<String?>?): Array<String?> {
         if(map==null && copy!=null) return copy
         return Array(PERIOD_KEYS.size) { index -> if(map==null) null else map[PERIOD_KEYS[index]]?:copy?.get(index) }
     }
     companion object {
+        fun initializeEras(path: String,maps: Map<String,Map<String,String>>,calendar: ICUResourceBundle?,maxEra: Int): Array<String?>? {
+            val names=maps[path]?:return null
+            val fallback=calendar!!.findWithFallback(path)
+            return Array(maxEra+1) { index -> val key=index.toString(); names[key]?:fallback?.findWithFallback(key)?.getString()?:"" }
+        }
         const val PATTERN_CHARS="GyMdkHmsSEDFwWahKzYeugAZvcLQqVUOXxrbB"
         private val ERA_FIELDS=arrayOf("eras" to "eras/abbreviated","eraNames" to "eras/wide","narrowEras" to "eras/narrow")
         private val MONTH_FIELDS=arrayOf("months" to "monthNames/format/wide","shortMonths" to "monthNames/format/abbreviated","narrowMonths" to "monthNames/format/narrow","standaloneMonths" to "monthNames/stand-alone/wide","standaloneShortMonths" to "monthNames/stand-alone/abbreviated","standaloneNarrowMonths" to "monthNames/stand-alone/narrow")

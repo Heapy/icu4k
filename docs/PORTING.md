@@ -10308,3 +10308,43 @@ Full verification passed in 6m 32s: JVM 2,144 tests, macOS Arm64 1,018 tests,
 and JS Node 1,020 tests (one existing skip), with no failures. Linux x64 test
 compilation passed. Anonymous-class reporting was exercised on all three
 executed backends.
+
+### Public DateFormatSymbols facade (2026-10-17)
+
+Added the public common symbol facade over the existing resource, state, cache
+and zone-string cores. Constructors cover default/ULocale, Calendar, KClass and
+UResourceBundle inputs; JVM Kotlin adapters cover Locale, Class and Java bundle
+forms. Java non-ICU resource bundles retain the source ClassCastException path.
+Factories create distinct facade objects, with template data shared through the
+source cache key (base locale, calendar type and nonempty numbers keyword).
+
+All public era/month/weekday/quarter/cyclic-year/zodiac/leap-pattern/AM-PM,
+separator/pattern-character and zone-string accessors are connected. AM/PM
+convenience overloads dispatch virtually to the contextual overloads. Protected
+initializeData and initEras hooks dispatch during construction, including direct
+bundle initialization. PatternOrderedMap now exposes a live mutable Map view so
+initEras overrides can replace/remove entries without silently mutating a copy.
+The original standalone data-core initializer delegates to the same era helper.
+
+Cloning makes a new state container while sharing the source array references;
+public getters/setters retain their source copy rules, including shared mutable
+leap patterns and the standalone abbreviated leap-pattern slot quirk (bug 008).
+Equality preserves ICU's field selection and requested-locale display-name
+comparison; hash uses the requested locale. Zone strings use the real clock and
+canonical default zone. The first lazy lookup returns its stored matrix;
+subsequent lookups and explicitly supplied matrices use defensive row copies.
+Locale availability and deprecated always-null bundle helpers are also exposed.
+JVM serialization remains outstanding with the wider public calendar/date stack.
+
+Six JVM oracle tests cover all CalType symbol sets in six locales, numbering
+keywords/fallbacks, every context/width combination including invalid values,
+mutations/clones/cache sharing, calendar/Class/bundle/Locale constructors,
+available locales, default factories/null inputs/rejected Java bundles, all lazy
+zone rows and protected era-map mutation. Four common tests cover copied arrays,
+clone setters, calendar constructors, zone copies, protected initialization and
+AM/PM virtual dispatch. Hebrew's 14-entry month-name table was verified against
+ICU4J rather than imposing a 13-entry calendar-month assumption.
+
+Full verification passed in 6m 31s: JVM 2,154 tests, macOS Arm64 1,022 tests,
+and JS Node 1,024 tests (one existing skip), with no failures. Linux x64 test
+compilation passed. All new public symbol tests passed on the executed backends.
