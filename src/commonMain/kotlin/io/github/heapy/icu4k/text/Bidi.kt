@@ -4,6 +4,8 @@
 package io.github.heapy.icu4k.text
 
 import io.github.heapy.icu4k.impl.UBiDiProps
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 /** ICU Unicode bidirectional paragraphs, lines and index mappings. Mutable, like ICU4J. */
 open class Bidi(maxLength: Int, maxRunCount: Int) {
