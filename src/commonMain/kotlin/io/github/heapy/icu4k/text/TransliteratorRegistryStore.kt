@@ -14,7 +14,7 @@ internal class TransliteratorRegistryStore {
     internal class LocaleEntry(var rule: String, var direction: Int)
     private val registry = Index<Array<Any?>>()
     private val sources = Index<Index<Variants>>()
-    private val available = Index<Unit>()
+    private val available = Index<Unit>(true)
 
     fun put(id: String, entry: Any?, visible: Boolean) {
         val stv = TransliteratorIDParser.IDtoSTV(id)
@@ -117,21 +117,31 @@ internal class TransliteratorRegistryStore {
 
     // Each map operation locks separately, matching Collections.synchronizedMap rather
     // than serializing a whole registration/lookup. Enumerations remain fail-fast.
-    private class Index<V> {
+    private class Index<V>(private val insertionOrdered: Boolean = false) {
         private val values = LinkedHashMap<CaseInsensitiveString, V>()
         private val lock = createTextTrieMapLock(values)
         private var version = 0
+        private var capacity = 0
+        private var threshold = 0
+        private fun bucket(key: CaseInsensitiveString): Int { val hash=key.hashCode();return (hash xor (hash ushr 16)) and (capacity-1) }
         operator fun get(key: CaseInsensitiveString): V? = lock.withLock { values[key] }
         fun put(key: CaseInsensitiveString, value: V) = lock.withLock {
-            if (!values.containsKey(key)) version++
+            val added=!values.containsKey(key)
+            if(added) {
+                version++
+                if(capacity==0){capacity=16;threshold=12}
+                // Source HashMap doubles small collision-heavy tables before treeifying.
+                if(!insertionOrdered && capacity<64 && values.keys.count {bucket(it)==bucket(key)}>=8) {capacity*=2;threshold=capacity*3/4}
+            }
             values[key] = value
+            if(added && values.size>threshold){capacity*=2;threshold=capacity*3/4}
         }
         fun remove(key: CaseInsensitiveString) = lock.withLock {
             if (values.containsKey(key)) { values.remove(key); version++ }
         }
         fun isEmpty(): Boolean = lock.withLock { values.isEmpty() }
         fun enumeration(): Enumeration<String> {
-            val (keys, expected) = lock.withLock { values.keys.toList() to version }
+            val (keys, expected) = lock.withLock { (if(insertionOrdered)values.keys.toList() else values.keys.sortedBy {bucket(it)}) to version }
             return idEnumeration(keys) { if (expected != version) throw ConcurrentModificationException() }
         }
     }

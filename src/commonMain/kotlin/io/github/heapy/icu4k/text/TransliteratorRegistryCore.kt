@@ -5,13 +5,14 @@ package io.github.heapy.icu4k.text
 import io.github.heapy.icu4k.impl.createTextTrieMapLock
 
 /** Registry entry lifecycle. The owner supplies concrete public Transliterator construction. */
-internal class TransliteratorRegistryCore<T : TransliterationFunction>(private val host: Host<T>) : TransliterationResourceBootstrap.Registry {
-    interface Host<T : TransliterationFunction> {
+internal class TransliteratorRegistryCore<T : Any>(private val host: Host<T>) : TransliterationResourceBootstrap.Registry {
+    interface Host<T : Any> {
         val parserFactory: TransliterationFactory
         fun ruleBased(id: String, data: TransliterationData, filter: UnicodeSet?): T
         fun compound(elements: List<T>, anonymousPasses: Int): T
         fun getInstance(id: String): T
         fun setID(instance: T, id: String)
+        fun setFilter(instance: T, filter: UnicodeSet)
         /** Clone Any/RuleBased/Compound instances; return other registered instances unchanged. */
         fun cloneStored(instance: T): T
     }
@@ -60,7 +61,7 @@ internal class TransliteratorRegistryCore<T : TransliterationFunction>(private v
                     }
                     val result = host.compound(elements, pass - 1)
                     host.setID(result, entry.id)
-                    entry.filter?.let { result.setFilter(it) }
+                    entry.filter?.let { host.setFilter(result, it) }
                     return result
                 }
                 is InstanceEntry<*> -> { @Suppress("UNCHECKED_CAST") return host.cloneStored(entry.instance as T) }

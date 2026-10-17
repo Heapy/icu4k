@@ -38,5 +38,6 @@ internal object RegistryFixtureHost : TransliteratorRegistryCore.Host<RegistryFi
             return RegistryFixtureFunction(canonical)
         }
         override fun setID(instance: RegistryFixtureFunction, id: String) { instance.idValue=id }
+        override fun setFilter(instance: RegistryFixtureFunction, filter: UnicodeSet) { instance.setFilter(filter) }
         override fun cloneStored(instance: RegistryFixtureFunction) = if(instance.data == null && instance.elements == null) instance else RegistryFixtureFunction(instance.idValue,instance.data,instance.elements).also { it.filterValue=instance.filterValue?.let(::UnicodeSet) }
     }

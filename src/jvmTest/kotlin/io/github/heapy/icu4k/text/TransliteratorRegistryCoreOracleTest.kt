@@ -100,7 +100,8 @@ class TransliteratorRegistryCoreOracleTest {
                 override fun compound(elements:List<TransliterationFunction>,anonymousPasses:Int):TransliterationFunction=error("unused")
                 override fun getInstance(id:String)=host.getInstance(id)
                 override fun setID(instance:TransliterationFunction,id:String)=Unit
-                override fun cloneStored(instance:TransliterationFunction)=instance
+                override fun setFilter(instance: TransliterationFunction, filter: UnicodeSet) { instance.setFilter(filter) }
+        override fun cloneStored(instance:TransliterationFunction)=instance
             })
             invoke(source,"put",arrayOf(String::class.java,Class::class.java,Boolean::class.javaPrimitiveType!!),"X-Y",sourceClass,true)
             port.putClass("X-Y",portClass,true)

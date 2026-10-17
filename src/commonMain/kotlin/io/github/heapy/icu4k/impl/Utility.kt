@@ -6,6 +6,37 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** Shared ICU string, escaping and append utilities. */
 internal object Utility {
+    fun <T : Appendable> appendNumber(result: T, number: Int, radix: Int, minDigits: Int): T {
+        if(radix<2 || radix>36)throw IllegalArgumentException("Illegal radix $radix")
+        var absolute=number
+        if(number<0){absolute=-number;appendUtilityNumberPart(result,"-",false)}
+        fun append(n: Int, minimum: Int) {
+            val digit=n%radix
+            if(n>=radix || minimum>1)append(n/radix,minimum-1)
+            if(digit<0)throw IndexOutOfBoundsException()
+            appendUtilityNumberPart(result,"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[digit].toString(),true)
+        }
+        append(absolute,minDigits)
+        return result
+    }
+    fun parsePattern(pattern: String, text: io.github.heapy.icu4k.text.Replaceable, initialIndex: Int, limit: Int): Int {
+        var patternIndex=0
+        var index=initialIndex
+        if(pattern.isEmpty())return index
+        var wanted=UTF16.charAt(pattern,0)
+        while(index<limit) {
+            val c=text.char32At(index)
+            if(wanted=='~'.code) {
+                if(PatternProps.isWhiteSpace(c)){index+=UTF16.getCharCount(c);continue}
+                if(++patternIndex==pattern.length)return index
+            }else if(c==wanted) {
+                val n=UTF16.getCharCount(c);index+=n;patternIndex+=n
+                if(patternIndex==pattern.length)return index
+            }else return -1
+            wanted=UTF16.charAt(pattern,patternIndex)
+        }
+        return -1
+    }
     fun parseChar(id: String, pos: IntArray, ch: Char): Boolean {
         val start = pos[0]
         pos[0] = PatternProps.skipWhiteSpace(id, pos[0])
@@ -279,3 +310,5 @@ internal object Utility {
 }
 
 internal expect fun appendUtilityText(appendable: Appendable, string: CharSequence)
+
+internal expect fun appendUtilityNumberPart(appendable: Appendable, text: CharSequence, character: Boolean)

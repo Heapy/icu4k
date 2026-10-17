@@ -4,6 +4,7 @@ package io.github.heapy.icu4k.text
 
 /** Shared stand-in table; matching and replacement deliberately use separate checked casts. */
 internal class TransliterationData {
+    val lock = io.github.heapy.icu4k.impl.createTextTrieMapLock(this)
     var ruleSet = TransliterationRuleSet()
     var variableNames = mutableMapOf<String, CharArray>()
     var variables: Array<Any?>? = null

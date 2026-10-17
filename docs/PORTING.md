@@ -11894,3 +11894,31 @@ existing skip), 1,342 macOS Native tests, zero failures/errors, and successful
 Linux Native test compilation. Earlier lookup commit 453e3a83 passed both GitHub
 Actions jobs in run 39032866389; UScript commit ebaa94b1 passed both jobs in run
 39032303638.
+
+## Public transliteration API and built-ins
+
+Connected public Transliterator and nested Position to the execution, ID parser,
+rule parser and registry. Added RuleBasedTransliterator and compound ownership,
+shared Data locking, class/factory/instance/alias registration, inverse lookup,
+display names and source/target APIs. JVM Locale/Class entry points are extensions.
+The registry construction host now accepts concrete public instances; function
+replacement/ID parsing uses a private adapter without adding protocol methods to
+the public API.
+
+Ported all built-in registration families: Null/Remove, escape/unescape variants,
+lower/upper/title/fold, Unicode names, NFC/NFD/NFKC/NFKD/FCD/FCC, hidden Thai-word
+break insertion and Any-to-script with width fix, Latin pivot and a shared atomic
+put-if-absent cache. Source UTF-16 script-run stepping, compound clone context
+behavior, createFromRules Null omission/double instantiation and single-data
+registry filter loss are retained. Source DAG bucket traversal is reproduced for
+the built-in inventory so generated Any variants preserve their upstream order;
+source/target enumeration itself has no specified ordering contract.
+
+JVM validation compares all 816 registered transforms with ICU4J 78.3 for creation,
+rules and a mixed-script corpus. Built-in streaming/filter/inverse matrices,
+resource and Any dispatch, all display names across four locales, exact ordered
+inventory/variants, custom registration, Position identity, filter copying,
+source/target sets and append/parser failure paths also pass. A standalone
+source-only scan confirms all 816 upstream IDs create and execute on that corpus
+without exceptions. This validates the exercised public surface; it is not a
+claim of complete ICU4J compatibility.
