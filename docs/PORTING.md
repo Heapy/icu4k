@@ -10279,3 +10279,32 @@ constructor stamps/clone ownership and Ethiopic constructor-specific era modes.
 Full verification passed in 5m 14s: JVM 2,138 tests, macOS Arm64 1,015 tests,
 and JS Node 1,017 tests (one existing skip), with no failures. Linux x64 test
 compilation passed; execution is covered by repository CI.
+
+### Calendar diagnostics and protected range API (2026-10-17)
+
+Added Calendar.getDisplayName(ULocale), its JVM Kotlin Locale adapter, and the
+source debugging toString sequence. Display names return the runtime class name
+and ignore the locale, including null. JVM uses javaClass.name; JS and Native
+use their runtime class metadata with anonymous-class fallbacks. Debug output
+reads stored values directly, appends the stored zone (not an overridable
+getter), calls the source fieldName hook, and prints fields according to isSet
+without completing the calendar. Thus virtually-set fields can print their
+stored zero values until another operation computes them, just as in ICU4J.
+
+Exposed protected MIN/MAX_JULIAN, MIN/MAX_MILLIS and shared mutable MIN/MAX_DATE
+objects. JVM bytecode inspection confirmed all six are protected static final
+fields. Numeric bounds reuse the existing exact Grego limits; date getters do
+not create defensive copies. GregorianCalendar.getActualMinimum now delegates
+to the existing Gregorian core override, returning getMinimum without the
+base calendar's generic actual-range search.
+
+Three JVM oracle tests compare exact debug strings (after package-name mapping)
+for cleared, invalid strict, virtually-set, completed, partially updated and
+null-zone states, locale-ignored display names, protected limits/shared dates,
+and all Gregorian actual minima. Three common tests cover unresolved fields,
+virtual-field dumps, anonymous subclasses and shared protected range objects.
+
+Full verification passed in 6m 32s: JVM 2,144 tests, macOS Arm64 1,018 tests,
+and JS Node 1,020 tests (one existing skip), with no failures. Linux x64 test
+compilation passed. Anonymous-class reporting was exercised on all three
+executed backends.

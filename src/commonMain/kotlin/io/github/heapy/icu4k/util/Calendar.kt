@@ -4,6 +4,7 @@
 package io.github.heapy.icu4k.util
 
 import io.github.heapy.icu4k.impl.calendar.*
+import io.github.heapy.icu4k.impl.Grego
 import io.github.heapy.icu4k.impl.CalType
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import kotlin.time.Clock
@@ -170,6 +171,25 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
         if ((valid == null) != (actual == null)) throw IllegalArgumentException()
         validLocale = valid; actualLocale = actual
     }
+    @Suppress("UNUSED_PARAMETER")
+    open fun getDisplayName(locale: ULocale?): String = calendarClassName(this)
+    override fun toString(): String = buildString {
+        append(calendarClassName(this@Calendar)).append("[time=")
+        append(if (values.isTimeSet) values.time.toString() else "?")
+        append(",areFieldsSet=").append(values.areFieldsSet)
+        append(",areAllFieldsSet=").append(values.areAllFieldsSet)
+        append(",lenient=").append(values.lenient)
+        append(",zone=").append(values.zone)
+        append(",firstDayOfWeek=").append(values.firstDayOfWeek)
+        append(",minimalDaysInFirstWeek=").append(values.minimalDaysInFirstWeek)
+        append(",repeatedWallTime=").append(values.repeatedWallTime)
+        append(",skippedWallTime=").append(values.skippedWallTime)
+        for (i in fields!!.indices) {
+            append(',').append(fieldName(i)).append('=')
+            append(if (isSet(i)) fields!![i].toString() else "?")
+        }
+        append(']')
+    }
     public override fun clone(): Calendar {
         val copy = cloneHost() as? Calendar ?: cloneNative()
         copy.fields = fields!!.copyOf(); copy.stamps = stamps!!.copyOf()
@@ -189,6 +209,12 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
         override fun toString(): String = core().toString()
     }
     companion object {
+        protected const val MIN_JULIAN = -0x7F000000
+        protected const val MAX_JULIAN = 0x7F000000
+        protected const val MIN_MILLIS = Grego.MIN_MILLIS
+        protected const val MAX_MILLIS = Grego.MAX_MILLIS
+        @kotlin.jvm.JvmField protected val MIN_DATE = Date(MIN_MILLIS)
+        @kotlin.jvm.JvmField protected val MAX_DATE = Date(MAX_MILLIS)
         const val ERA = 0; const val YEAR = 1; const val MONTH = 2; const val WEEK_OF_YEAR = 3; const val WEEK_OF_MONTH = 4
         const val DATE = 5; const val DAY_OF_MONTH = 5; const val DAY_OF_YEAR = 6; const val DAY_OF_WEEK = 7; const val DAY_OF_WEEK_IN_MONTH = 8
         const val AM_PM = 9; const val HOUR = 10; const val HOUR_OF_DAY = 11; const val MINUTE = 12; const val SECOND = 13

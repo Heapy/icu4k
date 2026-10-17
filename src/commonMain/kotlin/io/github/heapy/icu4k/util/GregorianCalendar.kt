@@ -49,6 +49,7 @@ open class GregorianCalendar : Calendar {
     override fun isEquivalentTo(other: Calendar?): Boolean = super.isEquivalentTo(other) && gregorian.hasSameCutover((other as GregorianCalendar).gregorian)
     override fun hashCode(): Int = gregorian.hashCode(super.hashCode())
     override fun roll(field: Int, amount: Int) = gregorian.roll(field, amount)
+    override fun getActualMinimum(field: Int): Int = gregorian.getActualMinimum(field)
     override fun getActualMaximum(field: Int): Int = gregorian.getActualMaximum(field)
     internal fun inDaylightTime(): Boolean = gregorian.inDaylightTime()
     override fun handleGetLimit(field: Int, limitType: Int): Int = gregorian.handleGetLimit(field, limitType)
