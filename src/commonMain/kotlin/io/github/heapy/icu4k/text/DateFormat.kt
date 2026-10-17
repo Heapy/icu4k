@@ -191,7 +191,10 @@ abstract class DateFormat : UFormat {
         @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(skeleton: String?): DateFormat = getPatternInstance(skeleton, ULocale.getDefault(ULocale.Category.FORMAT))
         @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(skeleton: String?, locale: ULocale?): DateFormat = SimpleDateFormat(SimpleDateFormat.bestPattern(skeleton, locale), locale)
         @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(calendar: Calendar?, skeleton: String?, locale: ULocale?): DateFormat {
-            val actual = if (calendar != null) locale!!.setKeywordValue("calendar", calendar.getType()) else locale
+            val actual = if (calendar != null) {
+                val type = calendar.getType() // Java evaluates the argument before a null receiver fails.
+                locale!!.setKeywordValue("calendar", type)
+            } else locale
             val pattern = SimpleDateFormat.bestPattern(skeleton, actual)
             return SimpleDateFormat(pattern, actual).also { it.setCalendar(calendar) }
         }

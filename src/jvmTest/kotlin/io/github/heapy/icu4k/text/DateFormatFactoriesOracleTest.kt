@@ -81,6 +81,18 @@ class DateFormatFactoriesOracleTest {
         assertSame(DateFormat.getAvailableLocales(), DateFormat.getAvailableLocales())
         assertSame(DateFormat.getAvailableULocales(), DateFormat.getAvailableULocales())
     }
+    @Test fun sourceAlsoCallsCalendarTypeBeforeNullLocaleFailure() {
+        val sourceCalls = mutableListOf<String>(); val portCalls = mutableListOf<String>()
+        val a = object : com.ibm.icu.util.GregorianCalendar(SourceLocale.US) {
+            override fun getType(): String { sourceCalls.add("type"); return "gregorian" }
+        }
+        val b = object : GregorianCalendar(ULocale.US) {
+            override fun getType(): String { portCalls.add("type"); return "gregorian" }
+        }
+        sourceCalls.clear(); portCalls.clear()
+        assertEquals(outcome { Source.getInstanceForSkeleton(a, "y", null as SourceLocale?) }, outcome { DateFormat.getInstanceForSkeleton(b, "y", null as ULocale?) })
+        assertEquals(listOf("type"), sourceCalls); assertEquals(sourceCalls, portCalls)
+    }
     @Test fun invalidStylesNullsAndRelativeParsingPreserveFailureOrder() {
         for (date in listOf(-2, -1, 4, 127, 128, 132, 256)) for (time in listOf(-2, -1, 4, 128, 132)) {
             assertEquals(outcome { Source.getDateTimeInstance(date, time, SourceLocale.US).javaClass.simpleName }, outcome { DateFormat.getDateTimeInstance(date, time, ULocale.US).javaClass.simpleName }, "$date/$time")

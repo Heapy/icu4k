@@ -16,6 +16,15 @@ class DateFormatFactoriesTest {
         assertFailsWith<IllegalArgumentException> { DateFormat.getDateTimeInstance(null, -2, -2, ULocale.US) }
         assertNull(DateFormat.getInstanceForSkeleton(null, "y", ULocale.US).getCalendar())
     }
+    @Test fun calendarTypeHookPrecedesNullLocaleFailure() {
+        val calls = mutableListOf<String>()
+        val calendar = object : GregorianCalendar(ULocale.US) {
+            override fun getType(): String { calls.add("type"); return "gregorian" }
+        }
+        calls.clear()
+        assertFailsWith<NullPointerException> { DateFormat.getInstanceForSkeleton(calendar, "y", null) }
+        assertEquals(listOf("type"), calls)
+    }
     @Test fun relativeDaysContextParsingAndCloneSharing() {
         val format = DateFormat.getDateInstance(DateFormat.RELATIVE_SHORT, ULocale.US)
         assertIs<RelativeDateFormat>(format)
