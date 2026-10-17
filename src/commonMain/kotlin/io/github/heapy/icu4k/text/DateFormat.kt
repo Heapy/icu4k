@@ -191,6 +191,7 @@ abstract class DateFormat : UFormat {
         const val TIMEZONE_LOCALIZED_GMT_OFFSET_FIELD = 31
         const val TIMEZONE_ISO_FIELD = 32
         const val TIMEZONE_ISO_LOCAL_FIELD = 33
+        internal const val RELATED_YEAR = 34
         const val AM_PM_MIDNIGHT_NOON_FIELD = 35
         const val FLEXIBLE_DAY_PERIOD_FIELD = 36
         const val TIME_SEPARATOR = 37

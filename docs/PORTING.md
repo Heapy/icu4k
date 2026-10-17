@@ -10545,3 +10545,24 @@ streams. The full verification passed in 2m 51s: JVM 2,212 tests, macOS Native
 1,037 tests and JS 1,039 tests (one existing skip), with Linux Native test
 compilation also successful. Public SimpleDateFormat and DateFormat factories
 remain pending.
+
+### SimpleDateFormat pattern engine (2026-10-17)
+
+Ported the source lazy pattern compiler and shared SimpleCache into the internal
+common `SimpleDateFormatPatternCore`. Field runs retain the source numeric
+classification, while literals preserve doubled apostrophes and incomplete
+quotes. The independent flag scan retains quoted Han-year detection. Localized
+pattern translation and calendar-field level comparison are also ported, along
+with all pattern/calendar/DateFormat/attribute tables. The source's missing
+comma in the calendar-field table is preserved: `B` maps to -2 and the array has
+37 entries. Added DateFormat's package-private RELATED_YEAR selector internally.
+
+Oracle tests compare all 65,536 UTF-16 characters, every field table, thousands
+of short quote/field combinations, numeric widths, shared cache identity,
+translation failures and field-unit levels directly with pinned ICU4J 78.3.
+Common tests exercise quoting, flags, field identities and cache behavior on
+all platforms. This is the pattern component of the full SimpleDateFormat port;
+the public formatter/parser and DateFormat factories are still pending.
+
+Full verification passed in 6m 13s: JVM 2,219 tests, macOS Native 1,040 tests,
+JS 1,042 tests (one existing skip), and Linux Native test compilation.
