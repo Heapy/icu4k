@@ -24,3 +24,8 @@ internal actual fun <T> bidiArrayAt(data: Array<T>?, index: Int): T {
     if (index < 0 || index >= values.size) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
     return values[index]
 }
+internal actual fun bidiIntAt(data: IntArray?, index: Int): Int {
+    val values = data!!
+    if (index < 0 || index >= values.size) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
+    return values[index]
+}
