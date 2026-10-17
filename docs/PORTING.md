@@ -12491,3 +12491,48 @@ regressions cover alias execution and deferred factory failure.
 - Full validation passed in 6m 44s: JVM 2,874 tests; Node 1,430 tests (one
   skipped); macOS Native 1,428 tests; zero failures/errors. Linux Native test
   compilation passed using the full validation command recorded above.
+
+### Encoder runtime, callbacks and ASCII / Latin-1 (ICU4J 78.3)
+
+- Ported the internal from-Unicode framework: queued byte output, callback
+  dispatch, truncated-input handling, partial-character counts, negative-length
+  replay, protected NIO loop/flush adapters, replacement copies and validation,
+  reset behavior, surrogate helpers and maximum-output-size calculation.
+- Encoder fallback differs from decoder fallback: it is configurable, with
+  private-use code points always permitting fallback. Reset preserves fallback,
+  useSubChar1, context, invalid-input length and stored array contents, as source
+  does. The initial partial-code-point marker becomes -1 on explicit reset.
+- Added STOP, SKIP, SUBSTITUTE and ESCAPE callbacks, including the pinned
+  default-ignorable list, stop-on-illegal context, alternate single-byte
+  substitution, all ICU/Java/C/XML/Unicode/CSS escape forms, recursive encoding
+  of escape text and fixed-size overflow storage.
+- Preserved source quirks: fromUWriteBytes emits no offsets for partially written
+  sequences; the C supplementary escape stores eight digits but reports a length
+  that truncates two of them; ASCII/Latin-1 do not record a non-surrogate
+  unmappable character in fromUChar32, so its callback sees the source's zero value.
+- Ported both concrete single-byte encoders, including array/generic paths,
+  pending surrogate completion and per-call offsets. The array error path keeps
+  the source's target array-offset cursor assignment. The retained status value
+  1 is source encoder state and does not cause these encoders to write a BOM.
+- Independent source traces cover 3,562 configurations: sliced/ordinary arrays,
+  non-array algorithms, read-only buffers, zero/small output capacities, callback
+  contexts and errors, initial replay/queued/pending state, NIO and independent
+  input chunks. Four bulk traces send every UTF-16 unit through both codecs with
+  replacement and skip callbacks. Traces compare output, offsets, cursors, all
+  seven scalar fields, both flags, three full state arrays and callback settings.
+- Direct JVM callback comparisons cover 20,160 metadata/replacement/context/
+  code-point/error/capacity/input-length combinations. Both surrogate helper
+  overloads are compared for all 65,536 lead values against nine input choices
+  (1,179,648 calls), plus 45 pending-count combinations.
+- Common source goldens verify fallback and default-ignorable rules for every
+  code point, including adjacent out-of-range values (1,114,114 inputs), on all
+  tested platforms. The source's callback list is retained rather than replaced
+  by a query against potentially different Unicode property data.
+- Reproduce using `scripts/oracles/SingleByteEncoderGoldens.java` and
+  `scripts/oracles/EncoderPrimitiveGoldens.java` with the ICU4J core and charset
+  78.3 jars on the Java classpath.
+- This completes the internal encoder foundation and two single-byte codecs;
+  remaining encoder families and the public charset API are still pending.
+- Full validation passed in 6m 29s: JVM 2,885 tests; Node 1,439 tests (one
+  skipped); macOS Native 1,437 tests; zero failures/errors. Linux Native test
+  compilation passed using the full validation command recorded above.
