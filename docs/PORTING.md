@@ -11658,3 +11658,11 @@ replacement/reset, indexed multi-rule execution and the nonprogress loop guard.
 The public Transliterator/RuleBasedTransliterator facade, rule parser, ID parser,
 registry, function replacer, built-in transliterators and transliteration resource
 registration remain outstanding. No public transliteration availability is claimed.
+
+
+Validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64` passed
+in 5m 21s with Kotlin 2.4.21 / Gradle 9.8.1. XML reports contain 2,648 JVM tests,
+1,277 JavaScript tests (one existing skip) and 1,275 macOS Native tests, with zero
+failures or errors. Linux Native test compilation passed. Remote CI 39028073196
+for the preceding Bidi/BidiTransform stage completed its macOS job successfully;
+the jvm-js-linux job was still running at this verification.
