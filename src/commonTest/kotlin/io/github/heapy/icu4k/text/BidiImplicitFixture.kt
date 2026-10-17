@@ -21,3 +21,22 @@ internal class BidiImplicitFixture(
         }
     }
 }
+
+/** Fresh nonempty setPara state through the kernel phases; facade lifecycle is separate. */
+internal fun BidiImplicitFixture.resolveFresh(embeddings: ByteArray?) {
+    base.levels = ByteArray(0)
+    trailingWSStart = 0
+    BidiPropertyCore(base).scan()
+    trailingWSStart = base.length
+    val direction = if (embeddings == null) {
+        base.levels = ByteArray(base.length)
+        BidiExplicitCore(base).resolve()
+    } else {
+        base.levels = embeddings
+        BidiExplicitCore(base).check()
+    }
+    val core = BidiImplicitCore(this)
+    core.prepareIsolates()
+    if (direction.toInt() == 2) core.resolveRuns(embeddings != null) else trailingWSStart = 0
+    core.addDefaultInverseMarks()
+}

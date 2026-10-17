@@ -29,33 +29,34 @@ class BidiImplicitCoreOracleTest {
         listOf("startON", "start1", "stateImp", "state").map { name -> field(it.javaClass, name).get(it) }
     } }
     private fun snapshotPortIsolates(isolates: Array<BidiImplicitCore.Isolate?>?): List<Any?>? = isolates?.map { it?.let { listOf(it.startON, it.start1, it.stateImp, it.state) } }
-    private fun compare(text: String, level: Int, mode: Int, options: Int, order: Boolean, prologue: String?, epilogue: String?, embeddings: ByteArray? = null) {
+    private fun compare(text: String, level: Int, mode: Int, options: Int, order: Boolean, prologue: String?, epilogue: String?, embeddings: ByteArray? = null, contextMutation: Pair<Boolean, String?>? = null) {
         val sc = mutableListOf<Int>(); val pc = mutableListOf<Int>()
         val source = object : com.ibm.icu.text.Bidi() {
-            override fun getCustomizedClass(c: Int): Int { sc += c; return super.getCustomizedClass(c) }
+            override fun getCustomizedClass(c: Int): Int {
+                sc += c
+                if (c == '.'.code && contextMutation != null) {
+                    if (contextMutation.first) setContext(contextMutation.second, epilogue)
+                    else setContext(prologue, contextMutation.second)
+                }
+                return super.getCustomizedClass(c)
+            }
         }
         source.setReorderingMode(mode); source.setReorderingOptions(options); source.orderParagraphsLTR(order); source.setContext(prologue, epilogue)
-        val base = BidiPropertyFixture(text, level, mode, BidiReorderingCore.normalizeReorderingOptions(options), order, prologue?.takeIf { it.isNotEmpty() }) { pc += it; BidiPropertyCore.customizedClass(it, null) }
-        val port = BidiImplicitFixture(base, epilogue?.takeIf { it.isNotEmpty() })
-        base.levels = ByteArray(0) // Source setPara resets this before scanning.
-        port.trailingWSStart = 0
-        val core = BidiImplicitCore(port)
-        val se = embeddings?.copyOf()
-        val expected = outcome { source.setPara(text.toCharArray(), level.toByte(), se) }
-        val actual = outcome {
-            BidiPropertyCore(base).scan()
-            port.trailingWSStart = base.length
-            val direction = if (embeddings == null) {
-                base.levels = ByteArray(base.length)
-                BidiExplicitCore(base).resolve()
-            } else {
-                base.levels = embeddings.copyOf()
-                BidiExplicitCore(base).check()
+        lateinit var base: BidiPropertyFixture
+        lateinit var port: BidiImplicitFixture
+        base = BidiPropertyFixture(text, level, mode, BidiReorderingCore.normalizeReorderingOptions(options), order, prologue?.takeIf { it.isNotEmpty() }) {
+            pc += it
+            if (it == '.'.code && contextMutation != null) {
+                val replacement = contextMutation.second?.takeIf { value -> value.isNotEmpty() }
+                if (contextMutation.first) base.prologue = replacement else port.epilogue = replacement
             }
-            core.prepareIsolates()
-            if (direction.toInt() == 2) core.resolveRuns(embeddings != null) else port.trailingWSStart = 0
-            core.addDefaultInverseMarks()
+            BidiPropertyCore.customizedClass(it, null)
         }
+        port = BidiImplicitFixture(base, epilogue?.takeIf { it.isNotEmpty() })
+        val se = embeddings?.copyOf()
+        val pe = embeddings?.copyOf()
+        val expected = outcome { source.setPara(text.toCharArray(), level.toByte(), se) }
+        val actual = outcome { port.resolveFresh(pe) }
         val label = "mode=$mode options=$options level=$level order=$order text=$text"
         assertEquals(expected, actual, label)
         assertEquals(sc, pc, "$label callbacks")
@@ -70,7 +71,10 @@ class BidiImplicitCoreOracleTest {
         assertEquals(field("paraLevel").getByte(source), base.paraLevel, label)
         assertEquals(snapshotPoints(field("insertPoints").get(source)), snapshotPortPoints(port.insertPoints), label)
         assertEquals(snapshotIsolates(field("isolates").get(source)), snapshotPortIsolates(port.isolates), label)
-        if (se != null && field("levels").get(source) === se) assertContentEquals(se, base.levels, "$label caller embeddings")
+        if (se != null && field("levels").get(source) === se) {
+            assertSame(pe, base.levels, "$label caller embedding alias")
+            assertContentEquals(se, pe, "$label caller embedding mutation")
+        }
     }
     @Test fun publicOptionNormalizationRetainsOtherFlags() {
         val source = com.ibm.icu.text.Bidi()
@@ -103,6 +107,52 @@ class BidiImplicitCoreOracleTest {
             compare(text, listOf(0, 1, 2, 125, 126, 127).random(random), listOf(0, 1, 2, 4, 5, 6).random(random), random.nextInt(8), random.nextBoolean(),
                 if (random.nextBoolean()) null else text(random.nextInt(15)), if (random.nextBoolean()) null else text(random.nextInt(15)), embedding)
         }
+    }
+    @Test fun contextReplacementDuringImplicitCallbacksMatchesSource() {
+        for (replacement in listOf("b", "", null, "😀א", "abc אב")) for (mode in listOf(0, 1, 2, 4, 5, 6)) {
+            compare("1 א", 1, mode, 1, false, "אabc.", null, contextMutation = true to replacement)
+            compare("1 א", 1, mode, 1, false, null, ".abcא", contextMutation = false to replacement)
+        }
+    }
+    @Test fun retainedIsolateAndPointStorageMatchesRepeatedPublicCalls() {
+        val source = com.ibm.icu.text.Bidi()
+        source.setPara("a\u2067א\u2069b", 0, null)
+        val first = BidiImplicitFixture(BidiPropertyFixture("a\u2067א\u2069b", 0, 0, 0, false))
+        first.resolveFresh(null)
+        val sourceIsolates = field("isolates").get(source)
+        val portIsolates = first.isolates
+        assertEquals(snapshotIsolates(sourceIsolates), snapshotPortIsolates(portIsolates))
+        source.setReorderingMode(5); source.setReorderingOptions(1)
+        val second = BidiImplicitFixture(BidiPropertyFixture("\u2069אabc", 0, 5, 1, false))
+        second.isolates = portIsolates
+        assertEquals("bounds", outcome { source.setPara("\u2069אabc", 0, null) })
+        assertEquals("bounds", outcome { second.resolveFresh(null) })
+        assertSame(sourceIsolates, field("isolates").get(source))
+        assertSame(portIsolates, second.isolates)
+        assertEquals(snapshotIsolates(field("isolates").get(source)), snapshotPortIsolates(second.isolates))
+        assertContentEquals(field("levels").get(source) as ByteArray, second.base.levels)
+        val fresh = com.ibm.icu.text.Bidi().apply { setReorderingMode(5); setReorderingOptions(1) }
+        assertEquals("null", outcome { fresh.setPara("\u2069אabc", 0, null) })
+
+        val marked = "ا 12 a 34 אב 56 a .".repeat(8)
+        source.setPara(marked, 0, null)
+        val markedPort = BidiImplicitFixture(BidiPropertyFixture(marked, 0, 5, 1, false))
+        markedPort.isolates = second.isolates
+        markedPort.resolveFresh(null)
+        val sourcePoints = field("insertPoints").get(source)
+        val sourceArray = field(sourcePoints.javaClass, "points").get(sourcePoints)
+        assertEquals(snapshotPoints(sourcePoints), snapshotPortPoints(markedPort.insertPoints))
+        val reused = BidiImplicitFixture(BidiPropertyFixture("abc", 0, 5, 1, false))
+        reused.insertPoints.points = markedPort.insertPoints.points
+        reused.isolates = markedPort.isolates
+        source.setPara("abc", 0, null)
+        reused.resolveFresh(null)
+        assertSame(sourceArray, field(sourcePoints.javaClass, "points").get(sourcePoints))
+        assertSame(markedPort.insertPoints.points, reused.insertPoints.points)
+        assertEquals(snapshotPoints(sourcePoints), snapshotPortPoints(reused.insertPoints))
+        assertEquals(snapshotIsolates(field("isolates").get(source)), snapshotPortIsolates(reused.isolates))
+        assertEquals(0, reused.insertPoints.size)
+        assertEquals(20, reused.insertPoints.points.size)
     }
     @Test fun everyPropertySequenceActionAndPartialMutationMatchesSource() {
         val levClass = Class.forName("com.ibm.icu.text.Bidi\$LevState")
