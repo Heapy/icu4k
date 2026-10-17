@@ -45,6 +45,8 @@ class BinaryBuffer private constructor(
             if (position > value) position = value
         }
     val remaining: Int get() = limit - position
+    /** Codec fast paths may only access an exposed, writable array. */
+    internal val hasArray: Boolean get() = !isReadOnly && storage is ArrayBufferStorage
 
     fun getByte(index: Int): Byte {
         if (index !in 0 until limit) throw IndexOutOfBoundsException("Invalid byte index: $index")

@@ -96,22 +96,25 @@ internal fun decoderConfigure(cesu: Boolean, mode: Int, seed: Int): CharsetUtf8D
 internal fun decoderGoldenRun(cesu: Boolean, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, nio: Boolean = false): String =
     decoderRuntimeRun(cesu.toString(), decoderConfigure(cesu, mode, seed), hex, split, capacity, mode, seed, nio)
 
-internal fun decoderRuntimeRun(label: String, decoder: CharsetDecoderRuntime, hex: String, split: Int, capacity: Int, mode: Int, seed: Int = 0, nio: Boolean = false, local: Boolean = false, privateState: () -> List<Int> = { emptyList() }): String {
+internal fun decoderRuntimeRun(label: String, decoder: CharsetDecoderRuntime, hex: String, split: Int, capacity: Int, mode: Int, seed: Int = 0, nio: Boolean = false, local: Boolean = false, backend: Int = 1, privateState: () -> List<Int> = { emptyList() }): String {
     val raw = hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-    val backing = ByteArray(raw.size + 4); raw.copyInto(backing, 2)
-    var source = BinaryBuffer(backing, arrayOffset = 2, capacity = raw.size)
+    val sourceOffset = if (backend in listOf(0, 3, 4)) 0 else 2
+    val targetOffset = if (backend in listOf(0, 3, 4, 5)) 0 else 2
+    val sourceReadOnly = backend in listOf(2, 3, 7)
+    val backing = ByteArray(raw.size + 4); raw.copyInto(backing, sourceOffset)
+    var source = BinaryBuffer(backing, arrayOffset = sourceOffset, capacity = raw.size, isReadOnly = sourceReadOnly)
     var hash = 1; var count = 0; var flushing = false
     fun add(value: Int) { hash = 31 * hash + value }
     var end = minOf(split, raw.size); source.limit = end
-    if (local) source = BinaryBuffer(backing, arrayOffset = 2, capacity = end)
+    if (local) source = BinaryBuffer(backing, arrayOffset = sourceOffset, capacity = end, isReadOnly = sourceReadOnly)
     while (true) {
         val cap = if (count % 5 == 0) 0 else capacity
-        val target = CharsetCharBuffer(CharArray(cap + 4), 2, cap)
+        val target = CharsetCharBuffer(CharArray(cap + 4), targetOffset, cap, isReadOnly = backend == 6, arrayAccessible = backend !in listOf(4, 5))
         val offsets = CharsetIntBuffer(IntArray(cap))
         val flush = end == raw.size
         var result: CharsetCoderResult? = null
         var failed = false
-        val text = try { (if (nio) if (flushing) decoder.flush(target) else decoder.decodeNioLoop(source, target) else decoder.decode(source, target, offsets, flush)).also { result = it }.toString() } catch (_: CharsetBufferOverflowException) { failed = true; "THROW:overflow" } catch (_: IllegalStateException) { failed = true; "THROW:state" } catch (_: IllegalArgumentException) { failed = true; "THROW:argument" } catch (_: IndexOutOfBoundsException) { failed = true; "THROW:bounds" } catch (_: NullPointerException) { failed = true; "THROW:null" }
+        val text = try { (if (nio) if (flushing) decoder.flush(target) else decoder.decodeNioLoop(source, target) else decoder.decode(source, target, offsets, flush)).also { result = it }.toString() } catch (_: CharsetBufferOverflowException) { failed = true; "THROW:overflow" } catch (_: IllegalStateException) { failed = true; "THROW:state" } catch (_: IllegalArgumentException) { failed = true; "THROW:argument" } catch (_: IndexOutOfBoundsException) { failed = true; "THROW:bounds" } catch (_: NullPointerException) { failed = true; "THROW:null" } catch (_: CharsetReadOnlyBufferException) { failed = true; "THROW:readonly" }
         add(text.hashCode()); add(source.position); add(target.position); add(offsets.position)
         repeat(target.position) { add(target.get(it).code) }; repeat(offsets.position) { add(offsets.array[it]) }
         for (value in listOf(decoder.toUnicodeStatus, decoder.toUBytesBegin, decoder.toULength, decoder.charErrorBufferLength, decoder.charErrorBufferBegin, decoder.invalidCharLength, decoder.preToUBegin, decoder.preToULength, decoder.preToUFirstLength, decoder.mode)) add(value)
@@ -131,7 +134,7 @@ internal fun decoderRuntimeRun(label: String, decoder: CharsetDecoderRuntime, he
             if (flush) break
             val start = end
             end = minOf(end + split, raw.size)
-            if (local) source = BinaryBuffer(backing, arrayOffset = 2 + start, capacity = end - start) else source.limit = end
+            if (local) source = BinaryBuffer(backing, arrayOffset = sourceOffset + start, capacity = end - start, isReadOnly = sourceReadOnly) else source.limit = end
         }
     }
     return "$label|$hex|$split|$capacity|$mode|$seed|$count|$hash"

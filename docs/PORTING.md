@@ -12397,3 +12397,30 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false` (5m 11s).
+
+### US-ASCII / ISO-8859-1 streaming decoders (ICU4J 78.3)
+
+- Ported ASCII decoding and its Latin-1 specialization, including malformed-byte
+  handling, source/target progress and per-call normal offsets. Latin-1 accepts
+  the entire byte range; ASCII reports malformed (not unmappable) input.
+- Both array and generic-buffer loops are retained. Their behavior differs when
+  output becomes full before an invalid ASCII byte: the generic loop can consume
+  that byte and report an error while the array loop stops at output capacity.
+- Preserved the source's absolute array-index cursor assignments on malformed
+  ASCII in sliced buffers, including invalid-position failures. They are not
+  silently replaced with the otherwise expected array-offset subtraction.
+- Added internal array-accessibility detection to BinaryBuffer and character
+  cursor views. Read-only/host storage selects the generic path, and opaque
+  writable character views retain their accessibility through slicing.
+- Independent source goldens cover 5,312 configurations: 4,736 streaming cases
+  and 576 NIO cases, every byte value, zero/small output capacities, callback
+  modes, ordinary/sliced arrays, read-only input/output and direct buffers.
+  Common opaque views exercise the same non-array algorithms without java.nio.
+- Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/SingleByteDecoderGoldens.java`. The shared trace harness also
+  reruns the unchanged UTF-8/CESU-8 and UTF-16/32 corpora.
+- These internal decoders are complete; remaining codec families, encoders,
+  public charset APIs and detector/match integration are still pending.
+- Full validation passed: JVM 2,861 tests; Node 1,419 tests (one skipped);
+  macOS Native 1,417 tests; zero failures/errors. Linux Native test compilation
+  passed with the same full validation command above.

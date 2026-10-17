@@ -23,8 +23,10 @@ internal class CharsetCharBuffer(
     val arrayOffset: Int = 0,
     capacity: Int = array.size - arrayOffset,
     val isReadOnly: Boolean = false,
+    private val arrayAccessible: Boolean = true,
 ) : CharsetBufferCursor(capacity) {
     init { require(arrayOffset >= 0 && capacity >= 0 && arrayOffset <= array.size - capacity) }
+    val hasArray: Boolean get() = !isReadOnly && arrayAccessible
     fun get(index: Int): Char {
         if (index !in 0..<limit) throw IndexOutOfBoundsException()
         return array[arrayOffset + index]
@@ -43,7 +45,7 @@ internal class CharsetCharBuffer(
         if (!hasRemaining()) throw CharsetBufferOverflowException()
         put(position, value); position++
     }
-    fun slice(): CharsetCharBuffer = CharsetCharBuffer(array, arrayOffset + position, remaining, isReadOnly)
+    fun slice(): CharsetCharBuffer = CharsetCharBuffer(array, arrayOffset + position, remaining, isReadOnly, arrayAccessible)
 }
 internal class CharsetIntBuffer(val array: IntArray) : CharsetBufferCursor(array.size) {
     fun put(value: Int) {
