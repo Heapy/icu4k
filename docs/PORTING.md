@@ -12576,3 +12576,38 @@ regressions cover alias execution and deferred factory failure.
 - Full validation passed in 7m 16s: JVM 2,893 tests; Node 1,447 tests (one
   skipped); macOS Native 1,445 tests; zero failures/errors. Linux Native test
   compilation passed using the full validation command recorded above.
+
+### MBCS from-Unicode extension matching and byte output (ICU4J 78.3)
+
+- Ported the extension encoder's three-stage Unicode lookup, longest-match
+  UTF-16 section search, partial-input requests, fallback/private-use rules,
+  reserved-bit checks and subChar1 marker. Lookup retains the fixed two-unit
+  result bias and leaves input/extension cursors unchanged.
+- Preserved the source's use of TO_U_IS_PARTIAL for the initial trie result;
+  subsequent nodes use FROM_U_IS_PARTIAL. Simple matching retains the source's
+  loss of the roundtrip flag before calculating signed byte lengths.
+- Added direct one-to-three-byte and indexed longer output, SI/SO prefix/state
+  transitions and queued output via the shared encoder runtime. Source mutation
+  and exception behavior is retained for read-only/full targets and long output
+  that overflows the fixed 30-byte error array.
+- Independent actual-source goldens traverse every nonzero from-Unicode extension
+  entry across the 190 packaged tables (48 with lookup cases). They compare
+  143,724 matches, the same number of simple lookups and 213,816 writes, varying
+  prefix splits, source/pre-array offsets, fallback, flush, SI/SO state, output
+  capacity and read-only output. All output bytes, offsets, cursor positions,
+  status, pending error length and the complete error array are checked.
+- Nine synthetic fixtures additionally cover roundtrip/fallback/private-use,
+  subChar1, reserved flags, the initial-partial predicate, long mappings and the
+  19-unit partial limit. Source goldens include 9,600 matches, 9,600 simple lookups and
+  360 writes, repeated by common tests in both byte orders. Section search is
+  checked over all 65,536 UTF-16 values for empty, sparse and boundary sections.
+- Reproduce actual-table goldens using `scripts/oracles/FromUnicodeExtensionGoldens.java`
+  with the ICU4J core/charset jars and the upstream charset data directory. Compile
+  that oracle together with `scripts/oracles/SyntheticFromUnicodeGoldens.java`
+  to regenerate the synthetic cases.
+- This completes extension lookup/output helpers. The MBCS streaming encoder's
+  base-table conversion loops, extension continuation/replay and integration
+  remain pending, along with other remaining codec families and public APIs.
+- Full validation passed in 7m 46s: JVM 2,897 tests; Node 1,451 tests (one
+  skipped); macOS Native 1,449 tests; zero failures/errors. Linux Native test
+  compilation passed using the full validation command recorded above.
