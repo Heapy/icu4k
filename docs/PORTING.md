@@ -10591,3 +10591,36 @@ same common regression test covers negative hours and hour 24 on all targets.
 
 Final full verification passed in 6m 25s: JVM 2,226 tests, macOS Native 1,044
 tests and JS 1,046 tests (one existing skip), plus Linux Native test compilation.
+
+### SimpleDateFormat formatting engine (2026-10-17)
+
+Ported the complete field formatting switch, pattern traversal and attributed
+field-position collection into the internal common SimpleDateFormatFormatCore.
+The owner boundary preserves both subFormat variants, per-field NumberFormat
+selection, virtual zero-padding and pattern-to-attribute hooks. Calendar type
+mismatch uses the formatter calendar and restores its zone only on success,
+matching the source's failure side effects.
+
+All numeric, named and timezone fields are implemented, including Hebrew Adar
+adjustments, Chinese/Dangi leap months, cyclic year names, flexible day-period
+fallbacks and capitalization with cloned sentence iterators. Fractional seconds
+use the primary NumberFormat rather than a field override. The companion
+SimpleDateFormatNumberCore preserves captured digits, the ten-character work
+buffer, non-fast fallbacks, override disabling and clone buffer independence.
+Pattern table access now has explicit bounds checks for JS.
+
+JVM oracle tests cover every ASCII pattern letter at widths 1–7 across calendars,
+locales, supplementary/non-contiguous digits and algorithmic numbering systems.
+Further cases cover timezone styles, day periods, capitalization, fast/slow
+dispatch, attributed positions, calendar mismatch, partial failure buffers,
+malformed symbol and capitalization arrays, direct protected field calls,
+per-field number overrides, numeric boundaries and clone storage. Common tests
+exercise complete patterns, Chinese leap month/cyclic names, Hebrew Adar,
+capitalization, fallback positions and captured-vs-primary digit state.
+
+These are the formatting internals of the full port. Public SimpleDateFormat,
+its parser, construction/override management, interval formatting and
+serialization remain pending.
+
+Full verification passed in 6m 18s: JVM 2,241 tests, macOS Native 1,051 tests
+and JS 1,053 tests (one existing skip), plus Linux Native test compilation.

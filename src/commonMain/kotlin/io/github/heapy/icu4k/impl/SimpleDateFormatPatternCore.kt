@@ -86,8 +86,8 @@ internal object SimpleDateFormatPatternCore {
     }
 
     fun index(ch: Char): Int = if (ch.code < patternCharToIndex.size) patternCharToIndex[ch.code] else -1
-    fun calendarField(index: Int): Int = patternIndexToCalendarField[index]
-    fun dateFormatField(index: Int): Int = patternIndexToDateFormatField[index]
+    fun calendarField(index: Int): Int { if (index !in patternIndexToCalendarField.indices) throw IndexOutOfBoundsException(); return patternIndexToCalendarField[index] }
+    fun dateFormatField(index: Int): Int { if (index !in patternIndexToDateFormatField.indices) throw IndexOutOfBoundsException(); return patternIndexToDateFormatField[index] }
     fun attribute(ch: Char): DateFormat.Field? = index(ch).let { if (it == -1) null else patternIndexToDateFormatAttribute[it] }
 
     fun translate(pattern: String, from: String, to: String): String {
