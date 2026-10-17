@@ -10996,3 +10996,44 @@ Final verification passed in 3m 41s: all 58 focused JVM pattern tests,
 JS 1,115 tests (one existing skip), macOS Native 1,113 tests, and Linux
 Native test compilation. The preceding full 2,371-test JVM run is the broader
 baseline for the cache-consumer integration.
+
+
+### DateInterval and DateIntervalInfo (2026-10-17)
+
+DateInterval now preserves immutable epoch endpoints, including reversed ranges,
+source low-32-bit sum hashing, decimal text and the exact two-long JVM schema/UID.
+DateIntervalInfo exposes locale/resource construction, custom/fallback patterns,
+pattern splitting, best-skeleton matching and detached pattern snapshots. Its
+immutable PatternInfo value preserves nullable parts, ordering, equality/hash/text,
+Cloneable identity and source stream fields.
+
+Locale loading follows calendar preferences, resource fallback and intervalFormats
+aliases; it normalizes H to h and B to a and keeps the first fallback value for
+each skeleton/field. Copy-on-write maps preserve shared immutable pattern values,
+frozen clone identity, virtual constructor clone/fallback/freeze calls and the
+private clone path used by cloneAsThawed. Mutators check the stored frozen field
+rather than a virtual isFrozen override. Reversing the fallback sets the source's
+sticky default-order flag; restoring an earlier-first fallback does not clear it.
+
+Private map traversal uses JDK HashMap on JVM and a common string-key bucket/tree
+implementation on JS/Native. Insert/update, resizing, collision-tree insertion
+and clone insertion histories preserve source tie selection and snapshot order.
+The JVM oracle compares colliding Aa/BB and zero-hash/null strings, capacities,
+replacements and long UTF-16 keys with JDK maps. Common golden fingerprints cover
+collision traversal and seven locales' ordered patterns, split parts and hashes.
+
+DateInterval is directly Serializable; DateIntervalInfo and PatternInfo add
+Serializable over a non-serializable clone base. Default JVM schemas/UIDs match
+ICU4J without an added serializable superclass layer. Tests cover bidirectional streams and an isolated source-only
+classloader, transient frozen/read-only reset, and shared graph mutations after
+reading. Native subclasses can provide the typed cloneNative copy hook.
+
+New common tests exercise endpoints, pattern aliases/order, copy-on-write, frozen
+validation, skeleton snapshots and immutable pattern values. JVM oracles compare
+all available locale data plus calendar aliases, custom/null/invalid fields,
+quoted splits, fallback errors, subclasses, map traversal and stream descriptors.
+DateIntervalFormat and its formatted-value/span engine remain pending.
+
+Verification passed in 4m 25s: JVM 2,386 tests, JS 1,121 tests (one existing
+skip), macOS Native 1,119 tests, and Linux Native test compilation. There were
+no test failures or errors.

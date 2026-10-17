@@ -536,6 +536,24 @@ The API includes field names, length options, mutable parser items and frozen or
 cloned instances. ICU4J 78.3's cache and clone behavior is preserved; details are
 recorded in [the porting log](docs/PORTING.md).
 
+`DateInterval` stores interval endpoints, while `DateIntervalInfo` loads and customizes
+CLDR interval patterns:
+
+```kotlin
+import io.github.heapy.icu4k.text.DateIntervalInfo
+import io.github.heapy.icu4k.util.Calendar
+import io.github.heapy.icu4k.util.DateInterval
+
+val interval = DateInterval(0, 86_400_000)
+val patterns = DateIntervalInfo(ULocale.US)
+val parts = patterns.getIntervalPattern("yMMMd", Calendar.DATE)
+println(parts?.getFirstPart())
+```
+
+Interval pattern data supports endpoint order, quoted pattern splitting,
+skeleton matching, copy-on-write clones and ICU4J-compatible JVM streams.
+The `DateIntervalFormat` facade remains pending.
+
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer
 formatting and parsing, with localized digits and source-compatible cache and
 numeric boundary behavior. JVM serialization interoperates with ICU4J 78.3.
