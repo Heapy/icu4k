@@ -11037,3 +11037,31 @@ DateIntervalFormat and its formatted-value/span engine remain pending.
 Verification passed in 4m 25s: JVM 2,386 tests, JS 1,121 tests (one existing
 skip), macOS Native 1,119 tests, and Linux Native test compilation. There were
 no test failures or errors.
+
+### List-based formatted interval fields (2026-10-17)
+
+The source FormattedValueFieldPositionIteratorImpl is now common code. It keeps
+the list-based iteration context, field/value constraints, attributed runs,
+first-later duplicate scanning for endpoint spans and stable bubble-sort rules.
+Three occurrences of a field intentionally produce overlapping endpoint spans,
+as in ICU4J; this is not replaced with an endpoint grouping heuristic.
+
+SimpleDateFormat now exposes the source package-level attribute-collecting
+format path to interval code. It performs the same calendar-type conversion,
+time-zone restoration and capitalization as ordinary formatting, bypassing a
+subclass's public three-argument format override as the source does.
+
+DateIntervalPatternCore now ports DateIntervalFormat's complete pattern-generation
+path: hour metacharacter/day-period normalization, date/time skeleton partition,
+best-match expansion, field width adjustment, quote-aware replacement and
+single-date/time-interval concatenation. It retains source fallback patterns for
+missing date fields and the source skeleton reassignment order after a month
+match. Interval field maps use the same portable traversal as DateIntervalInfo.
+The public DateIntervalFormat formatting/clone/serialization facade is still
+pending; this core is its pattern initialization dependency.
+
+Verification passed in 5m 29s: JVM 2,398 tests, JS 1,128 tests (one existing
+skip), macOS Native 1,126 tests and Linux Native test compilation. New oracle
+checks cover locale/calendar/hour-cycle pattern maps and initialization state,
+custom interval data, quoted width adjustments, randomized skeleton partitioning
+and shuffled duplicate field ranges with character-iterator runs.
