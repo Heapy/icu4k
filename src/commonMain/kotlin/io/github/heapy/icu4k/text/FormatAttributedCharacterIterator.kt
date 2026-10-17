@@ -24,5 +24,5 @@ expect interface FormatAttributedCharacterIterator {
 }
 const val FORMAT_CHARACTER_DONE: Char = '\uffff'
 
-internal data class FormatAttributeRange(val field: FormatField, val value: Any, val start: Int, val limit: Int)
+internal data class FormatAttributeRange(val field: FormatAttribute, val value: Any, val start: Int, val limit: Int)
 internal expect fun attributedCharacterIterator(text: String, ranges: List<FormatAttributeRange>): FormatAttributedCharacterIterator

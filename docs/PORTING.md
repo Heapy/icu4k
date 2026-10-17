@@ -10652,3 +10652,35 @@ custom-format lifecycle, public API and serialization remain pending.
 
 Full verification passed in 4m 37s: JVM 2,251 tests, macOS Native 1,056 tests
 and JS 1,058 tests (one existing skip), plus Linux Native test compilation.
+
+### MessageFormat recursive formatting and attributes (2026-10-17)
+
+Ported the complete recursive formatter traversal into internal common
+MessageFormatFormatCore. It handles missing/null arguments, inferred numbers
+and dates, cached custom formats, choice, plural, selectordinal and select.
+Both apostrophe modes retain the source's complex-submessage reparsing rules.
+Formatter construction and locale/cache ownership stay on the owner boundary.
+
+Plural providers preserve offsets, original Number objects, lazy rule creation,
+formatted-number precision via DecimalFormat.getFixedDecimal, preformatted #
+reuse and explicit-selector bypass. The owner supplies the JVM assertion mode;
+this preserves ICU4J's NaN assertion failure when assertions are enabled.
+
+The destination accumulator copies every nested iterator attribute run and adds
+argument spans in source order, including overlapping outer/inner argument keys,
+nonzero iterator start indexes and first-argument FieldPosition updates. Internal
+FormatAttributeRange now accepts the base FormatAttribute, so custom attributes
+such as JDK TextAttribute survive alongside ICU numeric/date fields.
+
+Seven common tests cover recursion, precision, offsets, missing values, custom
+formats, generic attributes, overlapping spans and lazy assertions. Five JVM
+oracle tests compare strings, partial buffers, positions and per-character
+attributes across apostrophe modes, locales, large numbers, NaN/infinities,
+custom complex formats, date/temporal delegation, empty arguments and repeated
+formatter calls. Source Format adapters isolate the generic formatter protocol;
+a separate path uses real common number formatters and fixed-decimal operands.
+Public MessageFormat, stock-format construction/cache lifecycle and serialization
+remain pending, together with the complete SimpleDateFormat parser/facade.
+
+Full verification passed in 5m 59s: JVM 2,263 tests, macOS Native 1,063 tests
+and JS 1,065 tests (one existing skip), plus Linux Native test compilation.
