@@ -27,7 +27,7 @@ abstract class TimeZoneNames protected constructor() : ICUSerializable {
     open fun getExemplarLocationName(tzID: String?): String? =
         TimeZoneNamesDataCore.getDefaultExemplarLocationName(tzID)
 
-    open fun find(text: CharSequence?, start: Int, types: Set<NameType>?): Collection<MatchInfo> =
+    open fun find(text: CharSequence?, start: Int, types: Set<NameType>?): Collection<MatchInfo>? =
         throw UnsupportedOperationException("The method is not implemented in TimeZoneNames base class.")
 
     open class MatchInfo(nameType: NameType?, private val tzID: String?, private val mzID: String?, private val matchLength: Int) {

@@ -12,11 +12,7 @@ import kotlin.concurrent.Volatile
 
 /** TimeZoneFormat's localized numeric GMT configuration, formatting and parsing. */
 internal class LocalizedGMTOffsetCore private constructor() {
-    enum class GMTOffsetPatternType(val defaultPattern: String, val required: String, val positive: Boolean) {
-        POSITIVE_HM("+H:mm","Hm",true), POSITIVE_HMS("+H:mm:ss","Hms",true),
-        NEGATIVE_HM("-H:mm","Hm",false), NEGATIVE_HMS("-H:mm:ss","Hms",false),
-        POSITIVE_H("+H","H",true), NEGATIVE_H("-H","H",false)
-    }
+    typealias GMTOffsetPatternType = io.github.heapy.icu4k.text.TimeZoneFormat.GMTOffsetPatternType
     private class Field(val type: Char, val width: Int)
     private lateinit var gmtPattern: String
     private lateinit var prefix: String
@@ -55,6 +51,8 @@ internal class LocalizedGMTOffsetCore private constructor() {
     fun getGMTOffsetPattern(type: GMTOffsetPatternType?): String = patterns[type!!.ordinal]
     fun getGMTOffsetDigits(): String = digits.joinToString("")
     fun getGMTZeroFormat(): String = zero
+    internal fun serializationPatterns(): Array<String> = patterns
+    internal fun serializationDigits(): Array<String> = digits
     fun isFrozen(): Boolean = frozen
     fun freeze(): LocalizedGMTOffsetCore { frozen = true; return this }
     fun clone(): LocalizedGMTOffsetCore = LocalizedGMTOffsetCore().also {
@@ -341,6 +339,21 @@ internal class LocalizedGMTOffsetCore private constructor() {
         }
     }
     companion object {
+        internal fun expandLegacyPatterns(value: Array<String>): Array<String> = if (value.size == 4) {
+            arrayOf(value[0], value[1], value[2], value[3], truncate(value[0]), truncate(value[2]))
+        } else value
+        internal fun fromSerialized(pattern: String, offsets: Array<String>, digits: Array<String>, zero: String): LocalizedGMTOffsetCore =
+            LocalizedGMTOffsetCore().also {
+                it.initGMTPattern(pattern)
+                if (offsets.size < 6) throw IllegalArgumentException("Insufficient number of elements in gmtOffsetPatterns")
+                val parsed = Array(6) { index -> parsePattern(offsets[index], GMTOffsetPatternType.entries[index].required) }
+                it.patterns = offsets.copyOfRange(0, 6)
+                it.items = parsed
+                it.checkAbutting()
+                it.digits = digits
+                it.zero = zero
+            }
+
         private const val HOUR = 3_600_000
         private const val MINUTE = 60_000
         private const val SECOND = 1_000

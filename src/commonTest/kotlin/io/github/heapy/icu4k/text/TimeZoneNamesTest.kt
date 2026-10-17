@@ -18,10 +18,10 @@ class TimeZoneNamesTest {
     @Test fun matchesAndRegionalAbbreviations() {
         val names = TimeZoneNames.getInstance(ULocale.US)!!
         val match = names.find("xxEastern Standard Time", 2, setOf(TimeZoneNames.NameType.LONG_STANDARD))
-        assertTrue(match.any { it.mzID() == "America_Eastern" && it.matchLength() == 21 })
+        assertTrue(match!!.any { it.mzID() == "America_Eastern" && it.matchLength() == 21 })
         val tzdb = TimeZoneNames.getTZDBInstance(ULocale("en_IL"))
         val found = tzdb.find("IST", 0, setOf(TimeZoneNames.NameType.SHORT_STANDARD))
-        assertEquals("Israel", found.single().mzID())
+        assertEquals("Israel", found!!.single().mzID())
         assertFailsWith<IllegalArgumentException> { names.find("", 0, null) }
     }
     @Test fun matchValidationAndBulkDestination() {

@@ -12,15 +12,9 @@ import io.github.heapy.icu4k.util.ULocale
 
 /** Full TimeZoneFormat parse selection algorithm; timezone objects and virtual services belong to its owner. */
 internal class TimeZoneFormatParseCore<Z>(private val locale: ULocale, private val localized: LocalizedGMTOffsetCore, private val owner: OwnerQueries<Z>) {
-    enum class Style(val flag: Int) {
-        GENERIC_LOCATION(1), GENERIC_LONG(2), GENERIC_SHORT(4), SPECIFIC_LONG(8), SPECIFIC_SHORT(16),
-        LOCALIZED_GMT(32), LOCALIZED_GMT_SHORT(64), ISO_BASIC_SHORT(128), ISO_BASIC_LOCAL_SHORT(256),
-        ISO_BASIC_FIXED(128), ISO_BASIC_LOCAL_FIXED(256), ISO_BASIC_FULL(128), ISO_BASIC_LOCAL_FULL(256),
-        ISO_EXTENDED_FIXED(128), ISO_EXTENDED_LOCAL_FIXED(256), ISO_EXTENDED_FULL(128), ISO_EXTENDED_LOCAL_FULL(256),
-        ZONE_ID(512), ZONE_ID_SHORT(1024), EXEMPLAR_LOCATION(2048)
-    }
-    enum class TimeType { UNKNOWN, STANDARD, DAYLIGHT }
-    enum class ParseOption { ALL_STYLES, TZ_DATABASE_ABBREVIATIONS }
+    typealias Style = io.github.heapy.icu4k.text.TimeZoneFormat.Style
+    typealias TimeType = io.github.heapy.icu4k.text.TimeZoneFormat.TimeType
+    typealias ParseOption = io.github.heapy.icu4k.text.TimeZoneFormat.ParseOption
     enum class GenericNameType {
         LOCATION, LONG, SHORT;
         fun isFallbackTypeOf(type: GenericNameType?): Boolean {

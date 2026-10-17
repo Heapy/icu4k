@@ -10466,3 +10466,50 @@ run passed in 37 seconds.
 Final full verification passed in 7m 18s: 2,180 JVM tests, 1,028 macOS
 Native tests and 1,030 JS tests (one existing skip), with no failures.
 Linux Native test sources compiled; execution on Linux remains a CI check.
+
+### Public TimeZoneFormat and real timezone owners (2026-10-17)
+
+Added TimeZoneFormat with all 20 styles, public offset/time/parse enums, frozen
+ULocale-keyed factory caching, protected construction, GMT pattern/digit/zero
+configuration, default parse options, ISO/localized numeric methods, named
+formatting, parse overloads and the UFormat protocol. JVM Locale inputs use the
+existing conversion. The display/parse cores now share the real public enum
+types, so Output<TimeType> is the same live output object throughout callbacks.
+
+Owner adapters use the actual TimeZone virtual methods, Olson canonical IDs,
+BasicTimeZone transitions/rules and real frozen/custom-zone factories. Generic
+names use a base-locale SoftCache and the existing generic-name engine. Source
+virtual dispatch is preserved: specific/exemplar display calls getTimeZoneNames,
+while parsing uses the stored provider. Numeric display and the public numeric
+parse paths use their virtual hooks; private numeric fallback paths stay private.
+Custom name providers may return null match collections. Their iterators and
+MatchInfo getters are adapted lazily rather than flattening callback order.
+
+Cloning preserves the source's pattern/item array sharing and independent scalar
+state. Frozen objects still accept setDefaultParseOptions, as the source does.
+Typed Native clones use the established protected copy/cloneNative convention.
+
+JVM serialization has the exact seven persistent fields and UID. Tests exercise
+source-to-port and port-to-source streams, frozen-to-thawed restoration, canonical
+CLDR provider reuse, custom provider retention, legacy four-pattern expansion,
+malformed/missing fields and clone-graph array identities. The TZDB parse flag is
+intentionally omitted from the stream, matching ICU4J.
+
+The portable generic-name resource compiler implements JDK apostrophe handling
+and untyped indexed string arguments, including null/missing arguments. Every
+regionFormat/fallbackFormat resource pattern is compared with JDK MessageFormat.
+JVM owners use JDK MessageFormat directly. This internal CLDR-resource compiler
+is not the outstanding general MessageFormat facade or a typed-message formatter.
+The SimpleDateFormat pattern engine and DateFormat factories remain outstanding.
+
+Four common tests and eleven JVM oracle tests cover all styles, localized digits,
+historic/DST boundaries, named and offset parsing, parse options and positions,
+factory identity, frozen mutation, clone sharing, UFormat field attributes,
+custom/null name providers, virtual hooks and lazy match iteration. Existing
+zone display/parse core and public TimeZoneNames tests are included in the
+focused run. That run passed in 52 seconds; a further generic-match iterator
+order check passed in 5 seconds.
+
+Final full verification passed in 6m 38s: 2,195 JVM tests, 1,032 macOS
+Native tests and 1,034 JS tests (one existing skip), with no failures.
+Linux Native test sources compiled; execution on Linux remains a CI check.

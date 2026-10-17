@@ -44,7 +44,7 @@ class TimeZoneNamesOracleTest {
     private fun matches(a: Source, b: TimeZoneNames, text: String?, start: Int, types: Set<TimeZoneNames.NameType>?) {
         val sourceTypes = types?.let { EnumSet.noneOf(Source.NameType::class.java).also { s -> it.forEach { t -> s.add(sourceType(t)) } } }
         val left = outcome { a.find(text, start, sourceTypes).map { "${it.nameType()}:${it.tzID()}:${it.mzID()}:${it.matchLength()}" }.sorted() }
-        val right = outcome { b.find(text, start, types).map { "${it.nameType()}:${it.tzID()}:${it.mzID()}:${it.matchLength()}" }.sorted() }
+        val right = outcome { b.find(text, start, types)?.map { "${it.nameType()}:${it.tzID()}:${it.mzID()}:${it.matchLength()}" }?.sorted() }
         assertEquals(left, right, "$text/$start/$types")
     }
     @Test fun localizedAndTZDBPrefixMatches() {

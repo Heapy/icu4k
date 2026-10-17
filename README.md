@@ -389,6 +389,10 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
+`TimeZoneFormat` formats and parses all named, localized-GMT and ISO styles using
+real timezone history. Frozen locale factories, custom name providers, GMT
+configuration, clone behavior and source-compatible JVM serialization are included.
+
 `TimeZoneNames` exposes localized CLDR names, historical metazone mappings,
 prefix matches and region-sensitive TZDB abbreviations. Locale factories, custom
 JVM factories and source-compatible JVM serialization are included.
