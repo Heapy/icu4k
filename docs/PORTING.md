@@ -11611,3 +11611,9 @@ line parent invalidation/recovery and repeated runs-only setup.
 The public Bidi stage passed `jvmTest jsNodeTest macosArm64Test
 compileTestKotlinLinuxX64` in 5m 18s before BidiTransform was added. Remote CI
 39025984969 for the preceding line-kernel stage also completed successfully.
+
+
+Final Bidi/BidiTransform validation: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` passed in 4m 43s. XML reports contain 2,630 JVM tests,
+1,266 JavaScript tests (one existing skip) and 1,264 macOS Native tests, with zero
+failures or errors. Linux Native test compilation passed.
