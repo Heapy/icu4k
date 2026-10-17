@@ -17,7 +17,7 @@ class MessageFormatStyleCoreOracleTest {
         if(t is VirtualMachineError)throw t
         when(t) { is NullPointerException->"null"; is IndexOutOfBoundsException->"bounds"; else->t.javaClass.simpleName+":"+t.message }
     }
-    private class Owner(override val locale:ULocale) : MessageFormatStyleCore.Owner {
+    internal class Owner(override val locale:ULocale) : MessageFormatStyleCore.Owner {
         private val patterns=CalendarPatternDataCore.withCommonGenerator()
         private val generator by lazy {
             DateTimePatternGeneratorCore().also { core ->

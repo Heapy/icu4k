@@ -10804,3 +10804,15 @@ registration, cache operations, failures and reentrancy against ICU4J 78.3.
 
 Full verification passed in 8m 2s: JVM 2,313 tests, macOS Native 1,090
 and JS 1,092 tests (one existing skip), plus Linux Native main compilation.
+
+
+### Numeric leap-month MessageFormat integration (2026-10-17)
+
+SimpleDateFormatNumericLeapMonthCore joins the production MessagePattern,
+MessageFormatCacheCore and MessageFormatParseCore. It constructs every explicit
+stock formatter, including nested ones, before overriding top-level argument 0.
+The override retains the mutable NumberFormat, supports explicit null, preserves
+other argument formats and rejects named patterns at the source setter boundary.
+Four common regressions and a JVM oracle compare construction, setter failures,
+parsed values and positions across six locales and numeric/date/complex patterns.
+Focused JVM verification passed (five tests). Public SDF owner binding follows.
