@@ -522,6 +522,20 @@ back to ordinary dates outside the locale's relative-day range. Relative-date
 parsing throws the same unsupported-operation exception as ICU4J. See
 [the porting log](docs/PORTING.md) for current coverage.
 
+`DateTimePatternGenerator` exposes locale-aware skeleton matching and custom patterns:
+
+```kotlin
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
+val generator = DateTimePatternGenerator.getInstance(ULocale.US)
+println(generator.getBestPattern("yMMMd")) // MMM d, y
+generator.addPattern("yyyy-MM-dd", true, DateTimePatternGenerator.PatternInfo())
+```
+
+The API includes field names, length options, mutable parser items and frozen or
+cloned instances. ICU4J 78.3's cache and clone behavior is preserved; details are
+recorded in [the porting log](docs/PORTING.md).
+
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer
 formatting and parsing, with localized digits and source-compatible cache and
 numeric boundary behavior. JVM serialization interoperates with ICU4J 78.3.

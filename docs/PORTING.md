@@ -10949,3 +10949,50 @@ JVM factory/relative-date regressions, the full JS 1,110-test and macOS Native
 1,108-test suites, plus Linux Native test compilation. The preceding full JVM
 2,358-test run remains the broader baseline. GitHub CI for the preceding
 MessageFormat commit d05416b1 also completed successfully.
+
+
+### Public DateTimePatternGenerator (2026-10-17)
+
+DateTimePatternGenerator now exposes the common public facade over the pattern,
+resource, initialization and factory engines. Factories preserve cached frozen
+object identity, default FORMAT locale, no-standard-pattern construction and JVM
+Locale conversion. APIs cover best matches, length options, skeleton/base maps,
+field replacement/names, append/date-time formats, decimals, redundant patterns
+and internal tooling helpers. PatternInfo, VariableField and FormatParser are
+now the actual public nested types used by the engines; the parser's mutable
+item list remains live and preserves public variable-field identity.
+
+A core bridge routes the source's virtual self-calls through the facade while
+keeping private dispatch private. Cloning preserves JVM/JS subclass fields and
+recreates parser/matcher/distance/monitor state against the new public owner;
+Native subclasses can supply their typed cloneNative copy hook. Pattern maps and
+outer arrays are copied, while inner display-name arrays stay shared as in ICU4J.
+cloneAsThawed preserves the source quirk that clears the receiver's frozen flag,
+including the cached factory instance. A custom clone override's returned object
+is not forcibly thawed. The hour-format-character setter intentionally bypasses
+the frozen check.
+
+The source generator is not Serializable. A separate non-serializable shallow
+clone base preserves that boundary, including reinitialization of generator state
+when Serializable JVM subclasses are read. DateFormat/MessageFormat skeleton
+construction now uses the same public generator cache, so changes to cached
+patterns affect these consumers exactly as in ICU4J.
+
+New common tests cover factories/cache consumers, clones, field-name sharing,
+frozen validation, nested parser types and subclass hooks. JVM oracles compare
+locale/calendar/hour/number overrides, public mutations, static helpers,
+collection state, virtual dispatch, subclass cloning, non-serialization and
+independent clone monitors. Existing pattern-core and tokenizer/parser oracles
+continue to exercise the same promoted public nested types.
+
+The broader JVM run passed all 2,371 tests. The first JS run exposed unchecked
+empty-string indexing in isSingleField: JS returned true instead of throwing.
+The portable first-character boundary now validates empty strings explicitly on
+JS/Native, while JVM retains the exact JDK String.charAt exception path. All
+58 focused JVM pattern tests passed after this correction. GitHub CI for the
+preceding date-factory commit 00832b09 completed successfully.
+
+Final verification passed in 3m 41s: all 58 focused JVM pattern tests,
+JS 1,115 tests (one existing skip), macOS Native 1,113 tests, and Linux
+Native test compilation. The preceding full 2,371-test JVM run is the broader
+baseline for the cache-consumer integration.
