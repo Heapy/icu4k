@@ -221,10 +221,13 @@ open class SimpleDateFormat : DateFormat {
             val override = value.getOverrideString()
             return SimpleDateFormat(value.getPatternString(), value.getDateFormatSymbols(), value.getCalendar(), null, value.getLocale(), !override.isNullOrEmpty(), override)
         }
-        internal fun normalDateStyle(date: Boolean, style: Int, locale: ULocale?): DateFormat {
+        internal fun normalDateStyle(date: Boolean, style: Int, locale: ULocale?): DateFormat = normalDateTimeStyle(if (date) style else -1, if (date) -1 else style, locale)
+        internal fun normalDateTimeStyle(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat {
+            if (timeStyle < -1 || timeStyle > 3) throw IllegalArgumentException("Illegal time style $timeStyle")
+            if (dateStyle < -1 || dateStyle > 3) throw IllegalArgumentException("Illegal date style $dateStyle")
             val cal = Calendar.getInstance(locale)
             return try {
-                cal.getDateTimeFormat(if (date) style else -1, if (date) -1 else style, locale).also {
+                cal.getDateTimeFormat(dateStyle, timeStyle, locale).also {
                     it.setLocale(cal.getLocale(ULocale.VALID_LOCALE), cal.getLocale(ULocale.ACTUAL_LOCALE))
                 }
             } catch (_: MissingResourceException) { SimpleDateFormat("M/d/yy h:mm a") }
