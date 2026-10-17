@@ -12451,3 +12451,43 @@ regressions cover alias execution and deferred factory failure.
   skipped); macOS Native 1,420 tests; zero failures/errors. Linux Native test
   compilation passed. The independent synthetic generator reproduced the
   checked-in goldens byte for byte.
+
+### MBCS streaming decoder and single-character lookup (ICU4J 78.3)
+
+- Ported the complete `CharsetMBCS.CharsetDecoderMBCS` conversion path into
+  `CharsetMBCSDecoder`, using prepared Common Kotlin tables. This supersedes the
+  pending state-machine/continuation note in the previous matcher section.
+- Retained the separate multistate, single-state BMP and single-state Unicode
+  loops, including their fast paths, cursor updates, offsets and error behavior.
+  Conversion covers all final actions, fallback tables, supplementary output,
+  SI/SO state changes, DBCS-only restrictions, swaplfnl and all 14 algorithmic
+  GB18030 ranges.
+- Added partial extension continuation, longest-match output, overflow queues,
+  initial extension matching and negative-length replay of excess buffered bytes.
+  Malformed sequences back out potential next characters from the current input
+  or preserve them for replay when they came from an earlier input buffer.
+- Ported `simpleGetNextUChar` and its extension lookup. Source behavior is retained:
+  this helper excludes swaplfnl and algorithmic GB18030, always uses decoder
+  fallback, and its writable-array path uses cursor/limit without arrayOffset.
+  Read-only input instead gets a bounded copy. Explicit common array bounds keep
+  source failures consistent on JS as well as JVM/Native.
+- Independent source traces cover every packaged .cnv table and its swaplfnl
+  variant (190 tables, 380 configurations): streaming, the protected NIO adapter,
+  independent input chunks, queued output, all extension paths, GB18030 boundaries
+  and simple-character lookup over ordinary, sliced and read-only buffers.
+- The 1,381,666 scenarios include 380 bulk streams enumerating all 65,536 byte
+  pairs, with replacement callbacks and large output buffers. These exercise the
+  fast paths continuously; pairs in these bulk streams do not reset decoder state.
+- Each streaming trace checks results/exceptions, cursor positions, output units,
+  offsets, all ten runtime scalar fields, four complete state arrays, callback
+  context, replacement and actions after every call. A separate live JVM oracle
+  directly compares each call for every real extension stream and GB18030 boundary.
+- Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/MBCSDecoderGoldens.java /path/to/upstream/charset/icudata`.
+  The source generator emits compact per-converter fixture hashes rather than
+  duplicating large hex strings in Kotlin bytecode.
+- This ports the internal table-driven decoder. Encoders, other algorithmic codec
+  families, public charset APIs and detector/match text conversion remain pending.
+- Full validation passed in 6m 44s: JVM 2,874 tests; Node 1,430 tests (one
+  skipped); macOS Native 1,428 tests; zero failures/errors. Linux Native test
+  compilation passed using the full validation command recorded above.

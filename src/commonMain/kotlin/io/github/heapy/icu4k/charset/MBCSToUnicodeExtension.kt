@@ -43,7 +43,11 @@ internal object MBCSToUnicodeExtension {
                 matchLength = i + j
             }
             val byte = when {
-                i < preLength -> pre[preBegin + i++].toInt() and 255
+                i < preLength -> {
+                    val offset = preBegin + i++
+                    if (offset !in pre.indices) throw IndexOutOfBoundsException()
+                    pre[offset].toInt() and 255
+                }
                 j < sourceLength -> source!!.getByte(source.position + j++).toInt() and 255
                 else -> {
                     if (!finalInput && i + j <= 31) return -(i + j)
