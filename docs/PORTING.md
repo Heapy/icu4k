@@ -11808,3 +11808,11 @@ entries and 201 aliases. Tests verify 620 ordered registrations, deferred suppli
 calls, directory enumeration and private byte-copy isolation. Targeted JVM tests
 pass. Public registry lookup, built-in registrations and facade integration remain
 outstanding.
+
+
+Final execution/bootstrap validation: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` passed in 4m 49s. XML reports contain 2,715 JVM tests,
+1,332 JavaScript tests (one existing skip) and 1,330 macOS Native tests, with zero
+failures or errors. Linux Native test compilation passed. The pinned upstream
+checkout still reports commit 21d1eb0f306e1141c10931e914dfc038c06121da with no
+changes to the imported transliteration resource directory.
