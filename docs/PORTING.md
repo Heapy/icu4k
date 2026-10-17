@@ -11589,3 +11589,25 @@ Attributed tests compare iterator access traces, cursor positions, numeric
 shaping, embedding values and malformed input. These targeted tests pass.
 
 BidiTransform remains outstanding. The full ICU4J port is still incomplete.
+
+
+### BidiTransform (2026-10-17)
+
+BidiTransform now composes the Common Bidi, UTF16 and ArabicShaping engines for
+all sixteen logical/visual and LTR/RTL conversion schemes. Mirroring and shaping
+retain source ordering, including swallowed ArabicShapingException failures and
+bit-mask recognition of signed default levels. No JVM bidi implementation is
+used in production.
+
+A JVM differential matrix compares 31,360 transformations against ICU4J 78.3:
+eight texts, seven input levels, five output levels, four order pairs, mirroring
+on/off and fourteen shaping option sets. Cases include neutral input, Arabic,
+Hebrew, isolates, supplementary characters and malformed UTF-16, reusing the same
+transform objects across calls. Common tests retain independent UTF-16 hex
+output records for every conversion scheme with mirroring and letter/digit
+shaping. Public Bidi Common tests also cover map round trips, shared caller text,
+line parent invalidation/recovery and repeated runs-only setup.
+
+The public Bidi stage passed `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` in 5m 18s before BidiTransform was added. Remote CI
+39025984969 for the preceding line-kernel stage also completed successfully.

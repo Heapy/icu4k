@@ -23,6 +23,17 @@ See [porting scope](docs/PORTING.md) for measured source size and stages.
 See the [ICU4J bug tracker](docs/ICU4J_BUGS.md) for upstream findings and reproductions.
 Unicode's upstream license and third-party notices are retained in LICENSE.
 
+Common Kotlin bidirectional text is available through `Bidi` and `BidiTransform`:
+
+```kotlin
+import io.github.heapy.icu4k.text.Bidi
+
+val bidi = Bidi()
+bidi.setPara("abc אבג", 0, null)
+println(bidi.writeReordered(0)) // abc גבא
+val visualToLogical = bidi.getVisualMap()
+```
+
 Common Kotlin normalization is available through `Normalizer2`:
 
 ```kotlin
