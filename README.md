@@ -543,6 +543,7 @@ CLDR interval patterns:
 import io.github.heapy.icu4k.text.DateIntervalInfo
 import io.github.heapy.icu4k.util.Calendar
 import io.github.heapy.icu4k.util.DateInterval
+import io.github.heapy.icu4k.util.ULocale
 
 val interval = DateInterval(0, 86_400_000)
 val patterns = DateIntervalInfo(ULocale.US)
@@ -552,7 +553,23 @@ println(parts?.getFirstPart())
 
 Interval pattern data supports endpoint order, quoted pattern splitting,
 skeleton matching, copy-on-write clones and ICU4J-compatible JVM streams.
-The `DateIntervalFormat` facade remains pending.
+`DateIntervalFormat` formats compact CLDR ranges and exposes date fields and
+endpoint spans through `FormattedValue`:
+
+```kotlin
+import io.github.heapy.icu4k.text.DateIntervalFormat
+import io.github.heapy.icu4k.util.DateInterval
+import io.github.heapy.icu4k.util.TimeZone
+import io.github.heapy.icu4k.util.ULocale
+
+val formatter = DateIntervalFormat.getInstance("yMMMd", ULocale.US)
+formatter.setTimeZone(TimeZone.GMT_ZONE)
+val value = formatter.formatToValue(DateInterval(1_705_323_723_456, 1_705_410_123_456))
+println(value) // Jan 15 – 16, 2024
+```
+
+It supports custom interval patterns, calendars, time zones, capitalization,
+cloning and JVM stream compatibility. Parsing is unsupported, as in ICU4J.
 
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer
 formatting and parsing, with localized digits and source-compatible cache and

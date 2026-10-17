@@ -11065,3 +11065,47 @@ skip), macOS Native 1,126 tests and Linux Native test compilation. New oracle
 checks cover locale/calendar/hour-cycle pattern maps and initialization state,
 custom interval data, quoted width adjustments, randomized skeleton partitioning
 and shuffled duplicate field ranges with character-iterator runs.
+
+### Public DateIntervalFormat (2026-10-17)
+
+DateIntervalFormat now integrates the CLDR pattern engine with DateInterval and
+calendar formatting, compact first/second patterns, fallback range argument
+iteration and date-plus-time-range composition. FormattedDateInterval snapshots
+text and exposes normal date fields and DATE_INTERVAL_SPAN endpoint values via
+ConstrainedFieldPosition and attributed character runs. Portable index/range
+checks preserve source failures outside the JVM.
+
+Factories support default/ULocale locales and custom DateIntervalInfo. JVM
+boundaries add java.util.Locale and java.time Temporal overloads. The deprecated
+adopting constructor freezes the supplied info and retains the supplied
+SimpleDateFormat. Formatting uses its package-level collecting path, bypassing
+the public Calendar format override while retaining context/pattern callbacks.
+The initial full pattern and locale are captured before pattern generation as in
+source; private ignored-field patterns still call toPattern virtually.
+
+The source default pattern cache shares read-only maps without backfilling the
+date/time fallback strings on a cache hit. Clones share interval patterns and
+frozen info while copying the held formatter and both calendars. JVM monitor
+adapters are rebound to cloned/read formatter objects. Native subclasses can
+retain their type through the protected cloneNative copy hook.
+
+Mutators retain source copy/freeze order and detached formatter/time-zone getters.
+Formatting restores an applied pattern only on success; throwing pattern
+callbacks retain the source partial mutation. Parsing always throws the source
+unsupported-operation error. Default JVM fields/UID match ICU4J; readObject
+rebuilds transient patterns and supplies missing legacy capitalization settings.
+Span streams resolve back to their singleton field.
+
+New oracle tests compare locale/calendar/time-zone intervals, all difference
+levels, reversed dates, prefixed field positions, full attributed runs, endpoint
+constraints, repeated fallback arguments, cache-hit state, adopting constructor
+callbacks, exception mutation order, independent clone monitors and exact stream
+descriptors. Bidirectional streams and an isolated ICU4J-only classloader cover
+formatter restoration without the port runtime. Common goldens cover English,
+French, Japanese and Chinese-calendar formatting, spans, read-only views and
+Native subtype cloning.
+
+Verification passed in 6m 11s: JVM 2,412 tests, JS 1,132 tests (one existing
+skip), macOS Native 1,130 tests and Linux Native test compilation. All executed
+tests passed. Additional oracle cases cover era changes, extreme epoch endpoints,
+DST gaps/overlaps and capitalization in French, Russian and Finnish.
