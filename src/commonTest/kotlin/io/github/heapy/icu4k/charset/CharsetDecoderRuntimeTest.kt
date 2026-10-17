@@ -93,14 +93,17 @@ internal fun decoderConfigure(cesu: Boolean, mode: Int, seed: Int): CharsetUtf8D
     }
     return decoder
 }
-internal fun decoderGoldenRun(cesu: Boolean, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, nio: Boolean = false): String {
+internal fun decoderGoldenRun(cesu: Boolean, hex: String, split: Int, capacity: Int, mode: Int, seed: Int, nio: Boolean = false): String =
+    decoderRuntimeRun(cesu.toString(), decoderConfigure(cesu, mode, seed), hex, split, capacity, mode, seed, nio)
+
+internal fun decoderRuntimeRun(label: String, decoder: CharsetDecoderRuntime, hex: String, split: Int, capacity: Int, mode: Int, seed: Int = 0, nio: Boolean = false, local: Boolean = false, privateState: () -> List<Int> = { emptyList() }): String {
     val raw = hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
     val backing = ByteArray(raw.size + 4); raw.copyInto(backing, 2)
-    val source = BinaryBuffer(backing, arrayOffset = 2, capacity = raw.size)
-    val decoder = decoderConfigure(cesu, mode, seed)
+    var source = BinaryBuffer(backing, arrayOffset = 2, capacity = raw.size)
     var hash = 1; var count = 0; var flushing = false
     fun add(value: Int) { hash = 31 * hash + value }
     var end = minOf(split, raw.size); source.limit = end
+    if (local) source = BinaryBuffer(backing, arrayOffset = 2, capacity = end)
     while (true) {
         val cap = if (count % 5 == 0) 0 else capacity
         val target = CharsetCharBuffer(CharArray(cap + 4), 2, cap)
@@ -108,12 +111,13 @@ internal fun decoderGoldenRun(cesu: Boolean, hex: String, split: Int, capacity: 
         val flush = end == raw.size
         var result: CharsetCoderResult? = null
         var failed = false
-        val text = try { (if (nio) if (flushing) decoder.flush(target) else decoder.decodeNioLoop(source, target) else decoder.decode(source, target, offsets, flush)).also { result = it }.toString() } catch (_: CharsetBufferOverflowException) { failed = true; "THROW:overflow" } catch (_: IllegalStateException) { failed = true; "THROW:state" } catch (_: IllegalArgumentException) { failed = true; "THROW:argument" } catch (_: IndexOutOfBoundsException) { failed = true; "THROW:bounds" }
+        val text = try { (if (nio) if (flushing) decoder.flush(target) else decoder.decodeNioLoop(source, target) else decoder.decode(source, target, offsets, flush)).also { result = it }.toString() } catch (_: CharsetBufferOverflowException) { failed = true; "THROW:overflow" } catch (_: IllegalStateException) { failed = true; "THROW:state" } catch (_: IllegalArgumentException) { failed = true; "THROW:argument" } catch (_: IndexOutOfBoundsException) { failed = true; "THROW:bounds" } catch (_: NullPointerException) { failed = true; "THROW:null" }
         add(text.hashCode()); add(source.position); add(target.position); add(offsets.position)
         repeat(target.position) { add(target.get(it).code) }; repeat(offsets.position) { add(offsets.array[it]) }
         for (value in listOf(decoder.toUnicodeStatus, decoder.toUBytesBegin, decoder.toULength, decoder.charErrorBufferLength, decoder.charErrorBufferBegin, decoder.invalidCharLength, decoder.preToUBegin, decoder.preToULength, decoder.preToUFirstLength, decoder.mode)) add(value)
         add(decoder.toUBytesArray.contentHashCode()); add(decoder.charErrorBufferArray.contentHashCode()); add(decoder.invalidCharBuffer.contentHashCode()); add(decoder.preToUArray.contentHashCode())
         add(decoder.toUContext?.hashCode() ?: 0); add(decoder.replacement.hashCode()); add(decoder.malformedInputAction.toString().hashCode()); add(decoder.unmappableCharacterAction.toString().hashCode())
+        for (value in privateState()) add(value)
         count++; check(count <= 1000) { "Decoder did not terminate: $hex/$mode/$seed" }
         if (failed) break
         if (nio) {
@@ -123,10 +127,12 @@ internal fun decoderGoldenRun(cesu: Boolean, hex: String, split: Int, capacity: 
             }
             continue
         }
-        if (result!!.isUnderflow() && source.position == end) {
+        if (result!!.isUnderflow() && source.position == (if (local) source.limit else end)) {
             if (flush) break
-            end = minOf(end + split, raw.size); source.limit = end
+            val start = end
+            end = minOf(end + split, raw.size)
+            if (local) source = BinaryBuffer(backing, arrayOffset = 2 + start, capacity = end - start) else source.limit = end
         }
     }
-    return "$cesu|$hex|$split|$capacity|$mode|$seed|$count|$hash"
+    return "$label|$hex|$split|$capacity|$mode|$seed|$count|$hash"
 }

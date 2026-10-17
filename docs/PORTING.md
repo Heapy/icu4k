@@ -12365,3 +12365,35 @@ regressions cover alias execution and deferred factory failure.
   macosArm64Test compileTestKotlinLinuxX64
   -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false`
   (6m 2s).
+
+### UTF-16/UTF-32 streaming decoders (ICU4J 78.3)
+
+- Ported UTF-16 and UTF-32 streaming algorithms onto the common decoder runtime:
+  BOM-selected byte order, fixed BE/LE variants, UTF-16 version=1 behavior,
+  surrogate validation/queueing, partial code units and callback-based recovery.
+- Preserved source-specific BOM rules: fixed UTF-16 version=0 retains its BOM as
+  text, fixed UTF-32 consumes a matching BOM, and fixed UTF-16 version=1 skips
+  matching BOMs throughout the input and rejects reversed signatures.
+- Reset clears BOM-read state and its byte-array reference but retains the last
+  endian-XOR value, matching the source's mutable state. Both loops leave normal
+  offsets untouched and use the shared callbacks for error offsets/output.
+- Independent source goldens cover 5,724 configurations across nine variants:
+  4,104 streaming cases, 648 NIO pending/flush cases and 972 independent-input-
+  chunk cases. Trace fingerprints include complete common runtime state and the
+  private BOM-read/endian/BOM-array state after every call.
+- Inputs cover split signatures, absent/mismatched/repeated BOMs, BMP and
+  supplementary characters, lone/invalid surrogates, invalid UTF-32 scalar values,
+  truncated units, zero/small output buffers and report/replace/skip/escape modes.
+  Observed source failures (including invalid chunk rewinds and version=1 BOM
+  mismatch null-state failures) are retained and covered by the corpus.
+- Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/UnicodeDecoderGoldens.java`. The common trace harness is shared
+  with the existing UTF-8/CESU-8 source corpus, which remains unchanged.
+- This completes these internal Unicode decoder algorithms; encoders, remaining
+  codec families, the public charset facade and detector/match integration are
+  still pending.
+- Full validation passed: JVM 2,855 tests; Node 1,413 tests (one skipped);
+  macOS Native 1,411 tests; zero failures/errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false` (5m 11s).
