@@ -126,6 +126,7 @@ open class MeasureUnit : ICUSerializable {
     }
     protected fun interface Factory { fun create(type: String, subType: String): MeasureUnit }
     companion object {
+        private const val serialVersionUID = -1839973855554750484L
         private val cache = HashMap<String, MutableMap<String, MeasureUnit>>()
         // ICU4J uses a reentrant class monitor, including calls from custom factories.
         private val lock = createAvailabilityLock()

@@ -17,3 +17,5 @@ internal actual interface MeasureUnitObjectInput {
 }
 
 internal actual fun measureUnitSerialProxy(type: String?, subType: String?): Any = throw UnsupportedOperationException("Java object serialization is unavailable")
+
+internal actual fun invalidTimeUnitIndex(index: Int): Nothing = throw IllegalArgumentException("Bad index: $index")

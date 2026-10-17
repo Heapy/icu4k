@@ -31,3 +31,5 @@ internal class MeasureUnitSerialProxy() : Externalizable {
 internal actual typealias MeasureUnitExternalizable = java.io.Externalizable
 internal actual typealias MeasureUnitObjectInput = java.io.ObjectInput
 internal actual typealias MeasureUnitObjectOutput = java.io.ObjectOutput
+
+internal actual fun invalidTimeUnitIndex(index: Int): Nothing = throw java.io.InvalidObjectException("Bad index: $index")
