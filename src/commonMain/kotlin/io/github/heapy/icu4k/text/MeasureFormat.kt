@@ -47,7 +47,7 @@ open class MeasureFormat : UFormat {
             durations=localeToNumericDurationFormatters.get(locale!!)
             if(durations==null) {
                 val bundle=UResourceBundle.getBundleInstance(ICUData.ICU_UNIT_BASE_NAME,locale) as ICUResourceBundle
-                fun pattern(type:String)=bundle.getStringWithFallback("durationUnits/$type").replace("h","H")
+                fun pattern(type:String)=bundle.getWithFallback("durationUnits/$type").getString().replace("h","H")
                 durations=NumericFormatters(pattern("hm"),pattern("ms"),pattern("hms"))
                 localeToNumericDurationFormatters.put(locale,durations)
             }
