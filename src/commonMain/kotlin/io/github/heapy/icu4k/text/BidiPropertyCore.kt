@@ -26,6 +26,27 @@ internal class BidiPropertyCore(private val input: Input) {
         bidiByteAt(levels, index)
         levels[index] = value
     }
+    private fun putDirProp(index: Int, value: Byte) {
+        val props = input.dirProps
+        bidiByteAt(props, index)
+        props[index] = value
+    }
+    // Source UTF16.charAt(array, 0, limit, index), within the scanner's loop
+    // bounds. Avoid a new CharSequence slice per code point; retain backward
+    // pairing when a callback changed an already visited code unit.
+    private fun codePointAt(text: CharArray, limit: Int, index: Int): Int {
+        val first = bidiCharAt(text, index)
+        if (first.code !in 0xd800..0xdfff) return first.code
+        if (first.code <= 0xdbff) {
+            if (index + 1 >= limit) return first.code
+            val trail = bidiCharAt(text, index + 1)
+            if (UTF16.isTrailSurrogate(trail.code)) return ((first.code - 0xd800) shl 10) + trail.code - 0xdc00 + 0x10000
+        } else if (index > 0) {
+            val lead = bidiCharAt(text, index - 1)
+            if (UTF16.isLeadSurrogate(lead.code)) return ((lead.code - 0xd800) shl 10) + first.code - 0xdc00 + 0x10000
+        }
+        return first.code
+    }
     private fun checkParaCount() {
         val count = input.paraCount
         if (count <= input.paraLevels.size) return
@@ -79,15 +100,15 @@ internal class BidiPropertyCore(private val input: Input) {
         var i = 0
         while (i < input.originalLength) {
             val i0 = i
-            val c = UTF16.charAt(input.text, 0, input.originalLength, i)
+            val c = codePointAt(input.text, input.originalLength, i)
             i += UTF16.getCharCount(c)
             var i1 = i - 1
             val property = input.getCustomizedClass(c).toByte()
             input.flags = input.flags or flag(property)
-            input.dirProps[i1] = property
+            putDirProp(i1, property)
             if (i1 > i0) {
                 input.flags = input.flags or flag(D.BOUNDARY_NEUTRAL.toByte())
-                do { input.dirProps[--i1] = D.BOUNDARY_NEUTRAL.toByte() } while (i1 > i0)
+                do { putDirProp(--i1, D.BOUNDARY_NEUTRAL.toByte()) } while (i1 > i0)
             }
             if (removeControls && BidiReorderingCore.isBidiControlChar(c)) ++controlCount
             if (property.toInt() == D.LEFT_TO_RIGHT) {
@@ -107,7 +128,7 @@ internal class BidiPropertyCore(private val input: Input) {
                     state = NOT_SEEKING_STRONG
                 } else if (state == SEEKING_STRONG_FOR_FSI) {
                     if (stackLast <= 125) {
-                        input.dirProps[isolateStartStack[stackLast]] = D.RIGHT_TO_LEFT_ISOLATE
+                        putDirProp(isolateStartStack[stackLast], D.RIGHT_TO_LEFT_ISOLATE)
                         input.flags = input.flags or flag(D.RIGHT_TO_LEFT_ISOLATE)
                     }
                     state = LOOKING_FOR_PDI
@@ -123,7 +144,7 @@ internal class BidiPropertyCore(private val input: Input) {
                     previousStateStack[stackLast] = state.toByte()
                 }
                 if (property == D.FIRST_STRONG_ISOLATE) {
-                    input.dirProps[i - 1] = D.LEFT_TO_RIGHT_ISOLATE
+                    putDirProp(i - 1, D.LEFT_TO_RIGHT_ISOLATE)
                     state = SEEKING_STRONG_FOR_FSI
                 } else state = LOOKING_FOR_PDI
                 continue

@@ -9,6 +9,7 @@ class BidiPropertyCoreOracleTest {
     private val clazz = com.ibm.icu.text.Bidi::class.java
     private fun field(name: String) = clazz.getDeclaredField(name).apply { isAccessible = true }
     private val scan = clazz.getDeclaredMethod("getDirProps").apply { isAccessible = true }
+    private val allocateLevels = clazz.getDeclaredMethod("getLevelsMemory", Int::class.javaPrimitiveType).apply { isAccessible = true }
     private val explicit = clazz.getDeclaredMethod("resolveExplicitLevels").apply { isAccessible = true }
     private val paraLevelAt = clazz.getDeclaredMethod("GetParaLevelAt", Int::class.javaPrimitiveType).apply { isAccessible = true }
     private fun outcome(action: () -> Any?): String = try { "ok:${action()}" } catch (e: Throwable) {
@@ -59,6 +60,7 @@ class BidiPropertyCoreOracleTest {
             field("paras_limit").set(source, port.paraLimits.copyOf())
             field("paras_level").set(source, port.paraLevels.copyOf())
         }
+        field("levelsMemory").set(source, field("levels").get(source))
         fun checkState() {
             assertEquals(sourceCalls, portCalls, "classifier calls")
             assertContentEquals(field("text").get(source) as CharArray, port.text)
@@ -79,6 +81,12 @@ class BidiPropertyCoreOracleTest {
             assertEquals(outcome { paraLevelAt.invoke(source, i) }, outcome { port.getParaLevelAt(i) }, "paragraph index $i")
         }
         if (result == "ok:kotlin.Unit" && compose) {
+            val oldSourceLevels = field("levels").get(source)
+            val oldPortLevels = port.levels
+            allocateLevels.invoke(source, port.length)
+            field("levels").set(source, field("levelsMemory").get(source))
+            if (port.levels.size != port.length) port.levels = ByteArray(port.length)
+            assertEquals(oldSourceLevels === field("levels").get(source), oldPortLevels === port.levels, "level buffer reuse")
             assertEquals(outcome { explicit.invoke(source) }, outcome { BidiExplicitCore(port).resolve() }, "property/explicit composition")
             checkState()
         }
@@ -95,6 +103,19 @@ class BidiPropertyCoreOracleTest {
             for (level in listOf(126, 127)) for (mode in 0..6) {
                 compare("12(אב)\na", level, mode, 0, true, prologue)
             }
+        }
+    }
+    @Test fun everyUnicodeValueMatchesSourcePropertyScanning() {
+        // A separator prevents adjacent isolated surrogate values from becoming
+        // an unintended pair; supplementary values still use their actual pair.
+        for (plane in 0..16) {
+            val text = buildString {
+                for (c in (plane shl 16) until ((plane + 1) shl 16)) {
+                    append(String(Character.toChars(c)))
+                    append('a')
+                }
+            }
+            compare(text, 126, 0, 2, false, "12", compose = false)
         }
     }
     @Test fun randomParagraphScanningAndCompositionMatchSource() {
@@ -133,6 +154,41 @@ class BidiPropertyCoreOracleTest {
                 assertEquals(source.getCustomizedClass(c), BidiPropertyCore.customizedClass(c, port))
             }
         }
+    }
+    @Test fun callerArrayMutationKeepsSourceBackwardPairingAndExactJvmFailure() {
+        val sourceText = "a\udc00".toCharArray()
+        val sourceCalls = mutableListOf<Int>()
+        val portCalls = mutableListOf<Int>()
+        val source = object : com.ibm.icu.text.Bidi() {
+            override fun getCustomizedClass(c: Int): Int {
+                sourceCalls += c
+                if (sourceCalls.size == 1) sourceText[0] = '\ud800'
+                return super.getCustomizedClass(c)
+            }
+        }
+        lateinit var port: BidiPropertyFixture
+        port = BidiPropertyFixture("a\udc00", 126, 0, 0, false) {
+            portCalls += it
+            if (portCalls.size == 1) port.text[0] = '\ud800'
+            BidiPropertyCore.customizedClass(it, null)
+        }
+        field("text").set(source, sourceText)
+        field("originalLength").setInt(source, 2)
+        field("length").setInt(source, 2)
+        field("paraCount").setInt(source, 1)
+        field("paraLevel").setByte(source, 126)
+        field("defaultParaLevel").setByte(source, 126)
+        field("dirProps").set(source, ByteArray(2))
+        field("levels").set(source, ByteArray(2))
+        val sourceError = assertFailsWith<InvocationTargetException> { scan.invoke(source) }.targetException
+        val portError = assertFailsWith<IndexOutOfBoundsException> { BidiPropertyCore(port).scan() }
+        assertEquals(sourceError.javaClass.name, portError.javaClass.name)
+        assertEquals(sourceCalls, portCalls)
+        assertEquals(listOf('a'.code, 0x10000), sourceCalls)
+        assertContentEquals(sourceText, port.text)
+        assertContentEquals(field("dirProps").get(source) as ByteArray, port.dirProps)
+        assertEquals(field("paraLevel").getByte(source), port.paraLevel)
+        assertEquals(field("flags").getInt(source), port.flags)
     }
     @Test fun prologueReplacementInsideClassifierUsesCurrentSourceContext() {
         for (replacement in listOf("b", "ג\nb", null)) {

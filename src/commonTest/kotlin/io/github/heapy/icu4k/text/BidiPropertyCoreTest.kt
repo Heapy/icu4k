@@ -16,13 +16,13 @@ class BidiPropertyCoreTest {
         // ICU4J 78.3 private getDirProps + resolveExplicitLevels. Includes errors
         // and their partially mutated state, and every classifier callback.
         val expected = longArrayOf(
--8058034220089631860L,
--1540642475648456632L,
--8718846402552718618L,
-7845397036571371541L,
-2554749499471857323L,
--2379227768836864464L,
--4207199291464823017L,
+7617505901701005564L,
+-3134046948722697766L,
+-7568432664376620160L,
+-8297563587484158185L,
+3921954447413296047L,
+-2391536446930182788L,
+2329319873394296081L,
 )
         val texts = listOf("a", "אב", "ابت", "12(אב) a", "😀𞤀𞸀\ud800\udc00\ud800X\udc00", "a\r\nאב\na\u2029ب",
             "\u2068(אב)\u2069a", "\u2068(abc)\u2069א", "\u2068\u2066א\u2069a\u2069",
@@ -44,6 +44,8 @@ class BidiPropertyCoreTest {
             try { BidiPropertyCore(state).scan(); mix(0); succeeded = true } catch (e: IndexOutOfBoundsException) { mix(1) }
             snapshot()
             if (succeeded) {
+                // setPara allocates the level buffer using processed length.
+                if (state.levels.size != state.length) state.levels = ByteArray(state.length)
                 try { val result = BidiExplicitCore(state).resolve(); mix(0); mix(result.toInt()) } catch (e: IndexOutOfBoundsException) { mix(1) }
                 snapshot()
             }
@@ -69,6 +71,20 @@ class BidiPropertyCoreTest {
         assertFailsWith<NullPointerException> { BidiPropertyCore(nulled).scan() }
         assertEquals(0, nulled.flags)
         assertEquals(-1, nulled.lastArabicPos)
+    }
+    @Test fun inputMutationRetainsBackwardSurrogatePairingAndWriteFailure() {
+        val calls = mutableListOf<Int>()
+        lateinit var state: BidiPropertyFixture
+        state = BidiPropertyFixture("a\udc00", 126, 0, 0, false) {
+            calls += it
+            if (calls.size == 1) state.text[0] = '\ud800'
+            BidiPropertyCore.customizedClass(it, null)
+        }
+        assertFailsWith<IndexOutOfBoundsException> { BidiPropertyCore(state).scan() }
+        assertEquals(listOf('a'.code, 0x10000), calls)
+        assertEquals(126.toByte(), state.paraLevel)
+        assertEquals(1, state.flags)
+        assertContentEquals(byteArrayOf(0, 0), state.dirProps)
     }
     @Test fun customizedClassesRetainSentinelAndNegativeValues() {
         assertEquals(D.RIGHT_TO_LEFT, BidiPropertyCore.customizedClass('א'.code, null))

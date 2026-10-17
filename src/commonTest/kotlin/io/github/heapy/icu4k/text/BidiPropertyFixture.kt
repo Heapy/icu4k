@@ -15,7 +15,7 @@ internal class BidiPropertyFixture(
     override val originalLength = text.length
     override var length = text.length
     override val dirProps = ByteArray(text.length)
-    override val levels = ByteArray(text.length)
+    override var levels = ByteArray(text.length)
     override var paraCount = 1
     override var paraLevel = level.toByte()
     override val defaultParaLevel = (if ((level and 126) == 126) level else 0).toByte()
