@@ -12424,3 +12424,30 @@ regressions cover alias execution and deferred factory failure.
 - Full validation passed: JVM 2,861 tests; Node 1,419 tests (one skipped);
   macOS Native 1,417 tests; zero failures/errors. Linux Native test compilation
   passed with the same full validation command above.
+
+### MBCS to-Unicode extension-table matching (ICU4J 78.3)
+
+- Ported the extension-table lookup used by MBCS decoders: packed unsigned byte
+  section search, longest complete match, partial-input requests, SI/SO length
+  restrictions, fallback matching and removal of the roundtrip flag.
+- Lookup preserves both input cursors and reads absolute extension pointers in
+  the buffer's byte order. Scalar and multi-unit UTF-16 results are decoded from
+  the same tables; no JVM charset or NIO dependency is used by production code.
+- ICU4J always enables decoder fallback, even when passed `false`; the common
+  matcher preserves this behavior rather than introducing a different switch.
+- Independent synthetic source goldens cover 53,328 calls (48 configurations,
+  1,111 byte sequences each), prefix/source splits, flush states and SI/SO modes.
+  The common suite repeats them for both byte orders, and checks all 256 search
+  keys in contiguous and sparse sections.
+- A live JVM oracle walks all packaged extension mappings: 48 converters,
+  3,868 mappings, 139,116 lookup calls and 3,812 distinct per-converter outputs.
+  It compares actual private ICU4J methods, including UTF-16 output and offsets,
+  without consuming source cursors or modifying extension-table cursors.
+- Reproduce synthetic goldens with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/MBCSExtensionGoldens.java`.
+- This completes the table matcher, not the streaming MBCS decoder. Its state
+  machine, extension continuation/replay and callback integration remain pending.
+- Full validation passed in 5m 30s: JVM 2,865 tests; Node 1,422 tests (one
+  skipped); macOS Native 1,420 tests; zero failures/errors. Linux Native test
+  compilation passed. The independent synthetic generator reproduced the
+  checked-in goldens byte for byte.
