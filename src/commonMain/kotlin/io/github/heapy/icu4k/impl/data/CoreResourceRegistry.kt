@@ -999,6 +999,18 @@ internal object CoreResourceRegistry {
         "zh_TW.res" to 30,
         "zu.res" to 31,
         "zu_ZA.res" to 31,
+        "rfc3491.spp" to 31,
+        "rfc3530cs.spp" to 31,
+        "rfc3530csci.spp" to 31,
+        "rfc3530mixp.spp" to 31,
+        "rfc3722.spp" to 31,
+        "rfc3920node.spp" to 31,
+        "rfc3920res.spp" to 31,
+        "rfc4011.spp" to 31,
+        "rfc4013.spp" to 31,
+        "rfc4505.spp" to 31,
+        "rfc4518.spp" to 31,
+        "rfc4518ci.spp" to 31,
     )
     val names: Set<String> get() = groups.keys
     fun getBytes(name: String): ByteArray? = when (groups[name]) {
@@ -2124,6 +2136,18 @@ internal object CoreResourceRegistry {
     private fun group31(name: String): ByteArray? = when (name) {
         "zu.res" -> CoreLocale_zu_ResourceData.copy()
         "zu_ZA.res" -> CoreLocale_zu_ZA_ResourceData.copy()
+        "rfc3491.spp" -> Rfc3491StringPrepData.copy()
+        "rfc3530cs.spp" -> Rfc3530csStringPrepData.copy()
+        "rfc3530csci.spp" -> Rfc3530csciStringPrepData.copy()
+        "rfc3530mixp.spp" -> Rfc3530mixpStringPrepData.copy()
+        "rfc3722.spp" -> Rfc3722StringPrepData.copy()
+        "rfc3920node.spp" -> Rfc3920nodeStringPrepData.copy()
+        "rfc3920res.spp" -> Rfc3920resStringPrepData.copy()
+        "rfc4011.spp" -> Rfc4011StringPrepData.copy()
+        "rfc4013.spp" -> Rfc4013StringPrepData.copy()
+        "rfc4505.spp" -> Rfc4505StringPrepData.copy()
+        "rfc4518.spp" -> Rfc4518StringPrepData.copy()
+        "rfc4518ci.spp" -> Rfc4518ciStringPrepData.copy()
         else -> null
     }
 }

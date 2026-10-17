@@ -11993,3 +11993,19 @@ regressions cover alias execution and deferred factory failure.
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
   The imported Unicode corpus is retained byte-for-byte, including its original
   trailing spaces in seven lines; other changed files pass `git diff --check`.
+
+## Legacy folded tries and StringPrep profile data
+
+- Added ICU's original Trie, CharTrie and IntTrie binary format, constructors,
+  folded supplementary lookup, BMP/lead-unit distinctions, Latin-1 access,
+  equality, size accounting, and assertion-dependent hashCode behavior.
+- Added StringPrepDataReader and imported all 12 distinct `.spp` files used by
+  the 14 StringPrep profiles. Files are pinned in data/manifest.json and embedded
+  by the existing portable generator/CoreResourceRegistry.
+- JVM differential tests compare every Unicode code point in all 12 profile
+  tries, all BMP/lead values, Latin-1 access, dummy constructors and synthetic
+  32-bit tries in both byte orders. Common tests use independently generated
+  full-range fingerprints; regenerate with
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/TrieGoldens.java`.
+- Targeted JVM tests and `python3 scripts/generate-data.py --check` passed.
+  Full cross-target validation is recorded with the StringPrep milestone below.

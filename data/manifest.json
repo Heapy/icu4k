@@ -22486,6 +22486,90 @@
       "sha256": "202639d71bdad73731de896a50daa06432224f41398aa9bdca82a87c36b48245",
       "size": 160,
       "source_path": "icu4j/main/translit/src/main/resources/com/ibm/icu/impl/data/icudata/translit/el.res"
+    },
+    {
+      "name": "rfc3491.spp",
+      "file": "data/icu78/rfc3491.spp",
+      "object": "Rfc3491StringPrepData",
+      "sha256": "672de3c487e3ea32d95e416ba28cd59d4d580970c4ad1dfa4f8281a8d8d8e648",
+      "size": 20528
+    },
+    {
+      "name": "rfc3530cs.spp",
+      "file": "data/icu78/rfc3530cs.spp",
+      "object": "Rfc3530csStringPrepData",
+      "sha256": "d2cd1750f7a88a27e1a3632acbdcfbba7ddf7dc54624ee2f99559bdc56d10bc8",
+      "size": 13120
+    },
+    {
+      "name": "rfc3530csci.spp",
+      "file": "data/icu78/rfc3530csci.spp",
+      "object": "Rfc3530csciStringPrepData",
+      "sha256": "3904ffde46017da0dd54bdf17514e59cb473d05ed2a72dd5e1361ab8a85bdd4e",
+      "size": 19984
+    },
+    {
+      "name": "rfc3530mixp.spp",
+      "file": "data/icu78/rfc3530mixp.spp",
+      "object": "Rfc3530mixpStringPrepData",
+      "sha256": "56d99d849eb6e811336c2bd4c9da160a977d4cb764fbb5c01683bcaaf3c2b0a6",
+      "size": 13664
+    },
+    {
+      "name": "rfc3722.spp",
+      "file": "data/icu78/rfc3722.spp",
+      "object": "Rfc3722StringPrepData",
+      "sha256": "9453c0023cd87424656a0ff4317cfe727a8bbce3edee28b78a9260f5f5a080b4",
+      "size": 20736
+    },
+    {
+      "name": "rfc3920node.spp",
+      "file": "data/icu78/rfc3920node.spp",
+      "object": "Rfc3920nodeStringPrepData",
+      "sha256": "b33315aa8dcb0c191ee14387822954a1976c63bf6bfce85807ef1d6f471f23c3",
+      "size": 20736
+    },
+    {
+      "name": "rfc3920res.spp",
+      "file": "data/icu78/rfc3920res.spp",
+      "object": "Rfc3920resStringPrepData",
+      "sha256": "13dc479e0bdbee802ba887cca83b4124cbbc813e0319cdd8084000d8504ca3ea",
+      "size": 13728
+    },
+    {
+      "name": "rfc4011.spp",
+      "file": "data/icu78/rfc4011.spp",
+      "object": "Rfc4011StringPrepData",
+      "sha256": "6a89c3b0d0d8991db57727e67963612e5966234969073b68a66814baaded55e0",
+      "size": 13328
+    },
+    {
+      "name": "rfc4013.spp",
+      "file": "data/icu78/rfc4013.spp",
+      "object": "Rfc4013StringPrepData",
+      "sha256": "72c0cdcc9e496a8812038a398150f9b25109ee6a72d7f6efaccccdf0503cb823",
+      "size": 13744
+    },
+    {
+      "name": "rfc4505.spp",
+      "file": "data/icu78/rfc4505.spp",
+      "object": "Rfc4505StringPrepData",
+      "sha256": "21319076aafccf4992bad1be0eadb7960afe7b80986d4cf16657f2c270e6f527",
+      "size": 13200
+    },
+    {
+      "name": "rfc4518.spp",
+      "file": "data/icu78/rfc4518.spp",
+      "object": "Rfc4518StringPrepData",
+      "sha256": "0d50547e7ddc309afcfcd9e396ecc1a376dee2fd832478bee8d3c1ee7b851f77",
+      "size": 13920
+    },
+    {
+      "name": "rfc4518ci.spp",
+      "file": "data/icu78/rfc4518ci.spp",
+      "object": "Rfc4518ciStringPrepData",
+      "sha256": "c39c2382aa85561a67447705f6da315b19029dcdac32fa78b9ce8184455765d4",
+      "size": 20784
     }
   ],
   "registries": {
