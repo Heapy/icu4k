@@ -597,3 +597,16 @@ println(duration.formatMeasures(Measure(5, MeasureUnit.HOUR), Measure(7.25, Meas
 deprecated `TimeUnitFormat` also parses time-unit amounts using both full and
 abbreviated patterns. These APIs retain ICU4J 78.3's cache, field-position and
 locale-mutation behavior; JVM serialization uses the source proxy protocol.
+
+`ArabicShaping` performs character-based shaping for legacy Arabic text formats,
+including contextual letters, Lam–Alef ligatures and contextual Arabic digits:
+
+```kotlin
+import io.github.heapy.icu4k.text.ArabicShaping
+
+val shaping = ArabicShaping(ArabicShaping.LETTERS_SHAPE)
+println(shaping.shape("لا")) // ﻻ (U+FEFB)
+```
+
+String, buffer-slice, in-place and size-query APIs preserve ICU4J's option and
+fixed-length behavior. Expansion without enough room throws `ArabicShapingException`.

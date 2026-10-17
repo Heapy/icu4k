@@ -11190,3 +11190,33 @@ proxy streams for all seven time units remain covered in both directions.
 Verification passed in 5m 48s: JVM 2,435 tests, JS 1,139 tests (one existing
 skip), macOS Native 1,137 tests and Linux Native test compilation. All executed
 tests passed.
+
+### ArabicShaping and ArabicShapingException (2026-10-17)
+
+The full public ArabicShaping API and all source option constants are now in
+commonMain: string shaping, source/destination slices, size-only queries and
+fixed-length in-place shaping. The algorithm retains the pinned source joining
+tables, presentation-form normalization, logical/visual UTF-16 reversal, Lam–Alef
+contraction/expansion, tashkeel isolation/removal/tatweel replacement, text-relative
+space placement, Seen-tail and Yeh-Hamza two-cell handling, and standard/extended
+Arabic-Indic digit conversion. Contextual digits use the ported UBiDiProps data.
+
+Validation order and source messages are preserved, including resize rejection
+before in-place argument validation, unchecked destination offsets for size-only
+queries, and source size-estimation quirks. Output is built in a temporary buffer,
+so slices can overlap and failed expansion does not modify the destination.
+Equality/hash and option descriptions follow the source. ArabicShapingException
+retains the source serialVersionUID and interoperable JVM exception streams.
+
+All 35 StandardDataTest fixtures from the pinned upstream
+DataDrivenArabicShapingRegTest run as common goldens, including Arabic mathematical
+supplementary characters. JVM oracles compare every UTF-16 code unit in ten
+joining/digit modes, 4,000 option combinations against curated strings and 15,000
+random strings. Buffer oracles compare size queries, undersized/exact/oversized
+destinations, overlapping slices, in-place writes and invalid-argument precedence.
+Additional checks compare every source table and public constant, option
+descriptions and exception descriptors/streams.
+
+Verification passed in 5m 2s: JVM 2,444 tests, JS 1,142 tests (one existing
+skip), macOS Native 1,140 tests and Linux Native test compilation. All executed
+tests passed, including all common upstream shaping goldens on JS and Native.
