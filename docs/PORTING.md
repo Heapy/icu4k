@@ -12130,3 +12130,40 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false`.
+
+## Charset detection: multibyte recognizers
+
+- Added Shift_JIS, Big5, EUC-JP, EUC-KR and GB18030 recognizers with the original
+  byte iterator, incomplete-sequence behavior, error-ratio early exit, frequency
+  lookup and logarithmic confidence formula (including its float intermediate).
+- Preserved permissive source byte ranges, the decimal-80 GB18030 condition,
+  unsigned classification of packed four-byte values, and iterator EOF/reset
+  states. Detection continues to use rawLength rather than backing capacity.
+- Extracted all five frequency tables to checksum-pinned JSON and reproducible
+  Kotlin arrays. `python3 scripts/generate-charset-mbcs.py --check` is now a CI
+  gate. Reimport/verify against the pinned checkout with
+  `python3 scripts/generate-charset-mbcs.py --import-upstream /path/to/icu --check`.
+- JVM differential tests compare all metadata/confidences and every iterator
+  transition with ICU4J, plus exact frequency tables, encoded language samples,
+  deterministic random bytes, truncated input, scoring without frequency tables
+  and confidence boundary grids.
+- Common tests use 573 independent confidence/iterator-trace vectors generated
+  by `java -cp /path/to/icu4j-78.3.jar scripts/oracles/CharsetMbcsGoldens.java`.
+- SBCS recognizers, public detector/match APIs, filtering, reader/stream adapters
+  and portable decoding remain pending; this is another internal dependency
+  milestone toward the complete charset subsystem.
+- JS compilation exposed JVM-only IntArray.binarySearch resolution, so table
+  lookup now uses an explicit portable binary search. The Java float intermediate
+  is forced through IEEE-754 binary32 bits: JavaScript's numeric Float representation
+  otherwise changes large-input confidence (99 instead of ICU4J's 100).
+- Eight additional source goldens were produced by actual ICU4J detections over
+  approximately 32 MiB inputs using scripts/oracles/CharsetMbcsFloatGoldens.java.
+  Common tests exercise the extracted scoring stage with the corresponding
+  counters, avoiding large repeated allocations on each target.
+- Full validation passed after the portability corrections: JVM 2,805 tests;
+  Node 1,373 tests (one skipped); macOS Native 1,371 tests; no failures or errors.
+  Linux Native test compilation passed. Command: `./gradlew jvmTest jsNodeTest
+  macosArm64Test compileTestKotlinLinuxX64
+  -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false`.
+  Confidence goldens remain exact on every target, including large-counter
+  binary32 boundary cases.

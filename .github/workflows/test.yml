@@ -20,6 +20,7 @@ jobs:
           python3 scripts/generate-data.py --check
           python3 scripts/generate-locale-fallback.py --check
           python3 scripts/generate-config.py --check
+          python3 scripts/generate-charset-mbcs.py --check
       - run: ./gradlew jvmTest jsNodeTest linuxX64Test --console=plain
   macos:
     runs-on: macos-14
