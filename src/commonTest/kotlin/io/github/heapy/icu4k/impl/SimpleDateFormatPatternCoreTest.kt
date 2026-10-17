@@ -21,6 +21,8 @@ class SimpleDateFormatPatternCoreTest {
         assertEquals("'", SimpleDateFormatPatternCore.compile("''").single())
     }
     @Test fun fieldTablesAndCache() {
+        assertFailsWith<IndexOutOfBoundsException> { SimpleDateFormatPatternCore.isFieldUnitIgnored("y", -1) }
+        assertFailsWith<IndexOutOfBoundsException> { SimpleDateFormatPatternCore.isFieldUnitIgnored("y", 24) }
         assertSame(DateFormat.Field.TIME_ZONE, SimpleDateFormatPatternCore.attribute('X'))
         assertSame(DateFormat.Field.QUARTER, SimpleDateFormatPatternCore.attribute('q'))
         assertNull(SimpleDateFormatPatternCore.attribute('j'))

@@ -22,6 +22,7 @@ internal class SimpleDateFormatParseCore(private val owner: Owner) {
         val locale: ULocale?
         val symbols: DateFormatSymbols?
         val assertionsEnabled: Boolean get() = false
+        fun compiledPatternItems(): Array<Any>? = null
         fun booleanAttribute(key: BooleanAttribute): Boolean
         fun defaultCenturyStart(): Long
         fun defaultCenturyStartYear(): Int
@@ -58,7 +59,7 @@ internal class SimpleDateFormatParseCore(private val owner: Owner) {
         val leapPatterns = owner.symbols!!.state.data.fields["leapMonthPatterns"] as Array<String>?
         val leapParser = if (leapPatterns != null && leapPatterns.size >= DateFormatSymbols.DT_MONTH_PATTERN_COUNT)
             owner.numericLeapMonthParser(leapPatterns[DateFormatSymbols.DT_LEAP_MONTH_PATTERN_NUMERIC]) else null
-        val items = patternItems ?: SimpleDateFormatPatternCore.compile(owner.pattern!!).also { patternItems = it }
+        val items = owner.compiledPatternItems() ?: patternItems ?: SimpleDateFormatPatternCore.compile(owner.pattern!!).also { patternItems = it }
         fun fail(error: Int) {
             position.index = start
             position.errorIndex = error

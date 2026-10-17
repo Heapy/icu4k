@@ -22,6 +22,7 @@ internal class SimpleDateFormatFormatCore(private val owner: Owner) {
         val hasMinute: Boolean
         val hasSecond: Boolean
         val useFastFormat: Boolean
+        fun compiledPatternItems(): Array<Any>? = null
         fun capitalizationContext(): DisplayContext?
         fun numberFormat(ch: Char): NumberFormat?
         fun timeZoneFormat(): TimeZoneFormat
@@ -58,7 +59,7 @@ internal class SimpleDateFormatFormatCore(private val owner: Owner) {
     private fun format(cal: Calendar?, context: DisplayContext?, output: StringBuilder?, pos: FormatFieldPosition?, attributes: MutableList<FormatFieldPosition>?): StringBuilder? {
         pos!!.setBeginIndex(0)
         pos.setEndIndex(0)
-        val items = patternItems ?: SimpleDateFormatPatternCore.compile(owner.pattern!!).also { patternItems = it }
+        val items = owner.compiledPatternItems() ?: patternItems ?: SimpleDateFormatPatternCore.compile(owner.pattern!!).also { patternItems = it }
         for ((i, item) in items.withIndex()) {
             if (item is String) output!!.append(item)
             else {

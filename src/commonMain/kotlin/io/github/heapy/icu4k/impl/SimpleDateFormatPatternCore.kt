@@ -90,7 +90,7 @@ internal object SimpleDateFormatPatternCore {
     fun dateFormatField(index: Int): Int { if (index !in patternIndexToDateFormatField.indices) throw IndexOutOfBoundsException(); return patternIndexToDateFormatField[index] }
     fun attribute(ch: Char): DateFormat.Field? = index(ch).let { if (it == -1) null else patternIndexToDateFormatAttribute[it] }
 
-    fun translate(pattern: String, from: String, to: String): String {
+    fun translate(pattern: String, from: String?, to: String?): String {
         val result = StringBuilder()
         var inQuote = false
         for (original in pattern) {
@@ -99,8 +99,11 @@ internal object SimpleDateFormatPatternCore {
                 if (ch == '\'') inQuote = false
             } else if (ch == '\'') inQuote = true
             else if (isSyntaxChar(ch)) {
-                val index = from.indexOf(ch)
-                if (index != -1) ch = to[index]
+                val index = from!!.indexOf(ch)
+                if (index != -1) {
+                    if (index !in to!!.indices) throw IndexOutOfBoundsException()
+                    ch = to[index]
+                }
             }
             result.append(ch)
         }
@@ -111,6 +114,7 @@ internal object SimpleDateFormatPatternCore {
     fun level(ch: Char): Int = if (ch.code < patternCharToLevel.size) patternCharToLevel[ch.code] else -1
 
     fun isFieldUnitIgnored(pattern: String, field: Int): Boolean {
+        if (field !in calendarFieldToLevel.indices) throw IndexOutOfBoundsException()
         val fieldLevel = calendarFieldToLevel[field]
         var inQuote = false
         var prevCh = '\u0000'

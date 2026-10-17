@@ -180,12 +180,14 @@ abstract class NumberFormat : UFormat() {
         internal fun serviceOrNull(): NumberFormatServiceCore? = serviceLock.withLock { service }
         private fun getService(): NumberFormatServiceCore = serviceLock.withLock {
             service ?: NumberFormatServiceCore { locale, style ->
-                NumberFormatDataFactory.create(locale, style) { rulesLocale, rulesType, ruleSetName ->
-                    RuleBasedNumberFormat(rulesLocale, rulesType).also { it.setDefaultRuleSet(ruleSetName) }
-                }
+                createInstance(locale, style)
             }.also { service = it }
         }
         @JvmStatic fun getInstance(): NumberFormat = getInstance(ULocale.getDefault(ULocale.Category.FORMAT), NUMBERSTYLE)
+        internal fun createInstance(locale: ULocale?, style: Int): NumberFormat? =
+            NumberFormatDataFactory.create(locale, style) { rulesLocale, rulesType, ruleSetName ->
+                RuleBasedNumberFormat(rulesLocale, rulesType).also { it.setDefaultRuleSet(ruleSetName) }
+            }
         @JvmStatic fun getInstance(style: Int): NumberFormat = getInstance(ULocale.getDefault(ULocale.Category.FORMAT), style)
         @JvmStatic fun getInstance(locale: ULocale?): NumberFormat = getInstance(locale, NUMBERSTYLE)
         @JvmStatic fun getInstance(desiredLocale: ULocale?, choice: Int): NumberFormat {

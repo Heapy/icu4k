@@ -10729,3 +10729,48 @@ facade-owned caches would change this observable source behavior.
 
 Final full verification passed in 7m 3s: JVM 2,280 tests, macOS Native 1,071 tests
 and JS 1,073 tests (one existing skip), plus Linux Native test compilation.
+
+### SimpleDateFormat state, overrides and interval algorithm (2026-10-17)
+
+Ported SimpleDateFormat's owner lifecycle into common SimpleDateFormatStateCore:
+locale/symbol/calendar/number initialization in source order, the DateNumberFormat
+fast-path choice, lazy 80-year century calculation, mutable century-date identity,
+pattern flag scanning, Japanese Gannen transitions, per-field overrides, timezone
+digit synchronization and frozen formatter ownership. Clone state copies symbols
+and numeric scratch buffers while retaining the source's shared override maps,
+custom number formatters, century Date, timezone formatter and compiled items.
+
+Override handling preserves partial changes on invalid fields, UUID-backed custom
+formatter keys, repeated numbering-system reuse, retained override strings after
+primary number-format replacement, and failures when a full override clears maps
+needed by later partial entries. NumberFormat now exposes its existing direct data
+factory internally; SDF overrides use that path, bypassing registered service
+factories exactly as ICU4J's package-private createInstance does. Public
+NumberFormat.getInstance still uses the registration service.
+
+Both format and parse cores can now obtain compiled items from one shared owner.
+This preserves stale items and flags after applyLocalizedPattern, including when
+one engine warms the cache and the other engine consumes it. Nullable localized
+pattern alphabets are only dereferenced when a syntax letter needs translation.
+Field-unit lookup now explicitly checks its array bounds on JS as well as JVM.
+
+SimpleDateFormatIntervalCore ports the complete source survey-tool interval
+algorithm: calendar equivalence checks, difference discovery, range expansion,
+full/partial output, fast/slow callbacks, capitalization and FieldPosition updates.
+It retains ICU4J's comparison of a pattern index with calendar-field levels and
+its wrapped illegal-pattern messages rather than substituting interval patterns.
+
+Six common state tests and two common interval tests cover lifecycle, mutation,
+clone sharing, caches, Gannen, digits, failures and output. Seven JVM state oracle
+tests compare construction/override/pattern/clone/century sequences and registered
+factory bypass. The interval oracle compares strings, partial buffers, errors and
+positions across six locale/calendar combinations, both dispatch modes, thirteen
+patterns and five date pairs. Existing pattern oracle tests also remain included.
+
+Public SimpleDateFormat construction/API binding, default-pattern lookup,
+attributed input conversion, serialization, Calendar/DateFormat factory exposure
+and the complete MessageFormat stock-format owner remain pending. The joined
+DateFormat subclass used by these checks is a test fixture, not a public facade.
+
+Full verification passed in 6m 3s: JVM 2,296 tests, macOS Native 1,079 tests
+and JS 1,081 tests (one existing skip), plus Linux Native test compilation.
