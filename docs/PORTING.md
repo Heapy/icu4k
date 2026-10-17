@@ -12254,3 +12254,34 @@ regressions cover alias execution and deferred factory failure.
   -Pkotlin.incremental=false` (6m 17s). All 191 new resource files were also
   compared byte-for-byte with the pinned upstream checkout, and the complete
   3,172-resource generator check passed.
+
+### Converter alias catalog (ICU4J 78.3)
+
+- Ported UConverterAliasDataReader and the complete converter-alias lookup logic
+  over cnvalias.icu: ASCII/digit normalization, normalized binary search,
+  ambiguous aliases, per-standard canonical/preferred names, alias enumeration
+  and available-name enumeration. The catalog has 365 converter names; this is
+  the source catalog, not a claim that all 365 common converters are implemented.
+- Preserved source-sensitive behavior: exact tag case, hidden ALL tag, append-only
+  normalization, leading-zero handling, null/empty inputs and unchecked alias
+  indices. Explicit array bounds keep index failures portable on JavaScript.
+- The original compareNames termination order ignores a final differing character
+  when both inputs are exhausted; its second-name zero branch checks the first
+  name's index and can throw at the end of the second string. These observable
+  source behaviors are retained rather than replaced by normalized equality.
+- Independent source goldens cover all catalog aliases plus edge queries: 1,556
+  queries over all eight table tags and two invalid/case-variant tags, complete
+  alias lists, standard/canonical outputs, and the ordered 365-name catalog.
+  Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/ConverterAliasGoldens.java`.
+- JVM differential tests cover every pair of ASCII symbols inside comparator
+  inputs, random Unicode strings, mutated alias spellings, invalid indices and
+  null handling. Common tests verify the full source corpus, reader TOC/version
+  authentication, catalog bounds and comparator edge cases on each target.
+- Catalog loading uses immutable published data and lazy initialization. The
+  shared converter loader, stateful codecs and public charset APIs remain pending.
+- Full validation passed: JVM 2,831 tests; Node 1,391 tests (one skipped);
+  macOS Native 1,389 tests; zero failures/errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false` (5m 20s).
