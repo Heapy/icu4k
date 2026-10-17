@@ -263,8 +263,19 @@ for (i in 0..<message.countParts()) {
 }
 ```
 
-The parser exposes syntax parts and nested-message boundaries; rendering with
-`MessageFormat` and `PluralFormat` is still being ported.
+The parser exposes syntax parts and nested-message boundaries. `MessageFormat`
+formats and parses numbered or named arguments, including nested choices, plurals
+and selects:
+
+```kotlin
+import io.github.heapy.icu4k.text.MessageFormat
+
+val files = MessageFormat("{n,plural,one{# file} other{# files}}", ULocale.US)
+println(files.format(mapOf("n" to 2))) // 2 files
+```
+
+Custom formats, attributed output, cloning and ICU4J-compatible JVM streams are
+supported. JVM callers may also supply `java.text.Format` implementations.
 
 `SelectFormat` selects a message by keyword and falls back to `other`:
 
@@ -495,8 +506,8 @@ println(format.parse("1970-01-01 00:00:00 Z")!!.getTime()) // 0
 Calendar-specific style construction is available through
 `calendar.getDateTimeFormat(dateStyle, timeStyle, locale)`. Pattern overrides,
 localized symbols, attributed text, century boundaries, cloning and JVM
-serialization are supported. The complete MessageFormat facade and DateFormat
-factories, including relative dates, remain pending; see
+serialization are supported. DateFormat factories, including relative dates,
+remain pending; see
 [the porting log](docs/PORTING.md) for current coverage.
 
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer

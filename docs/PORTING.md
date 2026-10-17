@@ -10839,8 +10839,8 @@ cache and stock-style construction path.
 SDF's JVM stream schema preserves its eight source fields, UID and extra
 capitalization value. Reading restores transient state without constructor
 initialization, retains slow dispatch, updates century/calendar state and invokes
-virtual context setters. The complete MessageFormat public facade and
-DateFormat factories (including relative dates) remain pending.
+virtual context setters. DateFormat factories (including relative dates)
+remain pending.
 
 
 ### Calendar and timezone stream dependencies (2026-10-17)
@@ -10881,3 +10881,28 @@ reading its fields, matching the source reload path. The regression covers both
 zone subclasses. Final JVM verification passed all 2,337 tests; final JS, macOS
 Native and Linux Native main compilation also passed (4m 45s). The preceding full
 JS/macOS test run and Linux test compilation remain green.
+
+
+### Public MessageFormat and shared Format identity (2026-10-17)
+
+MessageFormat now exposes the common public facade over the existing pattern,
+cache, formatting and parsing engines. It supports numbered/named arguments,
+stock number/date styles, skeletons, rule-based numbers, nested choice/plural/select
+messages, custom-format setters/getters, attributed output, locale changes,
+apostrophe modes and clone state. Virtual parsing hooks and pattern-reset/failure
+order follow ICU4J. Clone caches are independent while custom formats stay shared.
+
+An opaque common Format root maps to java.text.Format on JVM and a portable root
+on JS/Native. This preserves arbitrary JVM custom formats and ChoiceFormat
+identity without changing the separate modern-number adapter serialization branch.
+MessageFormat's empty stable field schema, UID, custom stream records and Field
+singleton interoperate bidirectionally with ICU4J 78.3. Stock date construction
+uses the public calendar-aware SDF style path.
+
+New common tests cover named/numbered messages, parsing, custom caches, clones,
+locale failures and subclass hooks. JVM oracles compare six locales, both
+apostrophe modes, stock formats and nested arguments, raw JDK formats, attributed
+runs, failure states, stream descriptors, bidirectional streams and clone graphs.
+
+Full verification passed in 4m 11s: JVM 2,347 tests, macOS Native 1,105,
+JS 1,107 (one existing skip), and Linux Native test compilation.
