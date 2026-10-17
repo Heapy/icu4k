@@ -10684,3 +10684,48 @@ remain pending, together with the complete SimpleDateFormat parser/facade.
 
 Full verification passed in 5m 59s: JVM 2,263 tests, macOS Native 1,063 tests
 and JS 1,065 tests (one existing skip), plus Linux Native test compilation.
+
+### SimpleDateFormat parsing engines (2026-10-17)
+
+Ported the full outer parsing traversal and field parser into common
+SimpleDateFormatParseCore and SimpleDateFormatFieldParseCore. The traversal
+preserves abutting numeric-run width retries, ignored obsolete l fields, era
+omission, literal and whitespace flags, trailing punctuation, deferred day-period
+resolution, two-digit-century adjustment, and calendar-type conversion/rollback.
+Time-zone resolution uses real BasicTimeZone local-offset options and transition
+searches, including standard/daylight overrides and the source's 30-year search
+range. Negative initial positions retain the source's early-return state changes.
+
+Field parsing covers every source pattern index: era/year/month, weekdays,
+quarters, fractional seconds, fixed/flexible periods and all zone styles, plus
+generic numeric fields and related years. Longest symbolic matching retains
+optional terminal dots and source failure return values. Supplementary digits
+are counted as code points, while bounded integer parsing retains UTF-16 widths.
+NumberFormat mutations, the shared delayed Hebrew-month correction, and the
+source overload that drops leap-month/time-type outputs in numeric runs remain
+observable. Numeric leap-month parsing delegates to the actual MessageFormat
+parser through an owner protocol rather than a separate message parser.
+
+The engines retain owner callbacks for formatter state, number/time-zone formats,
+protected quarter matching and private recursive field dispatch. Public
+SimpleDateFormat construction, overrides, interval APIs and serialization remain
+pending; these internal engines do not claim to provide that public facade.
+
+Eight common tests exercise numeric runs, century adjustment, longest symbolic
+matches, fractions, whitespace, periods, zone resolution, negative suppression,
+leap patterns, supplementary case pairs, malformed symbols and failures. Nine JVM oracle tests
+compare all pattern letters at widths 1–6 across sixteen locales/calendar types,
+plus parser flags, malformed text, input positions, century boundaries, calendar
+conversion, real default DateNumberFormat instances, direct leap-month parsing,
+shared Hebrew state and exception-time NumberFormat mutation. They compare
+positions, set-field masks, zones and resulting millis; private-source probes
+also compare day-period/time-type outputs and optional-dot matching. Custom
+number/time-zone hooks cover null values without adding eager null failures.
+
+Facade integration must share the compiled pattern-item cache between formatting
+and parsing: source applyLocalizedPattern assigns a translated pattern without
+invalidating that cache or rescanning flags, unlike applyPattern. Independent
+facade-owned caches would change this observable source behavior.
+
+Final full verification passed in 7m 3s: JVM 2,280 tests, macOS Native 1,071 tests
+and JS 1,073 tests (one existing skip), plus Linux Native test compilation.

@@ -86,6 +86,16 @@ open class DateFormatSymbols : ICUCloneableBase {
     private fun writeObject(output: PluralObjectOutputStream) = dateSymbolsWrite(output,this)
     private fun readObject(input: PluralObjectInputStream) = dateSymbolsRead(input,this)
     companion object {
+        internal const val DT_LEAP_MONTH_PATTERN_FORMAT_WIDE = 0
+        internal const val DT_LEAP_MONTH_PATTERN_FORMAT_ABBREV = 1
+        internal const val DT_LEAP_MONTH_PATTERN_FORMAT_NARROW = 2
+        internal const val DT_LEAP_MONTH_PATTERN_STANDALONE_WIDE = 3
+        internal const val DT_LEAP_MONTH_PATTERN_STANDALONE_ABBREV = 4
+        internal const val DT_LEAP_MONTH_PATTERN_STANDALONE_NARROW = 5
+        internal const val DT_LEAP_MONTH_PATTERN_NUMERIC = 6
+        internal const val DT_MONTH_PATTERN_COUNT = 7
+        internal const val DEFAULT_TIME_SEPARATOR = ":"
+        internal const val ALTERNATE_TIME_SEPARATOR = "."
         private const val serialVersionUID = -5987973545549424702L
         private val serialPersistentFields: Array<RbnfObjectStreamField> = dateSymbolsSerializationFields()
 
