@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.IndianCalendarCore
 import kotlin.time.Clock
 
@@ -41,6 +43,8 @@ open class IndianCalendar : Calendar {
         override fun baseGetYearLength(year: Int): Int = super@IndianCalendar.handleGetYearLength(year)
     }
     companion object {
+        private const val serialVersionUID = 3617859668165014834L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("IndianCalendar")
         const val CHAITRA = 0; const val VAISAKHA = 1; const val JYAISTHA = 2; const val ASADHA = 3
         const val SRAVANA = 4; const val BHADRA = 5; const val ASVINA = 6; const val KARTIKA = 7
         const val AGRAHAYANA = 8; const val PAUSA = 9; const val MAGHA = 10; const val PHALGUNA = 11

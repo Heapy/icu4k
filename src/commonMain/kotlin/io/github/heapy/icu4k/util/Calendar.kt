@@ -8,6 +8,12 @@ import io.github.heapy.icu4k.impl.Grego
 import io.github.heapy.icu4k.impl.CalType
 import io.github.heapy.icu4k.impl.ICUResourceBundle
 import kotlin.time.Clock
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+import io.github.heapy.icu4k.text.DateFormat
+import io.github.heapy.icu4k.text.DateFormatSymbols
+import io.github.heapy.icu4k.text.SimpleDateFormat
 
 /** Mutable calendar fields, field precedence and timezone-aware time conversion. */
 abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
@@ -208,7 +214,59 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
         override fun hashCode(): Int = core().hashCode()
         override fun toString(): String = core().toString()
     }
+    open fun getDateTimeFormat(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat = dateFormats().getDateTimeFormat(this, locale, dateStyle, timeStyle)
+    protected open fun handleGetDateFormat(pattern: String?, locale: ULocale?): DateFormat? = handleGetDateFormat(pattern, null, locale)
+    protected open fun handleGetDateFormat(pattern: String?, override: String?, locale: ULocale?): DateFormat? = dateFormats().handleGetDateFormat(this, pattern, override, locale)
+    private fun dateFormats() = CalendarFormatCore(object : CalendarFormatCore.Owner<Calendar, DateFormatSymbols, DateFormat> {
+        override fun getType(calendar: Calendar): String = calendar.getType()
+        override fun handleGetDateFormat(calendar: Calendar, pattern: String?, override: String?, locale: ULocale?): DateFormat? = calendar.handleGetDateFormat(pattern, override, locale)
+        override fun setCalendar(format: DateFormat, calendar: Calendar) = format.setCalendar(calendar)
+        override fun createDateFormatSymbols(calendar: Calendar?, locale: ULocale?): DateFormatSymbols = DateFormatSymbols(calendar, locale)
+        override fun createSimpleDateFormat(configuration: CalendarFormatCore.FormatConfiguration<Calendar, DateFormatSymbols>): DateFormat = SimpleDateFormat.getInstance(FormatConfiguration(configuration))
+    }, datePatterns)
+    @Deprecated("This API is ICU internal only.")
+    class FormatConfiguration internal constructor(private val configuration: CalendarFormatCore.FormatConfiguration<Calendar, DateFormatSymbols>) {
+        fun getPatternString(): String? = configuration.getPatternString()
+        fun getOverrideString(): String? = configuration.getOverrideString()
+        fun getDateFormatSymbols(): DateFormatSymbols? = configuration.getDateFormatSymbols()
+        fun getCalendar(): Calendar? = configuration.getCalendar()
+        fun getLocale(): ULocale? = configuration.getLocale()
+    }
+    private fun writeObject(output: PluralObjectOutputStream) {
+        if (!values.isTimeSet) try { state().getTimeInMillis() } catch (_: IllegalArgumentException) { }
+        timeStateWriteFields(output, "Calendar", mapOf(
+            "time" to values.time, "lenient" to values.lenient, "zone" to values.zone,
+            "firstDayOfWeek" to values.firstDayOfWeek, "minimalDaysInFirstWeek" to values.minimalDaysInFirstWeek,
+            "repeatedWallTime" to values.repeatedWallTime, "skippedWallTime" to values.skippedWallTime,
+            "weekendOnset" to weekendOnset, "weekendOnsetMillis" to weekendOnsetMillis,
+            "weekendCease" to weekendCease, "weekendCeaseMillis" to weekendCeaseMillis,
+            "validLocale" to validLocale, "actualLocale" to actualLocale,
+        ))
+    }
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "Calendar")
+        values = CalendarStateCore.Values(
+            time = data["time"] as Long, isTimeSet = true, areFieldsVirtuallySet = true,
+            lenient = data["lenient"] as Boolean, zone = data["zone"] as TimeZone?,
+            firstDayOfWeek = data["firstDayOfWeek"] as Int, minimalDaysInFirstWeek = data["minimalDaysInFirstWeek"] as Int,
+            repeatedWallTime = data["repeatedWallTime"] as Int, skippedWallTime = data["skippedWallTime"] as Int,
+        )
+        validLocale = data["validLocale"] as ULocale?; actualLocale = data["actualLocale"] as ULocale?
+        weekendOnset = data["weekendOnset"] as Int; weekendOnsetMillis = data["weekendOnsetMillis"] as Int
+        weekendCease = data["weekendCease"] as Int; weekendCeaseMillis = data["weekendCeaseMillis"] as Int
+        val storage = CalendarStateCore.createStorage(handleCreateFields())
+        fields = storage.fields; stamps = storage.stamps; internalSetMask = storage.internalSetMask
+        fieldPort = null
+    }
     companion object {
+        private const val serialVersionUID = 6222646104888790989L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("Calendar")
+        private val datePatterns = CalendarPatternDataCore.withCommonGenerator()
+        @Deprecated("This API is ICU internal only.")
+        fun getDateTimePattern(calendar: Calendar?, locale: ULocale?, dateStyle: Int): String? = datePatterns.make(calendar!!.getType(), locale).getDateTimePattern(dateStyle)
+        @Deprecated("This API is ICU internal only.")
+        fun getDateAtTimePattern(calendar: Calendar?, locale: ULocale?, dateStyle: Int): String? = datePatterns.make(calendar!!.getType(), locale).getDateAtTimePattern(dateStyle)
+
         protected const val MIN_JULIAN = -0x7F000000
         protected const val MAX_JULIAN = 0x7F000000
         protected const val MIN_MILLIS = Grego.MIN_MILLIS

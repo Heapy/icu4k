@@ -65,6 +65,7 @@ internal class GregorianCalendarCore<C : Any>(private val owner: Owner<C>) {
             }
         }
     }
+    fun restoreSerializedCutover(value: Long) { gregorianCutover = value }
     fun getGregorianChange(): Date = Date(gregorianCutover)
     fun getType(): String = "gregorian"
     fun isEra0CountingBackward(): Boolean = true

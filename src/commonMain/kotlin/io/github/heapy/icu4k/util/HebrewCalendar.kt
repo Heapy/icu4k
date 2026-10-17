@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.CalendarFieldsCore
 import io.github.heapy.icu4k.impl.calendar.HebrewCalendarCore
 import kotlin.time.Clock
@@ -61,6 +63,8 @@ open class HebrewCalendar : Calendar {
         override fun internalSet(field: Int, value: Int) = p.internalSet(field, value)
     }
     companion object {
+        private const val serialVersionUID = -1952524560588825816L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("HebrewCalendar")
         const val TISHRI = 0; const val HESHVAN = 1; const val KISLEV = 2; const val TEVET = 3
         const val SHEVAT = 4; const val ADAR_1 = 5; const val ADAR = 6; const val NISAN = 7
         const val IYAR = 8; const val SIVAN = 9; const val TAMUZ = 10; const val AV = 11; const val ELUL = 12

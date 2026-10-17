@@ -12,3 +12,5 @@ fun Calendar.Companion.getAvailableLocales(): Array<Locale> = ICUResourceBundle.
 
 @Suppress("UNUSED_PARAMETER")
 fun Calendar.getDisplayName(locale: Locale?): String = calendarClassName(this)
+
+fun Calendar.getDateTimeFormat(dateStyle: Int, timeStyle: Int, locale: java.util.Locale?): io.github.heapy.icu4k.text.DateFormat = getDateTimeFormat(dateStyle, timeStyle, ULocale.forLocale(locale))

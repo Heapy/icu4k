@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.TaiwanCalendarCore
 
 /** Gregorian dates numbered relative to the Minguo era. */
@@ -29,5 +31,8 @@ open class TaiwanCalendar : GregorianCalendar {
         override fun gregorianComputeFields(julianDay: Int) = super@TaiwanCalendar.handleComputeFields(julianDay)
         override fun gregorianGetLimit(field: Int, limitType: Int): Int = super@TaiwanCalendar.handleGetLimit(field, limitType)
     }
-    companion object { const val BEFORE_MINGUO = 0; const val MINGUO = 1 }
+    companion object {
+        private const val serialVersionUID = 2583005278132380631L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("TaiwanCalendar")
+        const val BEFORE_MINGUO = 0; const val MINGUO = 1 }
 }

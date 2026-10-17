@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.EthiopicCalendarCore
 
 class EthiopicCalendar : CECalendar {
@@ -40,7 +44,11 @@ class EthiopicCalendar : CECalendar {
         override fun setAmeteAlemEra(value: Boolean) = this@EthiopicCalendar.setAmeteAlemEra(value)
         override fun baseGetLimit(field: Int, type: Int): Int = super@EthiopicCalendar.handleGetLimit(field, type)
     }
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "EthiopicCalendar", mapOf("eraType" to ethiopic().eraType))
+    private fun readObject(input: PluralObjectInputStream) { ethiopic().eraType = timeStateReadFields(input, "EthiopicCalendar")["eraType"] as Int }
     companion object {
+        private const val serialVersionUID = -2438495771339315608L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("EthiopicCalendar")
         const val MESKEREM = 0; const val TEKEMT = 1; const val HEDAR = 2; const val TAHSAS = 3
         const val TER = 4; const val YEKATIT = 5; const val MEGABIT = 6; const val MIAZIA = 7
         const val GENBOT = 8; const val SENE = 9; const val HAMLE = 10; const val NEHASSE = 11; const val PAGUMEN = 12

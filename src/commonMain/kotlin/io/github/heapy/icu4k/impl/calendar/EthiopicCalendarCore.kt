@@ -14,10 +14,10 @@ internal class EthiopicCalendarCore(private val owner: Owner) {
         fun setAmeteAlemEra(value: Boolean)
         fun baseGetLimit(field: Int, type: Int): Int
     }
-    private var ameteAlem = false
-    fun setAmeteAlemEra(value: Boolean) { ameteAlem = value }
-    fun isAmeteAlemEra(): Boolean = ameteAlem
-    fun copyFor(owner: Owner): EthiopicCalendarCore = EthiopicCalendarCore(owner).also { it.ameteAlem = ameteAlem }
+    var eraType = 0
+    fun setAmeteAlemEra(value: Boolean) { eraType = if (value) 1 else 0 }
+    fun isAmeteAlemEra(): Boolean = eraType == 1
+    fun copyFor(owner: Owner): EthiopicCalendarCore = EthiopicCalendarCore(owner).also { it.eraType = eraType }
     fun getType(): String = if (owner.isAmeteAlemEra()) "ethiopic-amete-alem" else "ethiopic"
     fun handleGetExtendedYear(): Int {
         if (owner.newerField(19, 1) == 19) return owner.internalGet(19, 1)

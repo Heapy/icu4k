@@ -2,11 +2,16 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.ChineseCalendarCore
 import kotlin.time.Clock
 
 /** Chinese lunisolar calendar, with separate astronomical and display time zones. */
 open class ChineseCalendar : Calendar {
+    private var zoneAstro: TimeZone? = null
     private var chineseState: ChineseCalendarCore?
     private fun chinese(): ChineseCalendarCore = chineseState ?: ChineseCalendarCore(Binding()) { throw NullPointerException() }.also { chineseState = it }
     constructor() : this(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT))
@@ -26,12 +31,13 @@ open class ChineseCalendar : Calendar {
         set(DATE, date); set(HOUR_OF_DAY, hour); set(MINUTE, minute); set(SECOND, second)
     }
     @Deprecated("This API is ICU internal only.")
-    protected constructor(zone: TimeZone?, locale: ULocale?, zoneAstroCalc: TimeZone?) : this(zone, locale, { zoneAstroCalc!!.getOffset(it) })
-    internal constructor(zone: TimeZone?, locale: ULocale?, astronomicalOffset: (Long) -> Int) : super(zone, locale) {
-        chineseState = ChineseCalendarCore(Binding(), astronomicalOffset)
+    protected constructor(zone: TimeZone?, locale: ULocale?, zoneAstroCalc: TimeZone?) : super(zone, locale) {
+        zoneAstro = zoneAstroCalc
+        chineseState = ChineseCalendarCore(Binding()) { zoneAstroCalc!!.getOffset(it) }
         setTimeInMillis(Clock.System.now().toEpochMilliseconds())
     }
     protected constructor(other: ChineseCalendar, copyMarker: Unit) : super(other, copyMarker) {
+        zoneAstro = other.zoneAstro
         chineseState = other.chinese().copyForOwner(Binding())
     }
     override fun handleGetLimit(field: Int, limitType: Int): Int = chinese().handleGetLimit(field, limitType)
@@ -80,7 +86,16 @@ open class ChineseCalendar : Calendar {
         override fun superSetTemporalMonthCode(value: String?) = super@ChineseCalendar.setTemporalMonthCode(value)
         override fun cloneCalendar(): ChineseCalendarCore.Copy = (p.clone() as ChineseCalendar).Binding()
     }
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "ChineseCalendar", mapOf("zoneAstro" to zoneAstro))
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "ChineseCalendar")
+        val zone = data["zoneAstro"] as TimeZone?
+        zoneAstro = zone
+        chineseState = ChineseCalendarCore(Binding()) { zone!!.getOffset(it) }
+    }
     companion object {
+        private const val serialVersionUID = 7312110751940929420L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("ChineseCalendar")
         private val CHINA_ZONE = SimpleTimeZone(28800000, "CHINA_ZONE").freeze()
     }
 }

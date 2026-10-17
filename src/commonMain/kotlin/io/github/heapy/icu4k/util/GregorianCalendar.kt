@@ -3,6 +3,10 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.GregorianCalendarCore
 import kotlin.time.Clock
 
@@ -99,7 +103,14 @@ open class GregorianCalendar : Calendar {
         override fun zoneUsesDaylightTime(): Boolean = p.getTimeZone()!!.useDaylightTime()
         override fun complete() = p.complete()
     }
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "GregorianCalendar", mapOf("gregorianCutover" to gregorian.getGregorianChange().getTime()))
+    private fun readObject(input: PluralObjectInputStream) {
+        val cutover = timeStateReadFields(input, "GregorianCalendar")["gregorianCutover"] as Long
+        gregorianState = GregorianCalendarCore.beforeFieldInitialization(Binding()).also { it.restoreSerializedCutover(cutover) }
+    }
     companion object {
+        private const val serialVersionUID = 9199388694351062137L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("GregorianCalendar")
         const val BC = 0
         const val AD = 1
     }

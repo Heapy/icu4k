@@ -14,3 +14,5 @@ internal actual fun dateFormatClassName(input: Any): String=input.javaClass.name
 internal actual fun invalidDateFormatField(message: String): Nothing=throw java.io.InvalidObjectException(message)
 fun DateFormat.format(date: java.time.temporal.Temporal,output: StringBuilder?,position: FormatFieldPosition?): StringBuilder = format(JavaTimeConverters.temporalToCalendar(date),output,position)
 fun DateFormat.format(date: java.time.temporal.Temporal): String = format(date,StringBuilder(64),FormatFieldPosition(0)).toString()
+
+internal actual fun dateFormatBooleanAttributes(): MutableSet<DateFormat.BooleanAttribute> = java.util.EnumSet.allOf(DateFormat.BooleanAttribute::class.java)

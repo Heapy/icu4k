@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.PersianCalendarCore
 import kotlin.time.Clock
 
@@ -37,5 +39,9 @@ open class PersianCalendar : Calendar {
         override fun newerField(defaultField: Int, alternateField: Int): Int = this@PersianCalendar.newerField(defaultField, alternateField)
         override fun internalGet(field: Int, defaultValue: Int): Int = this@PersianCalendar.internalGet(field, defaultValue)
         override fun internalSet(field: Int, value: Int) = this@PersianCalendar.internalSet(field, value)
+    }
+    companion object {
+        private const val serialVersionUID = -6727306982975111643L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("PersianCalendar")
     }
 }

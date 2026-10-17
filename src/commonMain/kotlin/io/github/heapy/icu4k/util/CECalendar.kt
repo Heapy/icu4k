@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.CECalendarCore
 import kotlin.time.Clock
 
@@ -44,6 +46,8 @@ abstract class CECalendar : Calendar {
         override fun baseSetTemporalMonthCode(code: String?) = super@CECalendar.setTemporalMonthCode(code)
     }
     companion object {
+        private const val serialVersionUID = -999547623066414271L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("CECalendar")
         fun ceToJD(year: Long, month: Int, day: Int, epoch: Int): Int = CECalendarCore.ceToJD(year, month, day, epoch)
         fun jdToCE(julianDay: Int, epoch: Int, fields: IntArray?) = CECalendarCore.jdToCE(julianDay, epoch, fields)
     }

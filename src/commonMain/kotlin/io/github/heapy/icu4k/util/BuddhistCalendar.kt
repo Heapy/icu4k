@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.BuddhistCalendarCore
 
 /** Gregorian dates numbered in the Buddhist era. */
@@ -33,5 +35,8 @@ open class BuddhistCalendar : GregorianCalendar {
         override fun gregorianComputeMonthStart(year: Int, month: Int, useMonth: Boolean): Int = super@BuddhistCalendar.handleComputeMonthStart(year, month, useMonth)
         override fun gregorianGetLimit(field: Int, limitType: Int): Int = super@BuddhistCalendar.handleGetLimit(field, limitType)
     }
-    companion object { const val BE = 0 }
+    companion object {
+        private const val serialVersionUID = 2583005278132380631L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("BuddhistCalendar")
+        const val BE = 0 }
 }

@@ -30,6 +30,9 @@ internal class IslamicCalendarCore(private val owner: Owner) {
     private var cType: CalculationType? = CalculationType.ISLAMIC_CIVIL
     private var algorithm: Algorithm? = CIVIL
     private var civil = true
+    fun restoreSerializedFields(type: CalculationType, legacyCivil: Boolean) { cType = type; civil = legacyCivil }
+    fun serializedCivil(): Boolean = civil
+    fun serializedType(): CalculationType? = cType
     fun initializeDefaults() { cType = CalculationType.ISLAMIC_CIVIL; algorithm = CIVIL; civil = true }
     fun copyForOwner(newOwner: Owner): IslamicCalendarCore = IslamicCalendarCore(newOwner).also {
         it.cType = cType; it.algorithm = algorithm; it.civil = civil

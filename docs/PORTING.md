@@ -10816,3 +10816,59 @@ other argument formats and rejects named patterns at the source setter boundary.
 Four common regressions and a JVM oracle compare construction, setter failures,
 parsed values and positions across six locales and numeric/date/complex patterns.
 Focused JVM verification passed (five tests). Public SDF owner binding follows.
+
+
+### Public SimpleDateFormat and Calendar factories (2026-10-17)
+
+The public SimpleDateFormat now binds the common state, pattern, number,
+formatting, parsing and interval engines. Constructors preserve the source fast/
+slow dispatch choices, symbol cloning, locale metadata, numbering overrides and
+calendar ownership. Protected formatting/quarter hooks remain virtual. Formatting
+and parsing share compiled items, including the stale-cache behavior after
+applyLocalizedPattern. Clone rebuilds owner callbacks while preserving the
+source's shared override maps, century Date and timezone formatter.
+
+Calendar exposes getDateTimeFormat, protected handleGetDateFormat, its internal
+FormatConfiguration contract and date/time glue lookups through CalendarFormatCore.
+Calendar-specific symbols and overrides reach SimpleDateFormat without extra clones.
+Attributed formatting supports common inputs and JVM temporal inputs, including
+the source Java-calendar branch that replaces stored state but formats the old
+local calendar. Numeric leap-month parsing uses the full production MessageFormat
+cache and stock-style construction path.
+
+SDF's JVM stream schema preserves its eight source fields, UID and extra
+capitalization value. Reading restores transient state without constructor
+initialization, retains slow dispatch, updates century/calendar state and invokes
+virtual context setters. The complete MessageFormat public facade and
+DateFormat factories (including relative dates) remain pending.
+
+
+### Calendar and timezone stream dependencies (2026-10-17)
+
+Calendar now serializes the source's thirteen stable fields, resolving pending
+fields before writing and swallowing only IllegalArgumentException as ICU4J does.
+Reading creates fresh storage through the concrete handleCreateFields hook,
+rebuilds owner callbacks lazily and resets time/field flags to the source virtual
+state. All fourteen Calendar hierarchy descriptors retain source UIDs/schemas;
+Gregorian cutover, Chinese/Dangi astronomical zones, Ethiopic era mode and Islamic
+calculation/legacy civil settings use their own source stream boundaries.
+
+Timezone streams preserve the source TimeZone ID, SimpleTimeZone decoded rules
+and shared STZInfo, RuleBasedTimeZone initial/historic/final rules, and complete
+Olson transition arrays/final rules/canonical IDs. Locks, frozen flags and derived
+transition caches are reconstructed. Legacy Olson streams reload resources or
+construct an empty zone, retaining the source stream version. Constant zones use
+the source nested class name and UID. RuleBasedTimeZone now has a public facade;
+Dangi uses the real shared rule-based astronomical zone rather than only an
+offset callback. DateFormat flags use EnumSet on JVM and its exact base schema.
+
+New common tests exercise the public SDF and rule-based zone APIs. JVM oracles
+cover public formatting/parsing across calendar types, style factories and
+keywords, attributed inputs, fast/slow/number virtual dispatch after clone/read,
+SDF bidirectional streams and clone graphs, all calendar descriptors and seventeen
+calendar modes (including ancient dates), unresolved invalid fields, zone schemas,
+mutated current-zone streams and legacy Olson recovery. MessageFormat stock-style
+oracles now use the public SDF rather than a joined test facade.
+
+Full verification passed in 6m 19s: JVM 2,336 tests, macOS Native 1,100
+and JS 1,102 tests (one existing skip), plus Linux Native test compilation.

@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.CalType
 import io.github.heapy.icu4k.impl.calendar.EraRulesCore
 import io.github.heapy.icu4k.impl.calendar.JapaneseCalendarCore
@@ -49,6 +51,8 @@ open class JapaneseCalendar : GregorianCalendar {
         override fun handleGetLimit(field: Int, type: Int): Int = p.handleGetLimit(field, type)
     }
     companion object {
+        private const val serialVersionUID = -2977189902603704691L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("JapaneseCalendar")
         private val ERA_RULES = EraRulesCore.getInstance(CalType.JAPANESE, JapaneseCalendarCore.enableTentativeEra(japaneseEraConfiguration()), object : EraRulesCore.Owner {
             override fun currentTimeMillis(): Long = Clock.System.now().toEpochMilliseconds()
             override fun defaultZoneOffset(time: Long): Int = TimeZone.getDefault().getOffset(time)

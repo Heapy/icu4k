@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.util
 
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 import io.github.heapy.icu4k.impl.calendar.IslamicCalendarCore
 import kotlin.time.Clock
 
@@ -67,7 +71,17 @@ open class IslamicCalendar : Calendar {
         override fun set(field: Int, value: Int) = p.set(field, value)
         override fun getActualMaximum(field: Int): Int = p.getActualMaximum(field)
     }
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "IslamicCalendar", mapOf("civil" to islamic().serializedCivil(), "cType" to islamic().serializedType()?.let { CalculationType.valueOf(it.name) }))
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "IslamicCalendar")
+        islamicState = IslamicCalendarCore.beforeFieldInitialization(Binding())
+        val type = data["cType"] as CalculationType? ?: if (data["civil"] as Boolean) CalculationType.ISLAMIC_CIVIL else CalculationType.ISLAMIC
+        islamic().restoreSerializedFields(IslamicCalendarCore.CalculationType.valueOf(type.name), data["civil"] as Boolean)
+        setCalculationType(type)
+    }
     companion object {
+        private const val serialVersionUID = -6253365474073869325L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("IslamicCalendar")
         const val MUHARRAM = 0; const val SAFAR = 1; const val RABI_1 = 2; const val RABI_2 = 3
         const val JUMADA_1 = 4; const val JUMADA_2 = 5; const val RAJAB = 6; const val SHABAN = 7
         const val RAMADAN = 8; const val SHAWWAL = 9; const val DHU_AL_QIDAH = 10; const val DHU_AL_HIJJAH = 11

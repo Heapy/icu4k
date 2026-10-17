@@ -475,9 +475,29 @@ Explicit JDK-mode construction requires JVM.
 
 `SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
 local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
-retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Remaining
-calendar APIs, serialization and date formatting are
-still pending; see [the porting log](docs/PORTING.md) for current coverage.
+retains mutable epoch milliseconds and aliases `java.util.Date` on JVM.
+`RuleBasedTimeZone` exposes historical and recurring transition rules. Calendar,
+SimpleTimeZone, RuleBasedTimeZone and OlsonTimeZone JVM streams preserve ICU4J's
+field schemas, algorithm settings and historical zone data.
+
+`SimpleDateFormat` now formats and parses common date patterns:
+
+```kotlin
+import io.github.heapy.icu4k.text.SimpleDateFormat
+import io.github.heapy.icu4k.util.Date
+
+val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX", ULocale.US)
+format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"))
+println(format.format(Date(0))) // 1970-01-01 00:00:00 Z
+println(format.parse("1970-01-01 00:00:00 Z")!!.getTime()) // 0
+```
+
+Calendar-specific style construction is available through
+`calendar.getDateTimeFormat(dateStyle, timeStyle, locale)`. Pattern overrides,
+localized symbols, attributed text, century boundaries, cloning and JVM
+serialization are supported. The complete MessageFormat facade and DateFormat
+factories, including relative dates, remain pending; see
+[the porting log](docs/PORTING.md) for current coverage.
 
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer
 formatting and parsing, with localized digits and source-compatible cache and

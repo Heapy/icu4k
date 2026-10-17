@@ -18,36 +18,19 @@ class MessageFormatStyleCoreOracleTest {
         when(t) { is NullPointerException->"null"; is IndexOutOfBoundsException->"bounds"; else->t.javaClass.simpleName+":"+t.message }
     }
     internal class Owner(override val locale:ULocale) : MessageFormatStyleCore.Owner {
-        private val patterns=CalendarPatternDataCore.withCommonGenerator()
-        private val generator by lazy {
-            DateTimePatternGeneratorCore().also { core ->
-                DateTimePatternInitializationCore().initialize(core,locale) { loc ->
-                    val cal=Calendar.getInstance(loc)
-                    object:DateTimePatternInitializationCore.CalendarPatterns {
-                        override fun getDateAtTimePattern(style:Int):String?=patterns.make(cal.getType(),loc).getDateAtTimePattern(style)
-                    }
-                }
-            }
-        }
-        override fun dateStyle(date:Boolean,style:Int,locale:ULocale?):Any {
-            val cal=Calendar.getInstance(locale)
-            val data=patterns.make(cal.getType(),locale)
-            val index=if(date)style+4 else style
-            val override=data.overrideAt(index)
-            return SimpleDateFormatStateFixture(locale.toString(),data.pattern(index),override,!override.isNullOrEmpty()).also { it.setCalendar(cal) }
-        }
-        override fun dateSkeleton(skeleton:String,locale:ULocale?):Any=SimpleDateFormatStateFixture(locale.toString(),generator.getBestPattern(skeleton))
-        override fun datePattern(pattern:String,locale:ULocale?):Any=SimpleDateFormatStateFixture(locale.toString(),pattern)
+        override fun dateStyle(date:Boolean,style:Int,locale:ULocale?):Any=SimpleDateFormat.normalDateStyle(date,style,locale)
+        override fun dateSkeleton(skeleton:String,locale:ULocale?):Any=SimpleDateFormat(SimpleDateFormat.bestPattern(skeleton,locale),locale)
+        override fun datePattern(pattern:String,locale:ULocale?):Any=SimpleDateFormat(pattern,locale)
     }
     private fun parsed(value:Any?):Any?=when(value) { is java.util.Date->value.time; is Number->value.toString(); else->value }
     private fun compare(a:java.text.Format,b:java.text.Format,label:String) {
         fun kind(value:Any):String=when(value) {
-            is SimpleDateFormatStateFixture->"SimpleDateFormat"
+            is SimpleDateFormat->"SimpleDateFormat"
             is io.github.heapy.icu4k.impl.number.LocalizedNumberFormatterAsFormat->"LocalizedNumberFormatterAsFormat"
             else->value.javaClass.simpleName
         }
         assertEquals(kind(a),kind(b),label)
-        if(a is com.ibm.icu.text.SimpleDateFormat && b is SimpleDateFormatStateFixture) {
+        if(a is com.ibm.icu.text.SimpleDateFormat && b is SimpleDateFormat) {
             a.timeZone=com.ibm.icu.util.TimeZone.getTimeZone("Etc/UTC"); b.setTimeZone(TimeZone.getTimeZone("Etc/UTC"))
             a.set2DigitYearStart(java.util.Date(0)); b.state.setCenturyStart(Date(0))
             assertEquals(a.toPattern(),b.state.pattern,label)

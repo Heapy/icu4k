@@ -56,7 +56,7 @@ internal class SimpleDateFormatFormatCore(private val owner: Owner) {
         return result
     }
 
-    private fun format(cal: Calendar?, context: DisplayContext?, output: StringBuilder?, pos: FormatFieldPosition?, attributes: MutableList<FormatFieldPosition>?): StringBuilder? {
+    fun format(cal: Calendar?, context: DisplayContext?, output: StringBuilder?, pos: FormatFieldPosition?, attributes: MutableList<FormatFieldPosition>?): StringBuilder? {
         pos!!.setBeginIndex(0)
         pos.setEndIndex(0)
         val items = owner.compiledPatternItems() ?: patternItems ?: SimpleDateFormatPatternCore.compile(owner.pattern!!).also { patternItems = it }

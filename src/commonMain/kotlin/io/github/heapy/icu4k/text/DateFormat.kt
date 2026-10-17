@@ -9,12 +9,14 @@ import io.github.heapy.icu4k.util.*
 abstract class DateFormat : UFormat {
     @kotlin.jvm.JvmField protected var calendar: Calendar? = null
     @kotlin.jvm.JvmField protected var numberFormat: NumberFormat? = null
-    private var booleanAttributes: MutableSet<BooleanAttribute> = BooleanAttribute.entries.toMutableSet()
+    private var booleanAttributes: MutableSet<BooleanAttribute> = dateFormatBooleanAttributes()
+    private var serialVersionOnStream = 1
     private var capitalizationSetting: DisplayContext? = DisplayContext.CAPITALIZATION_NONE
     protected constructor() : super()
     protected constructor(other: DateFormat, @Suppress("UNUSED_PARAMETER") copyMarker: Unit) : super() {
         calendar=other.calendar; numberFormat=other.numberFormat
         booleanAttributes=other.booleanAttributes; capitalizationSetting=other.capitalizationSetting
+        serialVersionOnStream=other.serialVersionOnStream
         other.copyLocaleTo(this)
     }
     enum class BooleanAttribute {
@@ -149,8 +151,22 @@ abstract class DateFormat : UFormat {
             }
         }
     }
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "DateFormat", mapOf(
+        "calendar" to calendar, "numberFormat" to numberFormat, "booleanAttributes" to booleanAttributes,
+        "capitalizationSetting" to capitalizationSetting, "serialVersionOnStream" to serialVersionOnStream,
+    ))
+    @Suppress("UNCHECKED_CAST")
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "DateFormat")
+        calendar = data["calendar"] as Calendar?; numberFormat = data["numberFormat"] as NumberFormat?
+        booleanAttributes = data["booleanAttributes"] as MutableSet<BooleanAttribute>? ?: dateFormatBooleanAttributes()
+        capitalizationSetting = if ((data["serialVersionOnStream"] as Int) < 1) DisplayContext.CAPITALIZATION_NONE else data["capitalizationSetting"] as DisplayContext?
+        serialVersionOnStream = 1
+    }
+
     companion object {
         private const val serialVersionUID=7218322306649953788L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("DateFormat")
         internal fun fixNumberFormatForDates(format: NumberFormat) {
             format.setGroupingUsed(false)
             if(format is DecimalFormat) format.setDecimalSeparatorAlwaysShown(false)
@@ -317,3 +333,5 @@ private class FixedDateSkeletonList(values: List<String?>): AbstractMutableList<
     override fun add(index: Int,element: String?): Unit=throw UnsupportedOperationException()
     override fun removeAt(index: Int): String?=throw UnsupportedOperationException()
 }
+
+internal expect fun dateFormatBooleanAttributes(): MutableSet<DateFormat.BooleanAttribute>
