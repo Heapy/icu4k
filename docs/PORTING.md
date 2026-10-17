@@ -12107,3 +12107,26 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false`.
+
+## Charset detection: Unicode and ISO-2022 recognizer foundations
+
+- Added stateless common recognizers for UTF-8, UTF-16BE/LE, UTF-32BE/LE and
+  ISO-2022-JP/KR/CN, with a shared internal input/candidate protocol. Raw and
+  filtered views retain their independent lengths and backing-array sizes.
+- Preserved ICU4J heuristics: incomplete UTF-8 tails, non-validating UTF-8
+  sequence recognition, UTF-16 backing-capacity scanning, UTF-32 scalar upper
+  bound, escape/shift counting and confidence thresholds.
+- JVM differential tests call all eight ICU4J recognizers directly, with random
+  bytes, independent filtered views, raw lengths, malformed Unicode and escapes.
+  Common tests use 78 independent source-generated confidence vectors, including
+  padded 8,000-byte stream buffers and corrupt-but-mostly-valid sequences.
+- Regenerate using `java -cp /path/to/icu4j-78.3.jar
+  scripts/oracles/CharsetRecognizerGoldens.java`.
+- This is an internal dependency milestone. Multibyte/single-byte recognizers,
+  detector registration/filtering/public APIs, stream/reader adapters and
+  portable charset decoding remain in scope and are not yet implemented.
+- Full validation passed: JVM 2,800 tests; Node 1,371 tests (one skipped);
+  macOS Native 1,369 tests; no failures or errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false`.
