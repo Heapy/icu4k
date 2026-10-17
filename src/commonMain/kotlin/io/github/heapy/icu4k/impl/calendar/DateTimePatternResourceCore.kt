@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import io.github.heapy.icu4k.impl.*
 import io.github.heapy.icu4k.util.MissingResourceException
 import io.github.heapy.icu4k.util.ULocale
@@ -12,7 +14,7 @@ internal class DateTimePatternResourceCore(private val loader: ICUResourceLoader
     fun calendarType(locale: ULocale): String = locale.getKeywordValue("calendar")
         ?: CalendarLocaleCore.getKeywordValuesForLocale("calendar",locale,true)[0]
     private fun bundle(locale: ULocale): ICUResourceBundle = UResourceBundle.getBundleInstance(ICUData.ICU_BASE_NAME,locale,loader) as ICUResourceBundle
-    fun addStandardPatterns(core: DateTimePatternGeneratorCore,locale: ULocale,info: DateTimePatternGeneratorCore.PatternInfo) {
+    fun addStandardPatterns(core: DateTimePatternGeneratorCore,locale: ULocale,info: DateTimePatternGenerator.PatternInfo) {
         val rb=bundle(locale); val path="calendar/${calendarType(locale)}/DateTimePatterns"
         val patterns=rb.getWithFallback(path)
         fun wrong(): Nothing=throw MissingResourceException("Resource in wrong format","ICUResourceBundle",path)
@@ -27,7 +29,7 @@ internal class DateTimePatternResourceCore(private val loader: ICUResourceLoader
             core.addPattern(pattern,false,info)
         }
     }
-    fun addCLDRData(core: DateTimePatternGeneratorCore,locale: ULocale,info: DateTimePatternGeneratorCore.PatternInfo) {
+    fun addCLDRData(core: DateTimePatternGeneratorCore,locale: ULocale,info: DateTimePatternGenerator.PatternInfo) {
         val rb=bundle(locale); val type=calendarType(locale)
         try {
             rb.getAllChildrenWithFallback("calendar/$type/appendItems",object: UResource.Sink() {
@@ -63,6 +65,10 @@ internal class DateTimePatternResourceCore(private val loader: ICUResourceLoader
         private val APPEND=arrayOf("Era","Year","Quarter","Month","Week","*","Day-Of-Week","Day","*","*","*","Hour","Minute","Second","*","Timezone")
         private val NAMES=arrayOf("era","year","quarter","month","week","weekOfMonth","weekday","day","dayOfYear","weekdayOfMonth","dayperiod","hour","minute","second","*","zone")
         private val WIDTHS=arrayOf("","-short","-narrow")
+        fun appendFormatNumber(key: UResource.Key?): Int {
+            for (i in APPEND.indices) if (key!!.contentEquals(APPEND[i])) return i
+            return -1
+        }
         fun appendFormatNumber(key: String?): Int=APPEND.indexOf(key)
         private fun fieldAndWidthNumber(key: String): Int {
             for(i in NAMES.indices) for(j in WIDTHS.indices) if(NAMES[i]+WIDTHS[j]==key) return i*3+j

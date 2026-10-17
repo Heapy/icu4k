@@ -1,7 +1,7 @@
 package io.github.heapy.icu4k.impl.calendar
 
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.FormatParser
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.VariableField
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.FormatParser
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.VariableField
 import kotlin.test.*
 
 class DateTimePatternSyntaxCoreTest {

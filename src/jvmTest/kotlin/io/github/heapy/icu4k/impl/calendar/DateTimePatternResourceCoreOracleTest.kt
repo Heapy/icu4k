@@ -1,6 +1,8 @@
 @file:Suppress("DEPRECATION")
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import com.ibm.icu.text.DateTimePatternGenerator as Source
 import com.ibm.icu.util.ULocale as SourceLocale
 import io.github.heapy.icu4k.impl.ICUResourceBundleReader
@@ -28,7 +30,7 @@ class DateTimePatternResourceCoreOracleTest {
         for(id in ids) for(includeStandard in listOf(false,true)) {
             val a=ctor.newInstance(); val b=DateTimePatternGeneratorCore(Source::class.java.desiredAssertionStatus())
             canonical.invoke(a); b.addCanonicalItems()
-            val ai=Source.PatternInfo(); val bi=DateTimePatternGeneratorCore.PatternInfo()
+            val ai=Source.PatternInfo(); val bi=DateTimePatternGenerator.PatternInfo()
             val locale=SourceLocale(id); val target=ULocale(id)
             assertEquals(type.invoke(a,locale),resources.calendarType(target),"type/$id")
             fun state(label: String) {

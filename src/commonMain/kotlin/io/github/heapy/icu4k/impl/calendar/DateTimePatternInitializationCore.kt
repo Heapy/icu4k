@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import io.github.heapy.icu4k.impl.ICUResourceLoader
 import io.github.heapy.icu4k.impl.defaultICUResourceLoader
 import io.github.heapy.icu4k.text.DecimalFormatSymbols
@@ -20,7 +22,7 @@ internal class DateTimePatternInitializationCore(loader: ICUResourceLoader=defau
         initialize(core,locale,false,createCalendar)
     }
     private fun initialize(core: DateTimePatternGeneratorCore,locale: ULocale?,skipStandard: Boolean,createCalendar: ((ULocale)->CalendarPatterns)?) {
-        val info=DateTimePatternGeneratorCore.PatternInfo()
+        val info=DateTimePatternGenerator.PatternInfo()
         core.addCanonicalItems()
         val loc=locale!!
         if(!skipStandard) resources.addStandardPatterns(core,loc,info)

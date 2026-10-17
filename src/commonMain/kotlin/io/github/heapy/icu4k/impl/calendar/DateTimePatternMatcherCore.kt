@@ -7,8 +7,8 @@ import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.TYPE_LIMIT
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.DAYPERIOD
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.getCanonicalChar
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.NONE
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.FormatParser
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.VariableField
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.FormatParser
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.VariableField
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.types
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.MINUTE
 import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.FRACTIONAL_SECOND

@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.calendar
 
-import io.github.heapy.icu4k.impl.PatternTokenizer
-import io.github.heapy.icu4k.text.UnicodeSet
 
 /** DateTimePatternGenerator's field classification and quote-aware parser. */
 internal object DateTimePatternSyntaxCore {
@@ -48,67 +46,6 @@ internal object DateTimePatternSyntaxCore {
         for(i in 0 until TYPE_LIMIT) if(mask and (1 shl i)!=0) {
             if(isNotEmpty()) append(" | ")
             append(FIELD_NAME[i]).append(' ')
-        }
-    }
-    open class VariableField(value: String?,strict: Boolean) {
-        constructor(value: String?): this(value,false)
-        val canonicalIndex=getCanonicalIndex(value,strict)
-        private val string: String
-        init {
-            if(canonicalIndex<0) throw IllegalArgumentException("Illegal datetime field:\t$value")
-            string=value!!
-        }
-        open fun getType(): Int=types[canonicalIndex][1]
-        open fun isNumeric(): Boolean=types[canonicalIndex][2]>0
-        override fun toString(): String=string
-        companion object {
-            fun getCanonicalCode(type: Int): String=if(type in CANONICAL_ITEMS.indices) CANONICAL_ITEMS[type] else type.toString()
-        }
-    }
-    open class FormatParser {
-        private val tokenizer=PatternTokenizer().setSyntaxCharacters(SYNTAX_CHARS).setExtraQuotingCharacters(QUOTING_CHARS).setUsingQuote(true)
-        private val items=ArrayList<Any?>()
-        fun set(value: String?): FormatParser=set(value,false)
-        @Suppress("UNUSED_PARAMETER")
-        open fun set(value: String?,strict: Boolean): FormatParser {
-            items.clear()
-            val text=value!!
-            if(text.isEmpty()) return this
-            tokenizer.setPattern(text)
-            val buffer=StringBuilder(); val variable=StringBuilder()
-            while(true) {
-                buffer.setLength(0)
-                val status=tokenizer.next(buffer)
-                if(status==PatternTokenizer.DONE) break
-                if(status==PatternTokenizer.SYNTAX) {
-                    if(variable.isNotEmpty() && buffer[0]!=variable[0]) addVariable(variable,false)
-                    variable.append(buffer)
-                } else { addVariable(variable,false); items.add(buffer.toString()) }
-            }
-            addVariable(variable,false)
-            return this
-        }
-        private fun addVariable(variable: StringBuilder,strict: Boolean) {
-            if(variable.isNotEmpty()) { items.add(VariableField(variable.toString(),strict)); variable.setLength(0) }
-        }
-        open fun getItems(): MutableList<Any?> = items
-        override fun toString(): String=toString(0,items.size)
-        open fun toString(start: Int,limit: Int): String=buildString {
-            for(i in start until limit) {
-                if(i !in items.indices) throw IndexOutOfBoundsException()
-                val item=items[i]
-                if(item is String) append(tokenizer.quoteLiteral(item)) else append(item!!.toString())
-            }
-        }
-        open fun hasDateAndTimeFields(): Boolean {
-            var found=0
-            for(item in items) if(item is VariableField) found=found or (1 shl item.getType())
-            return found and DATE_MASK!=0 && found and TIME_MASK!=0
-        }
-        open fun quoteLiteral(value: String?): Any=tokenizer.quoteLiteral(value)
-        companion object {
-            private val SYNTAX_CHARS=UnicodeSet("[a-zA-Z]").freeze()
-            private val QUOTING_CHARS=UnicodeSet("[[[:script=Latn:][:script=Cyrl:]]&[[:L:][:M:]]]").freeze()
         }
     }
     val types=arrayOf(

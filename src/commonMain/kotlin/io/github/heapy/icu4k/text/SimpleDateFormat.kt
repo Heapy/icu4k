@@ -223,14 +223,7 @@ open class SimpleDateFormat : DateFormat {
         }
         internal fun normalDateStyle(date: Boolean, style: Int, locale: ULocale?): DateFormat = normalDateTimeStyle(if (date) style else -1, if (date) -1 else style, locale)
         internal fun normalDateTimeStyle(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat = DateFormat.createStyle(dateStyle, timeStyle, locale, null)
-        internal fun bestPattern(skeleton: String?, locale: ULocale?): String = DateTimePatternGeneratorCore().also { core ->
-            DateTimePatternInitializationCore().initialize(core, locale!!) { loc ->
-                val cal = Calendar.getInstance(loc)
-                object : DateTimePatternInitializationCore.CalendarPatterns {
-                    override fun getDateAtTimePattern(style: Int): String? = Calendar.getDateAtTimePattern(cal, loc, style)
-                }
-            }
-        }.getBestPattern(skeleton)
+        internal fun bestPattern(skeleton: String?, locale: ULocale?): String = DateTimePatternGenerator.getInstance(locale).getBestPattern(skeleton)
     }
 }
 internal expect fun simpleDateFormatAssertionsEnabled(): Boolean

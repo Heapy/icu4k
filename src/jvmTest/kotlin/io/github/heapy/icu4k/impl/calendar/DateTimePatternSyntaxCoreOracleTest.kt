@@ -1,6 +1,8 @@
 @file:Suppress("DEPRECATION")
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import com.ibm.icu.text.DateTimePatternGenerator as Source
 import java.lang.reflect.InvocationTargetException
 import kotlin.random.Random
@@ -16,7 +18,7 @@ class DateTimePatternSyntaxCoreOracleTest {
     private fun items(values: List<Any?>): List<Any?> = values.map {
         when(it) {
             is Source.VariableField -> listOf("field",it.toString(),it.type,it.isNumeric)
-            is DateTimePatternSyntaxCore.VariableField -> listOf("field",it.toString(),it.getType(),it.isNumeric())
+            is DateTimePatternGenerator.VariableField -> listOf("field",it.toString(),it.getType(),it.isNumeric())
             else -> listOf("literal",it)
         }
     }
@@ -31,14 +33,14 @@ class DateTimePatternSyntaxCoreOracleTest {
         assertEquals(table.map { (it as IntArray).toList() },DateTimePatternSyntaxCore.types.map { it.toList() })
         for(ch in 0..127) for(length in listOf(0,1,2,3,4,5,6,7,20,21,126,127,128,255,256,1000)) for(strict in listOf(false,true)) {
             val value=ch.toChar().toString().repeat(length)
-            assertEquals(outcome { val field=Source.VariableField(value,strict); listOf(field.toString(),field.type,field.isNumeric) },outcome { val field=DateTimePatternSyntaxCore.VariableField(value,strict); listOf(field.toString(),field.getType(),field.isNumeric()) },"field/$ch/$length/$strict")
+            assertEquals(outcome { val field=Source.VariableField(value,strict); listOf(field.toString(),field.type,field.isNumeric) },outcome { val field=DateTimePatternGenerator.VariableField(value,strict); listOf(field.toString(),field.getType(),field.isNumeric()) },"field/$ch/$length/$strict")
         }
         val canonical=Source::class.java.getDeclaredMethod("getCanonicalChar",Int::class.javaPrimitiveType,Char::class.javaPrimitiveType).apply { isAccessible=true }
         for(field in -2..17) for(ch in listOf('h','K','H','k','L','\u0000')) assertEquals(outcome { canonical.invoke(null,field,ch) },outcome { DateTimePatternSyntaxCore.getCanonicalChar(field,ch) })
-        for(field in listOf(Int.MIN_VALUE,-1,0,15,16,Int.MAX_VALUE)) assertEquals(Source.VariableField.getCanonicalCode(field),DateTimePatternSyntaxCore.VariableField.getCanonicalCode(field))
+        for(field in listOf(Int.MIN_VALUE,-1,0,15,16,Int.MAX_VALUE)) assertEquals(Source.VariableField.getCanonicalCode(field),DateTimePatternGenerator.VariableField.getCanonicalCode(field))
     }
     @Test fun parserItemsQuotingFailuresAndMutableAliases() {
-        val a=Source.FormatParser(); val b=DateTimePatternSyntaxCore.FormatParser()
+        val a=Source.FormatParser(); val b=DateTimePatternGenerator.FormatParser()
         val sourceAlias=a.items; val targetAlias=b.getItems()
         for(pattern in patterns()) for(strict in listOf(false,true)) {
             assertEquals(outcome { a.set(pattern,strict); "ok" },outcome { b.set(pattern,strict); "ok" },"parse/$pattern/$strict")
@@ -64,7 +66,7 @@ class DateTimePatternSyntaxCoreOracleTest {
     private fun snapshot(target: DateTimePatternMatcherCore): List<Any?> = listOf(target.type.toList(),target.original.toString(),target.baseOriginal.toString(),target.toString(),target.toCanonicalString(),target.getBasePattern(),target.getFieldMask(),target.hashCode())
     @Test fun matcherSkeletonsDuplicateRulesAndPartialStateMatchSource() {
         val a=matcherConstructor.newInstance(); val b=DateTimePatternMatcherCore(assertions)
-        val ap=Source.FormatParser(); val bp=DateTimePatternSyntaxCore.FormatParser()
+        val ap=Source.FormatParser(); val bp=DateTimePatternGenerator.FormatParser()
         val generator=Source.getEmptyInstance()
         for(pattern in patterns()+listOf("y".repeat(127),"y".repeat(128),"y".repeat(256),"S".repeat(1000))) for(duplicates in listOf(false,true)) {
             assertEquals(outcome { set.invoke(a,pattern,ap,duplicates); "ok" },outcome { b.set(pattern,bp,duplicates); "ok" },"matcher/$pattern/$duplicates")
@@ -75,7 +77,7 @@ class DateTimePatternSyntaxCoreOracleTest {
     @Test fun distanceMasksOrderingAndExtractionPreserveSourceState() {
         val random=Random(13183)
         val data=patterns().filterNotNull().take(1600)
-        val ap=Source.FormatParser(); val bp=DateTimePatternSyntaxCore.FormatParser()
+        val ap=Source.FormatParser(); val bp=DateTimePatternGenerator.FormatParser()
         val info=distanceConstructor.newInstance(); val targetInfo=DateTimePatternDistanceInfo()
         val matches=data.mapNotNull { pattern ->
             val a=matcherConstructor.newInstance(); val b=DateTimePatternMatcherCore(assertions)

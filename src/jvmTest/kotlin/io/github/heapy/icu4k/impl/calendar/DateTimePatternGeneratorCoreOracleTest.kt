@@ -1,6 +1,8 @@
 @file:Suppress("DEPRECATION")
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import com.ibm.icu.text.DateTimePatternGenerator as Source
 import com.ibm.icu.util.ULocale
 import java.lang.reflect.InvocationTargetException
@@ -37,7 +39,7 @@ class DateTimePatternGeneratorCoreOracleTest {
     private fun read(source: Source,name: String): Any?=Source::class.java.getDeclaredField(name).apply { isAccessible=true }.get(source)
     private fun allowed(source: Source,value: Array<String?>?) { Source::class.java.getDeclaredField("allowedHourFormats").apply { isAccessible=true }.set(source,value) }
     @Test fun registrationConflictsExplicitSkeletonsAndFailureState() {
-        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGeneratorCore.PatternInfo()
+        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGenerator.PatternInfo()
         val random=Random(783)
         val patterns=listOf(null,"","y-M-d","yy/MM/dd","yyyy MMM d","d MMMM y","EEEE d MMMM y","HH:mm","H.m.s","hh:mm a","K:mm B","m:ss.SSS","y j M","d 'of' MMMM","ah","h")
         val skeletons=listOf(null,"yMd","yyMMdd","yyyyMMMMd","hmm","ahmm","Hm","yM","MMMMd","msS")
@@ -49,7 +51,7 @@ class DateTimePatternGeneratorCoreOracleTest {
         }
     }
     @Test fun bestPatternsFieldAdjustmentMetacharactersAndAppendBranches() {
-        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGeneratorCore.PatternInfo()
+        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGenerator.PatternInfo()
         for((pattern,skeleton) in listOf("yyyy-MM-dd" to null,"EEEE, d MMMM y" to "yMMMMEEEEd","MMM d" to "MMMd","HH:mm" to "Hm","HH:mm:ss" to "Hms","h:mm a" to "hm","y/MM/dd" to "yyyyMMdd","MMMM d" to "MMdd")) {
             a.addPatternWithSkeleton(pattern,skeleton,true,ai); b.addPatternWithSkeleton(pattern,skeleton,true,bi)
         }
@@ -62,7 +64,7 @@ class DateTimePatternGeneratorCoreOracleTest {
     }
     private fun import(source: Source): DateTimePatternGeneratorCore {
         val core=DateTimePatternGeneratorCore(Source::class.java.desiredAssertionStatus())
-        val info=DateTimePatternGeneratorCore.PatternInfo()
+        val info=DateTimePatternGenerator.PatternInfo()
         val values=read(source,"skeleton2pattern") as Map<*,*>
         for((key,value) in values) {
             val record=value!!; val clazz=record.javaClass
@@ -104,7 +106,7 @@ class DateTimePatternGeneratorCoreOracleTest {
         val a2=a.clone(); val b2=b.copy(); assertFalse(a2.isFrozen); assertFalse(b2.isFrozen()); assertEquals(state(a2),state(b2))
     }
     @Test fun redundantsOutputAliasesAndFailFastMapIteration() {
-        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGeneratorCore.PatternInfo()
+        val a=Source.getEmptyInstance(); val b=empty(); val ai=Source.PatternInfo(); val bi=DateTimePatternGenerator.PatternInfo()
         for(pattern in listOf("y-M-d","yyyy/MM/dd","d MMM y","HH:mm","H:m","h:mm a")) { a.addPattern(pattern,true,ai); b.addPattern(pattern,true,bi) }
         assertEquals(a.getRedundants(LinkedHashSet()).toList(),b.getRedundants(LinkedHashSet()).toList())
         val sourceMap=object: LinkedHashMap<String,String>() { override fun put(key: String,value: String): String? { a.addPattern("G yQQQQ",true,ai); return super.put(key,value) } }
@@ -120,7 +122,7 @@ class DateTimePatternGeneratorCoreOracleTest {
         assertSame(outputA,a.getBaseSkeletons(outputA)); assertSame(outputB,b.getBaseSkeletons(outputB))
         val av=sourceView!! as MutableSet<String>; val bv=targetView!! as MutableSet<String>
         assertEquals(av.remove("y"),bv.remove("y")); assertEquals(state(a),state(b))
-        a.addPattern("y-M-d",true,Source.PatternInfo()); b.addPattern("y-M-d",true,DateTimePatternGeneratorCore.PatternInfo())
+        a.addPattern("y-M-d",true,Source.PatternInfo()); b.addPattern("y-M-d",true,DateTimePatternGenerator.PatternInfo())
         assertEquals(av.toList(),bv.toList())
         val ai=av.iterator(); val bi=bv.iterator()
         while(ai.hasNext()) { assertEquals(ai.next(),bi.next()); ai.remove(); bi.remove(); assertEquals(state(a),state(b)) }

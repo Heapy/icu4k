@@ -3,17 +3,18 @@
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl.calendar
 
+import io.github.heapy.icu4k.text.DateTimePatternGenerator
+
 import io.github.heapy.icu4k.impl.SimpleFormatterImpl
 import io.github.heapy.icu4k.impl.createCalendarCacheLock
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.FormatParser
-import io.github.heapy.icu4k.impl.calendar.DateTimePatternSyntaxCore.VariableField
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.FormatParser
+import io.github.heapy.icu4k.text.DateTimePatternGenerator.VariableField
 import kotlin.concurrent.Volatile
 
 /** Pattern registration, best-match search and field adjustment; locale initialization is separate. */
 internal open class DateTimePatternGeneratorCore(private val assertionsEnabled: Boolean=false,monitorOwner: Any?=null) {
     enum class DisplayWidth { WIDE, ABBREVIATED, NARROW }
     enum class HourCycle { HOUR_CYCLE_12,HOUR_CYCLE_23,HOUR_CYCLE_24,HOUR_CYCLE_11 }
-    class PatternInfo { var status=0; var conflictingPattern: String?=null }
     private class PatternValue(val pattern: String?,val specified: Boolean)
     private class Match(var pattern: String?,var matcher: DateTimePatternMatcherCore?)
     private val monitor=createCalendarCacheLock(monitorOwner?:this)
@@ -33,11 +34,13 @@ internal open class DateTimePatternGeneratorCore(private val assertionsEnabled: 
     open fun isFrozen(): Boolean=frozen
     open fun freeze(): DateTimePatternGeneratorCore { frozen=true; return this }
     private fun checkFrozen() { if(isFrozen()) throw UnsupportedOperationException("Attempt to modify frozen object") }
-    open fun copy(monitorOwner: Any?=null): DateTimePatternGeneratorCore=DateTimePatternGeneratorCore(assertionsEnabled,monitorOwner).also {
-        it.skeletons=skeletons.copy(); it.bases=bases.copy(); it.decimal=decimal
-        it.dateTimeFormats=dateTimeFormats.copyOf(); it.appendFormats=appendFormats.copyOf(); it.fieldNames=fieldNames.copyOf()
-        it.hour=hour; it.allowedHours=allowedHours; it.availableKeys=availableKeys
+    internal fun copyStateTo(target: DateTimePatternGeneratorCore) {
+        target.skeletons=skeletons.copy(); target.bases=bases.copy(); target.decimal=decimal
+        target.dateTimeFormats=dateTimeFormats.copyOf(); target.appendFormats=appendFormats.copyOf(); target.fieldNames=fieldNames.copyOf()
+        target.hour=hour; target.allowedHours=allowedHours; target.availableKeys=availableKeys
     }
+    internal fun clearFrozen() { frozen=false }
+    open fun copy(monitorOwner: Any?=null): DateTimePatternGeneratorCore=DateTimePatternGeneratorCore(assertionsEnabled,monitorOwner).also { copyStateTo(it) }
     open fun cloneAsThawed(): DateTimePatternGeneratorCore { val result=copy(); frozen=false; return result }
     open fun getDefaultHourFormatChar(): Char=hour
     open fun setDefaultHourFormatChar(value: Char) { hour=value }
@@ -73,9 +76,9 @@ internal open class DateTimePatternGeneratorCore(private val assertionsEnabled: 
             if(getFieldDisplayName(i,DisplayWidth.NARROW)==null) setFieldDisplayName(i,DisplayWidth.NARROW,getFieldDisplayName(i,DisplayWidth.ABBREVIATED))
         }
     }
-    fun addCanonicalItems() { val info=PatternInfo(); for(item in DateTimePatternSyntaxCore.CANONICAL_ITEMS) addPattern(item,false,info) }
-    open fun addPattern(pattern: String?,override: Boolean,info: PatternInfo?): DateTimePatternGeneratorCore=addPatternWithSkeleton(pattern,null,override,info)
-    open fun addPatternWithSkeleton(pattern: String?,skeleton: String?,override: Boolean,info: PatternInfo?): DateTimePatternGeneratorCore {
+    fun addCanonicalItems() { val info=DateTimePatternGenerator.PatternInfo(); for(item in DateTimePatternSyntaxCore.CANONICAL_ITEMS) addPattern(item,false,info) }
+    open fun addPattern(pattern: String?,override: Boolean,info: DateTimePatternGenerator.PatternInfo?): DateTimePatternGeneratorCore=addPatternWithSkeleton(pattern,null,override,info)
+    open fun addPatternWithSkeleton(pattern: String?,skeleton: String?,override: Boolean,info: DateTimePatternGenerator.PatternInfo?): DateTimePatternGeneratorCore {
         checkFrozen()
         val matcher=DateTimePatternMatcherCore(assertionsEnabled).set(skeleton?:pattern,parser,false)
         val base=matcher.getBasePattern()
