@@ -11862,3 +11862,16 @@ Registry validation: the full `jvmTest jsNodeTest macosArm64Test
 compileTestKotlinLinuxX64` run passed in 4m 37s: 2,730 JVM tests, 1,337 JS tests
 (one existing skip), 1,335 macOS Native tests, zero failures/errors. Linux Native
 test compilation also passed.
+
+## Mutable transliteration support
+
+Ported the full mutable ReplaceableContextIterator used by case transliterators:
+separate mapping/context ranges, bidirectional lookahead, incremental limit state
+and replacement length adjustments. Added BreakTransliterator's CharacterIterator
+adapter with shared text, independent cursor clones and unvalidated shallow clone
+semantics after text mutation. Public generic Transform and StringTransform
+contracts are now available in Common Kotlin.
+
+Targeted JVM oracles compare constructor/cursor bounds, replacements, malformed
+UTF-16, context directions and full lower/upper/title/fold mappings in English,
+Turkish, Azerbaijani, Lithuanian and Greek contexts against ICU4J 78.3.
