@@ -21,9 +21,9 @@ internal class DateIntervalPatternCore(private val owner: Owner) {
     }
     private data class SkeletonMatch(val skeleton: String, val bestSkeleton: String)
     private val info get() = owner.info
-    fun initialize(): MutableMap<String, PatternInfo> {
+    fun initialize(fullPattern: String? = owner.fullPattern): MutableMap<String, PatternInfo> {
         val generator = DateTimePatternGenerator.getInstance(owner.locale)
-        if (owner.skeleton == null) owner.skeleton = generator.getSkeleton(owner.fullPattern)
+        if (owner.skeleton == null) owner.skeleton = generator.getSkeleton(fullPattern)
         var skeleton = normalizeHourMetacharacters(owner.skeleton!!, owner.locale)
         val patterns = intervalPatternMap<PatternInfo>()
         val date = StringBuilder(); val normalizedDate = StringBuilder()
