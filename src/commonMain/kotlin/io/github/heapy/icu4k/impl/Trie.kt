@@ -30,6 +30,14 @@ abstract class Trie {
     override fun equals(other: Any?): Boolean = other===this || other is Trie && isLatin1Linear()==other.isLatin1Linear() && options==other.options && m_dataLength_==other.m_dataLength_ && m_index_.contentEquals(other.m_index_)
     override fun hashCode(): Int = legacyTrieHashCode(0)
     fun getSerializedDataSize(): Int = 16+2*m_dataOffset_+m_dataLength_*(if(isCharTrie())2 else 4)
+    internal fun iteratorIndex(index: Int): Int {
+        if(index !in m_index_.indices)throw IndexOutOfBoundsException()
+        return m_index_[index].code
+    }
+    internal fun iteratorValue(index: Int): Int = getValue(index)
+    internal fun iteratorInitial(): Int = getInitialValue()
+    internal fun iteratorDataOffset(): Int = m_dataOffset_
+    internal fun iteratorFold(value: Int): Int = (m_dataManipulate_?:throw NullPointerException("The field DataManipulate in this Trie is null")).getFoldingOffset(value)
     protected abstract fun getSurrogateOffset(lead: Char,trail: Char): Int
     protected abstract fun getValue(index: Int): Int
     protected abstract fun getInitialValue(): Int

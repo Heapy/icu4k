@@ -12040,3 +12040,20 @@ regressions cover alias execution and deferred factory failure.
   or errors. Linux Native test compilation passed. Command:
   `./gradlew jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64
   -Pkotlin.compiler.execution.strategy=in-process`.
+
+## Legacy TrieIterator and RangeValueIterator
+
+- Added RangeValueIterator and its reusable, subclassable Element result.
+- Ported the original TrieIterator block/folding algorithm, including extract,
+  reset, terminal result preservation, BMP lead-code-point index displacement,
+  and supplementary null-index/block skips. Internal Trie accessors preserve
+  checked array access across Kotlin targets without widening protected APIs.
+- JVM tests compare every range from all 12 profile tries at four extract
+  transforms, repeated complete iteration, partial reset, and dummy char/int
+  tries. Common tests use 48 independent range/callback-trace fingerprints from
+  ICU4J 78.3; regenerate with
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/TrieIteratorGoldens.java`.
+- Full validation passed: JVM 2,790 tests; Node 1,367 tests (one skipped);
+  macOS Native 1,365 tests; no failures or errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
