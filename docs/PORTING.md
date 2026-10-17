@@ -11414,3 +11414,59 @@ existing skip) and 1,178 macOS Native tests, with no failures or errors. Linux
 Native test compilation passed. Before partitioning, the full kernel validation
 also passed in 5m 11s (2,499 JVM / 1,163 JS / 1,161 macOS tests); the count increase
 is the independent plane tests and separate direction-boundary test.
+
+### Bidi paragraph property preparation (2026-10-17)
+
+BidiPropertyCore ports getDirProps and GetParaLevelAt: UTF-16 code-point scanning
+with BN lead units, paragraph P2/P3, FSI to LRI/RLI resolution, isolate overflow,
+CR/LF paragraph boundaries, paragraph storage growth, default/inverse paragraph
+levels, streaming processed length, last Arabic position, control counts and
+paragraph-order flags. Its input extends the explicit-level state protocol so
+property preparation feeds BidiExplicitCore directly. Source classifier fallback
+(CLASS_DEFAULT), upper-value clamping and unchanged negative values are shared by
+the future facade through customizedClass.
+
+Prologue scanning retains the source's first-strong selection after the last
+paragraph break and observes context replacement during classifier callbacks.
+The scanner retains source partial writes and failures, including inverse
+streaming without a completed paragraph; these outcomes are compared rather than
+replaced with a successful empty result.
+
+JVM tests compare source preparation, paragraph-level lookup and composition with
+explicit-level resolution, including 5,000 seeded random paragraphs, all modes,
+streaming/control options, supplementary and malformed UTF-16, isolate overflow,
+multiple paragraph-storage expansions, custom direction values, callback failures
+and callback context mutation. Common tests use independently captured ICU4J
+78.3 fingerprints of classifier calls, outcome/errors, both working arrays and
+all paragraph metadata, followed by explicit resolution. Fixtures cover all modes,
+six paragraph levels, six option sets and varied prologues; they are partitioned
+by mode for Node test duration.
+
+The implicit-level state tables and resolver, remaining line/run/maps, full Bidi
+facade and BidiTransform remain outstanding. The complete Bidi API is not yet
+exposed by these internal kernels.
+
+Composition tests now pass through the source getLevelsMemory transition using
+processed length, including buffer identity/reuse and shrinking to zero after
+streaming preparation. Common fingerprints were independently recaptured with
+this allocation step. Reused-state JVM cases seed prior counters, paragraph
+storage and working arrays to verify retained content and failure-time mutation.
+
+The scanner reads UTF-16 arrays directly using source forward/backward pairing,
+avoiding a per-code-point CharSequence slice. A callback that changes a previously
+visited unit into a lead surrogate can make the next trail unit pair backwards;
+the source then fails its property-array write. Common tests retain that failure
+on portable targets; JVM tests compare the exact source exception class, callback
+sequence and mutations. A separate JVM oracle scans every U+0000..U+10FFFF value
+(with separators around isolated surrogate values), comparing full properties,
+metadata and classifier calls in bounded per-plane inputs.
+
+Remote CI 39020533151 for the preceding stage (93380784) completed successfully
+on both jvm-js-linux and macOS, verifying the Unicode-plane timeout adjustment.
+
+Final validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64`
+passed in 6m 32s with Kotlin 2.4.21 / Gradle 9.8.1. XML reports contain 2,534 JVM
+tests, 1,190 JavaScript tests (one existing skip) and 1,188 macOS Native tests,
+with no failures or errors. Linux Native test compilation passed. The initial
+property-core full validation before the allocation/mutation refinements also
+passed in 8m 49s.
