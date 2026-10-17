@@ -83,9 +83,9 @@ class BidiImplicitCoreTest {
 )
         val texts = listOf("abc", "אבג", "a(אב)12 ب٣ z", "ا 12 א 34 ا 56 a", "a\r\nאב\na\u2029ب",
             "a\u202bא(12)\u202c z", "\u202da(אב)\u202cب", "a\u2067אב \u2066x\u2069z\u2069 q", "\u2069א", "a\u2068א\u2069",
-            "\u0300א\u0301 12", "😀𞤀𞸀\ud800X\udc00", "א a   \n", "a\u200c\u200d\u200e\u200fא\u202c ",
+            "\u0300א\u0301 12", "😀𞤀𞸀" + charArrayOf('\ud800', 'X', '\udc00').concatToString(), "א a   \n", "a\u200c\u200d\u200e\u200fא\u202c ",
             "\u2067".repeat(140) + "aא" + "\u2069".repeat(145), "ا 12 a 34 אב 56 a .".repeat(8))
-        val prologues = listOf(null, "", "a", "א", "ا\n1", "😀𞤀", "\ud800א\udc00")
+        val prologues = listOf(null, "", "a", "א", "ا\n1", "😀𞤀", charArrayOf('\ud800', 'א', '\udc00').concatToString())
         val epilogues = listOf("", null, "a", "א", "12", "٣", "\nא", "😀𞸀", "\u0000\u2068")
         var hash = -3750763034362895579L
         fun mix(value: Int) { hash = (hash xor value.toLong()) * 1099511628211L }

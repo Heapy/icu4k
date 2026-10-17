@@ -17,7 +17,7 @@ class ModifierTest {
         assertSame(NumberFormatField.INTEGER, output.fieldAt(3))
         assertSame(NumberFormatField.SIGN, output.fieldAt(0))
         assertTrue(mod.isStrong())
-        assertEquals(2, ConstantAffixModifier("\ud800", "\udc00", null, false).getCodePointCount())
+        assertEquals(2, ConstantAffixModifier(charArrayOf('\ud800').concatToString(), charArrayOf('\udc00').concatToString(), null, false).getCodePointCount())
         assertTrue(ConstantAffixModifier.EMPTY.strictEquals(ConstantAffixModifier(null, null, null, false)))
     }
     @Test fun multiFieldOverwriteCopiesInputAndCountsDelta() {

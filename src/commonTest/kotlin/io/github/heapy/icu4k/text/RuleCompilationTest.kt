@@ -23,10 +23,10 @@ class RuleCompilationTest {
         assertFailsWith<IllegalArgumentException> { RuleBasedBreakIterator("[];") }
     }
     @Test fun malformedSourceUnitsUseOriginalJavaUtf8ReplacementPolicy() {
-        val rules = "\\" + "\ud800" + ";.;"
+        val rules = "\\" + charArrayOf('\ud800').concatToString() + ";.;"
         val iterator = RuleBasedBreakIterator(rules)
         assertEquals("\\?;.;", iterator.toString())
-        iterator.setText("\ud800x")
+        iterator.setText(charArrayOf('\ud800', 'x').concatToString())
         assertEquals(1, iterator.next()); assertEquals(2, iterator.next())
     }
 }

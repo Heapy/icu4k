@@ -4,6 +4,8 @@ package io.github.heapy.icu4k.text
 import io.github.heapy.icu4k.lang.UCharacterDirection as D
 import kotlin.test.*
 
+// Keep lone surrogate fixtures as Char values: cached JS string literals can
+// emit '?' instead, silently changing both inputs and expected output strings.
 class BidiPropertyCoreTest {
     @Test fun sourcePreparationAndExplicitMode0() = checkMode(0)
     @Test fun sourcePreparationAndExplicitMode1() = checkMode(1)
@@ -24,11 +26,11 @@ class BidiPropertyCoreTest {
 -2391536446930182788L,
 2329319873394296081L,
 )
-        val texts = listOf("a", "אב", "ابت", "12(אב) a", "😀𞤀𞸀\ud800\udc00\ud800X\udc00", "a\r\nאב\na\u2029ب",
+        val texts = listOf("a", "אב", "ابت", "12(אב) a", "😀𞤀𞸀" + charArrayOf('\ud800', '\udc00', '\ud800', 'X', '\udc00').concatToString(), "a\r\nאב\na\u2029ب",
             "\u2068(אב)\u2069a", "\u2068(abc)\u2069א", "\u2068\u2066א\u2069a\u2069",
             "\u2069\u2068\u2067א\u2069\u2069", "\u2068".repeat(140) + "א" + "\u2069".repeat(145),
             "\u2068".repeat(140) + "a", "a\nא\nب\r\n".repeat(30), "a\u200c\u200d\u200e\u200f\u202a\u202c\u2066\u2069א\n")
-        val prologues = listOf(null, "", "א\na", "a\nא", "אב", "١٢", "😀𞤀\ud800א\udc00")
+        val prologues = listOf(null, "", "א\na", "a\nא", "אב", "١٢", "😀𞤀" + charArrayOf('\ud800', 'א', '\udc00').concatToString())
         var hash = -3750763034362895579L
         fun mix(value: Int) { hash = (hash xor value.toLong()) * 1099511628211L }
         for (level in listOf(0, 1, 2, 125, 126, 127)) for (options in listOf(0, 1, 2, 3, 4, 6)) for ((t, text) in texts.withIndex()) {
@@ -75,11 +77,12 @@ class BidiPropertyCoreTest {
     @Test fun inputMutationRetainsBackwardSurrogatePairingAndWriteFailure() {
         val calls = mutableListOf<Int>()
         lateinit var state: BidiPropertyFixture
-        state = BidiPropertyFixture("a\udc00", 126, 0, 0, false) {
+        state = BidiPropertyFixture(charArrayOf('a', '\udc00').concatToString(), 126, 0, 0, false) {
             calls += it
             if (calls.size == 1) state.text[0] = '\ud800'
             BidiPropertyCore.customizedClass(it, null)
         }
+        assertEquals(listOf(0x61, 0xdc00), state.text.map { it.code })
         assertFailsWith<IndexOutOfBoundsException> { BidiPropertyCore(state).scan() }
         assertEquals(listOf('a'.code, 0x10000), calls)
         assertEquals(126.toByte(), state.paraLevel)
