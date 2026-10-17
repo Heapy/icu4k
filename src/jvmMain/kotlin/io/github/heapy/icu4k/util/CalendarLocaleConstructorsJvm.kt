@@ -10,3 +10,5 @@ fun JapaneseCalendar(locale: java.util.Locale?): JapaneseCalendar = JapaneseCale
 fun JapaneseCalendar(zone: TimeZone?, locale: java.util.Locale?): JapaneseCalendar = JapaneseCalendar(zone, ULocale.forLocale(locale))
 fun IslamicCalendar(locale: java.util.Locale?): IslamicCalendar = IslamicCalendar(TimeZone.forLocaleOrDefault(locale), ULocale.forLocale(locale))
 fun IslamicCalendar(zone: TimeZone?, locale: java.util.Locale?): IslamicCalendar = IslamicCalendar(zone, ULocale.forLocale(locale))
+fun ChineseCalendar(locale: java.util.Locale?): ChineseCalendar = ChineseCalendar(TimeZone.forLocaleOrDefault(locale), ULocale.forLocale(locale))
+fun ChineseCalendar(zone: TimeZone?, locale: java.util.Locale?): ChineseCalendar = ChineseCalendar(zone, ULocale.forLocale(locale))

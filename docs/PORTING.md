@@ -10185,3 +10185,37 @@ callbacks on JVM, JS and Native.
 Full verification passed in 6m 29s: JVM 2,120 tests, macOS Arm64 1,009 tests,
 and JS Node 1,011 tests (one existing skip), with no failures. Linux x64 test
 compilation passed; Linux execution is delegated to the repository CI runner.
+
+### Public Chinese and Dangi calendars (2026-10-17)
+
+Connected ChineseCalendar's existing lunisolar core to the public common calendar
+field engine. All common source constructors and JVM Kotlin Locale overloads are
+available. Numeric constructors preserve the source initialization sequence:
+install current time, set MILLISECOND to zero, then set the supplied fields in
+source order, including leap-month and optional era fields. They do not clear
+the calendar or bypass the clock constructor.
+
+The protected astronomical-zone constructor remains available. Its zone is
+independent of the display time zone and retains the supplied reference. Before
+base construction completes, algorithm calls have no installed astronomical
+zone; fixed metadata hooks remain available. The initialized calculation core
+is installed before the virtual clock setter. Clones rebind their owner and
+shallow-share the source caches and astronomical zone, while base fields,
+stamps and display zones are copied by Calendar.
+
+The ICU-internal Dangi subclass uses the existing rule-based astronomical
+history: GMT+8 initially, GMT+7 for the 1897 adjustment, GMT+8 from 1898, and
+GMT+9 from 1912. Its native clone retains the Dangi runtime type and these rules.
+No fixed modern-offset substitution is used.
+
+Four JVM oracle tests compare all calendar fields, all limit types, actual
+month/year maxima, leap-month codes, ordinal resolution, addition/rolling,
+constructor stamps, custom astronomical zones, clones and early constructor
+callbacks against ICU4J 78.3. Date coverage includes each month's days 1, 15 and
+28 in 1896–1898, 1911–1913, 2000, 2023 and 2024 for both calendar types and two
+display offsets. Two common tests cover leap-month transitions and clone owners,
+constructor fields and distinct display/astronomical zones on all backends.
+
+Full verification passed in 5m 57s: JVM 2,126 tests, macOS Arm64 1,011 tests,
+and JS Node 1,013 tests (one existing skip), with no failures. Linux x64 test
+compilation passed; Linux execution remains covered by repository CI.

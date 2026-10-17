@@ -429,6 +429,11 @@ civil, tabular with Thursday epoch, and Umm al-Qura. Locale constructors select
 the calendar keyword; date and numeric-field constructors retain ICU's civil
 default. `setCivil` preserves the instant while recomputing calendar fields.
 
+`ChineseCalendar` and the ICU-internal `DangiCalendar` support lunisolar fields,
+leap-month codes, ordinal months, month arithmetic and independent calendar
+copies. Astronomical calculations retain ICU's separate China/Korea zones,
+including the historical Korean offset changes.
+
 System zones and default-zone lookup use the embedded ICU transition data:
 
 ```kotlin
