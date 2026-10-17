@@ -12193,3 +12193,31 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false` (5m 57s).
+
+### Charset detector orchestration (ICU4J 78.3)
+
+- Added the common internal CharsetDetectionEngine, connecting all 28 recognizers
+  in source registration order. Defaults enable 24 and leave the four IBM
+  recognizers disabled. Per-instance activation, exact encoding-name lookup,
+  declared-encoding storage and filter toggling follow the source contract.
+- Ported the 8,000-byte filtered view, HTML tag removal and its original fallback
+  thresholds, byte histograms and C1 flag. Raw recognition still sees the entire
+  raw input; stream adapters can provide padded raw storage with a shorter length.
+  Caller-owned byte arrays remain live rather than being copied.
+- Source ordering is preserved by sorting ascending stably and reversing the
+  results; equal confidences consequently reverse registration order.
+- JVM differential checks exercise every recognizer toggle, invalid names,
+  random stateful detector reuse and input mutation, malformed/tag-heavy HTML,
+  fallback threshold boundaries, long inputs and stream backing capacity.
+- Common tests use 247 independently generated source vectors from
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/CharsetDetectorGoldens.java`.
+  They check ordered results, metadata, filtered length/content hash, byte
+  histograms and C1 state, plus configuration isolation and returned array copies.
+- This is the shared engine for the public API, not a completed CharsetDetector
+  facade. Portable decoding, CharsetMatch, reader/stream ownership and public
+  detector convenience methods are still pending.
+- Full validation passed: JVM 2,817 tests; Node 1,380 tests (one skipped);
+  macOS Native 1,378 tests; zero failures/errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false` (5m 40s).
