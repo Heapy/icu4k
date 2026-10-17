@@ -11947,3 +11947,21 @@ which resolves to Null), and a null factory remains visible until lookup fails.
 Previously Kotlin parameter checks rejected registration early. A source-only
 reproduction and public JVM differential test establish the source timing; common
 regressions cover alias execution and deferred factory failure.
+
+## Punycode and StringPrep error protocol
+
+- Ported ICU4J's Bootstring/Punycode codec into commonMain, including UTF-16
+  case flags, input limits, supplementary insertion, overflow checks, and error
+  codes. The historical upper-case flag comparison is retained for parity.
+- Added StringPrepParseException with all error constants, source context,
+  error-based equality, and target-specific assertion behavior for hashCode.
+- JVM differential tests cover deterministic random Unicode input, malformed
+  UTF-16, malformed encoded input, short case-flag buffers and mutations on
+  failure. Common tests use independent ICU4J 78.3 output vectors.
+- This is a dependency milestone for IDNA/StringPrep, not completion of either
+  public subsystem. UTS #46 data is already embedded; domain processing,
+  StringPrep profiles, and IDNA2003 remain to be ported.
+- Validation: full JVM suite 2,770 tests; Node 1,359 tests (one skipped);
+  macOS Native 1,357 tests; no failures or errors. Linux Native test compilation
+  also passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
