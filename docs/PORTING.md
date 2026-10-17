@@ -11358,3 +11358,59 @@ Validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64`
 passed with Kotlin 2.4.21 / Gradle 9.8.1 in 5m 35s. XML reports contain
 2,491 JVM tests, 1,160 JavaScript tests (one existing skip) and 1,158 macOS
 Native tests, with no failures or errors. Linux Native test compilation passed.
+
+### Bidi N0 brackets and explicit levels (2026-10-17)
+
+BidiBracketCore ports the paragraph resolver's mutable bracket machinery: N0
+opening/closing resolution, deferred N0c correction, canonical angle-bracket
+matching, number/NSM context, override clearing, isolate runs and boundary/paragraph
+resets. Opening storage grows with the source policy; short counters retain their
+source width. The missing public UCharacter.BidiPairedBracketType constants are
+also available in common code.
+
+BidiExplicitCore ports direction-from-flags, X1–X8 embedding/override/isolate stack
+resolution, overflow counters, CR/LF paragraph resets and validation of supplied
+embedding levels. It retains the source fast paths for single-direction text and
+inverse modes, default paragraph level selection through its state input, flags,
+maximum isolate depth and partial array mutations before errors. These kernels
+consume paragraph state and do not substitute for the remaining property scanner,
+implicit-level tables or public Bidi facade.
+
+JVM oracles compare every bracket state field and both working arrays after each
+character and isolate/boundary/paragraph transition, including grown opening arrays,
+canonical brackets, nested contexts, every reordering mode, override levels and
+1,000 random strings. Explicit-level tests exercise paragraph/default levels,
+streaming options, long stack overflows and 5,000 random paragraphs against the
+source private methods. Another 10,000 supplied-level cases compare result/errors,
+flags, isolate counts and partial array writes; 10,000 arbitrary flag words check
+direction classification. Source inverse-streaming property preparation can fail
+before this kernel with paras_level[-1]; the oracle checks the precise mode,
+streaming/default-level and zero-paragraph conditions and compares every state
+that source preparation successfully produces.
+
+Common tests use independently captured ICU4J 78.3 fingerprints. Bracket goldens
+include every intermediate state for the curated texts, all seven modes and eight
+normal/override levels. Explicit-level goldens cover result/errors and mutations
+for raw paragraph states in all modes, four paragraph levels, paragraph ordering
+options and five generated level arrays. JVM tests additionally cover real source
+property preparation, default-level paragraphs and mixed paragraph levels.
+
+Property scanning, implicit resolution, remaining line/run/maps, the public Bidi
+facade and BidiTransform still remain. No public Bidi placeholder is exposed.
+
+The previous writer-core CI run (39019284206, commit 68977853) failed only its
+whole-Unicode Node direction test with a timer error; macOS passed. The exhaustive
+common direction test is now partitioned into 17 independently captured source
+fingerprints, one per Unicode plane, plus separate boundary assertions. Every
+value U+0000..U+10FFFF remains covered. The Node suite passed after partitioning
+(25s total; XML's maximum reported plane duration 1.073s). Remote CI for commit
+57bc8873 is still in progress at this point; its result is not inferred from the
+local checks.
+
+Final validation after the Unicode test partition: `jvmTest jsNodeTest
+macosArm64Test compileTestKotlinLinuxX64` passed in 5m 27s with Kotlin 2.4.21 /
+Gradle 9.8.1. XML reports contain 2,516 JVM tests, 1,180 JavaScript tests (one
+existing skip) and 1,178 macOS Native tests, with no failures or errors. Linux
+Native test compilation passed. Before partitioning, the full kernel validation
+also passed in 5m 11s (2,499 JVM / 1,163 JS / 1,161 macOS tests); the count increase
+is the independent plane tests and separate direction-boundary test.
