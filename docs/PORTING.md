@@ -11777,3 +11777,34 @@ both anonymous-count settings, four filters, serialization, source/target sets,
 batch output and every incremental position. Targeted JVM tests pass. Public
 Transliterator lifecycle/registry integration and built-in registrations remain
 outstanding; these kernels do not expose an incomplete public facade.
+
+
+Execution-core validation: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` passed in 4m 41s with Kotlin 2.4.21 / Gradle 9.8.1.
+Remote CI 39030268000 for the preceding parser/Bidi-test-partition stage completed
+successfully on macOS and jvm-js-linux, including Linux Native runtime tests.
+
+### Transliteration bundles and registry resource bootstrap (2026-10-17)
+
+All three pinned upstream transliteration bundles are now embedded under their
+logical translit/ names: root.res, en.res and el.res. The manifest records their
+upstream paths, sizes and SHA-256 values; the existing generator emits a separate
+TranslitResourceRegistry and ICUData routes names, enumeration and byte-copy
+access through it. No new resource reader is needed. `generate-data.py --check`
+verifies all 2,969 embedded resources.
+
+TransliterationResourceBootstrap ports the source's static resource-row loading:
+it visits RuleBasedTransliteratorIDs, skips IDs containing -t-, registers file and
+internal rule suppliers with direction/visibility, and registers aliases. Rule
+suppliers re-read their original row lazily, matching the source, rather than
+materializing every rule while bootstrapping. The registry callback protocol is
+ready for the actual public registry owner; it does not replace that registry.
+
+Common tests retain independent ICU4J 78.3 fingerprints for the complete resource
+trees (all keys, types, sizes, values and rule strings), plus all bootstrap rows
+and resolved supplier values. Root has six top-level resources and 1,007 ID rows;
+bootstrap skips 387 BCP-47 rows and registers 387 visible rule entries, 32 internal
+entries and 201 aliases. Tests verify 620 ordered registrations, deferred supplier
+calls, directory enumeration and private byte-copy isolation. Targeted JVM tests
+pass. Public registry lookup, built-in registrations and facade integration remain
+outstanding.

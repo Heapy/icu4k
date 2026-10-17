@@ -22462,15 +22462,41 @@
       "sha256": "8b37b68f4131805b4f6bad0dde344e129046c2ee23a91877661b799bdcbe97af",
       "size": 5520,
       "source_path": "icu4j/main/core/src/main/resources/com/ibm/icu/impl/data/icudata/unit/zu.res"
+    },
+    {
+      "name": "translit/root.res",
+      "file": "data/icu78/translit/root.res",
+      "object": "TranslitRootResourceData",
+      "sha256": "09b27ad42dbf1881d85ecbee89c410766b658c284ad01aaededba03a066829db",
+      "size": 1097968,
+      "source_path": "icu4j/main/translit/src/main/resources/com/ibm/icu/impl/data/icudata/translit/root.res"
+    },
+    {
+      "name": "translit/en.res",
+      "file": "data/icu78/translit/en.res",
+      "object": "TranslitEnResourceData",
+      "sha256": "939ed74b692752bc072fcbde51898a92a6654318c1a6292585fe55ed28dd50a8",
+      "size": 320,
+      "source_path": "icu4j/main/translit/src/main/resources/com/ibm/icu/impl/data/icudata/translit/en.res"
+    },
+    {
+      "name": "translit/el.res",
+      "file": "data/icu78/translit/el.res",
+      "object": "TranslitElResourceData",
+      "sha256": "202639d71bdad73731de896a50daa06432224f41398aa9bdca82a87c36b48245",
+      "size": 160,
+      "source_path": "icu4j/main/translit/src/main/resources/com/ibm/icu/impl/data/icudata/translit/el.res"
     }
   ],
   "registries": {
     "zone/": "ZoneResourceRegistry",
     "region/": "RegionResourceRegistry",
     "": "CoreResourceRegistry",
-    "unit/": "UnitResourceRegistry"
+    "unit/": "UnitResourceRegistry",
+    "translit/": "TranslitResourceRegistry"
   },
   "source_directories": {
-    "region/": "icu4j/main/regiondata/src/main/resources/com/ibm/icu/impl/data/icudata"
+    "region/": "icu4j/main/regiondata/src/main/resources/com/ibm/icu/impl/data/icudata",
+    "translit/": "icu4j/main/translit/src/main/resources/com/ibm/icu/impl/data/icudata"
   }
 }

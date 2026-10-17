@@ -10,6 +10,7 @@ import io.github.heapy.icu4k.impl.data.ZoneResourceRegistry
 import io.github.heapy.icu4k.impl.data.RegionResourceRegistry
 import io.github.heapy.icu4k.impl.data.CoreResourceRegistry
 import io.github.heapy.icu4k.impl.data.UnitResourceRegistry
+import io.github.heapy.icu4k.impl.data.TranslitResourceRegistry
 import io.github.heapy.icu4k.impl.data.UcaData
 import io.github.heapy.icu4k.impl.data.CollationAfResourceData
 import io.github.heapy.icu4k.impl.data.CollationAmResourceData
@@ -538,7 +539,7 @@ object ICUData {
         "rbnf/zh_Hant_TW.res",
         "rbnf/zh_MO.res",
         "rbnf/zh_TW.res",
-    ) + ZoneResourceRegistry.names + RegionResourceRegistry.names + CoreResourceRegistry.names + UnitResourceRegistry.names
+    ) + ZoneResourceRegistry.names + RegionResourceRegistry.names + CoreResourceRegistry.names + UnitResourceRegistry.names + TranslitResourceRegistry.names
     internal fun visitResources(directory: String, visitor: (String) -> Unit) {
         val prefix = directory.removePrefix("/")
         if (!prefix.startsWith("$ICU_BASE_NAME/")) return
@@ -944,6 +945,6 @@ object ICUData {
         "rbnf/zh_Hant_TW.res" -> RbnfZhHantTWResourceData.copy()
         "rbnf/zh_MO.res" -> RbnfZhMOResourceData.copy()
         "rbnf/zh_TW.res" -> RbnfZhTWResourceData.copy()
-        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName)) ?: RegionResourceRegistry.getBytes(itemPath(resourceName)) ?: CoreResourceRegistry.getBytes(itemPath(resourceName)) ?: UnitResourceRegistry.getBytes(itemPath(resourceName))
+        else -> ZoneResourceRegistry.getBytes(itemPath(resourceName)) ?: RegionResourceRegistry.getBytes(itemPath(resourceName)) ?: CoreResourceRegistry.getBytes(itemPath(resourceName)) ?: UnitResourceRegistry.getBytes(itemPath(resourceName)) ?: TranslitResourceRegistry.getBytes(itemPath(resourceName))
     }
 }
