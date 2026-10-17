@@ -343,6 +343,31 @@ class ULocale private constructor(localeID: String, normalize: Boolean) : Compar
         fun setDefault(locale: ULocale?) = LocaleDefaults.set(locale!!)
         fun setDefault(category: Category?, locale: ULocale?) = LocaleDefaults.set(category, locale!!)
 
+        fun acceptLanguage(acceptLanguageList: String?, availableLocales: Array<out ULocale?>?, fallback: BooleanArray?): ULocale? {
+            if (fallback != null) localeMatcherSetFallback(fallback, true)
+            val desired = try { LocalePriorityList.add(acceptLanguageList).build() } catch (_: IllegalArgumentException) { return null }
+            val builder = LocaleMatcher.builder()
+            for (locale in availableLocales!!) builder.addSupportedULocale(locale)
+            return acceptLanguageResult(builder.build().getBestMatchResult(desired), fallback)
+        }
+        fun acceptLanguage(acceptLanguageList: Array<out ULocale?>?, availableLocales: Array<out ULocale?>?, fallback: BooleanArray?): ULocale? {
+            if (fallback != null) localeMatcherSetFallback(fallback, true)
+            val builder = LocaleMatcher.builder()
+            for (locale in availableLocales!!) builder.addSupportedULocale(locale)
+            val matcher = builder.build()
+            val result = if (acceptLanguageList!!.size == 1) matcher.getBestMatchResult(acceptLanguageList[0])
+                else matcher.getBestMatchResult(acceptLanguageList.asList())
+            return acceptLanguageResult(result, fallback)
+        }
+        fun acceptLanguage(acceptLanguageList: String?, fallback: BooleanArray?): ULocale? =
+            acceptLanguage(acceptLanguageList, getAvailableLocales(), fallback)
+        fun acceptLanguage(acceptLanguageList: Array<out ULocale?>?, fallback: BooleanArray?): ULocale? =
+            acceptLanguage(acceptLanguageList, getAvailableLocales(), fallback)
+        private fun acceptLanguageResult(result: LocaleMatcher.Result, fallback: BooleanArray?): ULocale? {
+            if (result.getDesiredIndex() < 0) return null
+            if (fallback != null && result.getDesiredULocale()!!.equals(result.getSupportedULocale())) localeMatcherSetFallback(fallback, false)
+            return result.getSupportedULocale()
+        }
         fun getAvailableLocales(): Array<ULocale> = ICUResourceBundle.getAvailableULocales()!!.copyOf()
         fun getAvailableLocalesByType(type: AvailableType?): Collection<ULocale> {
             if (type == null) throw IllegalArgumentException()

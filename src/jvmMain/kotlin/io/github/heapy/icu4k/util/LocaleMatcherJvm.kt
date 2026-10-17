@@ -34,3 +34,5 @@ fun LocaleMatcher.isMatch(desired: Locale?, supported: Locale?): Boolean = isHos
 fun LocaleMatcher.Result.getDesiredLocale(): Locale? = desiredHost() as Locale?
 fun LocaleMatcher.Result.getSupportedLocale(): Locale? = supportedHost() as Locale?
 fun LocaleMatcher.Result.makeResolvedLocale(): Locale? = makeResolvedULocale()?.toLocale()
+
+internal actual fun localeMatcherSetFallback(fallback: BooleanArray, value: Boolean) { fallback[0] = value }

@@ -169,12 +169,18 @@ class LocaleMatcherTest {
     }
     @Test fun localizedDiagnosticIntegers() {
         val previous = ULocale.getDefault()
+        val previousFormat = ULocale.getDefault(ULocale.Category.FORMAT)
+        val previousDisplay = ULocale.getDefault(ULocale.Category.DISPLAY)
         try {
             ULocale.setDefault(ULocale("ar_EG"))
             val builder = LocaleMatcher.builder().setSupportedLocales("en, fr").internalSetThresholdDistance(5)
             assertTrue(builder.toString().contains("threshold=٥"))
             assertTrue(builder.build().toString().endsWith("threshold=٥ demotion=٥}"))
-        } finally { ULocale.setDefault(previous) }
+        } finally {
+            ULocale.setDefault(previous)
+            ULocale.setDefault(ULocale.Category.FORMAT, previousFormat)
+            ULocale.setDefault(ULocale.Category.DISPLAY, previousDisplay)
+        }
     }
 
 }

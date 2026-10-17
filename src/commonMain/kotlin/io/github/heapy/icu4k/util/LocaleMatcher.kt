@@ -265,3 +265,5 @@ internal fun localeMatcherPortableInt(value: Int): String {
     val zero = io.github.heapy.icu4k.text.DecimalFormatSymbols(ULocale.getDefault(ULocale.Category.FORMAT)).getZeroDigit()
     return value.toString().map { if (it in '0'..'9') zero + (it - '0') else it }.joinToString("")
 }
+
+internal expect fun localeMatcherSetFallback(fallback: BooleanArray, value: Boolean)
