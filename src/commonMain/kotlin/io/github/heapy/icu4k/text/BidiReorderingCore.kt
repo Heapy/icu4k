@@ -28,6 +28,8 @@ internal object BidiReorderingCore {
     const val LRM_AFTER = 2
     const val RLM_BEFORE = 4
     const val RLM_AFTER = 8
+    fun normalizeReorderingOptions(options: Int): Int =
+        if ((options and OPTION_REMOVE_CONTROLS) != 0) options and OPTION_INSERT_MARKS.inv() else options
     fun isBidiControlChar(c: Int): Boolean = (c and -4) == 0x200c || c in 0x202a..0x202e || c in 0x2066..0x2069
     fun baseDirection(paragraph: CharSequence?): Byte {
         if (paragraph == null || paragraph.isEmpty()) return NEUTRAL.toByte()

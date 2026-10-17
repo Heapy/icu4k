@@ -14,3 +14,13 @@ internal actual fun bidiStringCharAt(text: String, index: Int): Char {
     if (index < 0 || index >= text.length) throw IndexOutOfBoundsException("String index out of range: $index")
     return text[index]
 }
+internal actual fun bidiShortAt(data: ShortArray?, index: Int): Short {
+    val values = data!!
+    if (index < 0 || index >= values.size) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
+    return values[index]
+}
+internal actual fun <T> bidiArrayAt(data: Array<T>?, index: Int): T {
+    val values = data!!
+    if (index < 0 || index >= values.size) throw IndexOutOfBoundsException("Index $index out of bounds for length ${values.size}")
+    return values[index]
+}
