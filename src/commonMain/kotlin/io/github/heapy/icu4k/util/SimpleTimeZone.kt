@@ -74,7 +74,7 @@ open class SimpleTimeZone : BasicTimeZone {
     private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "SimpleTimeZone", core.serializationState())
     private fun readObject(input: PluralObjectInputStream) {
         val data = timeStateReadFields(input, "SimpleTimeZone")
-        core = SimpleTimeZoneCore(0, getID() ?: "", owner = owner())
+        core = SimpleTimeZoneCore(0, serializationID() ?: "", owner = owner())
         core.restoreSerialized(data)
         (data["xinfo"] as STZInfo?)?.applyTo(this)
     }

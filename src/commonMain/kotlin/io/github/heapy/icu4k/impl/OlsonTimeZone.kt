@@ -74,7 +74,11 @@ open class OlsonTimeZone : BasicTimeZone {
         override fun getSimpleTimeZoneRulesNear(date: Long): Array<TimeZoneRule?> = p.getSimpleTimeZoneRulesNear(date)
     }
     private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "OlsonTimeZone", core.serializationState())
-    private fun readObject(input: PluralObjectInputStream) { core = OlsonTimeZoneCore.fromSerialized(getID(), timeStateReadFields(input, "OlsonTimeZone"), owner()) }
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "OlsonTimeZone")
+        val id = if ((data["serialVersionOnStream"] as Int) < 1) getID() else serializationID()
+        core = OlsonTimeZoneCore.fromSerialized(id, data, owner())
+    }
     private companion object {
         private const val serialVersionUID = -6281977362477515376L
         private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("OlsonTimeZone")

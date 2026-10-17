@@ -24,6 +24,7 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
     abstract fun getRawOffset(): Int
     abstract fun useDaylightTime(): Boolean
     abstract fun inDaylightTime(date: Date?): Boolean
+    internal fun serializationID(): String? = id
     open fun getID(): String? = id
     open fun setID(value: String?) {
         if (value == null) throw NullPointerException()

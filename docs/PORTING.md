@@ -10872,3 +10872,12 @@ oracles now use the public SDF rather than a joined test facade.
 
 Full verification passed in 6m 19s: JVM 2,336 tests, macOS Native 1,100
 and JS 1,102 tests (one existing skip), plus Linux Native test compilation.
+
+
+A follow-up oracle reproduced an extra virtual getID call during current timezone
+stream reads. SimpleTimeZone and current Olson streams now use the stored base ID
+without invoking subclass callbacks. Legacy Olson still invokes the getter after
+reading its fields, matching the source reload path. The regression covers both
+zone subclasses. Final JVM verification passed all 2,337 tests; final JS, macOS
+Native and Linux Native main compilation also passed (4m 45s). The preceding full
+JS/macOS test run and Linux test compilation remain green.

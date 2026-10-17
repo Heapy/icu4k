@@ -81,4 +81,26 @@ class TimeZoneSerializationOracleTest {
             compare(read(bytes(ar)) as Source, read(bytes(br)) as TimeZone)
         }
     }
+    private object Calls { var source = 0; var port = 0 }
+    private class SourceIdSimple : SourceSimple(0, "id") {
+        override fun getID(): String? { Calls.source++; return super.getID() }
+    }
+    private class PortIdSimple : SimpleTimeZone(0, "id") {
+        override fun getID(): String? { Calls.port++; return super.getID() }
+    }
+    private class SourceIdOlson : SourceOlson("Etc/UTC") {
+        override fun getID(): String? { Calls.source++; return super.getID() }
+    }
+    private class PortIdOlson : OlsonTimeZone("Etc/UTC") {
+        override fun getID(): String? { Calls.port++; return super.getID() }
+    }
+    @Test fun currentStreamsDoNotInvokeVirtualIdGettersWhileReading() {
+        for ((a, b) in listOf(SourceIdSimple() to PortIdSimple(), SourceIdOlson() to PortIdOlson())) {
+            val ab = bytes(a); val bb = bytes(b)
+            Calls.source = 0; Calls.port = 0
+            read(ab); read(bb)
+            assertEquals(Calls.source, Calls.port)
+            assertEquals(0, Calls.source)
+        }
+    }
 }
