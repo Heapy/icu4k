@@ -11838,3 +11838,27 @@ preserved. Source/target enumeration order is unspecified by the API.
 JVM differential tests compare the cursor and legacy locale conversion across
 ICU locales, 120 mixed visibility/replacement/removal operations, exact variants,
 locale and script fallback, embedded Greek rules and enumeration failures.
+
+## Transliterator registry entry lifecycle
+
+Added the entry lifecycle core and resource-bootstrap adapter. Resource suppliers
+cache non-null text; parser results replace the shared entry wrapper with data,
+alias or compound entries. Lookup retains the requested ID for factories/rules,
+alias text appends to the caller's builder, and compound entries retain their
+original requested ID. The source's single-data filter loss, null-resource empty
+alias, retry after supplier/parser failures and ClassCastException fallback are
+retained. JVM class registration uses Class.newInstance and catches only the two
+exceptions caught by ICU4J.
+
+A construction host will connect this core to the public Transliterator,
+RuleBasedTransliterator, CompoundTransliterator and built-ins, which remain
+outstanding. This is an internal registry implementation, not a completed public
+transliteration facade. Differential tests compare parsed results, rules,
+filters, execution, supplier counts, class access/constructor failures and stored
+instance/factory dispatch. Common tests use 20 independently generated ICU4J
+entry-lifecycle fingerprints and pinned Greek-resource rule hashes.
+
+Registry validation: the full `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` run passed in 4m 37s: 2,730 JVM tests, 1,337 JS tests
+(one existing skip), 1,335 macOS Native tests, zero failures/errors. Linux Native
+test compilation also passed.
