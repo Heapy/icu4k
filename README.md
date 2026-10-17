@@ -434,6 +434,11 @@ leap-month codes, ordinal months, month arithmetic and independent calendar
 copies. Astronomical calculations retain ICU's separate China/Korea zones,
 including the historical Korean offset changes.
 
+`Calendar.getInstance(ULocale("th_TH"))` selects the locale's preferred calendar.
+Explicit calendar keywords select every ICU calendar type; unknown types fall
+back to Gregorian. The factory also supports explicit time zones and ISO 8601
+week rules, including locale first-day and region overrides.
+
 System zones and default-zone lookup use the embedded ICU transition data:
 
 ```kotlin

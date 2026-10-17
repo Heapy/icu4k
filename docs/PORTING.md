@@ -10219,3 +10219,34 @@ constructor fields and distinct display/astronomical zones on all backends.
 Full verification passed in 5m 57s: JVM 2,126 tests, macOS Arm64 1,011 tests,
 and JS Node 1,013 tests (one existing skip), with no failures. Linux x64 test
 compilation passed; Linux execution remains covered by repository CI.
+
+### Public calendar factories (2026-10-17)
+
+Added the common Calendar.getInstance overloads, full CalType dispatch, and
+getAvailableULocales, plus JVM Kotlin Locale factory/list adapters. Null locale
+resolves FORMAT default before any timezone lookup. A missing explicit zone is
+resolved from that locale; createInstance then independently resolves its own
+locale zone, constructs the selected calendar, and the outer factory installs the
+final zone and current time. Explicit zones retain their identity, matching
+Calendar.setTimeZone; the factory does not invent an additional clone or cache
+calendar instances. Unknown types fall back to Gregorian.
+
+ISO8601 uses GregorianCalendar with minimal days in first week set to four.
+Monday is applied only when both Unicode fw and rg types are absent. Ethiopic
+Amete Alem is selected after constructing EthiopicCalendar; Islamic RGSA uses
+the astronomical Islamic locale mode. Locale lists delegate to the same ICU
+resource availability layer as the source.
+
+Five JVM oracle tests cover every CalType and unknown/case-varied keywords in
+three regional locales, locale defaults and preferences, ISO first-day/region
+extensions, explicit-zone identity, null/default overloads, Java Locale adapters,
+all available locale arrays, and default-zone clone traces. The traces preserve
+the two default lookups without an explicit zone and the single construction
+lookup with one; setTimeInMillis defers field computation, so construction makes
+no offset query. Two common tests cover every dispatch target and clone,
+ISO settings/overrides, explicit zone identity, and alternate era/mode selection.
+
+Full verification passed in 4m 55s: JVM 2,133 tests, macOS Arm64 1,013 tests,
+and JS Node 1,015 tests (one existing skip), with no failures. Linux x64 test
+compilation passed. The initial trace test's immediate-offset expectation was
+corrected after source inspection; source and port both defer these queries.

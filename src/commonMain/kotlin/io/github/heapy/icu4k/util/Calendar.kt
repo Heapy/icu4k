@@ -4,6 +4,9 @@
 package io.github.heapy.icu4k.util
 
 import io.github.heapy.icu4k.impl.calendar.*
+import io.github.heapy.icu4k.impl.CalType
+import io.github.heapy.icu4k.impl.ICUResourceBundle
+import kotlin.time.Clock
 
 /** Mutable calendar fields, field precedence and timezone-aware time conversion. */
 abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
@@ -196,6 +199,44 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
         const val JULY = 6; const val AUGUST = 7; const val SEPTEMBER = 8; const val OCTOBER = 9; const val NOVEMBER = 10; const val DECEMBER = 11; const val UNDECIMBER = 12
         const val AM = 0; const val PM = 1; const val WALLTIME_LAST = 0; const val WALLTIME_FIRST = 1; const val WALLTIME_NEXT_VALID = 2
         const val WEEKDAY = 0; const val WEEKEND = 1; const val WEEKEND_ONSET = 2; const val WEEKEND_CEASE = 3
+        fun getInstance(): Calendar = getInstanceInternal(null, null)
+        fun getInstance(zone: TimeZone?): Calendar = getInstanceInternal(zone, null)
+        fun getInstance(locale: ULocale?): Calendar = getInstanceInternal(null, locale)
+        fun getInstance(zone: TimeZone?, locale: ULocale?): Calendar = getInstanceInternal(zone, locale)
+        fun getAvailableULocales(): Array<ULocale> = ICUResourceBundle.getAvailableULocales()!!
+        @Suppress("DEPRECATION")
+        private fun getInstanceInternal(zone: TimeZone?, requestedLocale: ULocale?): Calendar {
+            val locale = requestedLocale ?: ULocale.getDefault(ULocale.Category.FORMAT)
+            val finalZone = zone ?: TimeZone.forULocaleOrDefault(locale)
+            // Source construction resolves its own locale zone before replacing it.
+            val calendar = createInstance(locale)
+            calendar.setTimeZone(finalZone)
+            calendar.setTimeInMillis(Clock.System.now().toEpochMilliseconds())
+            return calendar
+        }
+        @Suppress("DEPRECATION")
+        private fun createInstance(locale: ULocale): Calendar {
+            val zone = TimeZone.forULocaleOrDefault(locale)
+            return when (CalendarLocaleCore.getCalendarTypeForLocale(locale) ?: CalType.GREGORIAN) {
+                CalType.GREGORIAN -> GregorianCalendar(zone, locale)
+                CalType.ISO8601 -> GregorianCalendar(zone, locale).apply {
+                    if (locale.getUnicodeLocaleType("fw") == null && locale.getUnicodeLocaleType("rg") == null) setFirstDayOfWeek(MONDAY)
+                    setMinimalDaysInFirstWeek(4)
+                }
+                CalType.BUDDHIST -> BuddhistCalendar(zone, locale)
+                CalType.CHINESE -> ChineseCalendar(zone, locale)
+                CalType.COPTIC -> CopticCalendar(zone, locale)
+                CalType.DANGI -> DangiCalendar(zone, locale)
+                CalType.ETHIOPIC -> EthiopicCalendar(zone, locale)
+                CalType.ETHIOPIC_AMETE_ALEM -> EthiopicCalendar(zone, locale).apply { setAmeteAlemEra(true) }
+                CalType.HEBREW -> HebrewCalendar(zone, locale)
+                CalType.INDIAN -> IndianCalendar(zone, locale)
+                CalType.ISLAMIC, CalType.ISLAMIC_CIVIL, CalType.ISLAMIC_UMALQURA, CalType.ISLAMIC_TBLA, CalType.ISLAMIC_RGSA -> IslamicCalendar(zone, locale)
+                CalType.JAPANESE -> JapaneseCalendar(zone, locale)
+                CalType.PERSIAN -> PersianCalendar(zone, locale)
+                CalType.ROC -> TaiwanCalendar(zone, locale)
+            }
+        }
         fun getWeekDataForRegion(region: String?): WeekData = WeekData(CalendarWeekDataCore.getWeekDataForRegion(region))
         fun getKeywordValuesForLocale(key: String?, locale: ULocale?, commonlyUsed: Boolean): Array<String> = CalendarLocaleCore.getKeywordValuesForLocale(key, locale, commonlyUsed)
     }
