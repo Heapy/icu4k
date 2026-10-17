@@ -404,12 +404,29 @@ calendar.add(Calendar.MONTH, 1)
 println(calendar.get(Calendar.DATE)) // 29
 ```
 
-`BuddhistCalendar`, `TaiwanCalendar`, `IndianCalendar` and the ICU-internal,
-deprecated `PersianCalendar` also support explicit zones, field resolution,
-date arithmetic and typed Native copies.
+`BuddhistCalendar`, `TaiwanCalendar`, `IndianCalendar`, `CopticCalendar`,
+`EthiopicCalendar`, `HebrewCalendar` and the ICU-internal, deprecated
+`PersianCalendar` also support explicit zones, field resolution, date arithmetic
+and Native copies.
+
+System zones and default-zone lookup use the embedded ICU transition data:
+
+```kotlin
+import io.github.heapy.icu4k.util.TimeZone
+
+val zone = TimeZone.getTimeZone("America/New_York")
+println(zone.getOffset(1710054000000L)) // -14400000
+val defaultZone = TimeZone.getDefault() // independent mutable copy
+val frozen = TimeZone.getFrozenTimeZone("Europe/Minsk")
+```
+
+JVM also supports `TIMEZONE_JDK` and default synchronization with
+`java.util.TimeZone`. JS/Native use ICU rules and process-local library default
+replacement; they discover the initial system zone through the host platform.
+Explicit JDK-mode construction requires JVM.
 
 `SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
 local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
-retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. System-zone
-lookup/default-zone factories, remaining calendar APIs and date formatting are
+retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Default-zone
+calendar constructors, remaining calendar APIs and date formatting are
 still pending; see [the porting log](docs/PORTING.md) for current coverage.

@@ -10048,3 +10048,52 @@ Verification: focused Olson JVM integration/core tests passed in 23s. Full JVM
 (2,093 tests), macOS Native (998 tests) and JS/Node (1,000 tests, one existing skip)
 passed without failures; Linux x64 test compilation passed. Combined verification
 completed in 6m 3s.
+
+### Public timezone factory and default runtime (2026-10-17)
+
+TimeZone now exposes ICU/JDK factory selection, frozen factories, default getters,
+setICUDefault/setDefault and locale timezone-keyword selection through the existing
+TimeZoneRuntimeCore. Resource-backed system zones and parsed custom GMT zones have
+cached frozen public prototypes; mutable lookups use owner-rebound thawed copies.
+UNKNOWN_ZONE and GMT_ZONE use the source's private ConstantZone implementation,
+including its unvalidated field-offset method and freeze/clone behavior, rather
+than substituting SimpleTimeZone. Public initialization reads the implementation
+configuration once when TimeZone is initialized.
+
+The JVM host synchronizes on java.util.TimeZone's class before the ICU default
+lock and synchronizes defaults back to JDK objects. JavaTimeZone supports exact
+JDK IDs and ICU canonical fallback, JDK raw/DST queries, frozen mutations and
+JDK calendar local-wall normalization. The local normalization algorithm lives in
+common JavaTimeZoneOffsetCore; its owner supplies a locked JDK calendar. The JVM
+TimeZoneAdapter presents arbitrary common ICU zones to JDK APIs. The source's
+clone calendar binding to the original JDK zone is retained, including its
+observable mutation behavior. JVM object serialization remains pending alongside
+the other public calendar/timezone serialization contracts.
+
+JS obtains the initial host zone ID from Intl.DateTimeFormat; macOS uses Foundation
+NSTimeZone; Linux uses TZ, the /etc/localtime zoneinfo link or /etc/timezone.
+There is no invented UTC fallback when a host does not expose its zone ID.
+On platforms without java.util.TimeZone, default replacement is process-local
+library host state and does not change JavaScript Date/Intl or the OS timezone.
+Their ICU factories still use the same embedded ICU transition data. Explicit
+JDK-mode construction on JS/Native throws UnsupportedOperationException; the
+selection value itself is retained as in ICU4J. Host-specific JDK rules are a JVM
+interoperability feature, not a second ICU data implementation on other targets.
+
+Before the final logging hook, full JVM (2,102 tests), macOS Native (1,002 tests)
+and JS/Node (1,004 tests, one existing skip) passed without failures; Linux x64
+test compilation passed in the same 5m 37s run. The JVM unknown-ID FINE logger is
+now bound to the ported TimeZone logger name and compared with ICU4J's message.
+An initial simultaneous JS/Native compilation exhausted the 2 GiB Java heap;
+Gradle now budgets 4 GiB and one worker for the embedded-data compiler graph.
+Final verification uses these repository defaults, with in-process compilation
+for this sandbox, and repeats the affected JVM timezone tests plus full Native/JS
+and Linux test compilation.
+
+Final behavior verification passed: 166 JVM timezone tests (including the FINE
+message oracle), full macOS Native (1,002 tests), full JS/Node (1,004 tests, one
+existing skip) and Linux x64 test compilation in 3m 21s. A final API-only change
+marks setICUDefault deprecated/internal like the pinned source; JVM compilation
+passed afterward. The earlier full JVM result above covers the rest of the
+repository. ICU4J-009 records an independent Java-only reproduction of the JDK
+clone binding behavior; no upstream issue has been submitted.

@@ -6,6 +6,8 @@ package io.github.heapy.icu4k.util
 import io.github.heapy.icu4k.impl.timezone.TimeZoneBaseCore
 import io.github.heapy.icu4k.impl.timezone.TimeZoneMetadataCore
 import io.github.heapy.icu4k.impl.timezone.ZoneMetaCore
+import io.github.heapy.icu4k.impl.timezone.TimeZoneFactory
+import kotlin.concurrent.Volatile
 
 /** Base contract for mutable and frozen ICU time zones. */
 abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
@@ -52,6 +54,22 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
     companion object {
         const val UNKNOWN_ZONE_ID = TimeZoneMetadataCore.UNKNOWN_ZONE_ID
         const val GMT_ZONE_ID = TimeZoneMetadataCore.GMT_ZONE_ID
+        const val TIMEZONE_ICU = 0
+        const val TIMEZONE_JDK = 1
+        val UNKNOWN_ZONE: TimeZone = ConstantZone(0, UNKNOWN_ZONE_ID).freeze()
+        val GMT_ZONE: TimeZone = ConstantZone(0, GMT_ZONE_ID).freeze()
+        private val runtime = TimeZoneFactory.runtime
+        fun getTimeZone(id: String?): TimeZone = runtime.getTimeZone(id)!!
+        fun getTimeZone(id: String?, type: Int): TimeZone = runtime.getTimeZone(id, type)!!
+        fun getFrozenTimeZone(id: String?): TimeZone = runtime.getFrozenTimeZone(id)!!
+        fun getDefault(): TimeZone = runtime.getDefault()!!
+        fun setDefault(zone: TimeZone?) = runtime.setDefault(zone)
+        @Deprecated("This API is ICU internal only.")
+        fun setICUDefault(zone: TimeZone?) = runtime.setICUDefault(zone)
+        fun getDefaultTimeZoneType(): Int = runtime.getDefaultTimeZoneType()
+        fun setDefaultTimeZoneType(type: Int) = runtime.setDefaultTimeZoneType(type)
+        @Deprecated("This API is ICU internal only.")
+        fun forULocaleOrDefault(locale: ULocale?): TimeZone = locale!!.getKeywordValue("timezone")?.let { getTimeZone(it) } ?: getDefault()
         fun getAvailableIDs(): Array<String> = TimeZoneMetadataCore.getAvailableIDs()
         fun getAvailableIDs(rawOffset: Int): Array<String> = TimeZoneMetadataCore.getAvailableIDs(rawOffset)
         fun getAvailableIDs(country: String?): Array<String> = TimeZoneMetadataCore.getAvailableIDs(country)
@@ -66,5 +84,27 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
         fun getEquivalentID(id: String?, index: Int): String = TimeZoneMetadataCore.getEquivalentID(id, index)
         fun getWindowsID(id: String?): String? = TimeZoneMetadataCore.getWindowsID(id)
         fun getIDForWindowsID(id: String?, region: String?): String? = TimeZoneMetadataCore.getIDForWindowsID(id, region)
+    }
+}
+
+private class ConstantZone : TimeZone {
+    private var rawOffset: Int
+    @Volatile private var frozen = false
+    constructor(rawOffset: Int, id: String) : super(id) { this.rawOffset = rawOffset }
+    private constructor(other: ConstantZone) : super(other, Unit) { rawOffset = other.rawOffset }
+    override fun getOffset(era: Int, year: Int, month: Int, day: Int, dayOfWeek: Int, milliseconds: Int): Int = rawOffset
+    override fun getRawOffset(): Int = rawOffset
+    override fun setRawOffset(offsetMillis: Int) {
+        if (isFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
+        rawOffset = offsetMillis
+    }
+    override fun useDaylightTime(): Boolean = false
+    override fun inDaylightTime(date: Date?): Boolean = false
+    override fun isFrozen(): Boolean = frozen
+    override fun freeze(): TimeZone { frozen = true; return this }
+    override fun cloneAsThawed(): TimeZone {
+        val copy = cloneHost() as? ConstantZone ?: ConstantZone(this)
+        copy.frozen = false
+        return copy
     }
 }

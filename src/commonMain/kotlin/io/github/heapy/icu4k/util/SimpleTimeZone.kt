@@ -9,6 +9,7 @@ import io.github.heapy.icu4k.impl.timezone.SimpleTimeZoneCore
 open class SimpleTimeZone : BasicTimeZone {
     private var core: SimpleTimeZoneCore
     constructor(rawOffset: Int, id: String?) : super(id) { core = SimpleTimeZoneCore(rawOffset, id, owner = owner()) }
+    internal constructor(prototype: SimpleTimeZoneCore) : super(prototype.getID()) { core = prototype.cloneAsThawed(owner()) }
     constructor(rawOffset: Int, id: String?, startMonth: Int, startDay: Int, startDayOfWeek: Int, startTime: Int,
         endMonth: Int, endDay: Int, endDayOfWeek: Int, endTime: Int) :
         this(rawOffset, id, startMonth, startDay, startDayOfWeek, startTime, endMonth, endDay, endDayOfWeek, endTime, 3600000)

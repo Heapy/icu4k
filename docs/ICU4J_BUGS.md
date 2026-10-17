@@ -7,7 +7,7 @@ alone. Reproduced behavior is distinguished from an accepted upstream defect.
 ## Baseline and verification
 
 - Local verification: entries 001–004 on 2026-10-15; entry 005 on 2026-10-16.
-- Entry 008 was independently reproduced on 2026-10-17 against the same binary.
+- Entries 008 and 009 were independently reproduced on 2026-10-17 against the same binary.
 - Artifact: `com.ibm.icu:icu4j:78.3`; reported ICU version: `78.3.0.0`.
 - Binary SHA-256: `e962c1758d9659ea1e1fbab99c58683f654d304e1126ace19aaabfe39e0edb25`.
 - Environment: macOS arm64, OpenJDK `25.0.4+9-LTS`.
@@ -48,6 +48,7 @@ Priority is local triage priority, not an upstream severity assignment.
 | [ICU4J-006](#icu4j-006-calendarcache-negative-key-probing-can-loop-forever) | A negative CalendarCache key can make collision probing loop forever | Reproduced defect | High | Not submitted |
 | [ICU4J-007](#icu4j-007-cloneasthawed-unfreezes-the-original-pattern-generator) | DateTimePatternGenerator.cloneAsThawed unfreezes its receiver | Reproduced defect | Medium | Not submitted |
 | [ICU4J-008](#icu4j-008-standalone-abbreviated-leap-pattern-overwrites-format) | Standalone abbreviated leap-month customization overwrites the format pattern | Reproduced defect | Medium | Not submitted |
+| [ICU4J-009](#icu4j-009-javatimezone-clone-retains-the-original-calendar-zone) | JavaTimeZone clone offset queries retain the original wrapped zone | Reproduced behavior; contract review pending | Medium | Not submitted |
 
 ## ICU4J 001 Region overrides depend on the host locale
 
@@ -456,6 +457,47 @@ DT_LEAP_MONTH_PATTERN_STANDALONE_ABBREV for those standalone branches.
 **ICU4K compatibility.** Keep slot 1 for the pinned baseline. JVM context/width
 oracles and common tests cover the cross-context overwrite and untouched slot 4.
 An upstream correction needs a separate port compatibility decision.
+
+## ICU4J 009 JavaTimeZone clone retains the original calendar zone
+
+Suggested upstream title: **JavaTimeZone.cloneAsThawed binds the cloned calendar
+to the original JDK timezone**.
+
+**Status.** Independently reproduced against ICU4J 78.3 on 2026-10-17, OpenJDK
+25.0.4+9-LTS, macOS 26.6.2 arm64. Local priority: medium. Owner unassigned;
+not submitted. Clone-independence contract review, latest release/HEAD verification
+and duplicate search remain pending.
+
+**Standalone reproduction.** Save as `JavaTimeZoneCloneRepro.java` and run
+`java --class-path /tmp/icu4j-78.3.jar JavaTimeZoneCloneRepro.java`:
+
+```java
+import com.ibm.icu.impl.JavaTimeZone;
+public class JavaTimeZoneCloneRepro {
+    public static void main(String[] args) {
+        JavaTimeZone original = new JavaTimeZone(new java.util.SimpleTimeZone(0, "private"), null);
+        JavaTimeZone copy = original.cloneAsThawed();
+        original.setRawOffset(3600000);
+        int[] offsets = new int[2];
+        copy.getOffset(0L, false, offsets);
+        System.out.println("clone.rawOffset=" + copy.getRawOffset());
+        System.out.println("clone.offsetAtEpoch=" + (offsets[0] + offsets[1]));
+    }
+}
+```
+
+Actual output is `clone.rawOffset=0` and `clone.offsetAtEpoch=3600000`. For a
+fixed-offset clone, both queries would be expected to remain at zero after
+mutating only the original. The cloned wrapper has an independent `javatz`, but
+`cloneAsThawed` constructs its new `javacal` with the receiver's `javatz` instead
+of the cloned wrapper's field. Field-based offsets and `getRawOffset` use the
+cloned JDK zone while date/local offset queries use the original zone. A possible
+fix is to construct the new calendar with `tz.javatz`.
+
+**ICU4K compatibility.** Preserve the original-zone binding for the pinned
+baseline. `TimeZoneFactoryOracleTest.jdkCloneCalendarBindingMatchesSourceAfterMutation`
+compares both wrappers after mutations to the original and clone. No upstream
+report has been sent; a correction needs a separate compatibility decision.
 
 ## Upstream handoff
 
