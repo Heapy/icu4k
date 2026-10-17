@@ -11571,3 +11571,21 @@ Validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64` passed
 in 4m 36s with Kotlin 2.4.21 / Gradle 9.8.1. XML reports contain 2,616 JVM tests,
 1,261 JavaScript tests (one existing skip) and 1,259 macOS Native tests, with no
 failures or errors. Linux Native test compilation passed.
+
+
+### Public Bidi API (2026-10-17)
+
+The Common Kotlin Bidi facade now connects the property, explicit, implicit,
+line and writer kernels. It includes constructors, reusable paragraph state,
+fixed-capacity buffers, runs-only orchestration, paragraph/line queries,
+logical/visual indices and maps, compatibility methods and attributed input.
+BidiAttributes supplies portable keys and BidiNumericShaper supplies a portable
+callback; JVM keys retain TextAttribute identity and accept NumericShaper.
+
+JVM differential tests compare constants and primitive types, mutable internal
+state, buffer sharing, failure ordering, repeated setup, parent invalidation and
+recovery, custom classifiers and virtual callback dispatch against ICU4J 78.3.
+Attributed tests compare iterator access traces, cursor positions, numeric
+shaping, embedding values and malformed input. These targeted tests pass.
+
+BidiTransform remains outstanding. The full ICU4J port is still incomplete.
