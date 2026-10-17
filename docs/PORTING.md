@@ -10529,3 +10529,19 @@ The old top-level proxy remains available to read earlier port streams. Three
 JVM oracle tests verify the descriptor/name, canonical unit/currency cross-read
 in both directions and reading old port proxy streams. The combined focused
 DateNumberFormat/proxy verification passed in 36 seconds.
+
+### Date-specific integer number format (2026-10-17)
+
+Ported `impl.DateNumberFormat` to common Kotlin, including the locale-only digit
+cache, resource-backed minus sign, integer formatting, Unicode digit parsing,
+clone behavior and the six-field ICU4J serialization schema. Source behavior is
+preserved for Long-to-Int truncation, parsing thresholds, malformed digit arrays,
+field positions and unsupported non-integer overloads. JVM supports source stream
+cross-reading; JS and Native retain the explicit Java serialization boundary.
+
+Five common tests and nine JVM oracle/serialization tests cover resource locales,
+constructor/cache ordering, numeric boundaries, failure side effects and legacy
+streams. The full verification passed in 2m 51s: JVM 2,212 tests, macOS Native
+1,037 tests and JS 1,039 tests (one existing skip), with Linux Native test
+compilation also successful. Public SimpleDateFormat and DateFormat factories
+remain pending.

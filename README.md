@@ -478,3 +478,7 @@ local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` bounda
 retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Remaining
 calendar APIs, serialization and date formatting are
 still pending; see [the porting log](docs/PORTING.md) for current coverage.
+
+The common `impl.DateNumberFormat` now provides ICU's date-specific integer
+formatting and parsing, with localized digits and source-compatible cache and
+numeric boundary behavior. JVM serialization interoperates with ICU4J 78.3.
