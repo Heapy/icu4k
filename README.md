@@ -574,3 +574,26 @@ cloning and JVM stream compatibility. Parsing is unsupported, as in ICU4J.
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer
 formatting and parsing, with localized digits and source-compatible cache and
 numeric boundary behavior. JVM serialization interoperates with ICU4J 78.3.
+
+The common legacy `MeasureFormat` API formats quantities, per-unit quantities and
+unit lists, including numeric hour/minute/second durations:
+
+```kotlin
+import io.github.heapy.icu4k.text.MeasureFormat
+import io.github.heapy.icu4k.util.Measure
+import io.github.heapy.icu4k.util.MeasureUnit
+import io.github.heapy.icu4k.util.ULocale
+
+val measures = MeasureFormat.getInstance(ULocale.US, MeasureFormat.FormatWidth.WIDE)
+println(measures.formatMeasures(Measure(70, MeasureUnit.FOOT), Measure(5.3, MeasureUnit.INCH)))
+// 70 feet, 5.3 inches
+
+val duration = MeasureFormat.getInstance(ULocale.US, MeasureFormat.FormatWidth.NUMERIC)
+println(duration.formatMeasures(Measure(5, MeasureUnit.HOUR), Measure(7.25, MeasureUnit.SECOND)))
+// 5:00:07.25
+```
+
+`MeasureFormat.getCurrencyFormat` formats and parses currency amounts. The
+deprecated `TimeUnitFormat` also parses time-unit amounts using both full and
+abbreviated patterns. These APIs retain ICU4J 78.3's cache, field-position and
+locale-mutation behavior; JVM serialization uses the source proxy protocol.

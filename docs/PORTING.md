@@ -11109,3 +11109,65 @@ Verification passed in 6m 11s: JVM 2,412 tests, JS 1,132 tests (one existing
 skip), macOS Native 1,130 tests and Linux Native test compilation. All executed
 tests passed. Additional oracle cases cover era changes, extreme epoch endpoints,
 DST gaps/overlaps and capitalization in French, Russian and Finnish.
+
+### MeasureFormat, TimeUnitFormat and legacy currency formatting (2026-10-17)
+
+MeasureFormat now provides source factories, all five width values, individual
+measures, collections/arrays, unit lists, per-unit quantities, display names and
+compiled range patterns. It composes the ported number formatter and unit list
+engines, truncates all but the last list value toward zero, and selects the
+source currency-specific width/precision path for final/single currency amounts.
+Numeric width follows the locale's quoted h/m/s duration pattern, inserts missing
+minutes, floors non-final components, retains the last component's precision and
+fills doubled fields to two digits. Negative/out-of-order/duplicate units use the
+ordinary unit-list path; NaN and infinity retain source handling.
+
+DontCareFieldPosition is the immutable source singleton with its sentinel field
+ID. Fast and slow list paths preserve source offset handling, unchanged/stale
+positions in numeric/empty cases, and the empty fraction position after the first
+integer item. The three-entry formatter cache compares unit identities and does
+not promote hits. MeasureFormat clones remain shallow, share immutable formatter
+entries and rebind their JVM monitor adapter.
+
+TimeUnitFormat retains its deprecated public constructors, setters, mutable
+NumberFormat reference and longest-match parser across both full/short styles.
+Its resource sink reads only the first fallback table, then applies the source
+search/default rules. Equal-length matches follow the seven-key source HashMap
+bucket order and lexicographic plural-key order on every platform. Private parser
+locale/readiness and inherited locale metadata intentionally follow the source
+setter behavior: setLocale clears formatter caches without replacing the number
+format or resetting an already prepared parser. A first parse can replace locale
+metadata with the number format's locale; a custom number format with no locale
+metadata can produce the source null failure. Clones copy the held number format
+but share parsed pattern tables. Native subclasses use the typed cloneNative hook.
+
+CurrencyFormat provides the source currency-only specialization and parsing via
+its held NumberFormat. The shared MeasureProxy preserves Externalizable version,
+language tag, width ordinal, number format, subclass byte and optional HashMap
+payload, including invalid/missing data checks and unknown-width fallback. It
+restores all three formatter types and keeps legacy class UIDs/fields/readResolve
+paths. JVM array classification checks the actual Measure component type; portable
+array classification validates contents where component metadata is erased.
+
+Oracle tests compare locale/width combinations, numeric durations, rounding,
+currencies, compound per-units, custom number formats, prefixed field positions,
+range patterns, parser tables/partial matches, locale mutation, cache retention,
+proxy validation, independent clone monitors and bidirectional streams. An
+isolated ICU4J-only classloader reads ported formatter proxy streams. Common
+source goldens exercise localized output, ambiguous/partial parses, array/list
+inputs, mutable formatter caches and Native subtype cloning.
+
+The first full JS run exposed a missing data dependency: the embedded unit
+directory had only seven bundles, so Finnish duration separators and Japanese
+hour parsing fell back to root data. The complete pinned directory is now
+manifested and embedded: 535 binary .res files, 3,226,320 raw bytes, with shared
+pool/locale aliases and a generated UnitResourceRegistry. ICUData enumeration,
+existence and byte dispatch use the registry. Regeneration/checking uses the
+existing checksum-verified scripts/generate-data.py workflow. A common whole-
+directory source fingerprint and a JVM byte-for-byte comparison against the ICU4J
+jar verify every bundle, not just the initially failing locales.
+
+Verification passed in 6m 13s: JVM 2,431 tests, JS 1,139 tests (one existing
+skip), macOS Native 1,137 tests and Linux Native test compilation. All executed
+tests passed, including the Finnish/Japanese source goldens and complete unit
+resource fingerprint on JS and Native.
