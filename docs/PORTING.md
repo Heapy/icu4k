@@ -11470,3 +11470,59 @@ tests, 1,190 JavaScript tests (one existing skip) and 1,188 macOS Native tests,
 with no failures or errors. Linux Native test compilation passed. The initial
 property-core full validation before the allocation/mutation refinements also
 passed in 8m 49s.
+
+### Bidi implicit levels and L1 (2026-10-17)
+
+BidiImplicitTables ports all 25 source table/action/pair fields, including exact
+array sharing between forward, inverse and numeric variants. BidiImplicitCore
+ports the property and level state machines, all 14 sequence actions, insertion
+point growth/confirmation/rollback, isolate continuation, inverse RTL lookahead,
+prologue/epilogue classification, mixed-direction run scheduling, override
+clearing, L1 whitespace adjustment and default inverse paragraph marks.
+
+The core retains signed byte/short arithmetic, partial writes before source
+failures, callback context replacement and source bounds/null distinctions on
+portable targets. Reordering option normalization follows the public setter:
+REMOVE_CONTROLS clears INSERT_MARKS while preserving unrelated option bits.
+
+JVM tests compare the tables and shared references against ICU4J 78.3. Every
+sequence table row/property pair is tested with randomized working state and
+partial failures; public setPara comparisons cover curated paragraphs, contexts,
+10,000 random inputs and supplied embedding arrays, including caller-array
+identity/mutation. Context replacement callbacks and repeated calls verify
+retained isolate/point storage. A fresh inverse input can throw NullPointerException
+where the same input after an isolate paragraph throws ArrayIndexOutOfBoundsException;
+this source history dependency is preserved. A marked paragraph grows point
+storage to 20 slots with 16 points; a later pure-LTR paragraph resets counters
+while retaining the array and stale records.
+
+Common goldens were captured independently from public ICU4J setPara: 17,280
+configurations across the six forward/inverse engine modes, six paragraph levels,
+six option values, 16 texts and five embedding profiles. Fingerprints include
+classifier calls, outcome/error, working arrays, paragraph metadata, all point
+slots and all isolate continuation fields. The 36 mode/level partitions keep
+individual Node tests bounded. Additional portable tests retain source storage
+reuse and history-dependent failure kinds.
+
+REORDER_RUNS_ONLY orchestration, the remaining line/run/index-map algorithms,
+full public Bidi lifecycle/API and BidiTransform remain outstanding. The implicit
+kernels do not expose an incomplete public Bidi facade.
+
+Remote CI 39022177366 for the preceding property-preparation stage (77d9a7df)
+completed successfully on jvm-js-linux and macOS.
+
+The first full run exposed corrupted malformed-UTF-16 test input in incremental
+JS output: an older `"a\udc00"` literal was emitted as `'a?'`, while the numeric
+Char mutation and production bounds guard remained intact. Lone-surrogate test
+strings now use runtime CharArray construction, retaining the original units and
+unchanged ICU4J fingerprints. The same repair restores the writer reversal,
+rule-compilation UTF-8 replacement and affix-boundary fixtures. The Node suite
+passed after the repair and again after forcing cached JS relinking/test execution
+(9s), rather than relying only on a fresh emission.
+
+Final validation after preserving fixture units: `jvmTest jsNodeTest
+macosArm64Test compileTestKotlinLinuxX64` passed in 4m 48s with Kotlin 2.4.21 /
+Gradle 9.8.1. XML reports contain 2,580 JVM tests, 1,229 JavaScript tests (one
+existing skip) and 1,227 macOS Native tests, with no failures or errors. Linux
+Native test compilation passed. The Node suite also passed both direct rebuilding
+and the forced cached relink before this full validation.
