@@ -22,6 +22,14 @@ import io.github.heapy.icu4k.util.VersionInfo
  * Remaining API coverage is tracked in the porting notes.
  */
 class UCharacter private constructor() {
+    interface BidiPairedBracketType {
+        companion object {
+            const val NONE = 0
+            const val OPEN = 1
+            const val CLOSE = 2
+            @Deprecated("Use property maximum") const val COUNT = 3
+        }
+    }
     interface NumericType {
         companion object {
             const val NONE = 0
