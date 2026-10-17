@@ -11307,3 +11307,54 @@ Verification passed in 6m 19s: JVM 2,473 tests, JS 1,153 tests (one existing
 skip), macOS Native 1,151 tests and Linux Native test compilation. All executed
 tests passed, including the complete distance-table fingerprint, all 96 common
 matcher goldens, localized diagnostics and acceptLanguage mutation/error tests.
+
+### Bidi support types, static reorder and writer cores (2026-10-17)
+
+BidiRun and BidiClassifier are now common public support types. Runs retain raw
+bounds, signed byte levels, parity, copying (including insertRemove) and source
+descriptions. Classifier context remains mutable/protected and its methods remain
+virtual; the default classify result is the CLASS_DEFAULT sentinel, requesting
+Unicode property lookup by the future paragraph resolver.
+
+BidiReorderingCore ports source base-direction detection, code-unit requiresBidi,
+logical/visual permutations from supplied levels, map inversion and object-slice
+reordering. It retains invalid-level/null handling, the MAX_EXPLICIT_LEVEL+1
+boundary, duplicate-map hole behavior and source CharSequence read order. A source
+fingerprint covers both direction helpers for every value U+0000..U+10FFFF;
+requiresBidi deliberately preserves its code-unit treatment of supplementary text.
+
+BidiWriterCore ports the complete writer/reversal logic: visual-run traversal,
+mirroring, base/combining retention, bidi-control removal, numeric LRM/RLM marks,
+inverse and reversed output, mode-specific option normalization and writer failure
+outcomes. The source control predicate includes join controls. A resolved-state
+input protocol preserves virtual countRuns/getVisualRun/isInverse dispatch and
+raw field access order. Checked byte/string accesses retain source bounds failures
+on portable targets. Zero processed length returns before querying runs.
+
+JVM differential tests feed the writer actual resolved ICU4J states in every mode,
+with options, paragraph levels, random strings, controls, isolates, supplementary
+characters and malformed UTF-16. Reversal tests cover all BMP values and all
+supplementary combining/mirrored code points. Reorder tests compare 20,000 random
+level arrays, 10,000 maps, object-slice failures and full Unicode direction results.
+Common goldens contain 49 successfully resolved source states with 11 output/error
+outcomes each, plus reverse fixtures. Public support types have common and JVM
+oracle tests including signed levels, context identity and virtual callbacks.
+
+ICU4J 78.3 throws ArrayIndexOutOfBoundsException while resolving some streaming
+inputs without a completed paragraph. The exact matrix of source failures is
+recorded in jvmTest/resources/bidi-source-resolver-failures.txt and checked by the
+oracle. A separate seeded corpus records 693 distinct failing source preparations
+(537 bounds failures and 156 null-isolate failures), including inverse-mode inputs,
+in bidi-source-random-resolver-failures.txt with configuration and raw UTF-16 hex.
+These preparations cannot produce writer inputs; all successfully prepared random
+states are compared. Successfully resolved streaming states retain their writer
+outcomes, including source bounds errors.
+
+The UAX #9 paragraph resolver, remaining line/run/index-map implementation,
+public Bidi facade and BidiTransform remain outstanding. These support kernels
+are the first dependency stage of that full port.
+
+Validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64`
+passed with Kotlin 2.4.21 / Gradle 9.8.1 in 5m 35s. XML reports contain
+2,491 JVM tests, 1,160 JavaScript tests (one existing skip) and 1,158 macOS
+Native tests, with no failures or errors. Linux Native test compilation passed.
