@@ -4,6 +4,10 @@
 package io.github.heapy.icu4k.util
 
 import io.github.heapy.icu4k.impl.timezone.SimpleTimeZoneCore
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 
 /** A fixed offset or annually recurring daylight-saving rules. */
 open class SimpleTimeZone : BasicTimeZone {
@@ -66,7 +70,17 @@ open class SimpleTimeZone : BasicTimeZone {
         copy.core = core.cloneAsThawed(copy.owner())
         return copy
     }
+    internal fun serializationCore(): SimpleTimeZoneCore = core
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "SimpleTimeZone", core.serializationState())
+    private fun readObject(input: PluralObjectInputStream) {
+        val data = timeStateReadFields(input, "SimpleTimeZone")
+        core = SimpleTimeZoneCore(0, getID() ?: "", owner = owner())
+        core.restoreSerialized(data)
+        (data["xinfo"] as STZInfo?)?.applyTo(this)
+    }
     companion object {
+        private const val serialVersionUID = -7034676239311322769L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("SimpleTimeZone")
         const val WALL_TIME = 0
         const val STANDARD_TIME = 1
         const val UTC_TIME = 2

@@ -35,6 +35,7 @@ abstract class BasicTimeZone : TimeZone {
         throw IllegalStateException("Not implemented")
     }
     protected companion object {
+        private const val serialVersionUID = -3204278532246180932L
         fun getLocalOptionValue(option: LocalOption?): Int = option!!.flag
         const val LOCAL_STD = 1
         const val LOCAL_DST = 3

@@ -27,6 +27,7 @@ internal class OlsonTimeZoneCore private constructor(
         fun getSimpleTimeZoneRulesNear(date: Long): Array<TimeZoneRule?>?
     }
     private var id = id!!
+    private var serialVersionOnStream = 1
     private var transitionCount = 0
     private var typeCount = 0
     private var transitionTimes64: LongArray? = null
@@ -456,6 +457,7 @@ internal class OlsonTimeZoneCore private constructor(
     fun clone(): OlsonTimeZoneCore = if (queryFrozen()) this else cloneAsThawed()
     fun cloneAsThawed(newOwner: OwnerQueries? = owner): OlsonTimeZoneCore {
         val copy = OlsonTimeZoneCore(id, clock, newOwner, Unit)
+        copy.serialVersionOnStream = serialVersionOnStream
         copy.transitionCount = transitionCount; copy.typeCount = typeCount; copy.transitionTimes64 = transitionTimes64
         copy.typeOffsets = typeOffsets; copy.typeMapData = typeMapData; copy.finalStartYear = finalStartYear; copy.finalStartMillis = finalStartMillis
         copy.finalZone = finalZone?.clone(); copy.canonicalID = canonicalID; copy.initialRule = initialRule
@@ -463,6 +465,32 @@ internal class OlsonTimeZoneCore private constructor(
         copy.historicRules = historicRules; copy.finalZoneWithStartYear = finalZoneWithStartYear; copy.transitionRulesInitialized = transitionRulesInitialized
         return copy
     }
-    companion object { private val assertionsEnabled = olsonTimeZoneAssertionsEnabled() }
+    fun serializationState(): Map<String, Any?> = mapOf(
+        "transitionCount" to transitionCount, "typeCount" to typeCount, "transitionTimes64" to transitionTimes64,
+        "typeOffsets" to typeOffsets, "typeMapData" to typeMapData, "finalStartYear" to finalStartYear,
+        "finalStartMillis" to finalStartMillis, "canonicalID" to canonicalID,
+        "finalZone" to finalZone?.let { SimpleTimeZone(it) }, "serialVersionOnStream" to serialVersionOnStream,
+    )
+    companion object {
+        fun fromSerialized(id: String?, data: Map<String, Any?>, owner: OwnerQueries): OlsonTimeZoneCore {
+            if ((data["serialVersionOnStream"] as Int) < 1) {
+                try { return OlsonTimeZoneCore(id, owner = owner).also { it.serialVersionOnStream = data["serialVersionOnStream"] as Int; it.canonicalID = data["canonicalID"] as String? } } catch (_: Exception) { }
+                return OlsonTimeZoneCore(id ?: "", { Clock.System.now().toEpochMilliseconds() }, owner, Unit).also {
+                    it.typeCount = 1; it.typeOffsets = intArrayOf(0, 0); it.serialVersionOnStream = data["serialVersionOnStream"] as Int; it.canonicalID = data["canonicalID"] as String?
+                }
+            }
+            return OlsonTimeZoneCore(id ?: "", { Clock.System.now().toEpochMilliseconds() }, owner, Unit).also {
+                it.serialVersionOnStream = data["serialVersionOnStream"] as Int
+                it.transitionCount = data["transitionCount"] as Int; it.typeCount = data["typeCount"] as Int
+                it.transitionTimes64 = data["transitionTimes64"] as LongArray?
+                it.typeOffsets = data["typeOffsets"] as IntArray; it.typeMapData = data["typeMapData"] as ByteArray?
+                it.finalStartYear = data["finalStartYear"] as Int; it.finalStartMillis = data["finalStartMillis"] as Double
+                it.canonicalID = data["canonicalID"] as String?
+                it.finalZone = (data["finalZone"] as SimpleTimeZone?)?.serializationCore()
+            }
+        }
+        private val assertionsEnabled = olsonTimeZoneAssertionsEnabled()
+    }
+
 }
 internal expect fun olsonTimeZoneAssertionsEnabled(): Boolean

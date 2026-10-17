@@ -8,6 +8,10 @@ import io.github.heapy.icu4k.impl.timezone.TimeZoneMetadataCore
 import io.github.heapy.icu4k.impl.timezone.ZoneMetaCore
 import io.github.heapy.icu4k.impl.timezone.TimeZoneFactory
 import kotlin.concurrent.Volatile
+import io.github.heapy.icu4k.text.PluralObjectInputStream
+import io.github.heapy.icu4k.text.PluralObjectOutputStream
+import io.github.heapy.icu4k.text.RbnfObjectStreamField
+
 
 /** Base contract for mutable and frozen ICU time zones. */
 abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
@@ -51,7 +55,11 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
 
     enum class SystemTimeZoneType { ANY, CANONICAL, CANONICAL_LOCATION }
 
+    private fun writeObject(output: PluralObjectOutputStream) = timeStateWriteFields(output, "TimeZone", mapOf("ID" to id))
+    private fun readObject(input: PluralObjectInputStream) { id = timeStateReadFields(input, "TimeZone")["ID"] as String? }
     companion object {
+        private const val serialVersionUID = -744942128318337471L
+        private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("TimeZone")
         const val UNKNOWN_ZONE_ID = TimeZoneMetadataCore.UNKNOWN_ZONE_ID
         const val GMT_ZONE_ID = TimeZoneMetadataCore.GMT_ZONE_ID
         const val TIMEZONE_ICU = 0
@@ -85,26 +93,27 @@ abstract class TimeZone : ICUCloneableBase, Freezable<TimeZone> {
         fun getWindowsID(id: String?): String? = TimeZoneMetadataCore.getWindowsID(id)
         fun getIDForWindowsID(id: String?, region: String?): String? = TimeZoneMetadataCore.getIDForWindowsID(id, region)
     }
-}
 
-private class ConstantZone : TimeZone {
-    private var rawOffset: Int
-    @Volatile private var frozen = false
-    constructor(rawOffset: Int, id: String) : super(id) { this.rawOffset = rawOffset }
-    private constructor(other: ConstantZone) : super(other, Unit) { rawOffset = other.rawOffset }
-    override fun getOffset(era: Int, year: Int, month: Int, day: Int, dayOfWeek: Int, milliseconds: Int): Int = rawOffset
-    override fun getRawOffset(): Int = rawOffset
-    override fun setRawOffset(offsetMillis: Int) {
-        if (isFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
-        rawOffset = offsetMillis
-    }
-    override fun useDaylightTime(): Boolean = false
-    override fun inDaylightTime(date: Date?): Boolean = false
-    override fun isFrozen(): Boolean = frozen
-    override fun freeze(): TimeZone { frozen = true; return this }
-    override fun cloneAsThawed(): TimeZone {
-        val copy = cloneHost() as? ConstantZone ?: ConstantZone(this)
-        copy.frozen = false
-        return copy
+    private class ConstantZone : TimeZone {
+        private companion object { private const val serialVersionUID = 1L }
+        private var rawOffset: Int
+        @kotlin.jvm.Transient @Volatile private var frozen = false
+        constructor(rawOffset: Int, id: String) : super(id) { this.rawOffset = rawOffset }
+        private constructor(other: ConstantZone) : super(other, Unit) { rawOffset = other.rawOffset }
+        override fun getOffset(era: Int, year: Int, month: Int, day: Int, dayOfWeek: Int, milliseconds: Int): Int = rawOffset
+        override fun getRawOffset(): Int = rawOffset
+        override fun setRawOffset(offsetMillis: Int) {
+            if (isFrozen()) throw UnsupportedOperationException("Attempt to modify a frozen TimeZone instance.")
+            rawOffset = offsetMillis
+        }
+        override fun useDaylightTime(): Boolean = false
+        override fun inDaylightTime(date: Date?): Boolean = false
+        override fun isFrozen(): Boolean = frozen
+        override fun freeze(): TimeZone { frozen = true; return this }
+        override fun cloneAsThawed(): TimeZone {
+            val copy = cloneHost() as? ConstantZone ?: ConstantZone(this)
+            copy.frozen = false
+            return copy
+        }
     }
 }

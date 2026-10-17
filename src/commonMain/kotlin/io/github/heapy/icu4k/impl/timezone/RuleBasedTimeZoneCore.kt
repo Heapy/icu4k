@@ -281,7 +281,13 @@ internal class RuleBasedTimeZoneCore(
         it.historicRules = historicRules?.toMutableList(); it.finalRules = finalRules?.copyOf()
         it.historicTransitions = historicTransitions; it.upToDate = upToDate
     }
+    fun serializationState(): Map<String, Any?> = mapOf("initialRule" to initialRule, "historicRules" to historicRules, "finalRules" to finalRules)
     companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun fromSerialized(data: Map<String, Any?>): RuleBasedTimeZoneCore = RuleBasedTimeZoneCore(data["initialRule"] as InitialTimeZoneRule?).also {
+            it.historicRules = data["historicRules"] as MutableList<TimeZoneRule>?
+            it.finalRules = data["finalRules"] as Array<AnnualTimeZoneRule?>?
+        }
         const val LOCAL_STD = 0x01
         const val LOCAL_DST = 0x03
         const val LOCAL_FORMER = 0x04

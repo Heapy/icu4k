@@ -18,6 +18,7 @@ internal class SimpleTimeZoneCore(
     private var dst: Int = Grego.MILLIS_PER_HOUR,
     private val owner: OwnerQueries? = null,
 ) {
+    internal typealias STZInfo = io.github.heapy.icu4k.util.STZInfo
     interface OwnerQueries {
         fun getID(): String?
         fun getRawOffset(): Int
@@ -339,25 +340,25 @@ internal class SimpleTimeZoneCore(
         return copy
     }
     private fun getInfo(): STZInfo = info ?: STZInfo().also { info = it }
-    internal class STZInfo {
-        var sy = -1
-        var sm = -1; var sdwm = 0; var sdw = 0; var st = 0; var sdm = 0; var sa = false
-        var em = -1; var edwm = 0; var edw = 0; var et = 0; var edm = 0; var ea = false
-        fun setStart(m: Int, dwm: Int, dw: Int, t: Int, dm: Int, after: Boolean) { sm = m; sdwm = dwm; sdw = dw; st = t; sdm = dm; sa = after }
-        fun setEnd(m: Int, dwm: Int, dw: Int, t: Int, dm: Int, after: Boolean) { em = m; edwm = dwm; edw = dw; et = t; edm = dm; ea = after }
-        fun applyTo(zone: SimpleTimeZoneCore) {
-            if (sy != -1) zone.setStartYear(sy)
-            if (sm != -1) {
-                if (sdm == -1) zone.setStartRule(sm, sdwm, sdw, st)
-                else if (sdw == -1) zone.setStartRule(sm, sdm, st)
-                else zone.setStartRule(sm, sdm, sdw, st, sa)
-            }
-            if (em != -1) {
-                if (edm == -1) zone.setEndRule(em, edwm, edw, et)
-                else if (edw == -1) zone.setEndRule(em, edm, et)
-                else zone.setEndRule(em, edm, edw, et, ea)
-            }
-        }
+    fun serializationState(): Map<String, Any?> = mapOf("raw" to raw, "dst" to dst, "startMonth" to startMonth, "startDay" to startDay, "startDayOfWeek" to startDayOfWeek, "startTime" to startTime, "startTimeMode" to startTimeMode, "endMonth" to endMonth, "endDay" to endDay, "endDayOfWeek" to endDayOfWeek, "endTime" to endTime, "endTimeMode" to endTimeMode, "startYear" to startYear, "startMode" to startMode, "endMode" to endMode, "useDaylight" to useDaylight, "xinfo" to info)
+    fun restoreSerialized(data: Map<String, Any?>) {
+        raw = data["raw"] as Int
+        dst = data["dst"] as Int
+        startMonth = data["startMonth"] as Int
+        startDay = data["startDay"] as Int
+        startDayOfWeek = data["startDayOfWeek"] as Int
+        startTime = data["startTime"] as Int
+        startTimeMode = data["startTimeMode"] as Int
+        endMonth = data["endMonth"] as Int
+        endDay = data["endDay"] as Int
+        endDayOfWeek = data["endDayOfWeek"] as Int
+        endTime = data["endTime"] as Int
+        endTimeMode = data["endTimeMode"] as Int
+        startYear = data["startYear"] as Int
+        startMode = data["startMode"] as Int
+        endMode = data["endMode"] as Int
+        useDaylight = data["useDaylight"] as Boolean
+        info = data["xinfo"] as STZInfo?
     }
     companion object {
         const val WALL_TIME = 0
