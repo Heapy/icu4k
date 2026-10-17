@@ -506,8 +506,20 @@ println(format.parse("1970-01-01 00:00:00 Z")!!.getTime()) // 0
 Calendar-specific style construction is available through
 `calendar.getDateTimeFormat(dateStyle, timeStyle, locale)`. Pattern overrides,
 localized symbols, attributed text, century boundaries, cloning and JVM
-serialization are supported. DateFormat factories, including relative dates,
-remain pending; see
+serialization are supported. `DateFormat` provides style and skeleton factories,
+including factories that adopt an explicit calendar:
+
+```kotlin
+import io.github.heapy.icu4k.text.DateFormat
+
+val relative = DateFormat.getDateInstance(DateFormat.RELATIVE_SHORT, ULocale.US)
+println(relative.format(Date())) // today
+val month = DateFormat.getInstanceForSkeleton("yMMMM", ULocale.US)
+```
+
+Relative styles use localized day names and capitalization contexts, then fall
+back to ordinary dates outside the locale's relative-day range. Relative-date
+parsing throws the same unsupported-operation exception as ICU4J. See
 [the porting log](docs/PORTING.md) for current coverage.
 
 The common `impl.DateNumberFormat` now provides ICU's date-specific integer

@@ -10839,8 +10839,8 @@ cache and stock-style construction path.
 SDF's JVM stream schema preserves its eight source fields, UID and extra
 capitalization value. Reading restores transient state without constructor
 initialization, retains slow dispatch, updates century/calendar state and invokes
-virtual context setters. DateFormat factories (including relative dates)
-remain pending.
+virtual context setters. The DateFormat factories and relative-date formatter
+are covered by the later entry below.
 
 
 ### Calendar and timezone stream dependencies (2026-10-17)
@@ -10906,3 +10906,46 @@ runs, failure states, stream descriptors, bidirectional streams and clone graphs
 
 Full verification passed in 4m 11s: JVM 2,347 tests, macOS Native 1,105,
 JS 1,107 (one existing skip), and Linux Native test compilation.
+
+
+### DateFormat factories and RelativeDateFormat (2026-10-17)
+
+DateFormat exposes ordinary/relative style factories, explicit-calendar variants,
+pattern/skeleton factories, default-locale overloads, locale enumeration and JVM
+Locale adapters. Ordinary construction shares the Calendar/SDF path already used
+by MessageFormat. Explicit calendars are adopted, skeleton construction sets the
+calendar keyword before pattern generation, and null/style validation follows
+source order. Missing resources fall back to the source's default-locale pattern.
+
+RelativeDateFormat now loads fields/day/relative with fallback, computes day
+differences using a clone of the supplied calendar and the current clock, applies
+relative-unit capitalization rules, and joins localized date/time patterns with
+MessageFormat. Parsing remains explicitly unsupported as in ICU4J. Clone behavior
+preserves shared held formatters and relative data, while the base calendar is
+cloned. JVM streams retain all source fields, UID, lazy data/iterator recreation,
+and the legacy separate-date-format branch.
+
+Common tests exercise style/skeleton factories, explicit calendars, relative
+names, capitalization, parsing failures and cloning. JVM oracles compare ordinary
+styles and skeletons across seven locales/calendar types, relative style/context
+combinations over seven day offsets, field positions, validation order, calendar
+virtual hooks, missing-resource fallback, exact stream descriptors, bidirectional
+streams and clone graphs.
+
+Full verification passed in 5m 38s: JVM 2,358 tests, macOS Native 1,108,
+JS 1,110 (one existing skip), and Linux Native test compilation. An added
+common/source regression preserves the calendar getType callback before a null
+locale receiver fails during explicit-calendar skeleton construction.
+
+A follow-up JVM concurrency oracle reproduced the monitor ownership problem in
+shallow clones of the portable adapter: after reading a stream, lazy lookup in
+the clone blocked while the original object's monitor was held, unlike ICU4J.
+RelativeDateFormat now creates a fresh monitor adapter for the clone, keeping the
+source's shared held formatters and transient relative data. The regression uses
+actual concurrent formatting and rethrows worker failures.
+
+Final verification after the monitor correction passed in 3m 58s: all 12 focused
+JVM factory/relative-date regressions, the full JS 1,110-test and macOS Native
+1,108-test suites, plus Linux Native test compilation. The preceding full JVM
+2,358-test run remains the broader baseline. GitHub CI for the preceding
+MessageFormat commit d05416b1 also completed successfully.
