@@ -22570,6 +22570,1534 @@
       "object": "Rfc4518ciStringPrepData",
       "sha256": "c39c2382aa85561a67447705f6da315b19029dcdac32fa78b9ce8184455765d4",
       "size": 20784
+    },
+    {
+      "name": "cns-11643-1992.cnv",
+      "file": "data/icu78/cns-11643-1992.cnv",
+      "object": "CharsetCns116431992Data",
+      "sha256": "48a7337da99c203ca624adee8ec07a6ad42ecd85d579123851d0645b5e059a43",
+      "size": 116080,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/cns-11643-1992.cnv"
+    },
+    {
+      "name": "cnvalias.icu",
+      "file": "data/icu78/cnvalias.icu",
+      "object": "CharsetCnvaliasData",
+      "sha256": "9f989348baf4a13bb378e7b7a2e1cd1305e1c641fbfb96640991bd6d66a12680",
+      "size": 64016,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/cnvalias.icu"
+    },
+    {
+      "name": "ebcdic-xml-us.cnv",
+      "file": "data/icu78/ebcdic-xml-us.cnv",
+      "object": "CharsetEbcdicXmlUsData",
+      "sha256": "0e06337db89c3fca0b52ae495b5b67519d84a9df833c940a701e4b869b04ea7b",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ebcdic-xml-us.cnv"
+    },
+    {
+      "name": "euc-jp-2007.cnv",
+      "file": "data/icu78/euc-jp-2007.cnv",
+      "object": "CharsetEucJp2007Data",
+      "sha256": "cd72cf0b86ce73b6ad426e91d4cac5b6620dea6e8e2079c5115919624f4a5359",
+      "size": 97280,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/euc-jp-2007.cnv"
+    },
+    {
+      "name": "euc-tw-2014.cnv",
+      "file": "data/icu78/euc-tw-2014.cnv",
+      "object": "CharsetEucTw2014Data",
+      "sha256": "ab70b3082d1d23cdfec6a34689cd9724154e8b74b9a220ff6e73193fe6b86397",
+      "size": 545632,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/euc-tw-2014.cnv"
+    },
+    {
+      "name": "gb18030-2022.cnv",
+      "file": "data/icu78/gb18030-2022.cnv",
+      "object": "CharsetGb180302022Data",
+      "sha256": "0e9db19c6206820978ea84ad3010f23b776002170107026abd0f66d25ba0fa22",
+      "size": 233024,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/gb18030-2022.cnv"
+    },
+    {
+      "name": "gsm-03.38-2009.cnv",
+      "file": "data/icu78/gsm-03.38-2009.cnv",
+      "object": "CharsetGsm03382009Data",
+      "sha256": "bc3a9a60c0d22f22c0b8d6ce8e967f9cb82ef216b04c035f10ff5f0409162c4e",
+      "size": 3200,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/gsm-03.38-2009.cnv"
+    },
+    {
+      "name": "ibm-1006_P100-1995.cnv",
+      "file": "data/icu78/ibm-1006_P100-1995.cnv",
+      "object": "CharsetIbm1006P1001995Data",
+      "sha256": "01c7d8db2440718d4d3e47dd07bfec6bf23fde783717b46caec926ace0f1cebb",
+      "size": 3472,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1006_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1025_P100-1995.cnv",
+      "file": "data/icu78/ibm-1025_P100-1995.cnv",
+      "object": "CharsetIbm1025P1001995Data",
+      "sha256": "da573f894a3c4e3686dd1dd7d734bbc6c90dc33029c5062932d532a8c0638420",
+      "size": 2928,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1025_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1026_P100-1995.cnv",
+      "file": "data/icu78/ibm-1026_P100-1995.cnv",
+      "object": "CharsetIbm1026P1001995Data",
+      "sha256": "31b5c0c49664cf7e9db2c115727ea50b40ff7785cbded90dd9a8af260d6a6fe8",
+      "size": 2944,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1026_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1047_P100-1995.cnv",
+      "file": "data/icu78/ibm-1047_P100-1995.cnv",
+      "object": "CharsetIbm1047P1001995Data",
+      "sha256": "9b6a25c095b080350c645b81d90f2bdcf56b02ca8be78ba3b3c1113fcd5a7141",
+      "size": 2704,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1047_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1051_P100-1995.cnv",
+      "file": "data/icu78/ibm-1051_P100-1995.cnv",
+      "object": "CharsetIbm1051P1001995Data",
+      "sha256": "9f2e05d16fa1f0a51dd4cf2de498215a634d608c2290c5765bf9a19ee5650ff6",
+      "size": 3376,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1051_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1089_P100-1995.cnv",
+      "file": "data/icu78/ibm-1089_P100-1995.cnv",
+      "object": "CharsetIbm1089P1001995Data",
+      "sha256": "ed3a9f69360d3956cabdde409687be200333e54b088cfb6a0c11da2f81fee6e2",
+      "size": 3056,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1089_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1097_P100-1995.cnv",
+      "file": "data/icu78/ibm-1097_P100-1995.cnv",
+      "object": "CharsetIbm1097P1001995Data",
+      "sha256": "42a6f530425582af2f1eaadc5c0f2fe12cace7e34296212185edb9226e3255a2",
+      "size": 3504,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1097_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1098_P100-1995.cnv",
+      "file": "data/icu78/ibm-1098_P100-1995.cnv",
+      "object": "CharsetIbm1098P1001995Data",
+      "sha256": "e6bab62003aa961bace2842161a16947540d37fb05c2324d73e438599d3803d3",
+      "size": 4304,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1098_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1112_P100-1995.cnv",
+      "file": "data/icu78/ibm-1112_P100-1995.cnv",
+      "object": "CharsetIbm1112P1001995Data",
+      "sha256": "8f939d144463f6e90af206782d2b61957812e7c4dd150bae26aa68154775c255",
+      "size": 2960,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1112_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1122_P100-1999.cnv",
+      "file": "data/icu78/ibm-1122_P100-1999.cnv",
+      "object": "CharsetIbm1122P1001999Data",
+      "sha256": "fc832800255fa4c9c4a6b109b2b39c367c99309797e2dcdcb7218cd9f208f290",
+      "size": 2832,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1122_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1123_P100-1995.cnv",
+      "file": "data/icu78/ibm-1123_P100-1995.cnv",
+      "object": "CharsetIbm1123P1001995Data",
+      "sha256": "4cee418dd4482a7948503a8480c89c86e4e703aad627252b7abbecef4e6b2982",
+      "size": 3024,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1123_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1124_P100-1996.cnv",
+      "file": "data/icu78/ibm-1124_P100-1996.cnv",
+      "object": "CharsetIbm1124P1001996Data",
+      "sha256": "c7c94a918bc226a970e6ffec5e7490fc121bc64c733e06580efd3fac13bef001",
+      "size": 3024,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1124_P100-1996.cnv"
+    },
+    {
+      "name": "ibm-1125_P100-1997.cnv",
+      "file": "data/icu78/ibm-1125_P100-1997.cnv",
+      "object": "CharsetIbm1125P1001997Data",
+      "sha256": "6b0701b653d678df162a1042fdcf83a484227cbd41fa38a5cd7ece219106df69",
+      "size": 3872,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1125_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1129_P100-1997.cnv",
+      "file": "data/icu78/ibm-1129_P100-1997.cnv",
+      "object": "CharsetIbm1129P1001997Data",
+      "sha256": "4bc66c0acbe704e77e7fc16247afa53171b3e268ada4f9f064984be2ba0cd899",
+      "size": 3136,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1129_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1130_P100-1997.cnv",
+      "file": "data/icu78/ibm-1130_P100-1997.cnv",
+      "object": "CharsetIbm1130P1001997Data",
+      "sha256": "8ebaf079a1e55c58d5cf527ddde6fb448d80ebe387b93a67bfc66233df1344a5",
+      "size": 3136,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1130_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1131_P100-1997.cnv",
+      "file": "data/icu78/ibm-1131_P100-1997.cnv",
+      "object": "CharsetIbm1131P1001997Data",
+      "sha256": "8f517fd86fbe1c727f1e2eabdab974be638734ee3dfc5c1f17b89124eb88cdc8",
+      "size": 3712,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1131_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1132_P100-1998.cnv",
+      "file": "data/icu78/ibm-1132_P100-1998.cnv",
+      "object": "CharsetIbm1132P1001998Data",
+      "sha256": "e1aaa85f937ccbd7cebff434a6551555b50f40e0602ac5b5d98fc87ca7e2eec8",
+      "size": 2848,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1132_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-1133_P100-1997.cnv",
+      "file": "data/icu78/ibm-1133_P100-1997.cnv",
+      "object": "CharsetIbm1133P1001997Data",
+      "sha256": "542bf1ff2d147b2bc1d846af61c8ae449243f924b67f83e3b3e58682cf308de3",
+      "size": 2784,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1133_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1137_P100-1999.cnv",
+      "file": "data/icu78/ibm-1137_P100-1999.cnv",
+      "object": "CharsetIbm1137P1001999Data",
+      "sha256": "d1ce1f0aab96f5a1bd67321d03dc6c737816c76728c986446be70d7911ab19fb",
+      "size": 2912,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1137_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1140_P100-1997.cnv",
+      "file": "data/icu78/ibm-1140_P100-1997.cnv",
+      "object": "CharsetIbm1140P1001997Data",
+      "sha256": "42090a2eb295215b1d965e35f77e1e130ac687233d15567340744cd0feadc01c",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1140_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1141_P100-1997.cnv",
+      "file": "data/icu78/ibm-1141_P100-1997.cnv",
+      "object": "CharsetIbm1141P1001997Data",
+      "sha256": "cad941fafa8ecf275afcce8243fdeac2bdbb2d483bb24e8972d86f15a1a41fcb",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1141_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1142_P100-1997.cnv",
+      "file": "data/icu78/ibm-1142_P100-1997.cnv",
+      "object": "CharsetIbm1142P1001997Data",
+      "sha256": "0ad8f4ed9cb4233ace8bfa6165caebaa8974d97e0d263da77e78528c9ab1b51e",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1142_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1143_P100-1997.cnv",
+      "file": "data/icu78/ibm-1143_P100-1997.cnv",
+      "object": "CharsetIbm1143P1001997Data",
+      "sha256": "97c385704a43ee1ba35f2a3b17dcf5748623e7a46f4f25fb39ea9c6fdf0f43c6",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1143_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1144_P100-1997.cnv",
+      "file": "data/icu78/ibm-1144_P100-1997.cnv",
+      "object": "CharsetIbm1144P1001997Data",
+      "sha256": "89979d9743283912409a930ae70e14c654981c6bb5566aeb46d5edf0b9e66742",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1144_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1145_P100-1997.cnv",
+      "file": "data/icu78/ibm-1145_P100-1997.cnv",
+      "object": "CharsetIbm1145P1001997Data",
+      "sha256": "e4ae3d4575092a8c7f8115f06966dc4a08f05fd3d5ee3ec1d599ef74aa2d1a2d",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1145_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1146_P100-1997.cnv",
+      "file": "data/icu78/ibm-1146_P100-1997.cnv",
+      "object": "CharsetIbm1146P1001997Data",
+      "sha256": "b3b4ec942b93df229226fd7d049d57bba4b9d764ed1cd6be184a1a4517eb974c",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1146_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1147_P100-1997.cnv",
+      "file": "data/icu78/ibm-1147_P100-1997.cnv",
+      "object": "CharsetIbm1147P1001997Data",
+      "sha256": "a3560163032050b6168aa472640fd57a32b0385148777178e273952a68b32614",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1147_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1148_P100-1997.cnv",
+      "file": "data/icu78/ibm-1148_P100-1997.cnv",
+      "object": "CharsetIbm1148P1001997Data",
+      "sha256": "d5cfd083a33287cc6185db8354721ab7e0f76a4fbdea69d776e71faa76141120",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1148_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1149_P100-1997.cnv",
+      "file": "data/icu78/ibm-1149_P100-1997.cnv",
+      "object": "CharsetIbm1149P1001997Data",
+      "sha256": "8eeeec58ef296a243e880e07a06b48f7cf98dfbb9cb6487736ba25ca7a0cf9a1",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1149_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-1153_P100-1999.cnv",
+      "file": "data/icu78/ibm-1153_P100-1999.cnv",
+      "object": "CharsetIbm1153P1001999Data",
+      "sha256": "a25da292631fe3904f628400eef450a92fdecb3f0621456c0d13b2525579d39c",
+      "size": 3040,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1153_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1154_P100-1999.cnv",
+      "file": "data/icu78/ibm-1154_P100-1999.cnv",
+      "object": "CharsetIbm1154P1001999Data",
+      "sha256": "61bd2ae46a3085e8876e3c9028dbefa5dc7c7532a90a5e9fabe2ba942f82699f",
+      "size": 2960,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1154_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1155_P100-1999.cnv",
+      "file": "data/icu78/ibm-1155_P100-1999.cnv",
+      "object": "CharsetIbm1155P1001999Data",
+      "sha256": "0ced2328a313be007d5b32aa5e0ddc9b82aae846af27cb4edc6d360718109cc2",
+      "size": 2928,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1155_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1156_P100-1999.cnv",
+      "file": "data/icu78/ibm-1156_P100-1999.cnv",
+      "object": "CharsetIbm1156P1001999Data",
+      "sha256": "5c605e9c3ce7981da826b4dda83ff3ce5e10f87393a5098c648f87dc9999e374",
+      "size": 2992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1156_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1157_P100-1999.cnv",
+      "file": "data/icu78/ibm-1157_P100-1999.cnv",
+      "object": "CharsetIbm1157P1001999Data",
+      "sha256": "53130fb6e6fa1f256398808f0f96cc5ec6d5832b536b0552ca5611272636f408",
+      "size": 2864,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1157_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1158_P100-1999.cnv",
+      "file": "data/icu78/ibm-1158_P100-1999.cnv",
+      "object": "CharsetIbm1158P1001999Data",
+      "sha256": "e405ba5004a58757999d7c77dfa7e3899613d5f8ea9f8a23d654bd143a116463",
+      "size": 3056,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1158_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1160_P100-1999.cnv",
+      "file": "data/icu78/ibm-1160_P100-1999.cnv",
+      "object": "CharsetIbm1160P1001999Data",
+      "sha256": "d6e7df080e3aa54163838d53db2b88f044d64c0558dfc1742ca19de93f2dc0ff",
+      "size": 2864,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1160_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1162_P100-1999.cnv",
+      "file": "data/icu78/ibm-1162_P100-1999.cnv",
+      "object": "CharsetIbm1162P1001999Data",
+      "sha256": "604a8f35bc4d443f30da562410db4df44733b9d2c76a9dd3579e744ae0f98729",
+      "size": 2944,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1162_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1164_P100-1999.cnv",
+      "file": "data/icu78/ibm-1164_P100-1999.cnv",
+      "object": "CharsetIbm1164P1001999Data",
+      "sha256": "7cc84fa26260f8c54c21913c11f927b1c9eff7ba34f288cedfe8431b15e248b4",
+      "size": 3168,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1164_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1168_P100-2002.cnv",
+      "file": "data/icu78/ibm-1168_P100-2002.cnv",
+      "object": "CharsetIbm1168P1002002Data",
+      "sha256": "74655f0d1957dd0d2830d59c25ca7edef2393950d25eab03babc398f5c3896df",
+      "size": 3600,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1168_P100-2002.cnv"
+    },
+    {
+      "name": "ibm-1250_P100-1995.cnv",
+      "file": "data/icu78/ibm-1250_P100-1995.cnv",
+      "object": "CharsetIbm1250P1001995Data",
+      "sha256": "620e580e60aad25320ab9eabbefe5bf349b85314c9eb20c0ee3ed1ca7e775530",
+      "size": 3200,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1250_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1251_P100-1995.cnv",
+      "file": "data/icu78/ibm-1251_P100-1995.cnv",
+      "object": "CharsetIbm1251P1001995Data",
+      "sha256": "16992f43a7ea7a7a1994cd6061f056ca2c3e7a5e9d608ad5dcdd838552a93563",
+      "size": 3168,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1251_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1252_P100-2000.cnv",
+      "file": "data/icu78/ibm-1252_P100-2000.cnv",
+      "object": "CharsetIbm1252P1002000Data",
+      "sha256": "47b25eff6071cf0ea152387720533487f167da4c81d184994a199b19ad9b25a3",
+      "size": 3248,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1252_P100-2000.cnv"
+    },
+    {
+      "name": "ibm-1253_P100-1995.cnv",
+      "file": "data/icu78/ibm-1253_P100-1995.cnv",
+      "object": "CharsetIbm1253P1001995Data",
+      "sha256": "76cf5600a99af0646973d02cd0940cb62d82f98b05211575a2cd7996910cff08",
+      "size": 3056,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1253_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1254_P100-1995.cnv",
+      "file": "data/icu78/ibm-1254_P100-1995.cnv",
+      "object": "CharsetIbm1254P1001995Data",
+      "sha256": "6caad2d05cb2eb17e4ab6ceb9fbb39b70872f42ff6bea4a16d4c36cf011f3f61",
+      "size": 3264,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1254_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1255_P100-1995.cnv",
+      "file": "data/icu78/ibm-1255_P100-1995.cnv",
+      "object": "CharsetIbm1255P1001995Data",
+      "sha256": "be5b1a7501dd59715d0b34d404b09c850d2379f8bde16c3745ce6b3b8cb259e4",
+      "size": 3232,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1255_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1256_P110-1997.cnv",
+      "file": "data/icu78/ibm-1256_P110-1997.cnv",
+      "object": "CharsetIbm1256P1101997Data",
+      "sha256": "354045917e92f1b9f05e4c58a2d4826602e95f77c945a760e56f3af2bc2d675c",
+      "size": 4208,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1256_P110-1997.cnv"
+    },
+    {
+      "name": "ibm-1257_P100-1995.cnv",
+      "file": "data/icu78/ibm-1257_P100-1995.cnv",
+      "object": "CharsetIbm1257P1001995Data",
+      "sha256": "2da6764bf696d93086e2ba134d5c11e264d273f006fc39505b1a15ade9513004",
+      "size": 3056,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1257_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1258_P100-1997.cnv",
+      "file": "data/icu78/ibm-1258_P100-1997.cnv",
+      "object": "CharsetIbm1258P1001997Data",
+      "sha256": "f43d774c79d2449bdc19441850051997ebb0f63ed06ce254857b0e731e027f41",
+      "size": 3408,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1258_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-12712_P100-1998.cnv",
+      "file": "data/icu78/ibm-12712_P100-1998.cnv",
+      "object": "CharsetIbm12712P1001998Data",
+      "sha256": "0d759548fdcb540142e14a6bab837a8c0f9c80ee0801bf0fe4506d40d848d9c0",
+      "size": 2992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-12712_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-1276_P100-1995.cnv",
+      "file": "data/icu78/ibm-1276_P100-1995.cnv",
+      "object": "CharsetIbm1276P1001995Data",
+      "sha256": "4454ffe7ef796ecd346c32487b5bd41215dba408c218f7e62baf3d46ed69f18c",
+      "size": 3376,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1276_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-1363_P110-1997.cnv",
+      "file": "data/icu78/ibm-1363_P110-1997.cnv",
+      "object": "CharsetIbm1363P1101997Data",
+      "sha256": "2ecbf2dea844f0b6ea67de32194b816a5e034e97232c303931c886d6b061730a",
+      "size": 2832,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1363_P110-1997.cnv"
+    },
+    {
+      "name": "ibm-1363_P11B-1998.cnv",
+      "file": "data/icu78/ibm-1363_P11B-1998.cnv",
+      "object": "CharsetIbm1363P11b1998Data",
+      "sha256": "629571067d775525d8a2480717603dbf186c239eb3917ebbf97bf200a13b5da4",
+      "size": 133936,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1363_P11B-1998.cnv"
+    },
+    {
+      "name": "ibm-1364_P110-2007.cnv",
+      "file": "data/icu78/ibm-1364_P110-2007.cnv",
+      "object": "CharsetIbm1364P1102007Data",
+      "sha256": "9bada03e5f0cf4c3ff7b3e62f085e96c87533573b034e4fa00bbbdbfd970c335",
+      "size": 144592,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1364_P110-2007.cnv"
+    },
+    {
+      "name": "ibm-1371_P100-1999.cnv",
+      "file": "data/icu78/ibm-1371_P100-1999.cnv",
+      "object": "CharsetIbm1371P1001999Data",
+      "sha256": "dd3e82c4c67e122841690dac93c6d756b973fa39be01195f7296ea0f9f9ff6e4",
+      "size": 120784,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1371_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-1373_P100-2002.cnv",
+      "file": "data/icu78/ibm-1373_P100-2002.cnv",
+      "object": "CharsetIbm1373P1002002Data",
+      "sha256": "b124d8eab2159af50c3286b378dcaeed621549c3be9fb691452b343d73634cb1",
+      "size": 124336,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1373_P100-2002.cnv"
+    },
+    {
+      "name": "ibm-1375_P100-2008.cnv",
+      "file": "data/icu78/ibm-1375_P100-2008.cnv",
+      "object": "CharsetIbm1375P1002008Data",
+      "sha256": "bfd646caed02ae9152bef961bca822120084f7f0933b619fd66dd7c91e2753f8",
+      "size": 183904,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1375_P100-2008.cnv"
+    },
+    {
+      "name": "ibm-1383_P110-1999.cnv",
+      "file": "data/icu78/ibm-1383_P110-1999.cnv",
+      "object": "CharsetIbm1383P1101999Data",
+      "sha256": "64a7acac1dbe7cb24be846f11ca3bbbc28aadf30f28fd187afe8337455a3ee46",
+      "size": 76464,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1383_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-1386_P100-2001.cnv",
+      "file": "data/icu78/ibm-1386_P100-2001.cnv",
+      "object": "CharsetIbm1386P1002001Data",
+      "sha256": "4678af923a272445cd9e8bdd4f454aefbf5e215ece37b6364d60f41aa95ad82c",
+      "size": 116704,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1386_P100-2001.cnv"
+    },
+    {
+      "name": "ibm-1388_P100-2024.cnv",
+      "file": "data/icu78/ibm-1388_P100-2024.cnv",
+      "object": "CharsetIbm1388P1002024Data",
+      "sha256": "c3946da1bea581c817d99452c7a8ba844b7c76cddb9f021d199d8b1c53b893fe",
+      "size": 174992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1388_P100-2024.cnv"
+    },
+    {
+      "name": "ibm-1390_P110-2003.cnv",
+      "file": "data/icu78/ibm-1390_P110-2003.cnv",
+      "object": "CharsetIbm1390P1102003Data",
+      "sha256": "16918bfabb7949a6ad9596d180aa16151a09f4092e4b1176d39ab9a919ee659c",
+      "size": 167104,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1390_P110-2003.cnv"
+    },
+    {
+      "name": "ibm-1399_P110-2003.cnv",
+      "file": "data/icu78/ibm-1399_P110-2003.cnv",
+      "object": "CharsetIbm1399P1102003Data",
+      "sha256": "3b2445b18a193976b1d81d9adb0931dbbfcf2b6dc83f74423644e812a8370fc0",
+      "size": 4128,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-1399_P110-2003.cnv"
+    },
+    {
+      "name": "ibm-16684_P110-2003.cnv",
+      "file": "data/icu78/ibm-16684_P110-2003.cnv",
+      "object": "CharsetIbm16684P1102003Data",
+      "sha256": "02c61df4f6def04669b9164a2dabe57d428df1a83ab1af4fbc68c109d4ebf135",
+      "size": 3296,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-16684_P110-2003.cnv"
+    },
+    {
+      "name": "ibm-16804_X110-1999.cnv",
+      "file": "data/icu78/ibm-16804_X110-1999.cnv",
+      "object": "CharsetIbm16804X1101999Data",
+      "sha256": "79a4a4ee0c9f605aa8426c2e6852aac0e2d1ed8656ea4dd547bb0f0c149e7287",
+      "size": 3296,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-16804_X110-1999.cnv"
+    },
+    {
+      "name": "ibm-273_P100-1995.cnv",
+      "file": "data/icu78/ibm-273_P100-1995.cnv",
+      "object": "CharsetIbm273P1001995Data",
+      "sha256": "d38450c00238a430461e714dc112b19d09ab73037c017b4b967820a8145ac8c8",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-273_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-277_P100-1995.cnv",
+      "file": "data/icu78/ibm-277_P100-1995.cnv",
+      "object": "CharsetIbm277P1001995Data",
+      "sha256": "9ec6fbe9cbf5c1bf0a2b515ae6d4dc6fea27e49b44084555a287e7460e21626b",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-277_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-278_P100-1995.cnv",
+      "file": "data/icu78/ibm-278_P100-1995.cnv",
+      "object": "CharsetIbm278P1001995Data",
+      "sha256": "3f02617f23051a91adc23ad6afd391775ee8ff654c77b65246fbb82a3e0231d1",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-278_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-280_P100-1995.cnv",
+      "file": "data/icu78/ibm-280_P100-1995.cnv",
+      "object": "CharsetIbm280P1001995Data",
+      "sha256": "407860158e156c6227dad31f2a90dc8dd3a3b448f801ed8b191f76703b9f05da",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-280_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-284_P100-1995.cnv",
+      "file": "data/icu78/ibm-284_P100-1995.cnv",
+      "object": "CharsetIbm284P1001995Data",
+      "sha256": "c89e0f47c8d7d1abba082abcab327b72d4ed5cdee5ee990146f5da2406480c8c",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-284_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-285_P100-1995.cnv",
+      "file": "data/icu78/ibm-285_P100-1995.cnv",
+      "object": "CharsetIbm285P1001995Data",
+      "sha256": "6b61f246fb01851a929c9a1689aa09177a719ff693512ab2d70bb06e28dcafd1",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-285_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-290_P100-1995.cnv",
+      "file": "data/icu78/ibm-290_P100-1995.cnv",
+      "object": "CharsetIbm290P1001995Data",
+      "sha256": "0d54e9a0161ac0cb799b09074ecb296872b536a25d17e2ff52cdbc032808ee58",
+      "size": 2672,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-290_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-297_P100-1995.cnv",
+      "file": "data/icu78/ibm-297_P100-1995.cnv",
+      "object": "CharsetIbm297P1001995Data",
+      "sha256": "7a9717e7e5d32dd6b721622ab72bce555c8762f4a326c52d714f05c5325591d4",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-297_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-33722_P120-1999.cnv",
+      "file": "data/icu78/ibm-33722_P120-1999.cnv",
+      "object": "CharsetIbm33722P1201999Data",
+      "sha256": "b84f3c090a98f54bc70439edb6ee4b94e22aad570de09765ee486d0aa54ad326",
+      "size": 5232,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-33722_P120-1999.cnv"
+    },
+    {
+      "name": "ibm-33722_P12A_P12A-2004_U2.cnv",
+      "file": "data/icu78/ibm-33722_P12A_P12A-2004_U2.cnv",
+      "object": "CharsetIbm33722P12aP12a2004U2Data",
+      "sha256": "576fa57ed64302250e56f39a951034cc8ac14dd0c6393321e520a6908340ef80",
+      "size": 99360,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-33722_P12A_P12A-2004_U2.cnv"
+    },
+    {
+      "name": "ibm-33722_P12A_P12A-2009_U2.cnv",
+      "file": "data/icu78/ibm-33722_P12A_P12A-2009_U2.cnv",
+      "object": "CharsetIbm33722P12aP12a2009U2Data",
+      "sha256": "39bc8c21134d6fada965193674272288b6b5049aef46dd62720f9a63c141523c",
+      "size": 100176,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-33722_P12A_P12A-2009_U2.cnv"
+    },
+    {
+      "name": "ibm-37_P100-1995.cnv",
+      "file": "data/icu78/ibm-37_P100-1995.cnv",
+      "object": "CharsetIbm37P1001995Data",
+      "sha256": "b9b26853bf5d003fb60fc822e417391a935a791df7c0582fafa42717d598fb56",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-37_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-420_X120-1999.cnv",
+      "file": "data/icu78/ibm-420_X120-1999.cnv",
+      "object": "CharsetIbm420X1201999Data",
+      "sha256": "abe38f41c1513a7ac6d735b329fe2a57b7922c71569400ed98066202807bdc9f",
+      "size": 3264,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-420_X120-1999.cnv"
+    },
+    {
+      "name": "ibm-424_P100-1995.cnv",
+      "file": "data/icu78/ibm-424_P100-1995.cnv",
+      "object": "CharsetIbm424P1001995Data",
+      "sha256": "fce6a624475929af462a84139c97c4f868985c0b25886131b4c18039a1acc5dc",
+      "size": 2912,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-424_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-437_P100-1995.cnv",
+      "file": "data/icu78/ibm-437_P100-1995.cnv",
+      "object": "CharsetIbm437P1001995Data",
+      "sha256": "80215c03e7b05b027c112badc665f211a4afc47944051560b9642d407995f0bd",
+      "size": 3952,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-437_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-4517_P100-2005.cnv",
+      "file": "data/icu78/ibm-4517_P100-2005.cnv",
+      "object": "CharsetIbm4517P1002005Data",
+      "sha256": "19bff9d5042824bf592c9e3a7886d5a0b7dc88e545146d5294cdb3a60cb6784f",
+      "size": 3424,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-4517_P100-2005.cnv"
+    },
+    {
+      "name": "ibm-4899_P100-1998.cnv",
+      "file": "data/icu78/ibm-4899_P100-1998.cnv",
+      "object": "CharsetIbm4899P1001998Data",
+      "sha256": "6277ccd401baa737fcdb87371bc067664253b9e29a1eab91cd36fc0025904cc7",
+      "size": 2752,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-4899_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-4909_P100-1999.cnv",
+      "file": "data/icu78/ibm-4909_P100-1999.cnv",
+      "object": "CharsetIbm4909P1001999Data",
+      "sha256": "5bf622e2db1105e0302d115a7b9097ba40624af9da40ed8c365c0b50f6d6edc1",
+      "size": 2848,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-4909_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-4971_P100-1999.cnv",
+      "file": "data/icu78/ibm-4971_P100-1999.cnv",
+      "object": "CharsetIbm4971P1001999Data",
+      "sha256": "176309f67081cd5d65a1b6275bc1360c166e2c682a13805a1ae35b60299c7063",
+      "size": 2848,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-4971_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-500_P100-1995.cnv",
+      "file": "data/icu78/ibm-500_P100-1995.cnv",
+      "object": "CharsetIbm500P1001995Data",
+      "sha256": "478b606e09f754988e70e56399599fb0f6e6abe31602294d51d0d3e0dea780a0",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-500_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-5012_P100-1999.cnv",
+      "file": "data/icu78/ibm-5012_P100-1999.cnv",
+      "object": "CharsetIbm5012P1001999Data",
+      "sha256": "2e912864e888f223e1cf652ce6db4a9d9ec71767e2b3ca7da5bf5215791ad350",
+      "size": 2928,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5012_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-5123_P100-1999.cnv",
+      "file": "data/icu78/ibm-5123_P100-1999.cnv",
+      "object": "CharsetIbm5123P1001999Data",
+      "sha256": "1d60d0300f28894721257908718a81a85d60ab38a9edc6dd6646eba3402af97e",
+      "size": 2704,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5123_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-5346_P100-1998.cnv",
+      "file": "data/icu78/ibm-5346_P100-1998.cnv",
+      "object": "CharsetIbm5346P1001998Data",
+      "sha256": "20599f4e63f941882df6e0c868cc7e28472ee55a05d86af63b26ee50edca4402",
+      "size": 3200,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5346_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5347_P100-1998.cnv",
+      "file": "data/icu78/ibm-5347_P100-1998.cnv",
+      "object": "CharsetIbm5347P1001998Data",
+      "sha256": "bef1b703c05fa9ac213ff85991ee0bbfbb6a4b1d9b56e6dc426b539c5ae4f0a4",
+      "size": 3200,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5347_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5348_P100-1997.cnv",
+      "file": "data/icu78/ibm-5348_P100-1997.cnv",
+      "object": "CharsetIbm5348P1001997Data",
+      "sha256": "4f3740a00c832d802d00fcef0dafc9bded927d4827987bd297ce9f956b6acac1",
+      "size": 3200,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5348_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-5349_P100-1998.cnv",
+      "file": "data/icu78/ibm-5349_P100-1998.cnv",
+      "object": "CharsetIbm5349P1001998Data",
+      "sha256": "3d44f1399ad20c1f95fc3d2366ea32b5413cd746baeb2b33887cbd3f6724b742",
+      "size": 3072,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5349_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5350_P100-1998.cnv",
+      "file": "data/icu78/ibm-5350_P100-1998.cnv",
+      "object": "CharsetIbm5350P1001998Data",
+      "sha256": "cf943bab312cd027e88a71a309880b2e0d101981dffddfaed7d14db7173f23fb",
+      "size": 3280,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5350_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5351_P100-1998.cnv",
+      "file": "data/icu78/ibm-5351_P100-1998.cnv",
+      "object": "CharsetIbm5351P1001998Data",
+      "sha256": "9e3d47a2187342bf2dcc3ff6e93eecda37ed4fcefcbeb3e7178179a17f62a001",
+      "size": 3232,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5351_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5352_P100-1998.cnv",
+      "file": "data/icu78/ibm-5352_P100-1998.cnv",
+      "object": "CharsetIbm5352P1001998Data",
+      "sha256": "a12efffc4fb943bf2627fbb0881db5d91ccd49a09e6e3a08ed610edc890a76ef",
+      "size": 4224,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5352_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5353_P100-1998.cnv",
+      "file": "data/icu78/ibm-5353_P100-1998.cnv",
+      "object": "CharsetIbm5353P1001998Data",
+      "sha256": "036a08aa5c743975b2a93e3a14a8f37a6cc50dae03bc0096ab427de5eee0eaa2",
+      "size": 3088,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5353_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5354_P100-1998.cnv",
+      "file": "data/icu78/ibm-5354_P100-1998.cnv",
+      "object": "CharsetIbm5354P1001998Data",
+      "sha256": "ddd5f0dabab7a04c126eb4d1e36cc567bd32b56bd48d0300d97edb1049b2a0ca",
+      "size": 3408,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5354_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-5471_P100-2006.cnv",
+      "file": "data/icu78/ibm-5471_P100-2006.cnv",
+      "object": "CharsetIbm5471P1002006Data",
+      "sha256": "6547e984e9282adeb2536baef60b2b0972c37fd60b70e0dd806303b1bf09955e",
+      "size": 133664,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5471_P100-2006.cnv"
+    },
+    {
+      "name": "ibm-5478_P100-1995.cnv",
+      "file": "data/icu78/ibm-5478_P100-1995.cnv",
+      "object": "CharsetIbm5478P1001995Data",
+      "sha256": "0ae1dbc224292d7eddbfe2c0adda5113790b6b7f6dceb71b2e93236f5565fca8",
+      "size": 73152,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-5478_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-720_P100-1997.cnv",
+      "file": "data/icu78/ibm-720_P100-1997.cnv",
+      "object": "CharsetIbm720P1001997Data",
+      "sha256": "1858f079dfe55fcba95914751c227b4046c149d466b7530d612b60942a20cce1",
+      "size": 3488,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-720_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-737_P100-1997.cnv",
+      "file": "data/icu78/ibm-737_P100-1997.cnv",
+      "object": "CharsetIbm737P1001997Data",
+      "sha256": "a53215bbe9996c8c3150fcca44f5307b256b228b42de59d25cbaa2a2c9058ff7",
+      "size": 3712,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-737_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-775_P100-1996.cnv",
+      "file": "data/icu78/ibm-775_P100-1996.cnv",
+      "object": "CharsetIbm775P1001996Data",
+      "sha256": "72f674dca0806aff56dbedc49e61ccbdba36fa519085bee01b26773fd3e916cf",
+      "size": 3680,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-775_P100-1996.cnv"
+    },
+    {
+      "name": "ibm-803_P100-1999.cnv",
+      "file": "data/icu78/ibm-803_P100-1999.cnv",
+      "object": "CharsetIbm803P1001999Data",
+      "sha256": "58a31e7c4a4a603bd48998f4055cf6222d719daa37edac5d25d733d8703e08b1",
+      "size": 2592,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-803_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-813_P100-1995.cnv",
+      "file": "data/icu78/ibm-813_P100-1995.cnv",
+      "object": "CharsetIbm813P1001995Data",
+      "sha256": "a0b33a61a78a34db5731de54d37cc4fbb51152f774a07f1c0dd32f925f63f2d3",
+      "size": 2832,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-813_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-838_P100-1995.cnv",
+      "file": "data/icu78/ibm-838_P100-1995.cnv",
+      "object": "CharsetIbm838P1001995Data",
+      "sha256": "9988d1729e6721bfaf68364afa2add58a36ddfd1a46ebee0a859c6b48a49ccb6",
+      "size": 2784,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-838_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-8482_P100-1999.cnv",
+      "file": "data/icu78/ibm-8482_P100-1999.cnv",
+      "object": "CharsetIbm8482P1001999Data",
+      "sha256": "7e409686d71dc880090a3fa84b1842eff0b7d4f4a064077224aaf9b065efba1a",
+      "size": 2704,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-8482_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-850_P100-1995.cnv",
+      "file": "data/icu78/ibm-850_P100-1995.cnv",
+      "object": "CharsetIbm850P1001995Data",
+      "sha256": "e2c8a7cb449fb75922c82f2ed4bf2420796ca56555fa9376d09c2b86583d54ee",
+      "size": 3632,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-850_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-851_P100-1995.cnv",
+      "file": "data/icu78/ibm-851_P100-1995.cnv",
+      "object": "CharsetIbm851P1001995Data",
+      "sha256": "35127d68c2dcb6acf6e97f54d03830caea39d20a8c3be7edb57cde2fb7a22824",
+      "size": 3632,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-851_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-852_P100-1995.cnv",
+      "file": "data/icu78/ibm-852_P100-1995.cnv",
+      "object": "CharsetIbm852P1001995Data",
+      "sha256": "bb5fa33c0facbf4ac0046345e48f221f3ec4ce0cc66f4a663048bd9f2833c143",
+      "size": 3760,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-852_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-855_P100-1995.cnv",
+      "file": "data/icu78/ibm-855_P100-1995.cnv",
+      "object": "CharsetIbm855P1001995Data",
+      "sha256": "f93d2728a630f341336d84d8fedc3ca3d3511024f1504bb249d1419b28848bf8",
+      "size": 3664,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-855_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-856_P100-1995.cnv",
+      "file": "data/icu78/ibm-856_P100-1995.cnv",
+      "object": "CharsetIbm856P1001995Data",
+      "sha256": "fbeb3480427bbe7d2866cb905dce1b8ebd83fdc9ce75ff6ae1ecfb7ce1f5d7c6",
+      "size": 3584,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-856_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-857_P100-1995.cnv",
+      "file": "data/icu78/ibm-857_P100-1995.cnv",
+      "object": "CharsetIbm857P1001995Data",
+      "sha256": "e5827830dd2852b472109b616e4b50106142cd70d0ab7e84438ce86a05557ed2",
+      "size": 3616,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-857_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-858_P100-1997.cnv",
+      "file": "data/icu78/ibm-858_P100-1997.cnv",
+      "object": "CharsetIbm858P1001997Data",
+      "sha256": "524b02310228cda0b5997d498f8aedb635900d79b78635856a89b763ba2d078e",
+      "size": 3568,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-858_P100-1997.cnv"
+    },
+    {
+      "name": "ibm-860_P100-1995.cnv",
+      "file": "data/icu78/ibm-860_P100-1995.cnv",
+      "object": "CharsetIbm860P1001995Data",
+      "sha256": "9cec6353b1cace02287f406496194011552b0f4f60413fa0e7b729558b1cb39c",
+      "size": 3824,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-860_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-861_P100-1995.cnv",
+      "file": "data/icu78/ibm-861_P100-1995.cnv",
+      "object": "CharsetIbm861P1001995Data",
+      "sha256": "0101226421ce7c1a6764abff5545e696c9b6abe1d328f2bfdb083267b077df78",
+      "size": 3952,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-861_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-862_P100-1995.cnv",
+      "file": "data/icu78/ibm-862_P100-1995.cnv",
+      "object": "CharsetIbm862P1001995Data",
+      "sha256": "43c0c6a775a28e12669a219c336d7a564cf12fd85cb3e7606d7d260953ca34d7",
+      "size": 4160,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-862_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-863_P100-1995.cnv",
+      "file": "data/icu78/ibm-863_P100-1995.cnv",
+      "object": "CharsetIbm863P1001995Data",
+      "sha256": "d8a79d6f89afbbd3da56f7121ff56baba977a2d43117f4eaaf46f35486f638a9",
+      "size": 3936,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-863_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-864_X110-1999.cnv",
+      "file": "data/icu78/ibm-864_X110-1999.cnv",
+      "object": "CharsetIbm864X1101999Data",
+      "sha256": "9c5465a080214701513ee22e4b6fe9239d4e0b9b75d829d94272c87467c52e63",
+      "size": 4192,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-864_X110-1999.cnv"
+    },
+    {
+      "name": "ibm-865_P100-1995.cnv",
+      "file": "data/icu78/ibm-865_P100-1995.cnv",
+      "object": "CharsetIbm865P1001995Data",
+      "sha256": "8e98e978fd3604d730ff1707ab46cb0de989e0666a12f54d2e0194cd3f66e4c0",
+      "size": 3952,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-865_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-866_P100-1995.cnv",
+      "file": "data/icu78/ibm-866_P100-1995.cnv",
+      "object": "CharsetIbm866P1001995Data",
+      "sha256": "b910dea729dd83facab56f6cee60b3b7f42b39ea827b1b7ccd7f186a6a28b070",
+      "size": 3664,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-866_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-867_P100-1998.cnv",
+      "file": "data/icu78/ibm-867_P100-1998.cnv",
+      "object": "CharsetIbm867P1001998Data",
+      "sha256": "c2bde78e1bc66a814e1bbdacd1ad9f39f1590bdb7438db9da3147f18d3dd9e02",
+      "size": 4096,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-867_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-868_P100-1995.cnv",
+      "file": "data/icu78/ibm-868_P100-1995.cnv",
+      "object": "CharsetIbm868P1001995Data",
+      "sha256": "6a4d5ef658600e40b687825df2cd26c95824cd0ead714b00b9f5ac9ee457914f",
+      "size": 4272,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-868_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-869_P100-1995.cnv",
+      "file": "data/icu78/ibm-869_P100-1995.cnv",
+      "object": "CharsetIbm869P1001995Data",
+      "sha256": "f78726b1156ae19fdb3ca8285ce5496659ba137cb5c35e14d32c17f54633d1bf",
+      "size": 3536,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-869_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-870_P100-1995.cnv",
+      "file": "data/icu78/ibm-870_P100-1995.cnv",
+      "object": "CharsetIbm870P1001995Data",
+      "sha256": "7961715c8d8b6bde985f67bc5b0c0f071a7f903a2283b06deb13544ec31e0ac9",
+      "size": 2992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-870_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-871_P100-1995.cnv",
+      "file": "data/icu78/ibm-871_P100-1995.cnv",
+      "object": "CharsetIbm871P1001995Data",
+      "sha256": "ce434e10aefc845568d23f086776ff48ff65672f773ac63ed02e3cbf185a7d1d",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-871_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-874_P100-1995.cnv",
+      "file": "data/icu78/ibm-874_P100-1995.cnv",
+      "object": "CharsetIbm874P1001995Data",
+      "sha256": "5dd1e323403f46fa0a026f32b93800d7cdab35c50c4ccaf41c0705b44fab4352",
+      "size": 2784,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-874_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-875_P100-1995.cnv",
+      "file": "data/icu78/ibm-875_P100-1995.cnv",
+      "object": "CharsetIbm875P1001995Data",
+      "sha256": "a0be6431ff47eea9abd775d6947a685d6cb8d7dce49f68966d5fcedaed444d96",
+      "size": 2832,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-875_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-878_P100-1996.cnv",
+      "file": "data/icu78/ibm-878_P100-1996.cnv",
+      "object": "CharsetIbm878P1001996Data",
+      "sha256": "ff5e62148ce0b171c5d39de0c19a30d05f007d3c6d91934b872a4b9e3fd4ee66",
+      "size": 3504,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-878_P100-1996.cnv"
+    },
+    {
+      "name": "ibm-9005_X110-2007.cnv",
+      "file": "data/icu78/ibm-9005_X110-2007.cnv",
+      "object": "CharsetIbm9005X1102007Data",
+      "sha256": "bfe526ba4caff47a4aaf067f9ba041627c76643eacd4512d2fdb9a0024b89eb0",
+      "size": 2976,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-9005_X110-2007.cnv"
+    },
+    {
+      "name": "ibm-901_P100-1999.cnv",
+      "file": "data/icu78/ibm-901_P100-1999.cnv",
+      "object": "CharsetIbm901P1001999Data",
+      "sha256": "65a69c6a2ad781470d0bd366fb9067818fc55a60bd4dbb546beb73e2690fe4df",
+      "size": 3696,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-901_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-902_P100-1999.cnv",
+      "file": "data/icu78/ibm-902_P100-1999.cnv",
+      "object": "CharsetIbm902P1001999Data",
+      "sha256": "6c953bdd07ccdaa97d7a003a2e7e415c7792dc09f75dd2467aa90d24315e36e3",
+      "size": 3616,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-902_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-9067_X100-2005.cnv",
+      "file": "data/icu78/ibm-9067_X100-2005.cnv",
+      "object": "CharsetIbm9067X1002005Data",
+      "sha256": "f259e2cab8e6efe4151b287ffbc6a99a82227aee2c3f9614e9a1ee2a8049202a",
+      "size": 2960,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-9067_X100-2005.cnv"
+    },
+    {
+      "name": "ibm-912_P100-1995.cnv",
+      "file": "data/icu78/ibm-912_P100-1995.cnv",
+      "object": "CharsetIbm912P1001995Data",
+      "sha256": "0f4e4cbde87399daaca758f554c13e44a87b68e157f2a3f00a9a5b35b81dc66b",
+      "size": 3744,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-912_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-913_P100-2000.cnv",
+      "file": "data/icu78/ibm-913_P100-2000.cnv",
+      "object": "CharsetIbm913P1002000Data",
+      "sha256": "d5c6c2e1bdd4910f3e1ceea8f467843a3a654bfc315eb5ea733022f7cdace6f4",
+      "size": 2976,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-913_P100-2000.cnv"
+    },
+    {
+      "name": "ibm-914_P100-1995.cnv",
+      "file": "data/icu78/ibm-914_P100-1995.cnv",
+      "object": "CharsetIbm914P1001995Data",
+      "sha256": "5be3ef8c167fafe8f120812700c027c7b76f3f7072248a8e74b48797585b2393",
+      "size": 2992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-914_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-915_P100-1995.cnv",
+      "file": "data/icu78/ibm-915_P100-1995.cnv",
+      "object": "CharsetIbm915P1001995Data",
+      "sha256": "ee7e4a0b6348102d1e31f7de89be15cee39eb12d2affe165457424c43c3791ca",
+      "size": 2928,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-915_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-916_P100-1995.cnv",
+      "file": "data/icu78/ibm-916_P100-1995.cnv",
+      "object": "CharsetIbm916P1001995Data",
+      "sha256": "5b6a79f960540597b0073b8a7134a97fbe24e2dcf6e7bde008342f6c38a3b6c8",
+      "size": 2912,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-916_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-918_P100-1995.cnv",
+      "file": "data/icu78/ibm-918_P100-1995.cnv",
+      "object": "CharsetIbm918P1001995Data",
+      "sha256": "9805e11ab99ffc517d4cc99b0faecdff8725c046e8210ccf8839cf6c126423a1",
+      "size": 3472,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-918_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-920_P100-1995.cnv",
+      "file": "data/icu78/ibm-920_P100-1995.cnv",
+      "object": "CharsetIbm920P1001995Data",
+      "sha256": "c4056192faf24852eeb6bc84fae71844241fae974766692c7d248891d1de5be5",
+      "size": 2912,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-920_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-921_P100-1995.cnv",
+      "file": "data/icu78/ibm-921_P100-1995.cnv",
+      "object": "CharsetIbm921P1001995Data",
+      "sha256": "2869aedddb2d8f625c71a50531264b0508fe42d5a4ba8566f58b398fdc2d90bc",
+      "size": 2960,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-921_P100-1995.cnv"
+    },
+    {
+      "name": "ibm-922_P100-1999.cnv",
+      "file": "data/icu78/ibm-922_P100-1999.cnv",
+      "object": "CharsetIbm922P1001999Data",
+      "sha256": "dc349edc777ce5b349849b188712ba3694404c0474dabf4cf9d9771e64d27e32",
+      "size": 3584,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-922_P100-1999.cnv"
+    },
+    {
+      "name": "ibm-923_P100-1998.cnv",
+      "file": "data/icu78/ibm-923_P100-1998.cnv",
+      "object": "CharsetIbm923P1001998Data",
+      "sha256": "cdc5f5e84d098244750dad77ef84a3286c9e8ca31bb6ea44575d88f920fbdc81",
+      "size": 2816,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-923_P100-1998.cnv"
+    },
+    {
+      "name": "ibm-930_P120-1999.cnv",
+      "file": "data/icu78/ibm-930_P120-1999.cnv",
+      "object": "CharsetIbm930P1201999Data",
+      "sha256": "c757939e6d861a2596058fb2d7d2f0394519c5cc61407c660ad21f6a33b841fc",
+      "size": 99792,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-930_P120-1999.cnv"
+    },
+    {
+      "name": "ibm-933_P110-1995.cnv",
+      "file": "data/icu78/ibm-933_P110-1995.cnv",
+      "object": "CharsetIbm933P1101995Data",
+      "sha256": "c028099f49de0680ac8779419a48813e988c4295690ecd1e642f22ac8f8e8955",
+      "size": 142352,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-933_P110-1995.cnv"
+    },
+    {
+      "name": "ibm-935_P110-1999.cnv",
+      "file": "data/icu78/ibm-935_P110-1999.cnv",
+      "object": "CharsetIbm935P1101999Data",
+      "sha256": "f63ae7197d06703e3e36661b14226899a792685fe004e38a1b7fafbabb39303b",
+      "size": 84064,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-935_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-937_P110-1999.cnv",
+      "file": "data/icu78/ibm-937_P110-1999.cnv",
+      "object": "CharsetIbm937P1101999Data",
+      "sha256": "1dfe73afe5f87e08892c7463b6814b8afdd5059cce24f128c485d9ae808f9368",
+      "size": 1280,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-937_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-939_P120-1999.cnv",
+      "file": "data/icu78/ibm-939_P120-1999.cnv",
+      "object": "CharsetIbm939P1201999Data",
+      "sha256": "f6366a43244c07dc4dcb711fa203946099fe3d1efc14312ad89d21fbe1320bde",
+      "size": 5920,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-939_P120-1999.cnv"
+    },
+    {
+      "name": "ibm-942_P12A-1999.cnv",
+      "file": "data/icu78/ibm-942_P12A-1999.cnv",
+      "object": "CharsetIbm942P12a1999Data",
+      "sha256": "71ef68a38991089308bf3184071f6a1365e2d1da05544b08733693fb1b3ce0ac",
+      "size": 7920,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-942_P12A-1999.cnv"
+    },
+    {
+      "name": "ibm-943_P130-1999.cnv",
+      "file": "data/icu78/ibm-943_P130-1999.cnv",
+      "object": "CharsetIbm943P1301999Data",
+      "sha256": "248a52665ab00049fb0926c3556cb057e2c20e14fc22580667ebdc8a67c85e54",
+      "size": 10640,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-943_P130-1999.cnv"
+    },
+    {
+      "name": "ibm-943_P15A-2003.cnv",
+      "file": "data/icu78/ibm-943_P15A-2003.cnv",
+      "object": "CharsetIbm943P15a2003Data",
+      "sha256": "0c14738822c2712078c85ee77db214d9a63df8140d93df1559f846d0a7891092",
+      "size": 90992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-943_P15A-2003.cnv"
+    },
+    {
+      "name": "ibm-9447_P100-2002.cnv",
+      "file": "data/icu78/ibm-9447_P100-2002.cnv",
+      "object": "CharsetIbm9447P1002002Data",
+      "sha256": "f7c0c3eab675a57eb8250e693cb7400595ad49cef609d49acf47e8ab12895b07",
+      "size": 3360,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-9447_P100-2002.cnv"
+    },
+    {
+      "name": "ibm-9448_X100-2005.cnv",
+      "file": "data/icu78/ibm-9448_X100-2005.cnv",
+      "object": "CharsetIbm9448X1002005Data",
+      "sha256": "45f2e391046b0cc7c3e6a93c4c2f1942367fd09056f5ff1d1380bca86aad65d1",
+      "size": 4336,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-9448_X100-2005.cnv"
+    },
+    {
+      "name": "ibm-9449_P100-2002.cnv",
+      "file": "data/icu78/ibm-9449_P100-2002.cnv",
+      "object": "CharsetIbm9449P1002002Data",
+      "sha256": "6ce2b5e9a25da32a2b28a4f085d72fa21ec3b059b39731238fbc8bd610084c7b",
+      "size": 3216,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-9449_P100-2002.cnv"
+    },
+    {
+      "name": "ibm-949_P110-1999.cnv",
+      "file": "data/icu78/ibm-949_P110-1999.cnv",
+      "object": "CharsetIbm949P1101999Data",
+      "sha256": "5cc64cc3c7378b9039f52fc2b603705586b3d9c4e91ecfedb4f595415cd076f8",
+      "size": 2080,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-949_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-949_P11A-1999.cnv",
+      "file": "data/icu78/ibm-949_P11A-1999.cnv",
+      "object": "CharsetIbm949P11a1999Data",
+      "sha256": "ba27269d99fd41b2e60f0454120319be98d9bf4c2f625e216cb3179014660df5",
+      "size": 130368,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-949_P11A-1999.cnv"
+    },
+    {
+      "name": "ibm-950_P110-1999.cnv",
+      "file": "data/icu78/ibm-950_P110-1999.cnv",
+      "object": "CharsetIbm950P1101999Data",
+      "sha256": "1fd5d1a323eaf7aa70af8360b2e7cd8fd5b208893a574bb84b4ce45a83cdedf2",
+      "size": 14896,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-950_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-954_P101-2007.cnv",
+      "file": "data/icu78/ibm-954_P101-2007.cnv",
+      "object": "CharsetIbm954P1012007Data",
+      "sha256": "46b9f9856f2a86b812c4b5665ec32ac5ea13c4398a0533a6573c98b552426b91",
+      "size": 101408,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-954_P101-2007.cnv"
+    },
+    {
+      "name": "ibm-964_P110-1999.cnv",
+      "file": "data/icu78/ibm-964_P110-1999.cnv",
+      "object": "CharsetIbm964P1101999Data",
+      "sha256": "c4f199f8afa6714e543df2b8910b4e6939adf716113a796903ed99df81b338b5",
+      "size": 150384,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-964_P110-1999.cnv"
+    },
+    {
+      "name": "ibm-970_P110_P110-2006_U2.cnv",
+      "file": "data/icu78/ibm-970_P110_P110-2006_U2.cnv",
+      "object": "CharsetIbm970P110P1102006U2Data",
+      "sha256": "dfda1e68b50c0612626da90fe8ee2b255da9903973b850d31ba348bd34d80fd9",
+      "size": 102832,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-970_P110_P110-2006_U2.cnv"
+    },
+    {
+      "name": "ibm-971_P100-1995.cnv",
+      "file": "data/icu78/ibm-971_P100-1995.cnv",
+      "object": "CharsetIbm971P1001995Data",
+      "sha256": "947bff9eafb1a3a49b1ba918a67b30744c56db9ac832693c499c3fdf66245a46",
+      "size": 1344,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/ibm-971_P100-1995.cnv"
+    },
+    {
+      "name": "icu-internal-25546.cnv",
+      "file": "data/icu78/icu-internal-25546.cnv",
+      "object": "CharsetIcuInternal25546Data",
+      "sha256": "e7bf8b7723a244eecbfec34f586862d2f196dcc75ce8d19d2888f29200472239",
+      "size": 104128,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-25546.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d1.cnv",
+      "file": "data/icu78/icu-internal-compound-d1.cnv",
+      "object": "CharsetIcuInternalCompoundD1Data",
+      "sha256": "d187c3a030fe87df4b99163f21c72f9a2424746eaa7408c7cd094fb63007d981",
+      "size": 71344,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d1.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d2.cnv",
+      "file": "data/icu78/icu-internal-compound-d2.cnv",
+      "object": "CharsetIcuInternalCompoundD2Data",
+      "sha256": "929e53ab38ad3029661fedf10c805457d8d22e0708dd35bf61c64bd1bca82ad4",
+      "size": 74880,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d2.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d3.cnv",
+      "file": "data/icu78/icu-internal-compound-d3.cnv",
+      "object": "CharsetIcuInternalCompoundD3Data",
+      "sha256": "33a3423f3c52c189bdec245d898d54ebbaf233535216296c5b7efff7dcf78e47",
+      "size": 83680,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d3.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d4.cnv",
+      "file": "data/icu78/icu-internal-compound-d4.cnv",
+      "object": "CharsetIcuInternalCompoundD4Data",
+      "sha256": "a3a04a7d70037e84b9220eb053ed4fd153d6e9dd6de9d9567bae8435a88c072b",
+      "size": 68224,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d4.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d5.cnv",
+      "file": "data/icu78/icu-internal-compound-d5.cnv",
+      "object": "CharsetIcuInternalCompoundD5Data",
+      "sha256": "60f0a2b7ed62782c21c5225b0862ee4901f186157be3ad1591195b57d7ed4039",
+      "size": 31840,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d5.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d6.cnv",
+      "file": "data/icu78/icu-internal-compound-d6.cnv",
+      "object": "CharsetIcuInternalCompoundD6Data",
+      "sha256": "58bafa3a6ed0e3d28b8d3a3a79b4cbb1cae8ed795f7bf76d22ab1fc924a14aa5",
+      "size": 87648,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d6.cnv"
+    },
+    {
+      "name": "icu-internal-compound-d7.cnv",
+      "file": "data/icu78/icu-internal-compound-d7.cnv",
+      "object": "CharsetIcuInternalCompoundD7Data",
+      "sha256": "f7473f843f85e52586f3fb4dd41641bb48a4d1b080ab16a0de8899a0d92d65fe",
+      "size": 79184,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-d7.cnv"
+    },
+    {
+      "name": "icu-internal-compound-s1.cnv",
+      "file": "data/icu78/icu-internal-compound-s1.cnv",
+      "object": "CharsetIcuInternalCompoundS1Data",
+      "sha256": "4c7bc2b00c92d41e717e7e356af86f1b70a513021b8cce83f840104ebde91981",
+      "size": 2240,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-s1.cnv"
+    },
+    {
+      "name": "icu-internal-compound-s2.cnv",
+      "file": "data/icu78/icu-internal-compound-s2.cnv",
+      "object": "CharsetIcuInternalCompoundS2Data",
+      "sha256": "20df1716fa8850f11ee4ff4396862cee8570c74f8b44da55f21034f2aaa29328",
+      "size": 2480,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-s2.cnv"
+    },
+    {
+      "name": "icu-internal-compound-s3.cnv",
+      "file": "data/icu78/icu-internal-compound-s3.cnv",
+      "object": "CharsetIcuInternalCompoundS3Data",
+      "sha256": "aa62245b4171e616fe39c4862de374e456c3379fbc809c6e34615812741ba7aa",
+      "size": 2848,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-s3.cnv"
+    },
+    {
+      "name": "icu-internal-compound-t.cnv",
+      "file": "data/icu78/icu-internal-compound-t.cnv",
+      "object": "CharsetIcuInternalCompoundTData",
+      "sha256": "76af1e2407918cf9ec0ef3b3accb6aede76a637a3d1f38bf5d503f6ca71b7a6e",
+      "size": 320944,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/icu-internal-compound-t.cnv"
+    },
+    {
+      "name": "iso-8859_10-1998.cnv",
+      "file": "data/icu78/iso-8859_10-1998.cnv",
+      "object": "CharsetIso8859101998Data",
+      "sha256": "a00c0c7695a4f403b5f02299bedc44e4a53b4115ef3370f1db5f1d5c80c05524",
+      "size": 2736,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/iso-8859_10-1998.cnv"
+    },
+    {
+      "name": "iso-8859_11-2001.cnv",
+      "file": "data/icu78/iso-8859_11-2001.cnv",
+      "object": "CharsetIso8859112001Data",
+      "sha256": "7d810300a0fb4eb4b197d6d8070ceaac97260c63f5d9d2c3a27b23e3db39b1af",
+      "size": 2528,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/iso-8859_11-2001.cnv"
+    },
+    {
+      "name": "iso-8859_14-1998.cnv",
+      "file": "data/icu78/iso-8859_14-1998.cnv",
+      "object": "CharsetIso8859141998Data",
+      "sha256": "f292ffc65c8bff3263de8fea99cfe9b938d241cda95dc0c742632a64f59c1d26",
+      "size": 2992,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/iso-8859_14-1998.cnv"
+    },
+    {
+      "name": "iso-ir-165.cnv",
+      "file": "data/icu78/iso-ir-165.cnv",
+      "object": "CharsetIsoIr165Data",
+      "sha256": "6c696a91fa88ca7a9268fb812d51e973512ffe2b1390a58ff76373c217600cc7",
+      "size": 74064,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/iso-ir-165.cnv"
+    },
+    {
+      "name": "jisx-212.cnv",
+      "file": "data/icu78/jisx-212.cnv",
+      "object": "CharsetJisx212Data",
+      "sha256": "b56d7661957cf95c0d685cc600d7dc84aa345084ba76789dfee71b3e2ce91736",
+      "size": 71488,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/jisx-212.cnv"
+    },
+    {
+      "name": "lmb-excp.cnv",
+      "file": "data/icu78/lmb-excp.cnv",
+      "object": "CharsetLmbExcpData",
+      "sha256": "79191ed93c0c2190f811ca0549926a5ddcffb44cc56bbab8670f488ff88a28df",
+      "size": 11536,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/lmb-excp.cnv"
+    },
+    {
+      "name": "macos-0_2-10.2.cnv",
+      "file": "data/icu78/macos-0_2-10.2.cnv",
+      "object": "CharsetMacos02102Data",
+      "sha256": "b1a79e493840bf2775058a3fdb27562abf4e668766929494f3cca13f49b893f1",
+      "size": 3968,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/macos-0_2-10.2.cnv"
+    },
+    {
+      "name": "macos-29-10.2.cnv",
+      "file": "data/icu78/macos-29-10.2.cnv",
+      "object": "CharsetMacos29102Data",
+      "sha256": "c9ef78512a7356cebfa39bd36f61172ec17934c2dc3a979c19052e8246ff1384",
+      "size": 3440,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/macos-29-10.2.cnv"
+    },
+    {
+      "name": "macos-35-10.2.cnv",
+      "file": "data/icu78/macos-35-10.2.cnv",
+      "object": "CharsetMacos35102Data",
+      "sha256": "b5a1f53b2ebc59a0a5acea73a7376b472eb407b9c7383359c2e09067f9fa11d3",
+      "size": 3920,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/macos-35-10.2.cnv"
+    },
+    {
+      "name": "macos-6_2-10.4.cnv",
+      "file": "data/icu78/macos-6_2-10.4.cnv",
+      "object": "CharsetMacos62104Data",
+      "sha256": "6373e0d7b7830c63ba3004f7f38715caf33a251b3f3fb584b4d45619f005b95a",
+      "size": 3664,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/macos-6_2-10.4.cnv"
+    },
+    {
+      "name": "macos-7_3-10.2.cnv",
+      "file": "data/icu78/macos-7_3-10.2.cnv",
+      "object": "CharsetMacos73102Data",
+      "sha256": "09e60629daf3eec05ed44a432cf9398dcd260cbeaa331b6404b8f37c894d3b73",
+      "size": 3632,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/macos-7_3-10.2.cnv"
+    },
+    {
+      "name": "windows-874-2000.cnv",
+      "file": "data/icu78/windows-874-2000.cnv",
+      "object": "CharsetWindows8742000Data",
+      "sha256": "7a2ba4ce30a7cb349794f7daf02d0cd70854164077255a37c52e2e25066da432",
+      "size": 3584,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/windows-874-2000.cnv"
+    },
+    {
+      "name": "windows-936-2000.cnv",
+      "file": "data/icu78/windows-936-2000.cnv",
+      "object": "CharsetWindows9362000Data",
+      "sha256": "59c59c1f6aa8c1b44d385ed971a5b3bc9c5d44d740f00b2e89f3801c7dc8ef41",
+      "size": 6448,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/windows-936-2000.cnv"
+    },
+    {
+      "name": "windows-949-2000.cnv",
+      "file": "data/icu78/windows-949-2000.cnv",
+      "object": "CharsetWindows9492000Data",
+      "sha256": "8cc64ecd9f02f4bf5eb6636e7c6c7207a218d25ec869b28e79a67f578552dcbc",
+      "size": 5568,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/windows-949-2000.cnv"
+    },
+    {
+      "name": "windows-950-2000.cnv",
+      "file": "data/icu78/windows-950-2000.cnv",
+      "object": "CharsetWindows9502000Data",
+      "sha256": "18e0f0a9d4fcfe514dc00fb4ee8277d91b172ed3c55b667c4e7cf5dfbbe7c19f",
+      "size": 11872,
+      "source_file": "icu4j/main/charset/src/main/resources/com/ibm/icu/impl/data/icudata/windows-950-2000.cnv"
     }
   ],
   "registries": {

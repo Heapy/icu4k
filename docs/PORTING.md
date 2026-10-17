@@ -12221,3 +12221,36 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false` (5m 40s).
+
+### Converter binary data (ICU4J 78.3)
+
+- Imported the complete charset resource directory: all 190 `.cnv` converters
+  and `cnvalias.icu`, 5,214,352 bytes in total. Each manifest entry records its
+  original source file, size and SHA-256. The existing common resource generator
+  embeds the data and includes it in root-directory lookup/visitation.
+- Ported UConverterDataReader, static converter metadata, MBCS headers, serialized
+  mapping-table structures and the public InvalidFormatException. Parsing covers
+  cnvt version authentication, both byte orders, base-table names, state tables,
+  fallbacks, Unicode results, all encoder output representations, omitted encoder
+  data/index views, and extension bounds/views. These are data-loading components;
+  the stateful decoder/encoder algorithms are still pending.
+- The optional UTF-16 index and binary extensions retain shared storage and
+  independent cursors through BinaryBuffer views. The index view does not advance
+  the parent's cursor, matching the source's CharBuffer behavior.
+- Independent source goldens cover all 190 files, every serialized output type
+  (0, 1, 2, 3, 8, 9, 12 and 14), and all 48 files with extensions. Reproduce with
+  `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/ConverterDataGoldens.java data/icu78`.
+- JVM differential tests additionally compare original JAR bytes, every array
+  element, metadata field, fallback pair, extension and cursor position directly
+  with ICU4J. Common tests check source fingerprints and synthetic little/big
+  endian, v4/v5 headers, absent encoder tables, live views, signed base-name bytes,
+  extension validation, truncation and invalid headers. The charset oracle JAR
+  is a JVM test dependency only; production decoding stays in common code.
+- Full validation passed: JVM 2,823 tests; Node 1,385 tests (one skipped);
+  macOS Native 1,383 tests; zero failures/errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false` (6m 17s). All 191 new resource files were also
+  compared byte-for-byte with the pinned upstream checkout, and the complete
+  3,172-resource generator check passed.
