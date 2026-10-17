@@ -3,8 +3,9 @@
 package io.github.heapy.icu4k.lang
 
 import io.github.heapy.icu4k.impl.UCharacterProperty
+import io.github.heapy.icu4k.util.ULocale
 
-/** Script values and Script_Extensions backed by pinned ICU data. Locale selection is pending. */
+/** Script values and Script_Extensions backed by pinned ICU data. Includes locale and script-name selection. */
 class UScript private constructor() {
     enum class ScriptUsage { NOT_ENCODED, UNKNOWN, EXCLUDED, LIMITED_USE, ASPIRATIONAL, RECOMMENDED }
     companion object {
@@ -453,6 +454,43 @@ class UScript private constructor() {
         const val TOLONG_SIKI: Int = 211
         const val TRADITIONAL_HAN_WITH_LATIN: Int = 212
         const val CODE_LIMIT: Int = 213
+        private fun getCodesFromLocale(locale: ULocale): IntArray? {
+            val language = locale.getLanguage()
+            if (language == "ja") return intArrayOf(KATAKANA, HIRAGANA, HAN)
+            if (language == "ko") return intArrayOf(HANGUL, HAN)
+            val script = locale.getScript()
+            if (language == "zh" && script == "Hant") return intArrayOf(HAN, BOPOMOFO)
+            if (script.isNotEmpty()) {
+                var code = getCodeFromName(script)
+                if (code != INVALID_CODE) {
+                    if (code == SIMPLIFIED_HAN || code == TRADITIONAL_HAN) code = HAN
+                    return intArrayOf(code)
+                }
+            }
+            return null
+        }
+
+        fun getCode(locale: ULocale): IntArray? =
+            getCodesFromLocale(locale) ?: getCodesFromLocale(ULocale.addLikelySubtags(locale))
+
+        fun getCode(nameOrAbbrOrLocale: String): IntArray? {
+            var triedCode = false
+            var separator = nameOrAbbrOrLocale.indexOf('_')
+            if (separator < 0) separator = nameOrAbbrOrLocale.indexOf('-')
+            if (separator < 0 || (separator == 3 && nameOrAbbrOrLocale.length > 8) ||
+                (separator == 7 && nameOrAbbrOrLocale.length == 11)) {
+                val code = getCodeFromName(nameOrAbbrOrLocale)
+                if (code != UProperty.UNDEFINED) return intArrayOf(code)
+                triedCode = true
+            }
+            getCode(ULocale(nameOrAbbrOrLocale))?.let { return it }
+            if (!triedCode) {
+                val code = getCodeFromName(nameOrAbbrOrLocale)
+                if (code != UProperty.UNDEFINED) return intArrayOf(code)
+            }
+            return null
+        }
+
         fun getCodeFromName(nameOrAbbr: String): Int = UCharacter.getPropertyValueEnumNoThrow(UProperty.SCRIPT, nameOrAbbr)
         fun getName(scriptCode: Int): String? = UCharacter.getPropertyValueName(UProperty.SCRIPT, scriptCode, UProperty.NameChoice.LONG)
         fun getShortName(scriptCode: Int): String? = UCharacter.getPropertyValueName(UProperty.SCRIPT, scriptCode, UProperty.NameChoice.SHORT)

@@ -11816,3 +11816,12 @@ compileTestKotlinLinuxX64` passed in 4m 49s. XML reports contain 2,715 JVM tests
 failures or errors. Linux Native test compilation passed. The pinned upstream
 checkout still reports commit 21d1eb0f306e1141c10931e914dfc038c06121da with no
 changes to the imported transliteration resource directory.
+
+The next registry prerequisite ports `UScript.getCode(String/ULocale)` with the
+upstream alias-versus-locale decision, likely-subtag fallback and multi-script
+language handling. A JVM extension retains the `java.util.Locale` entry point.
+Differential coverage compares all ICU locales, all script long/short names and
+all host Java locales against ICU4J 78.3.
+Validation passed: the targeted JVM oracle and the full `jvmTest jsNodeTest
+macosArm64Test compileTestKotlinLinuxX64` run (4m 49s). The preceding execution /
+resource milestone also passed both GitHub Actions jobs in run 39031648447.
