@@ -10566,3 +10566,28 @@ the public formatter/parser and DateFormat factories are still pending.
 
 Full verification passed in 6m 13s: JVM 2,219 tests, macOS Native 1,040 tests,
 JS 1,042 tests (one existing skip), and Linux Native test compilation.
+
+### Locale day-period rules (2026-10-17)
+
+Ported the complete `impl.DayPeriodRules` class to common Kotlin, including its
+DayPeriod enum and mutable VALUES array. The original two-pass resource sinks
+load the embedded dayPeriods.res rules and locale-to-rule-set map, validate
+cutoff types/hours/full-day coverage and build shared rule instances. Locale
+fallback, explicit midnight/noon flags, hourly periods and midpoint calculation
+(including midnight wraparound and absent-period exceptions) follow ICU4J.
+
+Three JVM oracle tests compare all resource locales and available ICU locales
+with fallback variants and keywords, shared rule-set identity, every hourly
+value and period midpoint. Private validation/cutoff probes additionally cover
+Unicode numeric input, overflow, invalid hours and cutoff pairs, FROM/AFTER,
+BEFORE 24:00 and invalid AT positions. Four common tests cover English and
+Russian boundaries, wraparound, locale fallback and full 24-hour coverage for
+every embedded locale. No host date/time APIs or generated substitute rules
+are used. SimpleDateFormat's complete formatting/parsing engine remains pending.
+
+Hourly lookup explicitly checks bounds for JS, whose raw array access otherwise
+returns null/undefined for invalid hours instead of failing as ICU4J does. The
+same common regression test covers negative hours and hour 24 on all targets.
+
+Final full verification passed in 6m 25s: JVM 2,226 tests, macOS Native 1,044
+tests and JS 1,046 tests (one existing skip), plus Linux Native test compilation.
