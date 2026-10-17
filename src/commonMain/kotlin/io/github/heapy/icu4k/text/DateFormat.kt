@@ -167,6 +167,52 @@ abstract class DateFormat : UFormat {
     companion object {
         private const val serialVersionUID=7218322306649953788L
         private val serialPersistentFields: Array<RbnfObjectStreamField> = timeStateSerialFields("DateFormat")
+        @kotlin.jvm.JvmStatic fun getTimeInstance(): DateFormat = getTimeInstance(DEFAULT)
+        @kotlin.jvm.JvmStatic fun getTimeInstance(style: Int): DateFormat = getTimeInstance(style, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getTimeInstance(style: Int, locale: ULocale?): DateFormat = createStyle(-1, style, locale, null)
+        @kotlin.jvm.JvmStatic fun getDateInstance(): DateFormat = getDateInstance(DEFAULT)
+        @kotlin.jvm.JvmStatic fun getDateInstance(style: Int): DateFormat = getDateInstance(style, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getDateInstance(style: Int, locale: ULocale?): DateFormat = createStyle(style, -1, locale, null)
+        @kotlin.jvm.JvmStatic fun getDateTimeInstance(): DateFormat = getDateTimeInstance(DEFAULT, DEFAULT)
+        @kotlin.jvm.JvmStatic fun getDateTimeInstance(dateStyle: Int, timeStyle: Int): DateFormat = getDateTimeInstance(dateStyle, timeStyle, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getDateTimeInstance(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat = createStyle(dateStyle, timeStyle, locale, null)
+        @kotlin.jvm.JvmStatic fun getInstance(): DateFormat = getDateTimeInstance(SHORT, SHORT)
+        @kotlin.jvm.JvmStatic fun getDateInstance(calendar: Calendar?, style: Int): DateFormat = getDateInstance(calendar, style, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getDateInstance(calendar: Calendar?, style: Int, locale: ULocale?): DateFormat = getDateTimeInstance(calendar, style, -1, locale)
+        @kotlin.jvm.JvmStatic fun getTimeInstance(calendar: Calendar?, style: Int): DateFormat = getTimeInstance(calendar, style, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getTimeInstance(calendar: Calendar?, style: Int, locale: ULocale?): DateFormat = getDateTimeInstance(calendar, -1, style, locale)
+        @kotlin.jvm.JvmStatic fun getDateTimeInstance(calendar: Calendar?, dateStyle: Int, timeStyle: Int): DateFormat = getDateTimeInstance(calendar, dateStyle, timeStyle, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getDateTimeInstance(calendar: Calendar?, dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat {
+            if (calendar == null) throw IllegalArgumentException("Calendar must be supplied")
+            return createStyle(dateStyle, timeStyle, locale, calendar)
+        }
+        @kotlin.jvm.JvmStatic fun getInstance(calendar: Calendar?): DateFormat = getInstance(calendar, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getInstance(calendar: Calendar?, locale: ULocale?): DateFormat = getDateTimeInstance(calendar, SHORT, SHORT, locale)
+        @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(skeleton: String?): DateFormat = getPatternInstance(skeleton, ULocale.getDefault(ULocale.Category.FORMAT))
+        @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(skeleton: String?, locale: ULocale?): DateFormat = SimpleDateFormat(SimpleDateFormat.bestPattern(skeleton, locale), locale)
+        @kotlin.jvm.JvmStatic fun getInstanceForSkeleton(calendar: Calendar?, skeleton: String?, locale: ULocale?): DateFormat {
+            val actual = if (calendar != null) locale!!.setKeywordValue("calendar", calendar.getType()) else locale
+            val pattern = SimpleDateFormat.bestPattern(skeleton, actual)
+            return SimpleDateFormat(pattern, actual).also { it.setCalendar(calendar) }
+        }
+        @kotlin.jvm.JvmStatic fun getPatternInstance(skeleton: String?): DateFormat = getInstanceForSkeleton(skeleton)
+        @kotlin.jvm.JvmStatic fun getPatternInstance(skeleton: String?, locale: ULocale?): DateFormat = getInstanceForSkeleton(skeleton, locale)
+        @kotlin.jvm.JvmStatic fun getPatternInstance(calendar: Calendar?, skeleton: String?, locale: ULocale?): DateFormat = getInstanceForSkeleton(calendar, skeleton, locale)
+        @kotlin.jvm.JvmStatic fun getAvailableULocales(): Array<ULocale>? = io.github.heapy.icu4k.impl.ICUResourceBundle.getAvailableULocales()
+        @kotlin.jvm.JvmStatic fun getAvailableLocales(): Array<MessageFormatLocale>? = dateFormatAvailableLocales()
+        internal fun createStyle(dateStyle: Int, timeStyle: Int, locale: ULocale?, calendar: Calendar?): DateFormat {
+            if ((timeStyle != NONE && timeStyle and RELATIVE > 0) || (dateStyle != NONE && dateStyle and RELATIVE > 0)) {
+                return io.github.heapy.icu4k.impl.RelativeDateFormat(timeStyle, dateStyle, locale, calendar)
+            }
+            if (timeStyle < NONE || timeStyle > SHORT) throw IllegalArgumentException("Illegal time style $timeStyle")
+            if (dateStyle < NONE || dateStyle > SHORT) throw IllegalArgumentException("Illegal date style $dateStyle")
+            val cal = calendar ?: Calendar.getInstance(locale)
+            return try {
+                cal.getDateTimeFormat(dateStyle, timeStyle, locale).also {
+                    it.setLocale(cal.getLocale(ULocale.VALID_LOCALE), cal.getLocale(ULocale.ACTUAL_LOCALE))
+                }
+            } catch (_: MissingResourceException) { SimpleDateFormat("M/d/yy h:mm a") }
+        }
         internal fun fixNumberFormatForDates(format: NumberFormat) {
             format.setGroupingUsed(false)
             if(format is DecimalFormat) format.setDecimalSeparatorAlwaysShown(false)
@@ -335,3 +381,5 @@ private class FixedDateSkeletonList(values: List<String?>): AbstractMutableList<
 }
 
 internal expect fun dateFormatBooleanAttributes(): MutableSet<DateFormat.BooleanAttribute>
+
+internal expect fun dateFormatAvailableLocales(): Array<MessageFormatLocale>?

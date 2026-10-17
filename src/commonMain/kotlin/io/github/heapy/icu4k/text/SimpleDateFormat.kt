@@ -222,17 +222,8 @@ open class SimpleDateFormat : DateFormat {
             return SimpleDateFormat(value.getPatternString(), value.getDateFormatSymbols(), value.getCalendar(), null, value.getLocale(), !override.isNullOrEmpty(), override)
         }
         internal fun normalDateStyle(date: Boolean, style: Int, locale: ULocale?): DateFormat = normalDateTimeStyle(if (date) style else -1, if (date) -1 else style, locale)
-        internal fun normalDateTimeStyle(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat {
-            if (timeStyle < -1 || timeStyle > 3) throw IllegalArgumentException("Illegal time style $timeStyle")
-            if (dateStyle < -1 || dateStyle > 3) throw IllegalArgumentException("Illegal date style $dateStyle")
-            val cal = Calendar.getInstance(locale)
-            return try {
-                cal.getDateTimeFormat(dateStyle, timeStyle, locale).also {
-                    it.setLocale(cal.getLocale(ULocale.VALID_LOCALE), cal.getLocale(ULocale.ACTUAL_LOCALE))
-                }
-            } catch (_: MissingResourceException) { SimpleDateFormat("M/d/yy h:mm a") }
-        }
-        internal fun bestPattern(skeleton: String, locale: ULocale?): String = DateTimePatternGeneratorCore().also { core ->
+        internal fun normalDateTimeStyle(dateStyle: Int, timeStyle: Int, locale: ULocale?): DateFormat = DateFormat.createStyle(dateStyle, timeStyle, locale, null)
+        internal fun bestPattern(skeleton: String?, locale: ULocale?): String = DateTimePatternGeneratorCore().also { core ->
             DateTimePatternInitializationCore().initialize(core, locale!!) { loc ->
                 val cal = Calendar.getInstance(loc)
                 object : DateTimePatternInitializationCore.CalendarPatterns {

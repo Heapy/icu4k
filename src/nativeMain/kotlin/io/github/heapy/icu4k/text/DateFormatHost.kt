@@ -6,3 +6,5 @@ internal actual fun dateFormatClassName(input: Any): String = input::class.quali
 internal actual fun invalidDateFormatField(message: String): Nothing=throw IllegalStateException(message)
 
 internal actual fun dateFormatBooleanAttributes(): MutableSet<DateFormat.BooleanAttribute> = DateFormat.BooleanAttribute.entries.toMutableSet()
+
+internal actual fun dateFormatAvailableLocales(): Array<MessageFormatLocale>? = DateFormat.getAvailableULocales()
