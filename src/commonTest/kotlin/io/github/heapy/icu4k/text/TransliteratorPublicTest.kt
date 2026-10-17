@@ -140,4 +140,20 @@ class TransliteratorPublicTest {
         data.transliterate(text,pos,"b");data.finishTransliteration(text,pos)
         assertEquals("X",text.toString());assertEquals(1,pos.start)
     }
+    @Test fun nullRegistrationIsDeferredAndNullAliasResolvesNullTransform() {
+        val alias="HeapyNull-Alias"
+        val factory="HeapyNull-Factory"
+        try {
+            Transliterator.registerAlias(alias,null)
+            val trans=Transliterator.getInstance(alias)
+            assertEquals(alias,trans.getID());assertEquals("abc",trans.transliterate("abc"))
+            Transliterator.registerFactory(factory,null)
+            val ids=Transliterator.getAvailableIDs()
+            var found=false
+            while(ids.hasMoreElements())if(ids.nextElement()==factory)found=true
+            assertTrue(found)
+            assertFailsWith<NullPointerException>{Transliterator.getInstance(factory)}
+        }finally {Transliterator.unregister(alias);Transliterator.unregister(factory)}
+    }
+
 }

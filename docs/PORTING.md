@@ -11940,3 +11940,10 @@ compileTestKotlinLinuxX64` completed in 5m 38s. XML reports contain 2,764 JVM te
 1,356 JS tests (one existing skip), 1,354 macOS Native tests and no failures/errors.
 Linux Native test compilation passed. The 41 source-only public API fingerprints
 and ordered 816-ID inventory pass on JVM, JS and macOS Native.
+
+Transliterator registration null semantics now match the pinned Java source:
+registerAlias accepts a null target (StringBuilder emits the alias text "null",
+which resolves to Null), and a null factory remains visible until lookup fails.
+Previously Kotlin parameter checks rejected registration early. A source-only
+reproduction and public JVM differential test establish the source timing; common
+regressions cover alias execution and deferred factory failure.

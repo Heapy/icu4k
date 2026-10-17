@@ -143,4 +143,20 @@ class TransliteratorPublicOracleTest {
         }
     }
 
+    @Test fun nullRegistrationsPreserveSourceTimingAndAliasSemantics() {
+        val alias="HeapyNull-Alias"
+        val factory="HeapyNull-Factory"
+        fun invoke(type:Class<*>,name:String,parameter:Class<*>,id:String) {
+            try {type.getMethod(name,String::class.java,parameter).invoke(null,id,null)}
+            catch(e:java.lang.reflect.InvocationTargetException){throw e.targetException}
+        }
+        try {
+            assertEquals(error{Source.registerAlias(alias,null)},error{invoke(Transliterator::class.java,"registerAlias",String::class.java,alias)})
+            compare(Source.getInstance(alias),Transliterator.getInstance(alias),"abc")
+            assertEquals(error{Source.registerFactory(factory,null)},error{invoke(Transliterator::class.java,"registerFactory",Transliterator.Factory::class.java,factory)})
+            fun failure(block:()->Any?):String=try{block();"ok"}catch(e:Throwable){e.javaClass.simpleName}
+            assertEquals(failure{Source.getInstance(factory)},failure{Transliterator.getInstance(factory)})
+        }finally {Source.unregister(alias);Source.unregister(factory);Transliterator.unregister(alias);Transliterator.unregister(factory)}
+    }
+
 }

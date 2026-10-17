@@ -160,10 +160,10 @@ abstract class Transliterator protected constructor(id: String?, filter: Unicode
             }
             return result
         }
-        @JvmStatic fun registerFactory(id: String, factory: Factory) = registry.putFactory(id,{factory.getInstance(it)},true)
+        @JvmStatic fun registerFactory(id: String, factory: Factory?) = registry.putFactory(id,factory?.let { supplied -> { requested: String -> supplied.getInstance(requested) } },true)
         @JvmStatic fun registerInstance(instance: Transliterator) = registerInstance(instance,true)
         internal fun registerInstance(instance: Transliterator, visible: Boolean) = registry.putInstance(instance.getID()!!,instance,visible)
-        @JvmStatic fun registerAlias(aliasID: String, realID: String) = registry.putAlias(aliasID,realID,true)
+        @JvmStatic fun registerAlias(aliasID: String, realID: String?) = registry.putNullableAlias(aliasID,realID,true)
         internal fun registerSpecialInverse(target: String?, inverse: String?, bidirectional: Boolean) = TransliteratorIDParser.registerSpecialInverse(target,inverse,bidirectional)
         internal fun registerConstructor(id: String, constructor: ()->Transliterator?, displayName: String?) {
             registry.putClass(id,constructor,true)

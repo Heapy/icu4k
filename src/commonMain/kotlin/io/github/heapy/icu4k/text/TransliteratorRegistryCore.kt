@@ -25,7 +25,7 @@ internal class TransliteratorRegistryCore<T : Any>(private val host: Host<T>) : 
             return lock.withLock { resource ?: source().also { resource = it } }
         }
     }
-    class AliasEntry(var alias: String)
+    class AliasEntry(var alias: String?)
     class FactoryEntry<T>(val factory: (String) -> T?)
     /** The JVM owner catches only InstantiationException and IllegalAccessException. */
     class ClassEntry<T>(val construct: () -> T?)
@@ -35,8 +35,9 @@ internal class TransliteratorRegistryCore<T : Any>(private val host: Host<T>) : 
     override fun putResource(id: String, rules: () -> String, direction: Int, visible: Boolean) = putResourceSupplier(id, rules, direction, visible)
     fun putResourceSupplier(id: String, rules: () -> String?, direction: Int, visible: Boolean) = store.put(id, ResourceEntry(rules, direction), visible)
     fun putResource(id: String, rules: String?, direction: Int, visible: Boolean) = store.put(id, ResourceEntry(rules, direction), visible)
-    override fun putAlias(id: String, alias: String, visible: Boolean) = store.put(id, AliasEntry(alias), visible)
-    fun putFactory(id: String, factory: (String) -> T?, visible: Boolean) = store.put(id, FactoryEntry(factory), visible)
+    override fun putAlias(id: String, alias: String, visible: Boolean) = putNullableAlias(id,alias,visible)
+    fun putNullableAlias(id: String, alias: String?, visible: Boolean) = store.put(id,AliasEntry(alias),visible)
+    fun putFactory(id: String, factory: ((String) -> T?)?, visible: Boolean) = store.put(id, factory?.let {FactoryEntry(it)}, visible)
     fun putClass(id: String, construct: () -> T?, visible: Boolean) = store.put(id, ClassEntry(construct), visible)
     fun putInstance(id: String, instance: T, visible: Boolean) = store.put(id, InstanceEntry(instance), visible)
     fun remove(id: String) = store.remove(id)
