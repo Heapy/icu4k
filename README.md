@@ -389,7 +389,8 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
-`GregorianCalendar` supports explicit time zones, field resolution and date arithmetic:
+`GregorianCalendar` supports default or explicit time zones, locale timezone
+keywords, date-field constructors, field resolution and date arithmetic:
 
 ```kotlin
 import io.github.heapy.icu4k.util.Calendar
@@ -409,6 +410,20 @@ println(calendar.get(Calendar.DATE)) // 29
 `PersianCalendar` also support explicit zones, field resolution, date arithmetic
 and Native copies.
 
+`JapaneseCalendar` also supports default/locale/date constructors and the ICU era
+boundaries, including accession-month/day defaults for year one:
+
+```kotlin
+import io.github.heapy.icu4k.util.JapaneseCalendar
+
+val japanese = JapaneseCalendar(ULocale("ja@timezone=Asia/Tokyo"))
+japanese.clear()
+japanese.set(Calendar.ERA, JapaneseCalendar.REIWA)
+japanese.set(Calendar.YEAR, 1)
+println(japanese.get(Calendar.MONTH)) // Calendar.MAY
+println(japanese.get(Calendar.DATE)) // 1
+```
+
 System zones and default-zone lookup use the embedded ICU transition data:
 
 ```kotlin
@@ -427,6 +442,6 @@ Explicit JDK-mode construction requires JVM.
 
 `SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
 local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
-retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Default-zone
-calendar constructors, remaining calendar APIs and date formatting are
+retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Other
+calendar default-zone constructors, remaining calendar APIs and date formatting are
 still pending; see [the porting log](docs/PORTING.md) for current coverage.

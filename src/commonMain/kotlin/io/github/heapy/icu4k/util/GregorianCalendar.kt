@@ -13,10 +13,26 @@ open class GregorianCalendar : Calendar {
     private val gregorian: GregorianCalendarCore<GregorianCalendar>
         get() = gregorianState ?: GregorianCalendarCore.beforeFieldInitialization(Binding()).also { gregorianState = it }
     constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale) {
-        gregorianState = gregorian.also { it.initializeCutoverDefaults() }
+        gregorianState = initializeCutoverDefaults()
         setTimeInMillis(Clock.System.now().toEpochMilliseconds())
     }
+    constructor() : this(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT))
     constructor(zone: TimeZone?) : this(zone, ULocale.getDefault(ULocale.Category.FORMAT))
+    @Suppress("DEPRECATION")
+    constructor(locale: ULocale?) : this(TimeZone.forULocaleOrDefault(locale), locale)
+    constructor(year: Int, month: Int, date: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        gregorianState = initializeCutoverDefaults()
+        set(ERA, AD); set(YEAR, year); set(MONTH, month); set(DATE, date)
+    }
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        gregorianState = initializeCutoverDefaults()
+        set(ERA, AD); set(YEAR, year); set(MONTH, month); set(DATE, date); set(HOUR_OF_DAY, hour); set(MINUTE, minute)
+    }
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        gregorianState = initializeCutoverDefaults()
+        set(ERA, AD); set(YEAR, year); set(MONTH, month); set(DATE, date); set(HOUR_OF_DAY, hour); set(MINUTE, minute); set(SECOND, second)
+    }
+    private fun initializeCutoverDefaults(): GregorianCalendarCore<GregorianCalendar> = gregorian.also { it.initializeCutoverDefaults() }
     /** Copy path for Native subclasses; skips locale, clock and virtual initialization callbacks. */
     protected constructor(other: GregorianCalendar, copyMarker: Unit) : super(other, copyMarker) {
         gregorianState = other.gregorian.copyFor(Binding())

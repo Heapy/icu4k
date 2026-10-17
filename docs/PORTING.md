@@ -10097,3 +10097,54 @@ marks setICUDefault deprecated/internal like the pinned source; JVM compilation
 passed afterward. The earlier full JVM result above covers the rest of the
 repository. ICU4J-009 records an independent Java-only reproduction of the JDK
 clone binding behavior; no upstream issue has been submitted.
+
+### Public Japanese calendar and Gregorian constructors (2026-10-17)
+
+JapaneseCalendar now binds the existing era/calendar cores to the actual public
+GregorianCalendar lifecycle. Its common constructor matrix includes default,
+explicit zone, ULocale (including timezone keywords), zone/ULocale, Date, explicit
+era/date, current-era/date and date/time forms. GregorianCalendar now also exposes
+its default, ULocale, three-field, five-field and six-field constructors. Field
+constructors directly initialize the Calendar superclass, initialize Gregorian
+cutover fields and stamp only the source fields; they do not read the clock.
+Japanese field constructors then stamp ERA after the Gregorian constructor, as in
+ICU4J. Date construction reads current time through the no-argument constructor
+before applying the supplied Date. JVM Locale constructor-shaped factory overloads
+adapt both GregorianCalendar and JapaneseCalendar, using the same conversion and
+locale-zone evaluation order. They are Kotlin factories, not new Java bytecode
+constructors; the common classes retain their common constructor descriptors.
+
+EraRulesCore loads the pinned Japanese data with the tentative-era policy and
+initializes current era from the real current clock plus the runtime default
+zone's offset, independently of an explicit constructor zone. JVM configuration
+uses System.getProperty then System.getenv in source order, including the JDK
+supplemental-era property fallback. JS/Native have no Java system-property space;
+they read the tentative-era environment flag where the platform exposes it. The
+public enableTentativeEra helper remains dynamic while the loaded era rules and
+CURRENT_ERA remain fixed after initialization. Private identity helpers force
+companion initialization before Gregorian base construction on JS/Native, whose
+companion initialization is otherwise lazy. Era constants are runtime @JvmField
+vals initialized through calls; javap confirms no ConstantValue attributes, so
+javac consumers cannot inline them. Source deprecated/internal annotations are
+retained on enableTentativeEra, haveDefaultCentury and era-zero direction.
+
+Stateless owner adapters allow early Calendar constructor callbacks and fresh
+clones to dispatch through the correct Japanese object. The immutable era rules
+are shared; inherited Gregorian cloning retains cutover state and the Japanese
+Native copy hook uses the protected copy constructor without invoking clock or
+locale/default-zone construction again. Era limits, first-year month/day defaults,
+field precedence, era mapping, actual year maxima and Gregorian arithmetic all
+retain the existing pinned core behavior.
+
+Four new common tests cover modern accession boundaries, constructor flags and
+locale/default zones, independent clones and early metadata callbacks. Six JVM
+oracles cover every loaded era boundary in two offsets, era defaults/limits,
+field precedence, mutations, Gregorian cutover cloning, common/JVM constructor
+matrices, mutable tentative policy, strict errors and fresh-classloader bootstrap
+traces for now/field/Date constructors. The isolated traces compare default-zone
+cloning, offset queries, base week initialization and clock callbacks with ICU4J.
+The focused integration run passed. Full verification passed in 6m 2s: JVM
+2,113 tests, macOS Arm64 1,006 tests, and JS Node 1,008 tests (one existing
+skip), with no failures. Linux x64 test compilation also passed. JVM bytecode
+inspection confirmed that all six public era fields have no ConstantValue
+attribute, preserving class initialization when Java callers read them.
