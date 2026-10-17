@@ -610,3 +610,19 @@ println(shaping.shape("لا")) // ﻻ (U+FEFB)
 
 String, buffer-slice, in-place and size-query APIs preserve ICU4J's option and
 fixed-length behavior. Expansion without enough room throws `ArabicShapingException`.
+
+`RelativeDateTimeFormatter` formats numeric and qualitative relative dates with
+CLDR long, short and narrow styles:
+
+```kotlin
+import io.github.heapy.icu4k.text.RelativeDateTimeFormatter
+import io.github.heapy.icu4k.util.ULocale
+
+val relative = RelativeDateTimeFormatter.getInstance(ULocale.US)
+println(relative.format(-1.0, RelativeDateTimeFormatter.RelativeDateTimeUnit.DAY)) // yesterday
+println(relative.formatNumeric(3.0, RelativeDateTimeFormatter.RelativeDateTimeUnit.DAY)) // in 3 days
+val value = relative.formatToValue(3.0, RelativeDateTimeFormatter.RelativeDateTimeUnit.DAY)
+```
+
+Formatted results expose literal, numeric and number fields. The API also supports
+custom number formats, capitalization and locale-specific date/time combination.

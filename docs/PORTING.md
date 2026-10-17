@@ -11220,3 +11220,46 @@ descriptions and exception descriptors/streams.
 Verification passed in 5m 2s: JVM 2,444 tests, JS 1,142 tests (one existing
 skip), macOS Native 1,140 tests and Linux Native test compilation. All executed
 tests passed, including all common upstream shaping goldens on JS and Native.
+
+### RelativeDateTimeFormatter (2026-10-17)
+
+The complete public relative-date formatter is now in commonMain, including all
+five enums, quantitative/qualitative/numeric formatting, formatted values, custom
+NumberFormat factories/getters, capitalization context/style getters and compiled
+date/time combination. JVM locale factory extensions adapt java.util.Locale.
+
+The source resource sink walks fields tables through locale fallback, preserves
+first-seen qualitative/plural patterns, compiles zero-or-one-argument patterns,
+and records the shared style alias chain with consistency/depth checks. A ported
+SoftCache retains the source key/publication/soft-value behavior. Combined patterns
+come from the locale's default calendar and MEDIUM date-at-time pattern. Plain
+weekdays use standalone DateFormatSymbols widths, as in ICU4J.
+
+DecimalFormat formatting selects plurals from the rounded DecimalQuantity, while
+non-decimal formats select from the original double and receive the numeric field
+as a whole. Numeric offsets use total double ordering, including negative zero;
+automatic relative formatting retains the source hundredth-rounding tolerance
+around -2/-1/0/1/2 and falls back to numeric output when words are absent. Number
+formats are cloned on input and output, with the source monitor on getter cloning.
+Only beginning-of-sentence context titlecases strings using a synchronized sentence
+BreakIterator; value-formatting calls reject that context before validating other
+arguments. Other capitalization contexts retain source behavior.
+
+FormattedRelativeDateTime exposes immutable CharSequence views, appendTo, constrained
+field iteration and attributed character iterators through the common formatting
+engine. Field.LITERAL and Field.NUMERIC retain source UIDs, canonical readResolve
+and invalid-name validation, with bidirectional JVM stream tests.
+
+JVM oracles cover 25 selected locales, every style and unit, non-finite values,
+negative zero, tolerance boundaries, all directions, rounded plurals, custom
+DecimalFormat/RBNF, cloning, capitalization and argument failures. A separate
+pass loads every available ICU4J locale in every style and compares representative
+day/quarter/weekday/combination output. Common source goldens cover 21 locales
+times three styles, including field ranges, negative zero, words, weekdays and
+combination punctuation. The upstream en_GB narrow quarter/plural sideways-fallback
+regression is also preserved on common targets.
+
+Verification passed in 6m 48s: JVM 2,455 tests, JS 1,145 tests (one existing
+skip), macOS Native 1,143 tests and Linux Native test compilation. All executed
+tests passed, including all available-locale JVM comparisons and the 63 common
+locale/style source goldens.
