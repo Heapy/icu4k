@@ -28,8 +28,9 @@ internal class IslamicCalendarCore(private val owner: Owner) {
         ISLAMIC_UMALQURA("islamic-umalqura"), ISLAMIC_TBLA("islamic-tbla")
     }
     private var cType: CalculationType? = CalculationType.ISLAMIC_CIVIL
-    private var algorithm: Algorithm = CIVIL
+    private var algorithm: Algorithm? = CIVIL
     private var civil = true
+    fun initializeDefaults() { cType = CalculationType.ISLAMIC_CIVIL; algorithm = CIVIL; civil = true }
     fun copyForOwner(newOwner: Owner): IslamicCalendarCore = IslamicCalendarCore(newOwner).also {
         it.cType = cType; it.algorithm = algorithm; it.civil = civil
     }
@@ -42,7 +43,7 @@ internal class IslamicCalendarCore(private val owner: Owner) {
             CalculationType.ISLAMIC_TBLA -> TBLA
             CalculationType.ISLAMIC_UMALQURA -> UMALQURA
         }
-        civil = algorithm.isCivil()
+        civil = algorithm!!.isCivil()
     }
     fun setCivil(beCivil: Boolean) {
         if (beCivil && cType != CalculationType.ISLAMIC_CIVIL) {
@@ -58,11 +59,11 @@ internal class IslamicCalendarCore(private val owner: Owner) {
             owner.clear()
             owner.setTimeInMillis(time)
         }
-        civil = algorithm.isCivil()
+        civil = algorithm!!.isCivil()
     }
-    fun isCivil(): Boolean = algorithm.isCivil()
-    fun getCalculationType(): CalculationType = algorithm.type
-    fun getType(): String = algorithm.type.bcpType
+    fun isCivil(): Boolean = algorithm!!.isCivil()
+    fun getCalculationType(): CalculationType = algorithm!!.type
+    fun getType(): String = algorithm!!.type.bcpType
     fun setCalcTypeForLocale(locale: ULocale) {
         val type = CalendarUtil.getCalendarType(locale)
         setCalculationType(when {
@@ -78,12 +79,12 @@ internal class IslamicCalendarCore(private val owner: Owner) {
         return LIMITS[field][type]
     }
     fun handleGetExtendedYear(): Int = if (owner.newerField(19, 1) == 19) owner.internalGet(19, 1) else owner.internalGet(1, 1)
-    fun handleGetMonthLength(year: Int, month: Int): Int = algorithm.monthLength(year, month)
-    fun handleGetYearLength(year: Int): Int = algorithm.yearLength(year)
+    fun handleGetMonthLength(year: Int, month: Int): Int = algorithm!!.monthLength(year, month)
+    fun handleGetYearLength(year: Int): Int = algorithm!!.yearLength(year)
     @Suppress("UNUSED_PARAMETER")
-    fun handleComputeMonthStart(year: Int, month: Int, useMonth: Boolean): Int = (algorithm.monthStart(year, month) + algorithm.epoch() - 1).toInt()
+    fun handleComputeMonthStart(year: Int, month: Int, useMonth: Boolean): Int = (algorithm!!.monthStart(year, month) + algorithm!!.epoch() - 1).toInt()
     fun handleComputeFields(julianDay: Int) {
-        algorithm.compute(julianDay.toLong(), owner.internalGetTimeInMillis(),
+        algorithm!!.compute(julianDay.toLong(), owner.internalGetTimeInMillis(),
             { year -> owner.internalSet(0, 0); owner.internalSet(1, year); owner.internalSet(19, year) },
             { month -> owner.internalSet(2, month); owner.internalSet(23, month) },
             { owner.internalSet(5, it) }, { owner.internalSet(6, it) })
@@ -183,6 +184,10 @@ internal class IslamicCalendarCore(private val owner: Owner) {
         }
     }
     companion object {
+        fun beforeFieldInitialization(owner: Owner): IslamicCalendarCore = IslamicCalendarCore(owner).also {
+            it.cType = null; it.algorithm = null; it.civil = false
+        }
+
         private const val HIJRA_MILLIS = -42521587200000L
         private const val ONE_DAY = 86400000L
         private val ISLAMIC: Algorithm = IslamicAlgorithm()

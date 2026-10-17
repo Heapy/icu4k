@@ -8,3 +8,5 @@ fun GregorianCalendar(locale: java.util.Locale?): GregorianCalendar = GregorianC
 fun GregorianCalendar(zone: TimeZone?, locale: java.util.Locale?): GregorianCalendar = GregorianCalendar(zone, ULocale.forLocale(locale))
 fun JapaneseCalendar(locale: java.util.Locale?): JapaneseCalendar = JapaneseCalendar(TimeZone.forLocaleOrDefault(locale), ULocale.forLocale(locale))
 fun JapaneseCalendar(zone: TimeZone?, locale: java.util.Locale?): JapaneseCalendar = JapaneseCalendar(zone, ULocale.forLocale(locale))
+fun IslamicCalendar(locale: java.util.Locale?): IslamicCalendar = IslamicCalendar(TimeZone.forLocaleOrDefault(locale), ULocale.forLocale(locale))
+fun IslamicCalendar(zone: TimeZone?, locale: java.util.Locale?): IslamicCalendar = IslamicCalendar(zone, ULocale.forLocale(locale))

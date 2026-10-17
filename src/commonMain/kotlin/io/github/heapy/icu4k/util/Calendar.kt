@@ -46,6 +46,7 @@ abstract class Calendar : ICUCloneableBase, Comparable<Calendar?> {
 
     fun getTime(): Date = state().getTime()
     fun setTime(date: Date?) = state().setTime(date)
+    protected fun internalGetTimeInMillis(): Long = values.time
     open fun getTimeInMillis(): Long = state().getTimeInMillis()
     open fun setTimeInMillis(millis: Long) = state().setTimeInMillis(millis)
     fun get(field: Int): Int = state().get(field)

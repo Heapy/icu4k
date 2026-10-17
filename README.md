@@ -424,6 +424,11 @@ println(japanese.get(Calendar.MONTH)) // Calendar.MAY
 println(japanese.get(Calendar.DATE)) // 1
 ```
 
+`IslamicCalendar` supports all four ICU calculation modes: astronomical Islamic,
+civil, tabular with Thursday epoch, and Umm al-Qura. Locale constructors select
+the calendar keyword; date and numeric-field constructors retain ICU's civil
+default. `setCivil` preserves the instant while recomputing calendar fields.
+
 System zones and default-zone lookup use the embedded ICU transition data:
 
 ```kotlin

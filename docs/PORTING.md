@@ -10148,3 +10148,40 @@ The focused integration run passed. Full verification passed in 6m 2s: JVM
 skip), with no failures. Linux x64 test compilation also passed. JVM bytecode
 inspection confirmed that all six public era fields have no ConstantValue
 attribute, preserving class initialization when Java callers read them.
+
+### Public Islamic calendar (2026-10-17)
+
+Connected the existing four-mode Islamic calculation core to the public common
+`IslamicCalendar`: astronomical Islamic, civil, Thursday-epoch tabular, and Umm
+al-Qura. All common source constructors are available, with JVM Kotlin Locale
+factory overloads. Locale/zone constructors select the locale calendar mode
+before setting the clock; Date and numeric constructors directly initialize the
+base calendar and retain civil mode, including when the default locale requests
+another Islamic calculation type. Numeric constructors set only the source
+fields and do not read the clock.
+
+The core now supports Java's pre-field-initializer state for virtual callbacks
+from the Calendar constructor. Algorithm-dependent queries fail before the
+algorithm initializer, while fixed limits remain usable; explicit initializers
+reset any early mode mutation before locale selection. Normal standalone core
+construction retains its existing civil default. The base calendar exposes its
+stored instant through the source protected `internalGetTimeInMillis` helper,
+without forcing time computation during astronomical field conversion.
+
+Mode changes preserve ICU's distinction: `setCalculationType` changes the
+algorithm without invalidating fields; `setCivil` clears/recomputes around the
+saved instant when changing mode. The null setter still writes the serialized
+mode before failing, retaining the previous algorithm. Clones rebind the mutable
+core owner on every backend and preserve the runtime calculation mode.
+Serialization remains part of the outstanding public calendar work.
+
+Four JVM oracle tests compare all fields, limits, related years, temporal leap
+years, mode changes, clones, constructors, and arithmetic against ICU4J 78.3.
+Coverage includes all months in years 1299, 1300, 1445, 1600 and 1601 in two
+fixed offsets for every calculation mode. Three common tests exercise mode and
+clone ownership, constructor/default-locale differences, and early initializer
+callbacks on JVM, JS and Native.
+
+Full verification passed in 6m 29s: JVM 2,120 tests, macOS Arm64 1,009 tests,
+and JS Node 1,011 tests (one existing skip), with no failures. Linux x64 test
+compilation passed; Linux execution is delegated to the repository CI runner.
