@@ -97,7 +97,9 @@ open class SimpleDateFormat : DateFormat {
 
     open fun set2DigitYearStart(date: Date?) = state.setCenturyStart(date)
     open fun get2DigitYearStart(): Date? = state.centuryStart()
-    override fun format(calendar: Calendar?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder = engines.formatter.format(calendar, output, position)!!
+    override fun format(calendar: Calendar?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder = format(calendar, output, position, null)
+    internal fun format(calendar: Calendar?, output: StringBuilder?, position: FormatFieldPosition?, attributes: MutableList<FormatFieldPosition>?): StringBuilder =
+        engines.formatter.format(calendar, output, position, attributes)!!
     override fun parse(text: String?, calendar: Calendar?, position: ParsePosition?) = engines.parser.parse(text, calendar, position)
     protected open fun patternCharToDateFormatField(ch: Char): DateFormat.Field? = SimpleDateFormatPatternCore.attribute(ch)
     protected open fun subFormat(ch: Char, count: Int, beginOffset: Int, pos: FormatFieldPosition?, @Suppress("UNUSED_PARAMETER") symbols: DateFormatSymbols?, cal: Calendar?): String? =
