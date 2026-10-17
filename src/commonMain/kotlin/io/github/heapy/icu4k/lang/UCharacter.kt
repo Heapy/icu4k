@@ -14,6 +14,8 @@ import io.github.heapy.icu4k.text.BreakIterator
 import io.github.heapy.icu4k.text.CaseMap
 import io.github.heapy.icu4k.util.ULocale
 import io.github.heapy.icu4k.util.VersionInfo
+import io.github.heapy.icu4k.util.RangeValueIterator
+import io.github.heapy.icu4k.impl.Trie2
 
 /**
  * Unicode character operations backed by pinned ICU data on every target.
@@ -63,7 +65,20 @@ class UCharacter private constructor() {
     }
     enum class IdentifierStatus { RESTRICTED, ALLOWED }
     enum class IdentifierType { NOT_CHARACTER, DEPRECATED, DEFAULT_IGNORABLE, NOT_NFKC, NOT_XID, EXCLUSION, OBSOLETE, TECHNICAL, UNCOMMON_USE, LIMITED_USE, INCLUSION, RECOMMENDED }
+    private class UCharacterTypeIterator : RangeValueIterator {
+        private var iterator=typeRanges()
+        override fun next(element: RangeValueIterator.Element): Boolean {
+            if(!iterator.hasNext())return false
+            val range=iterator.next()
+            if(range.leadSurrogate)return false
+            element.start=range.startCodePoint;element.limit=range.endCodePoint+1;element.value=range.value
+            return true
+        }
+        override fun reset() { iterator=typeRanges() }
+        private fun typeRanges(): Iterator<Trie2.Range> = UCharacterProperty.INSTANCE.m_trie_.iterator(Trie2.ValueMapper {it and UCharacterProperty.TYPE_MASK})
+    }
     companion object {
+        fun getTypeIterator(): RangeValueIterator = UCharacterTypeIterator()
         fun hasIdentifierType(c: Int, type: IdentifierType): Boolean = UCharacterProperty.INSTANCE.hasIDType(c, type.ordinal)
         fun getIdentifierTypes(c: Int, types: MutableSet<IdentifierType>): Int = UCharacterProperty.INSTANCE.getIDTypes(c, types)
 

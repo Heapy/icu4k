@@ -12057,3 +12057,19 @@ regressions cover alias execution and deferred factory failure.
   macOS Native 1,365 tests; no failures or errors. Linux Native test compilation
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
+
+## UCharacter general-category range iterator
+
+- Added UCharacter.getTypeIterator using the existing property Trie2 with the
+  original category mask and lead-code-unit range exclusion. Returned iterators
+  own their cursors, support partial/full reset, and preserve results after
+  exhaustion.
+- JVM tests compare every range with ICU4J across repeated traversal/reset.
+  Common tests verify every code point in every returned range against getType,
+  maximal adjacency, full Unicode coverage, reset and terminal behavior.
+- An independent ICU4J 78.3 baseline contains 4,144 ranges with fingerprint
+  `-2096587558`; regenerate via
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/TypeIteratorGolden.java`.
+- Full JVM, Node and macOS Native suites passed; Linux Native test compilation
+  passed, using `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
