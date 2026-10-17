@@ -11922,3 +11922,21 @@ source/target sets and append/parser failure paths also pass. A standalone
 source-only scan confirms all 816 upstream IDs create and execute on that corpus
 without exceptions. This validates the exercised public surface; it is not a
 claim of complete ICU4J compatibility.
+
+Common transliteration validation now includes 41 independent ICU4J fingerprints
+covering forward/reverse lookup, metadata, rules, element IDs, filters, batch
+output, every incremental insertion and finish positions. An ordered inventory
+fingerprint checks all 816 IDs across targets. These goldens were produced by a
+standalone program linked only to the pinned ICU4J jar.
+
+CI run 39034237671 for the preceding support commit failed in the full-Unicode
+lowercase cache JS test with a timer error. The local test took 1.054s; the Mocha
+runner's default is 2s. Node tests now use a finite 30s timeout to accommodate full
+Unicode scans on CI without reducing coverage. The earlier registry lifecycle
+and iterator milestones passed both CI jobs (39033221728 and 39033655838).
+
+Public API cross-platform validation passed: `jvmTest jsNodeTest macosArm64Test
+compileTestKotlinLinuxX64` completed in 5m 38s. XML reports contain 2,764 JVM tests,
+1,356 JS tests (one existing skip), 1,354 macOS Native tests and no failures/errors.
+Linux Native test compilation passed. The 41 source-only public API fingerprints
+and ordered 816-ID inventory pass on JVM, JS and macOS Native.

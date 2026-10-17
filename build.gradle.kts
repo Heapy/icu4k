@@ -7,7 +7,14 @@ version = "0.1.0-SNAPSHOT"
 
 kotlin {
     jvm()
-    js() { nodejs() }
+    js() {
+        nodejs {
+            testTask {
+                // Full Unicode source/target scans exceed Mocha's 2s default on CI.
+                useMocha { timeout = "30s" }
+            }
+        }
+    }
     linuxX64()
     macosArm64()
     sourceSets {

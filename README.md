@@ -43,6 +43,17 @@ val composed = Normalizer2.getNFCInstance().normalize("e\u0301") // é
 val decomposed = Normalizer2.getNFDInstance().normalize("é") // e + U+0301
 ```
 
+Common Kotlin transliteration supports registered ICU transforms and custom rules:
+
+```kotlin
+import io.github.heapy.icu4k.text.Transliterator
+
+val ascii = Transliterator.getInstance("Latin-ASCII").transliterate("Crème brûlée")
+// Creme brulee
+val rules = Transliterator.createFromRules("example", "ab > X;", Transliterator.FORWARD)
+val result = rules.transliterate("abab") // XX
+```
+
 Common Kotlin break rules can be compiled and used directly:
 
 ```kotlin
