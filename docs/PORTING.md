@@ -12009,3 +12009,34 @@ regressions cover alias execution and deferred factory failure.
   `java -cp /path/to/icu4j-78.3.jar scripts/oracles/TrieGoldens.java`.
 - Targeted JVM tests and `python3 scripts/generate-data.py --check` passed.
   Full cross-target validation is recorded with the StringPrep milestone below.
+
+## StringPrep and legacy IDNA2003
+
+- Added all 14 StringPrep profiles, mapping/deletion and unassigned handling,
+  Unicode 3.2 NFKC, prohibited-character and BiDi checks, source-context errors,
+  and iterator cursor behavior. Profile instances use a synchronized weak cache.
+- Common callers can construct StringPrep from BinaryBuffer or ByteArray. A JVM
+  `StringPrep(InputStream)` factory adapter closes its input on success/failure,
+  matching ICU4J's stream ownership. Portable binary errors use the existing
+  ICUUncheckedIOException convention.
+- Added legacy IDNA label/domain ASCII/Unicode conversion and comparison APIs
+  for strings, builders and UCharacterIterator. These retain ICU4J's original
+  error/fallback behavior, separator handling, iterator side effects, length
+  limits, and asymmetric ASCII prefix comparison behavior.
+- JVM differential tests cover every profile, options, deterministic random
+  UTF-16, normalization corrections, exact error text/code, all iterator start
+  positions used by the fixtures, stream closure, and unequal-length comparison.
+- Common tests use 1,936 independent ICU4J 78.3 goldens for profiles and IDNA2003.
+  Regenerate with
+  `java -cp /path/to/icu4j-78.3.jar scripts/oracles/LegacyIdnaGoldens.java >
+  src/commonTest/kotlin/io/github/heapy/icu4k/text/LegacyIdnaGoldenRows.kt`.
+- Cross-target testing caught unchecked Kotlin/JS array access in the legacy
+  trie APIs. Explicit index checks now preserve JVM bounds failures on JS and
+  Native as well. The common dummy-trie regression exercises this path.
+- Added exhaustive JVM comparison of all 10,436 mapped/deleted code points
+  across the 14 pinned profiles, including supplementary case mappings.
+- Full cross-target validation passed after the bounds correction: JVM 2,786
+  tests; Node 1,365 tests (one skipped); macOS Native 1,363 tests; no failures
+  or errors. Linux Native test compilation passed. Command:
+  `./gradlew jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64
+  -Pkotlin.compiler.execution.strategy=in-process`.

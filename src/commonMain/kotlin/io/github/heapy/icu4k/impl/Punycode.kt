@@ -1,4 +1,5 @@
 // © 2016 and later: Unicode, Inc. and others.
+// Copyright (C) 2003-2014, International Business Machines Corporation and others. All Rights Reserved.
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 

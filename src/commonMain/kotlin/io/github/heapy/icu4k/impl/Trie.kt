@@ -1,4 +1,5 @@
 // © 2016 and later: Unicode, Inc. and others.
+// Copyright (C) 1996-2015, International Business Machines Corporation and others. All Rights Reserved.
 // SPDX-License-Identifier: Unicode-3.0
 package io.github.heapy.icu4k.impl
 
@@ -32,7 +33,11 @@ abstract class Trie {
     protected abstract fun getSurrogateOffset(lead: Char,trail: Char): Int
     protected abstract fun getValue(index: Int): Int
     protected abstract fun getInitialValue(): Int
-    protected fun getRawOffset(offset: Int,ch: Char): Int = (m_index_[offset+(ch.code shr 5)].code shl 2)+(ch.code and 31)
+    protected fun getRawOffset(offset: Int,ch: Char): Int {
+        val index=offset+(ch.code shr 5)
+        if(index !in m_index_.indices)throw IndexOutOfBoundsException()
+        return (m_index_[index].code shl 2)+(ch.code and 31)
+    }
     protected fun getBMPOffset(ch: Char): Int = getRawOffset(if(ch.isHighSurrogate())LEAD_INDEX_OFFSET_ else 0,ch)
     protected fun getLeadOffset(ch: Char): Int = getRawOffset(0,ch)
     protected fun getCodePointOffset(ch: Int): Int = when {
