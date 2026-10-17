@@ -11526,3 +11526,48 @@ Gradle 9.8.1. XML reports contain 2,580 JVM tests, 1,229 JavaScript tests (one
 existing skip) and 1,227 macOS Native tests, with no failures or errors. Linux
 Native test compilation passed. The Node suite also passed both direct rebuilding
 and the forced cached relink before this full validation.
+
+### Bidi line/run/index-map kernels (2026-10-17)
+
+BidiLineCore ports the remaining BidiLine algorithms: line slicing and trailing
+whitespace derivation, level lookup/materialization, logical/visual runs, run
+reordering, insertion/control run flags, index lookup and both maps. Static
+reorder/inversion continue to use BidiReorderingCore. A line-state protocol keeps
+allocation and parent linking at the future facade boundary; a child links its
+parent only after successful copying and direction calculation. It retains the
+source's fresh-line defaults (including inverse/order flags), processed/result
+length differences, signed levels, run storage sharing and level-array alias/copy
+behavior.
+
+JVM differential tests clone resolved public ICU4J states and compare all run
+slots, cumulative limits, flags, array sharing, levels and mutations after each
+operation. Coverage includes all seven modes, default/high paragraph levels,
+streaming, removal/marks, supplementary and malformed UTF-16, more than ten runs
+(binary index search), oversized level buffers, fixed run capacity failures and
+1,000 random paragraphs/slices. The writer is exercised on the newly built runs
+with eleven option combinations.
+
+Common fingerprints were independently captured from ICU4J 78.3 private BidiLine
+methods and the public writer: 1,320 paragraph configurations across six engine
+modes, five levels, four option sets and eleven texts, plus whole/first/last-unit
+slices. Thirty mode/level partitions compare lookup/run results, maps, repeated
+getLevels aliasing, writer output/errors and full run/level snapshots. Five frozen
+ASCII state records cover runs-only orchestration output, including short property
+arrays and lone UTF-16 units, without adding an incomplete runs-only implementation.
+
+Source quirks are retained: a cold visual-index lookup with removed controls can
+fail before countRuns initializes storage, and succeeds after warming that cache.
+Some runs-only states restore original text length while retaining shorter
+property arrays; private line copying then fails before linking the child. These
+failures are verified rather than repaired or omitted.
+
+Public Bidi constructors/lifecycle/validation, allocation policy, runs-only
+orchestration, compatibility/attributed APIs and BidiTransform remain outstanding.
+The algorithms are internal kernels until that complete facade is connected.
+
+Remote CI 39024426539 for dc0c9252 completed successfully on jvm-js-linux and macOS.
+
+Validation: `jvmTest jsNodeTest macosArm64Test compileTestKotlinLinuxX64` passed
+in 4m 36s with Kotlin 2.4.21 / Gradle 9.8.1. XML reports contain 2,616 JVM tests,
+1,261 JavaScript tests (one existing skip) and 1,259 macOS Native tests, with no
+failures or errors. Linux Native test compilation passed.
