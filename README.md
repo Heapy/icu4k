@@ -389,6 +389,10 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
+`TimeZoneNames` exposes localized CLDR names, historical metazone mappings,
+prefix matches and region-sensitive TZDB abbreviations. Locale factories, custom
+JVM factories and source-compatible JVM serialization are included.
+
 `DateFormat` provides the abstract calendar-based format/parse protocol, date
 fields, leniency/context controls and JVM temporal-input conversion. A concrete
 pattern formatter and style factories are still being ported.

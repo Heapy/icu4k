@@ -10431,3 +10431,38 @@ addresses that test instability; no production calendar arithmetic changed.
 Final full verification passed in 5m 5s: 2,170 JVM tests, 1,025 macOS
 Native tests and 1,027 JS tests (one existing skip), with no failures.
 Linux Native test sources compiled; Linux execution remains a CI check.
+
+### Public TimeZoneNames providers (2026-10-17)
+
+Added the public TimeZoneNames abstraction, NameType and validated MatchInfo,
+base virtual display-name/bulk fallback, exemplar-location fallback and factory
+contract. The locale factory uses the source SoftCache key (base locale name,
+excluding keywords); TZDB instances are separately constructed. The JVM factory
+honors ICUConfig's factory implementation property with the source reflection
+failure/fallback rules. The built-in provider is available directly on every
+backend; JVM java.util.Locale inputs use the existing locale conversion.
+
+TimeZoneNamesImpl binds the existing localized data engine to the real default
+timezone (including Olson canonical identity) and preserves virtual metazone
+callbacks during construction and bulk lookup. TZDBTimeZoneNames binds the IANA
+abbreviation engine and region disambiguation. Match collections retain the
+platform engine's empty/nonempty mutability behavior. No fixed-zone substitute
+was added.
+
+JVM serialization preserves the source base/provider UIDs and field descriptors:
+the CLDR provider writes only its resolved data locale and recreates transient
+name caches on read; TZDB stores its requested locale and recreates its regional
+parser lazily. Tests include source/port stream cross-reading in both directions.
+TimeZoneFormat and the SimpleDateFormat engine remain outstanding.
+
+Three common tests and seven JVM oracle tests cover locale/cache identity,
+every name type across locales and historic dates, invalid/null inputs, bulk
+partial writes, prefix matches, TZDB regional abbreviation choice, MatchInfo
+validation, subclass dispatch and serial descriptors/cross-reading. Fresh child
+JVMs verify configured custom/null factories, missing-class fallback and the
+source class-cast failure for an incompatible factory. The final focused JVM
+run passed in 37 seconds.
+
+Final full verification passed in 7m 18s: 2,180 JVM tests, 1,028 macOS
+Native tests and 1,030 JS tests (one existing skip), with no failures.
+Linux Native test sources compiled; execution on Linux remains a CI check.
