@@ -9,6 +9,17 @@ import kotlin.time.Clock
 
 /** Hebrew lunisolar calendar, including the intercalary Adar I month. */
 open class HebrewCalendar : Calendar {
+    constructor() : this(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT))
+    @Suppress("DEPRECATION")
+    constructor(locale: ULocale?) : this(TimeZone.forULocaleOrDefault(locale), locale)
+    constructor(date: Date?) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) { setTime(date) }
+    constructor(year: Int, month: Int, date: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        set(YEAR, year); set(MONTH, month); set(DATE, date)
+    }
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        set(YEAR, year); set(MONTH, month); set(DATE, date)
+        set(HOUR_OF_DAY, hour); set(MINUTE, minute); set(SECOND, second)
+    }
     constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale) {
         setTimeInMillis(Clock.System.now().toEpochMilliseconds())
     }

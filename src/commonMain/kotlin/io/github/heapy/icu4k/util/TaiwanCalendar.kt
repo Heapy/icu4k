@@ -7,6 +7,11 @@ import io.github.heapy.icu4k.impl.calendar.TaiwanCalendarCore
 
 /** Gregorian dates numbered relative to the Minguo era. */
 open class TaiwanCalendar : GregorianCalendar {
+    constructor() : super()
+    constructor(locale: ULocale?) : super(locale)
+    constructor(date: Date?) : this() { setTime(date) }
+    constructor(year: Int, month: Int, date: Int) : super(year, month, date)
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(year, month, date, hour, minute, second)
     constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale)
     constructor(zone: TimeZone?) : super(zone)
     protected constructor(other: TaiwanCalendar, copyMarker: Unit) : super(other, copyMarker)

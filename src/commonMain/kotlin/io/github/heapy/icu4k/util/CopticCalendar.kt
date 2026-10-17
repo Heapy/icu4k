@@ -5,6 +5,12 @@ package io.github.heapy.icu4k.util
 import io.github.heapy.icu4k.impl.calendar.CopticCalendarCore
 
 class CopticCalendar : CECalendar {
+    constructor() : super()
+    @Suppress("DEPRECATION")
+    constructor(locale: ULocale?) : this(TimeZone.forULocaleOrDefault(locale), locale)
+    constructor(date: Date?) : super(date)
+    constructor(year: Int, month: Int, date: Int) : super(year, month, date)
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(year, month, date, hour, minute, second)
     constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale)
     constructor(zone: TimeZone?) : this(zone, ULocale.getDefault(ULocale.Category.FORMAT))
     private constructor(other: CopticCalendar, copyMarker: Unit) : super(other, copyMarker)

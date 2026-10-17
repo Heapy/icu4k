@@ -7,6 +7,12 @@ import io.github.heapy.icu4k.impl.calendar.EthiopicCalendarCore
 class EthiopicCalendar : CECalendar {
     private var eraState: EthiopicCalendarCore? = null
     private fun ethiopic(): EthiopicCalendarCore = eraState ?: EthiopicCalendarCore(Binding()).also { eraState = it }
+    constructor() : this(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT))
+    @Suppress("DEPRECATION")
+    constructor(locale: ULocale?) : this(TimeZone.forULocaleOrDefault(locale), locale)
+    constructor(date: Date?) : super(date)
+    constructor(year: Int, month: Int, date: Int) : super(year, month, date)
+    constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(year, month, date, hour, minute, second)
     constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale) {
         ethiopic().setCalcTypeForLocale(locale)
     }

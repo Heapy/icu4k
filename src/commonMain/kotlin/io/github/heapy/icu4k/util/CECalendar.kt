@@ -7,6 +7,18 @@ import kotlin.time.Clock
 
 /** Shared thirteen-month calendar base. Constructors are internal to retain ICU's package-only extensibility. */
 abstract class CECalendar : Calendar {
+    internal constructor() : this(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT))
+    @Suppress("DEPRECATION")
+    internal constructor(locale: ULocale?) : this(TimeZone.forULocaleOrDefault(locale), locale)
+    internal constructor(zone: TimeZone?) : this(zone, ULocale.getDefault(ULocale.Category.FORMAT))
+    internal constructor(date: Date?) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) { setTime(date) }
+    internal constructor(year: Int, month: Int, date: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        set(YEAR, year); set(MONTH, month); set(DATE, date)
+    }
+    internal constructor(year: Int, month: Int, date: Int, hour: Int, minute: Int, second: Int) : super(TimeZone.getDefault(), ULocale.getDefault(ULocale.Category.FORMAT)) {
+        set(YEAR, year); set(MONTH, month); set(DATE, date)
+        set(HOUR_OF_DAY, hour); set(MINUTE, minute); set(SECOND, second)
+    }
     internal constructor(zone: TimeZone?, locale: ULocale?) : super(zone, locale) {
         setTimeInMillis(Clock.System.now().toEpochMilliseconds())
     }

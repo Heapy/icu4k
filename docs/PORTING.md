@@ -10250,3 +10250,32 @@ Full verification passed in 4m 55s: JVM 2,133 tests, macOS Arm64 1,013 tests,
 and JS Node 1,015 tests (one existing skip), with no failures. Linux x64 test
 compilation passed. The initial trace test's immediate-offset expectation was
 corrected after source inspection; source and port both defer these queries.
+
+### Remaining public calendar constructors (2026-10-17)
+
+Added the missing no-argument, ULocale, Date, three-field and six-field
+constructors for BuddhistCalendar, TaiwanCalendar, PersianCalendar,
+IndianCalendar, HebrewCalendar, CopticCalendar and EthiopicCalendar, plus the
+corresponding internal CECalendar constructors. JVM Kotlin Locale adapters now
+cover all seven classes. CE's constructors remain internal because the source
+base class is package-private.
+
+Buddhist and Taiwan delegate to the source-equivalent Gregorian paths. CE,
+Persian, Indian and Hebrew Date/numeric paths construct the base Calendar with
+the real default zone and FORMAT locale directly, bypassing current-time initialization.
+Numeric fields are set in source order. Coptic delegates to CE. Ethiopic's
+locale/default path selects era after CE's clock initialization; Date/numeric
+paths retain Amete Mihret and do not apply an Amete Alem keyword in the default
+locale. Existing owner and clone behavior is unchanged.
+
+Three JVM oracle tests compare all supplied-field stamps before completion and
+all fields/instants afterward under ordinary and Amete Alem default locales with
+a private fixed-offset default zone. The constructor matrix includes Date,
+three/six fields, no-argument, ULocale, Java Locale and explicit-zone locale
+forms for all seven classes. Instrumented subclass callbacks confirm numeric
+construction does not call setTimeInMillis. Two common tests cover numeric
+constructor stamps/clone ownership and Ethiopic constructor-specific era modes.
+
+Full verification passed in 5m 14s: JVM 2,138 tests, macOS Arm64 1,015 tests,
+and JS Node 1,017 tests (one existing skip), with no failures. Linux x64 test
+compilation passed; execution is covered by repository CI.

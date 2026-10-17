@@ -407,8 +407,8 @@ println(calendar.get(Calendar.DATE)) // 29
 
 `BuddhistCalendar`, `TaiwanCalendar`, `IndianCalendar`, `CopticCalendar`,
 `EthiopicCalendar`, `HebrewCalendar` and the ICU-internal, deprecated
-`PersianCalendar` also support explicit zones, field resolution, date arithmetic
-and Native copies.
+`PersianCalendar` also support default/locale/Date/numeric constructors, explicit
+zones, field resolution, date arithmetic and Native copies.
 
 `JapaneseCalendar` also supports default/locale/date constructors and the ICU era
 boundaries, including accession-month/day defaults for year one:
@@ -457,6 +457,6 @@ Explicit JDK-mode construction requires JVM.
 
 `SimpleTimeZone` also supports recurring daylight-saving rules, transitions and
 local-time disambiguation through `BasicTimeZone.LocalOption`. The `Date` boundary
-retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Other
-calendar default-zone constructors, remaining calendar APIs and date formatting are
+retains mutable epoch milliseconds and aliases `java.util.Date` on JVM. Remaining
+calendar APIs, serialization and date formatting are
 still pending; see [the porting log](docs/PORTING.md) for current coverage.
