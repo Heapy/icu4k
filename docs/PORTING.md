@@ -11171,3 +11171,22 @@ Verification passed in 6m 13s: JVM 2,431 tests, JS 1,139 tests (one existing
 skip), macOS Native 1,137 tests and Linux Native test compilation. All executed
 tests passed, including the Finnish/Japanese source goldens and complete unit
 resource fingerprint on JS and Native.
+
+### Legacy TimeUnit object streams (2026-10-17)
+
+MeasureUnit and TimeUnit now retain the source serialVersionUID values. TimeUnit
+retains its private persistent index field and legacy readResolve mapping:
+0 year, 1 month, 2 week, 3 day, 4 hour, 5 minute, 6 second. Values outside this
+range produce the source InvalidObjectException and message on JVM. Java object
+streams remain a JVM boundary; portable targets retain the same resolution code.
+
+A source oracle generates real default-field streams by replacing the modern
+MeasureUnitProxy with a fresh noncanonical TimeUnit during serialization. Tests
+cross-read these streams in both directions, assert canonical singleton identity
+for every legacy index, and check negative, oversized and Int endpoint indices.
+Descriptor checks compare both class UIDs and every persistent field/type. Normal
+proxy streams for all seven time units remain covered in both directions.
+
+Verification passed in 5m 48s: JVM 2,435 tests, JS 1,139 tests (one existing
+skip), macOS Native 1,137 tests and Linux Native test compilation. All executed
+tests passed.
