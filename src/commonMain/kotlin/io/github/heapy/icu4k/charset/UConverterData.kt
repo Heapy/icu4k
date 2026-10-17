@@ -40,6 +40,16 @@ internal class MBCSToUFallback(val offset: Int, val codePoint: Int)
 
 /** Serialized conversion tables; runtime conversion state belongs to a decoder/encoder. */
 internal class UConverterMBCSTable {
+    var baseSharedData: UConverterSharedData? = null
+    var extIndexes: BinaryBuffer? = null
+    var swapLFNLStateTable: Array<IntArray>? = null
+    var swapLFNLFromUnicodeChars: CharArray? = null
+    var swapLFNLName: String? = null
+    var dbcsOnlyState: Byte = 0
+    var stateTableOwned = false
+    var utf8Friendly = false
+    var maxFastUChar: Char = '\u0000'
+    var asciiRoundtrips = 0
     var countStates: Short = 0
     var countToUFallbacks = 0
     var stateTable = emptyArray<IntArray>()

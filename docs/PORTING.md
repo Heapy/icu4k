@@ -12285,3 +12285,38 @@ regressions cover alias execution and deferred factory failure.
   passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
   -Pkotlin.incremental=false` (5m 20s).
+
+### Shared MBCS converter loading/preparation (ICU4J 78.3)
+
+- Ported the shared converter loader and per-converter preparation over all 190
+  `.cnv` resources: metadata/version validation, custom resource lookup, base
+  converter loading, extension-only tables, recursion guards, Unicode masks,
+  ASCII roundtrip flags and UTF-8-friendly metadata.
+- Extension converters retain the source's shared base-table identity, DBCS-only
+  initial states, state-table rewrites and physical array shape. Each top-level
+  load owns its mutable tables; a custom resource loader is reused for base loads.
+- Ported swaplfnl validation and copied decode/encode tables, substitution bytes,
+  max-byte adjustments and GB18030/KEIS/JEF/JIPS option initialization. Preserved
+  the source's unaligned extension max-byte read at byte offset 17.
+- Implemented reconstruction of omitted encoder data: stage-2 expansion from
+  the optional UTF-8 index, enumeration of roundtrip decode mappings, EUC output
+  transforms and stage-3 roundtrip flags. The source's signed-byte/char casts,
+  enumeration behavior and signed Long arithmetic are retained.
+- Independent source goldens cover 380 prepared configurations (all 190 resources
+  with and without swaplfnl), including complete table fingerprints, options,
+  base identities, extension state, substitution and physical state-table sizes.
+  Reproduce with `java -cp /path/to/icu4j-78.3.jar:/path/to/icu4j-charset-78.3.jar
+  scripts/oracles/MBCSLoaderGoldens.java data/icu78`.
+- Another 78 independent source vectors cover all reconstruction output types,
+  EUC boundaries, Long overflow, supplementary/BMP mappings and complete synthetic
+  version-5.3 loads with omitted encoder bytes. Reproduce with the same classpath
+  and `scripts/oracles/MBCSReconstitutionGoldens.java`.
+- Common tests also exercise custom-loader base resolution, mutable table
+  isolation, invalid metadata/headers and extension recursion. This prepares data
+  for the stateful codecs; streaming decode/encode and public charset APIs are
+  still pending.
+- Full validation passed: JVM 2,840 tests; Node 1,400 tests (one skipped);
+  macOS Native 1,398 tests; zero failures/errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false` (5m 13s).
