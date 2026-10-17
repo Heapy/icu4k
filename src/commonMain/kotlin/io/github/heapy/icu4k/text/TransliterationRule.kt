@@ -6,7 +6,19 @@ package io.github.heapy.icu4k.text
 import io.github.heapy.icu4k.impl.Utility
 
 /** Mutable position protocol, to be owned by the public Transliterator facade. */
-internal class TransliterationPosition(var contextStart: Int, var contextLimit: Int, var start: Int, var limit: Int)
+internal open class TransliterationPosition(open var contextStart: Int, open var contextLimit: Int, open var start: Int, open var limit: Int) {
+    constructor() : this(0,0,0,0)
+    constructor(contextStart: Int,contextLimit: Int,start: Int) : this(contextStart,contextLimit,start,contextLimit)
+    constructor(pos: TransliterationPosition) : this() { set(pos) }
+    fun set(pos: TransliterationPosition) {contextStart=pos.contextStart;contextLimit=pos.contextLimit;start=pos.start;limit=pos.limit}
+    fun validate(length: Int) {
+        if(contextStart<0 || start<contextStart || limit<start || contextLimit<limit || length<contextLimit)
+            throw IllegalArgumentException("Invalid Position {cs=$contextStart, s=$start, l=$limit, cl=$contextLimit}, len=$length")
+    }
+    override fun equals(other: Any?): Boolean = other is TransliterationPosition && contextStart==other.contextStart && contextLimit==other.contextLimit && start==other.start && limit==other.limit
+    override fun hashCode(): Int {var result=1;for(value in intArrayOf(contextStart,contextLimit,start,limit))result=31*result+value;return result}
+    override fun toString(): String = "[cs=$contextStart, s=$start, l=$limit, cl=$contextLimit]"
+}
 
 internal class TransliterationRule(input: String, anteContextPos: Int, postContextPos: Int,
     output: String, cursorPos: Int, cursorOffset: Int, val segments: Array<UnicodeMatcher>?,

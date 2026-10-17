@@ -11738,3 +11738,42 @@ JVM report contains eight passing tests; full JS and macOS reports contain 1,313
 (one existing skip) and 1,311 tests respectively, with zero failures or errors.
 Linux Native test compilation passed. Remote verification of the partitioned
 CI workload will be provided by the next pushed run.
+
+
+### Transliteration filtered/streaming and compound execution (2026-10-17)
+
+TransliteratorExecutionCore ports batch range/string execution, validated
+incremental insertion, split-lead-surrogate deferral, finishing, filter-run
+selection and the full rollback algorithm. Incremental passes retain a backup via
+Replaceable.copy, commit completed prefixes and restore uncommitted text, limits
+and context lengths using the source's copy/delete sequence. Handler exceptions
+retain the source's intermediate text/backup state. The unfiltered public
+filtered-entry fast path deliberately bypasses completion checks, as in ICU4J.
+
+Filter copying/freezing, custom-filter materialization, external-filter
+intersection and base-ID rule serialization are also connected to the owner
+protocol. Materialization publishes the mutable filter before calling user code;
+exceptions and reentrant filter changes retain source state. Position gains the
+source constructors, copying, validation, equality/hash and diagnostic format.
+It remains an internal protocol pending the complete public facade.
+
+CompoundTransliteratorCore ports completed-prefix propagation between passes,
+length deltas, incomplete nonincremental errors, empty compounds, maximum context
+length, anonymous %Pass rule serialization and source/target propagation through
+successive filters. The element array remains shared at the owner boundary.
+
+JVM differential tests compare ICU4J public execution and package-private
+compounds against the new cores: all batch subranges, streamed UTF-16 units,
+malformed/supplementary text, positions/context bounds, filters, captures,
+quantifiers, cursor movement, callback failures, partial modifications, metadata
+copy/replace call order and reentrant filter changes. Compound matrices cover
+empty/expanding/deleting/context/quantified/nonprogress passes, anonymous counts,
+serialization and source/target sets.
+
+Eight independent Common execution fingerprints were captured from ICU4J's
+public API across five filters, six inputs, all batch subranges and each
+incremental insertion/retry/finish. Five further compound fingerprints cover
+both anonymous-count settings, four filters, serialization, source/target sets,
+batch output and every incremental position. Targeted JVM tests pass. Public
+Transliterator lifecycle/registry integration and built-in registrations remain
+outstanding; these kernels do not expose an incomplete public facade.
