@@ -9,6 +9,7 @@ internal class CharsetDetectionInput(
     val rawLength: Int = raw.size,
     val filtered: ByteArray = raw,
     val filteredLength: Int = if(filtered===raw)rawLength else filtered.size,
+    val c1Bytes: Boolean = (0..<filteredLength).any { (filtered[it].toInt() and 255) in 0x80..0x9f },
 ) {
     init {require(rawLength in 0..raw.size);require(filteredLength in 0..filtered.size)}
 }
