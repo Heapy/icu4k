@@ -11825,3 +11825,16 @@ all host Java locales against ICU4J 78.3.
 Validation passed: the targeted JVM oracle and the full `jvmTest jsNodeTest
 macosArm64Test compileTestKotlinLinuxX64` run (4m 49s). The preceding execution /
 resource milestone also passed both GitHub Actions jobs in run 39031648447.
+
+## Transliterator registry lookup
+
+Ported the registry's source/target fallback cursor, legacy three-component Java
+locale conversion, dynamic/static stores, hidden locale-rule cache and visible
+source/target/variant graph. The cursor retains identity-sensitive reset and the
+upstream locale/script fallback order. Each map operation locks independently;
+ID insertion order, default-variant priority and fail-fast live enumerations are
+preserved. Source/target enumeration order is unspecified by the API.
+
+JVM differential tests compare the cursor and legacy locale conversion across
+ICU locales, 120 mixed visibility/replacement/removal operations, exact variants,
+locale and script fallback, embedded Greek rules and enumeration failures.
