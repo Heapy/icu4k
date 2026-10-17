@@ -499,6 +499,31 @@ baseline. `TimeZoneFactoryOracleTest.jdkCloneCalendarBindingMatchesSourceAfterMu
 compares both wrappers after mutations to the original and clone. No upstream
 report has been sent; a correction needs a separate compatibility decision.
 
+## ICU4J 010 ChronoLocalDateTime conversion recurses without an overload
+
+Pinned ICU4J 78.3 `JavaTimeConverters.temporalToCalendar(Temporal)` recognizes
+`ChronoLocalDateTime<?>` and calls `temporalToCalendar` with that cast, but the
+class only defines a `LocalDateTime` overload. Overload resolution selects the
+same Temporal method again. A JapaneseDate (or another non-ISO chronology) at a
+LocalTime reaches this branch and exhausts the stack. ISO LocalDateTime is
+handled by an earlier branch.
+
+Minimal Java trigger:
+
+```java
+com.ibm.icu.impl.JavaTimeConverters.temporalToCalendar(
+    java.time.chrono.JapaneseDate.of(2024, 2, 29)
+        .atTime(java.time.LocalTime.NOON));
+```
+
+`DateFormatBaseOracleTest.sourceChronoDateTimeRecursionIsPreservedInIsolatedVms`
+runs the pinned source and port in separate `-Xss256k` JVMs. Each child explicitly
+catches StackOverflowError and reports it; the parent test process does not
+swallow VM failures. Confirmed on JDK 25.0.4+9-LTS, macOS 26.6.2, 2026-10-17.
+The port preserves the source branch pending an upstream compatibility decision.
+Current release/HEAD reproduction, duplicate search and upstream submission have
+not been performed; no issue has been posted.
+
 ## Upstream handoff
 
 Use stable local IDs when updating entries. Track each issue through

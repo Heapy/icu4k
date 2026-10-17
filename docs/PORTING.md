@@ -10378,3 +10378,56 @@ Full verification passed in 6m 11s: JVM 2,160 tests, macOS Arm64 1,022 tests,
 and JS Node 1,024 tests (one existing skip), with no failures. Linux x64 test
 compilation passed. Both remapped ICU4J stream directions and the restored-owner
 subclass test passed in the full JVM suite.
+
+### DateFormat base protocol, fields and JVM temporal inputs (2026-10-17)
+
+Added the public abstract DateFormat protocol for Calendar/Date/Number object
+formatting, Date convenience overloads, parsing into Calendar, ParsePosition
+handling, parse exceptions, owned calendar/number-format access, leniency flags,
+capitalization contexts, equality/hash and cloning. Concrete implementations
+supply format(Calendar,...) and parse(String,Calendar,...). Typed copy hooks
+support Native subclasses. Numeric format setters clone their input and apply
+the source date-number settings. Calendar setters retain the input identity.
+
+The source order is preserved around errors and overrides: only getTime's
+IllegalArgumentException is converted into parse failure, parser exceptions do
+not restore the timezone, and deprecated boolean attribute aliases are resolved
+before set membership. DateFormat clones copy calendar and number-format state
+but deliberately share the source boolean-attribute set. Equality ignores that
+set and compares calendar equivalence, numeric format and capitalization.
+
+Added all scalar pattern/style/field constants and the three fixed-size mutable
+skeleton lists. All 28 nested DateFormat.Field constants retain their real JVM
+class name, source UID, calendar mapping, protected construction, name registry
+and readResolve rules. Registry field count is obtained from an actual default
+GregorianCalendar rather than a replacement constant. Subclasses are excluded
+from registration and must implement their own readResolve.
+
+Ported JVM JavaTimeConverters and connected java.util.Calendar, Temporal,
+DayOfWeek and Month inputs. Proleptic Gregorian conversion, zone IDs/offsets,
+JDK week settings and implementation behavior of local/time-only values match
+the pinned source. The non-ISO ChronoLocalDateTime recursion bug is preserved
+and verified in isolated child JVMs (ICU4J bug 010).
+
+Three common tests and seven JVM oracle tests cover format dispatch, strict and
+lenient parse positions, parser failures/timezone restoration, ownership,
+attribute-sharing clones, contexts, date-number settings, all field mappings and
+canonical serialization, scalar/list parity and JVM temporal types. The pattern
+engine, DateFormat style/skeleton factories, Calendar formatter integration and
+DateFormat/calendar/timezone serialization remain outstanding; no substitute
+formatter or unsupported factory stubs were introduced.
+
+The initial full JVM run exposed an existing arithmetic-oracle instability:
+HotSpot's fast-throw path returned a division ArithmeticException without its
+message in ICU4J, while the common division retained '/ by zero'. The date-core
+oracle now compares the exception category for arithmetic failures, preserving
+all value/field/stamp checks and VM-error propagation. A focused rerun of both
+the affected date-core oracle and the new DateFormat tests passed.
+
+The same arithmetic-oracle assertion also caused the previous commit's Linux
+CI run 38991343553 to fail before JS/Native execution. The correction above
+addresses that test instability; no production calendar arithmetic changed.
+
+Final full verification passed in 5m 5s: 2,170 JVM tests, 1,025 macOS
+Native tests and 1,027 JS tests (one existing skip), with no failures.
+Linux Native test sources compiled; Linux execution remains a CI check.

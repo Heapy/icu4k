@@ -94,6 +94,8 @@ class CalendarDateCoreOracleTest {
         private fun outcome(block: () -> Any?): Any? = try { block() } catch (e: Throwable) {
             when (e) {
                 is VirtualMachineError -> throw e
+                // HotSpot fast-throw can omit the message after repeated integer division errors.
+                is ArithmeticException -> "arithmetic"
                 is NullPointerException -> "null"
                 is IndexOutOfBoundsException -> "bounds"
                 else -> e.javaClass.simpleName + ":" + e.message

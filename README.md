@@ -389,6 +389,10 @@ val dst = AnnualTimeZoneRule(
 println(dst.getStartInYear(2024, -18_000_000, 0)!!.getTime()) // 1710054000000
 ```
 
+`DateFormat` provides the abstract calendar-based format/parse protocol, date
+fields, leniency/context controls and JVM temporal-input conversion. A concrete
+pattern formatter and style factories are still being ported.
+
 `DateFormatSymbols` exposes locale/calendar era, month, weekday, quarter,
 AM/PM and leap-month names, with ICU's clone and defensive-copy behavior.
 For example, `DateFormatSymbols(ULocale("fr_FR")).getMonths()[0]` is `"janvier"`.
