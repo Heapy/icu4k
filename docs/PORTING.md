@@ -11263,3 +11263,47 @@ Verification passed in 6m 48s: JVM 2,455 tests, JS 1,145 tests (one existing
 skip), macOS Native 1,143 tests and Linux Native test compilation. All executed
 tests passed, including all available-locale JVM comparisons and the 63 common
 locale/style source goldens.
+
+### CLDR LocaleDistance, LocaleMatcher and acceptLanguage (2026-10-17)
+
+LocaleDistance loads the pinned langInfo.res match trie, region-partition table,
+partition strings, encoded paradigm LSRs and distance defaults. The full source
+algorithm is now common: language/script trie traversal, wildcard/final/skip-script
+flags, region partition maxima and pruning, shifted thresholds, explicit-subtag
+fractional penalties, likely-subtag tie-breaking and recursive reverse matching
+for ONLY_TWO_WAY. Packing/unpacking helpers, paradigm lookup, diagnostics and the
+source Data equality/hash behavior are covered by differential tests.
+
+LocaleMatcher provides the public builder, enums, string/priority-list constructors,
+single/list/Accept-Language desired locales, Result, isMatch, deprecated match and
+canonicalize APIs. Supported LSRs retain source default/paradigm/other ordering and
+deduplication; results map back to original supported indices. Desired iterators
+remain lazy, preserving hasNext/next order and early termination after exact or
+low-distance matches. Demotion and threshold/max-distance precedence follow ICU4J.
+Builders and built matchers have separate supported-list snapshots.
+
+Result preserves original desired/supported objects and indices. Resolution starts
+from the supported locale, then copies nonempty desired region/variant and each
+desired extension. The JVM adapter preserves Java Locale overloads, original Locale
+identity, eager supported-locale conversion, lazy desired ULocale conversion,
+private-use tags and the source empty/und distinction. Portable targets keep the
+ULocale API. Diagnostic integer localization follows the default formatting locale.
+
+All four ULocale.acceptLanguage overloads now use the matcher. They preserve
+fallback[0] mutation before parsing/validation, malformed-header handling, exact
+ULocale equality for clearing fallback, original supported-object identity and
+the absence-of-match null result. Empty fallback arrays fail on every platform.
+
+JVM oracles compare binary data, all 630 distance-table entries, defaults, paradigms,
+packing and 30,000 randomized packed queries with threshold fractions, directions,
+flags and candidate order. Matcher oracles compare 600 randomized configurations
+with 20 desired lists each, builder reuse, HTTP priorities, resolution failures,
+legacy variants, Java Locale adapters and lazy iterator traces. Common goldens
+cover 96 pinned ICU4J configuration/preference cases plus the complete source table
+fingerprint, builder snapshots, private-use/pseudolocales, localized diagnostics
+and acceptLanguage output/error/fallback behavior.
+
+Verification passed in 6m 19s: JVM 2,473 tests, JS 1,153 tests (one existing
+skip), macOS Native 1,151 tests and Linux Native test compilation. All executed
+tests passed, including the complete distance-table fingerprint, all 96 common
+matcher goldens, localized diagnostics and acceptLanguage mutation/error tests.

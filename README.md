@@ -626,3 +626,24 @@ val value = relative.formatToValue(3.0, RelativeDateTimeFormatter.RelativeDateTi
 
 Formatted results expose literal, numeric and number fields. The API also supports
 custom number formats, capitalization and locale-specific date/time combination.
+
+`LocaleMatcher` negotiates supported locales using CLDR language, script and
+region distances:
+
+```kotlin
+import io.github.heapy.icu4k.util.LocaleMatcher
+import io.github.heapy.icu4k.util.ULocale
+
+val matcher = LocaleMatcher.builder()
+    .setSupportedLocales("en_GB, en_US, fr_FR")
+    .build()
+println(matcher.getBestMatch(ULocale("en_AU"))) // en_GB
+val result = matcher.getBestMatchResult(ULocale("fr_CA@numbers=arab"))
+println(result.makeResolvedULocale()) // fr_CA@numbers=arab
+```
+
+Builders configure defaults, script/language preference, desired-list demotion,
+matching direction and maximum distance. Results retain original locale indices
+and merge desired region, variant and extensions into the supported locale.
+`ULocale.acceptLanguage` provides the corresponding HTTP-header and array wrappers
+with the ICU4J fallback flag. JVM extensions also accept `java.util.Locale`.
