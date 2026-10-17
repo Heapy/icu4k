@@ -65,6 +65,12 @@ open class RelativeDateFormat : DateFormat {
         capitalizationOfRelativeUnitsForStandAlone = other.capitalizationOfRelativeUnitsForStandAlone
         capitalizationBrkIter = other.capitalizationBrkIter
     }
+    public override fun clone(): DateFormat {
+        val copy = super.clone() as RelativeDateFormat
+        // Object.clone copies the JVM monitor adapter, whose owner must be the new object.
+        copy.datesLock = createCalendarCacheLock(copy)
+        return copy
+    }
     protected override fun cloneNative(): DateFormat = RelativeDateFormat(this, Unit)
 
     override fun format(calendar: Calendar?, output: StringBuilder?, position: FormatFieldPosition?): StringBuilder {

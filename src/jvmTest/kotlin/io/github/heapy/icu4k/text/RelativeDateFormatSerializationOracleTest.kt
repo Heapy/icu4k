@@ -41,6 +41,25 @@ class RelativeDateFormatSerializationOracleTest {
             compare(read(bytes(port), "io.github.heapy.icu4k.", "com.ibm.icu.") as Source, read(bytes(source), "com.ibm.icu.", "io.github.heapy.icu4k.") as RelativeDateFormat)
         }
     }
+    @Test fun clonedLazyLookupDoesNotAcquireOriginalMonitor() {
+        val a = read(bytes(Source(-1, 131, SourceLocale.US, null))) as Source
+        val b = read(bytes(RelativeDateFormat(-1, 131, ULocale.US, null))) as RelativeDateFormat
+        val ac = a.clone() as Source; val bc = b.clone() as RelativeDateFormat
+        for ((owner, format) in listOf<Pair<Any, () -> String>>(a to { ac.format(java.util.Date()) }, b to { bc.format(Date()) })) {
+            val done = java.util.concurrent.CountDownLatch(1)
+            val error = java.util.concurrent.atomic.AtomicReference<Throwable?>()
+            lateinit var worker: Thread
+            val independent = synchronized(owner) {
+                worker = Thread {
+                    try { format() } catch (failure: Throwable) { error.set(failure) } finally { done.countDown() }
+                }.apply { isDaemon = true; start() }
+                done.await(5, java.util.concurrent.TimeUnit.SECONDS)
+            }
+            worker.join(5000)
+            error.get()?.let { throw it }
+            assertTrue(independent, "A clone's lazy relative lookup must use its own monitor: ${owner.javaClass.name}")
+        }
+    }
     @Test fun legacyDateOnlyStreamUsesTheRetainedFormatter() {
         val a = Source(3, 131, SourceLocale.FRANCE, null); val b = RelativeDateFormat(3, 131, ULocale.FRANCE, null)
         fun set(owner: Any, name: String, value: Any?) { owner.javaClass.getDeclaredField(name).also { it.isAccessible = true }.set(owner, value) }
