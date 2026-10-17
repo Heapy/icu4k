@@ -11666,3 +11666,51 @@ in 5m 21s with Kotlin 2.4.21 / Gradle 9.8.1. XML reports contain 2,648 JVM tests
 failures or errors. Linux Native test compilation passed. Remote CI 39028073196
 for the preceding Bidi/BidiTransform stage completed its macOS job successfully;
 the jvm-js-linux job was still running at this verification.
+
+
+### Transliteration rule and ID parsers (2026-10-17)
+
+TransliteratorParser now ports the rule grammar: variable definitions and stand-in
+allocation, UnicodeSet symbols, quoted/escaped text, numbered/nested captures,
+quantifiers, dot, ante/post context, anchors, cursors and offsets, directional and
+bidirectional operators, variable-range pragmas, ID/data block ordering, compound
+filters, line continuations, error recovery, the thirty-error cutoff and chained
+causes. The source's unsupported backup/normalization pragmas still throw the
+source diagnostics. Reusing a parser retains the source's cached dot stand-in,
+including recursive serialization failures from stale stand-in graphs.
+
+TransliteratorIDParser ports filtered IDs, explicit inverse IDs, compound IDs,
+canonicalization, source/target/variant conversion, special-inverse registration
+and instance-list construction. A synchronized map uses Unicode-folded
+CaseInsensitiveString keys. CaseInsensitiveString is now available in common
+code, preserving original spelling, full-fold equality, lazy hashes and null
+source behavior. Quantifier implements repeat bounds, zero-width matching,
+incremental stop behavior, patterns and source-set/index analysis. Utility gains
+parseChar, parseInteger, parsePattern, parseUnicodeIdentifier and quotedIndexOf.
+Explicit string/range guards preserve Java failures on JavaScript.
+
+FunctionReplacer delegates to a TransliterationFunction/TransliterationFactory
+boundary. The parser uses that boundary for actual ID instantiation and filtered
+function replacements; no registry or public Transliterator stub is substituted.
+The future public registry/facade must connect this boundary and register built-in
+special inverses. JVM cause chaining mutates the source exception objects. JS and
+Native preserve mutable ICU errors and rebuild immutable standard Kotlin cause
+links while retaining their base error categories.
+
+JVM differential tests compare ICU4J parser state after successful and failed
+parses: data/ID blocks, filters, stand-in object kinds and patterns, named-variable
+arrays, generated rules, error chains and execution text/positions. They cover
+both directions, repeated parser calls, functions with filters, bad syntax,
+masking, pragmas, exhausted ranges, truncated IDs and the error cutoff. Further
+matrices compare canonical ID/filter results, integer/identifier/pattern parsing,
+Unicode-folded keys and quantifier matching with sets and zero-width callbacks.
+
+Twenty-six independent Common fingerprints were generated using ICU4J alone.
+Each includes both directions, parser errors/state, serialized rules and resolved
+engine output/positions for seven texts and incremental/nonincremental execution.
+Common tests additionally cover line continuations, long and nested cause chains,
+full Unicode key folding and source null behavior. Targeted JVM tests pass.
+
+Public Transliterator/RuleBasedTransliterator lifecycle/filtering, registry and
+resource registration, compound execution and built-in transliterators remain
+outstanding. The full ICU4J port remains incomplete.

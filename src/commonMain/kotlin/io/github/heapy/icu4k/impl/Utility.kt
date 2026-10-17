@@ -6,6 +6,83 @@ import io.github.heapy.icu4k.text.UTF16
 
 /** Shared ICU string, escaping and append utilities. */
 internal object Utility {
+    fun parseChar(id: String, pos: IntArray, ch: Char): Boolean {
+        val start = pos[0]
+        pos[0] = PatternProps.skipWhiteSpace(id, pos[0])
+        if (pos[0] == id.length || io.github.heapy.icu4k.text.transliterationCharAt(id,pos[0]) != ch) { pos[0] = start; return false }
+        ++pos[0]
+        return true
+    }
+    fun parseInteger(rule: String, pos: IntArray, limit: Int): Int {
+        var count = 0
+        var value = 0
+        var p = pos[0]
+        var radix = 10
+        if (rule.regionMatches(p, "0x", 0, 2, true)) { p += 2; radix = 16 }
+        else if (p < limit && io.github.heapy.icu4k.text.transliterationCharAt(rule,p) == '0') { ++p; count = 1; radix = 8 }
+        while (p < limit) {
+            val d = io.github.heapy.icu4k.lang.UCharacter.digit(io.github.heapy.icu4k.text.transliterationCharAt(rule,p++).code, radix)
+            if (d < 0) { --p; break }
+            ++count
+            val v = value * radix + d
+            if (v <= value) return 0
+            value = v
+        }
+        if (count > 0) pos[0] = p
+        return value
+    }
+    fun parsePattern(rule: String, initialPos: Int, limit: Int, pattern: String, parsedInts: IntArray?): Int {
+        var pos = initialPos
+        var count = 0
+        val p = IntArray(1)
+        for (c in pattern) when(c) {
+            ' ' -> {
+                if(pos >= limit || !PatternProps.isWhiteSpace(io.github.heapy.icu4k.text.transliterationCharAt(rule,pos++).code)) return -1
+                pos = PatternProps.skipWhiteSpace(rule,pos)
+            }
+            '~' -> pos = PatternProps.skipWhiteSpace(rule,pos)
+            '#' -> {
+                p[0] = pos
+                parsedInts!![count++] = parseInteger(rule,p,limit)
+                if(p[0] == pos) return -1
+                pos = p[0]
+            }
+            else -> {
+                if(pos >= limit) return -1
+                if(io.github.heapy.icu4k.lang.UCharacter.toLowerCase(io.github.heapy.icu4k.text.transliterationCharAt(rule,pos++).code).toChar() != c) return -1
+            }
+        }
+        return pos
+    }
+    fun parseUnicodeIdentifier(text: String, pos: IntArray): String? {
+        val buf = StringBuilder()
+        var p = pos[0]
+        while(p < text.length) {
+            // Character.codePointAt examines a lead surrogate only, unlike UTF16.charAt.
+            val first = io.github.heapy.icu4k.text.transliterationCharAt(text,p)
+            val cp = if(first.isHighSurrogate() && p+1 < text.length && io.github.heapy.icu4k.text.transliterationCharAt(text,p+1).isLowSurrogate())
+                0x10000 + ((first.code-0xd800) shl 10) + io.github.heapy.icu4k.text.transliterationCharAt(text,p+1).code-0xdc00 else first.code
+            if(buf.isEmpty()) {
+                if(!io.github.heapy.icu4k.lang.UCharacter.isUnicodeIdentifierStart(cp)) return null
+            } else if(!io.github.heapy.icu4k.lang.UCharacter.isUnicodeIdentifierPart(cp)) break
+            UTF16.append(buf,cp)
+            p += UTF16.getCharCount(cp)
+        }
+        pos[0] = p
+        return buf.toString()
+    }
+    fun quotedIndexOf(text: String, start: Int, limit: Int, chars: String): Int {
+        var i = start
+        while(i < limit) {
+            val c = io.github.heapy.icu4k.text.transliterationCharAt(text,i)
+            if(c == '\\') ++i
+            else if(c == '\'') { do { ++i } while(i < limit && io.github.heapy.icu4k.text.transliterationCharAt(text,i) != '\'') }
+            else if(chars.indexOf(c) >= 0) return i
+            ++i
+        }
+        return -1
+    }
+
     fun appendToRule(rule: StringBuilder, text: String, literal: Boolean, escape: Boolean, quote: StringBuilder) {
         for (c in text) appendToRule(rule, c.code, literal, escape, quote)
     }

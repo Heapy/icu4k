@@ -5,7 +5,7 @@ package io.github.heapy.icu4k.text
 /** Shared stand-in table; matching and replacement deliberately use separate checked casts. */
 internal class TransliterationData {
     var ruleSet = TransliterationRuleSet()
-    val variableNames = mutableMapOf<String, CharArray>()
+    var variableNames = mutableMapOf<String, CharArray>()
     var variables: Array<Any?>? = null
     var variablesBase: Char = '\u0000'
     fun lookupMatcher(standIn: Int): UnicodeMatcher? {

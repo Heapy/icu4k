@@ -10,7 +10,7 @@ internal class StringMatcher(private val pattern: String, private val segmentNum
     private var matchStart = -1
     private var matchLimit = -1
     constructor(pattern: String, start: Int, limit: Int, segmentNumber: Int, data: TransliterationData) :
-        this(pattern.substring(start, limit), segmentNumber, data)
+        this(transliterationSubstring(pattern, start, limit), segmentNumber, data)
 
     override fun matches(text: Replaceable, offset: IntArray, limit: Int, incremental: Boolean): Int {
         val cursor = intArrayOf(offset[0])
