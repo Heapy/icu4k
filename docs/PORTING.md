@@ -12073,3 +12073,14 @@ regressions cover alias execution and deferred factory failure.
 - Full JVM, Node and macOS Native suites passed; Linux Native test compilation
   passed, using `./gradlew jvmTest jsNodeTest macosArm64Test
   compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process`.
+
+## StringPrep reader diagnostic compatibility
+
+- Restored StringPrepDataReader's one-time `NormalizerDataReader` debug selection
+  and its before/after-header byte-count messages through the existing ICUDebug
+  platform boundary.
+- Isolated JVM classloader tests compare exact output with ICU4J for the enabled
+  flag, help mode and an unrelated flag; system properties/output are restored.
+- Combined full validation passed: JVM 2,793 tests; Node 1,368 tests (one skipped);
+  macOS Native 1,366 tests; no failures or errors. Linux Native test compilation
+  passed with the same full validation command recorded above.
