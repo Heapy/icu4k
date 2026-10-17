@@ -12084,3 +12084,26 @@ regressions cover alias execution and deferred factory failure.
 - Combined full validation passed: JVM 2,793 tests; Node 1,368 tests (one skipped);
   macOS Native 1,366 tests; no failures or errors. Linux Native test compilation
   passed with the same full validation command recorded above.
+
+## GenderInfo list-gender rules
+
+- Added GenderInfo, Gender, ListGenderStyle, explicit-style construction, vararg
+  and list processing, CLDR resource lookup, recursive ULocale fallback and the
+  original reclaimable SimpleCache behavior. Java Locale has a JVM adapter.
+- Retained empty/singleton rules, nullable element behavior and delayed failure
+  for a null style. The API keeps its upstream internal/deprecated designation.
+- JVM differential tests enumerate all nullable lists through length five for
+  every style, and compare every ICU4J locale plus keyword/alias/unknown fallback
+  cases. Common tests use 18 independently generated locale fingerprints across
+  every three-gender list through length four (2,178 combinations).
+- Regenerate with `java -cp /path/to/icu4j-78.3.jar
+  scripts/oracles/GenderInfoGoldens.java` against the pinned source JAR.
+- Kotlin's local incremental test cache rejected a dirty lookup for the previous
+  StringPrepDataReader change. The verified retry disables incremental
+  compilation via `-Pkotlin.incremental=false`; no library behavior or coverage
+  was reduced to avoid the compiler cache failure.
+- Full validation passed: JVM 2,797 tests; Node 1,370 tests (one skipped);
+  macOS Native 1,368 tests; no failures or errors. Linux Native test compilation
+  passed. Command: `./gradlew jvmTest jsNodeTest macosArm64Test
+  compileTestKotlinLinuxX64 -Pkotlin.compiler.execution.strategy=in-process
+  -Pkotlin.incremental=false`.
